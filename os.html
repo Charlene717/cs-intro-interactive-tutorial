@@ -1,0 +1,291 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ch 6: 作業系統 — Intro CS</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head><body>
+<nav class="top-nav"><div class="top-nav-inner">
+  <a href="index.html" class="top-nav-brand"><span>💻</span> <span data-zh="計算機概論" data-en="Intro CS">計算機概論</span></a>
+  <ul class="top-nav-links"><li><a href="history.html">History</a></li><li><a href="data-rep.html">Data</a></li><li><a href="logic-gates.html">Logic</a></li><li><a href="cpu-arch.html">CPU</a></li><li><a href="memory.html">Memory</a></li><li><a href="os.html" class="active">OS</a></li><li><a href="networking.html">Net</a></li><li><a href="database.html">DB</a></li><li><a href="programming.html">Prog</a></li><li><a href="algorithms.html">Algo</a></li><li><a href="data-structures.html">DS</a></li><li><a href="software-eng.html">SWE</a></li><li><a href="security.html">Sec</a></li><li><a href="ai-ml.html">AI/ML</a></li><li><a href="cloud-iot.html">Cloud</a></li><li><a href="ethics-future.html">Ethics</a></li>
+    <li><a href="references/index.html" data-zh="📚 參考資料" data-en="📚 References">📚 參考資料</a></li>
+  </ul>
+</div></nav>
+<div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
+<header class="page-hero"><div class="step-badge">CHAPTER 6 / 16</div>
+<h1 data-zh="作業系統" data-en="Operating Systems">作業系統</h1>
+<p class="subtitle" data-lang="zh">作業系統是硬體與應用程式之間的「翻譯層」——管理 CPU、記憶體、檔案、I/O，並提供行程、執行緒、虛擬化等抽象。</p>
+<p class="subtitle" data-lang="en">An OS is the translation layer between hardware and applications — it manages CPU, memory, files, and I/O, and exposes abstractions like processes, threads, and virtualization.</p>
+</header>
+<main class="content-wrap">
+
+<section class="section">
+<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
+<h2 data-zh="OS 為何不可或缺？" data-en="Why is an OS indispensable?">OS 為何不可或缺？</h2>
+<div data-lang="zh"><p>沒有作業系統，每個程式都得自己驅動硬碟、配置記憶體、處理鍵盤中斷——既不安全也不可移植。<strong>OS 的核心使命</strong>是把混亂的硬體包成乾淨的 API（系統呼叫 syscall），並仲裁多個程式同時競爭資源時的公平性與正確性。</p><p>從手錶上的 watchOS、手機 Android/iOS、桌面 Windows/macOS/Linux，到資料中心的 Linux + Kubernetes，每個現代計算裝置都仰賴 OS。</p></div>
+<div data-lang="en"><p>Without an OS, every program would have to drive the disk, allocate memory, and handle keyboard interrupts itself — unsafe and non-portable. <strong>The OS's core mission</strong> is to wrap chaotic hardware into clean APIs (system calls) and arbitrate fairness and correctness when many programs compete for resources.</p><p>From watchOS on a wristwatch, Android/iOS on phones, Windows/macOS/Linux on desktops, to Linux + Kubernetes in data centers — every modern device depends on an OS.</p></div>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<span data-lang="zh"><strong>核心觀念：</strong>OS 的兩大角色是「<strong>資源管理者</strong>」（公平分配 CPU/RAM/I/O）與「<strong>抽象層</strong>」（提供檔案、行程、socket 等概念，隱藏硬體細節）。</span>
+<span data-lang="en"><strong>Core idea:</strong> An OS plays two roles — <strong>resource manager</strong> (fairly allocate CPU/RAM/I/O) and <strong>abstraction layer</strong> (expose files, processes, sockets — hiding hardware details).</span>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="四大職責" data-en="FOUR DUTIES">四大職責</div>
+<h2 data-zh="一、OS 的四大職責" data-en="I. The Four Duties of an OS">一、OS 的四大職責</h2>
+<table class="comp-table">
+<thead><tr><th data-zh="職責" data-en="Duty">職責</th><th data-zh="做什麼" data-en="What it does">做什麼</th><th data-zh="代表機制" data-en="Mechanisms">代表機制</th></tr></thead>
+<tbody>
+<tr><td data-lang="zh"><strong>CPU 排程</strong></td><td data-lang="en"><strong>CPU Scheduling</strong></td><td data-lang="zh">決定哪個行程下一個跑、跑多久</td><td data-lang="en">Pick which process runs next and for how long</td><td>FCFS, SJF, RR, MLFQ, CFS</td></tr>
+<tr><td data-lang="zh"><strong>記憶體管理</strong></td><td data-lang="en"><strong>Memory Mgmt</strong></td><td data-lang="zh">虛擬位址 ↔ 實體位址、分頁、保護</td><td data-lang="en">Virtual ↔ physical address, paging, protection</td><td>TLB, page table, swap</td></tr>
+<tr><td data-lang="zh"><strong>檔案系統</strong></td><td data-lang="en"><strong>File System</strong></td><td data-lang="zh">提供目錄、檔名、權限、持久儲存</td><td data-lang="en">Directories, names, permissions, persistence</td><td>inode, journaling, ACL</td></tr>
+<tr><td data-lang="zh"><strong>I/O 與裝置驅動</strong></td><td data-lang="en"><strong>I/O & Drivers</strong></td><td data-lang="zh">統一鍵盤、滑鼠、網卡、GPU 介面</td><td data-lang="en">Unify keyboard, mouse, NIC, GPU interfaces</td><td>interrupt, DMA, driver</td></tr>
+</tbody></table>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="行程 vs 執行緒" data-en="PROCESS vs THREAD">行程與執行緒</div>
+<h2 data-zh="二、Process vs Thread" data-en="II. Process vs Thread">二、Process vs Thread</h2>
+<div data-lang="zh"><p><strong>行程 (Process)</strong> 是「正在執行中的程式」——擁有獨立的位址空間、檔案描述符、PID。<strong>執行緒 (Thread)</strong> 是行程內的執行單位，共享同一份記憶體與檔案，但有自己的暫存器與堆疊。</p>
+<p><code>fork()</code> 複製整個父行程；<code>exec()</code> 載入新程式覆蓋目前位址空間。Linux 用 PCB (Process Control Block) 紀錄行程狀態；切換行程時必須儲存/還原所有暫存器，這就是 <strong>context switch</strong>，成本約 1–10 μs（執行緒切換約 1 μs，行程切換更貴因為要刷新 TLB）。</p></div>
+<div data-lang="en"><p>A <strong>process</strong> is a "program in execution" with its own address space, file descriptors, and PID. A <strong>thread</strong> is an execution unit inside a process — sharing memory and files but having its own registers and stack.</p>
+<p><code>fork()</code> duplicates the parent process; <code>exec()</code> loads a new program over the current address space. Linux uses a <strong>PCB (Process Control Block)</strong> to track state. Switching processes requires saving/restoring all registers — the <strong>context switch</strong>, costing 1–10 μs (threads ~1 μs; processes cost more because the TLB must be flushed).</p></div>
+
+<table class="comp-table">
+<thead><tr><th></th><th data-zh="行程 Process" data-en="Process">Process</th><th data-zh="執行緒 Thread" data-en="Thread">Thread</th></tr></thead>
+<tbody>
+<tr><td data-lang="zh">位址空間</td><td data-lang="en">Address space</td><td data-lang="zh">獨立</td><td data-lang="en">Isolated</td><td data-lang="zh">共享</td><td data-lang="en">Shared</td></tr>
+<tr><td data-lang="zh">建立成本</td><td data-lang="en">Creation cost</td><td data-lang="zh">高 (~1 ms)</td><td data-lang="en">High (~1 ms)</td><td data-lang="zh">低 (~10 μs)</td><td data-lang="en">Low (~10 μs)</td></tr>
+<tr><td data-lang="zh">通訊方式</td><td data-lang="en">Communication</td><td>IPC: pipe, socket, shm</td><td data-lang="zh">直接讀寫共享變數（需鎖）</td><td data-lang="en">Shared variables (need locks)</td></tr>
+<tr><td data-lang="zh">當機影響</td><td data-lang="en">Crash impact</td><td data-lang="zh">不影響其他行程</td><td data-lang="en">Doesn't affect other processes</td><td data-lang="zh">整個行程崩潰</td><td data-lang="en">Brings down whole process</td></tr>
+</tbody></table>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動排程" data-en="INTERACTIVE SCHEDULER">CPU 排程模擬</div>
+<h2 data-zh="三、互動：CPU 排程演算法比較" data-en="III. Interactive: CPU Scheduling Comparison">三、互動：CPU 排程演算法比較</h2>
+<div data-lang="zh"><p>下圖以 Gantt 圖比較三種演算法處理同一組工作（J1:6ms、J2:2ms、J3:8ms、J4:3ms）的執行順序與平均等待時間。<strong>SJF</strong> 平均等待最短，但會「餓死」長工作；<strong>RR (時間片 2ms)</strong> 較公平但 context switch 多。</p></div>
+<div data-lang="en"><p>Below is a Gantt chart comparing three algorithms on the same job set (J1:6ms, J2:2ms, J3:8ms, J4:3ms). <strong>SJF</strong> minimizes average wait but can starve long jobs; <strong>RR (quantum 2ms)</strong> is fair but adds context-switch overhead.</p></div>
+<div class="interactive-panel">
+<div class="chart-container"><canvas id="schedChart"></canvas></div>
+<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">每條色塊代表該工作在 CPU 上的執行區段</span><span data-lang="en">Each colored bar is a job's run segment on CPU</span></p>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="排程演算法" data-en="SCHEDULING ALGORITHMS">排程演算法</div>
+<h2 data-zh="四、五大排程演算法" data-en="IV. Five Scheduling Algorithms">四、五大排程演算法</h2>
+<table class="comp-table">
+<thead><tr><th data-zh="演算法" data-en="Algorithm">演算法</th><th data-zh="策略" data-en="Strategy">策略</th><th data-zh="優點" data-en="Pros">優點</th><th data-zh="缺點" data-en="Cons">缺點</th></tr></thead>
+<tbody>
+<tr><td><strong>FCFS</strong></td><td data-lang="zh">先到先服務</td><td data-lang="en">First-Come First-Served</td><td data-lang="zh">最簡單、公平</td><td data-lang="en">Simplest, fair</td><td data-lang="zh">護衛效應 (convoy effect)</td><td data-lang="en">Convoy effect</td></tr>
+<tr><td><strong>SJF</strong></td><td data-lang="zh">最短工作優先</td><td data-lang="en">Shortest Job First</td><td data-lang="zh">平均等待時間最短</td><td data-lang="en">Min avg wait</td><td data-lang="zh">長工作飢餓、需預知執行時間</td><td data-lang="en">Starvation; needs burst estimate</td></tr>
+<tr><td><strong>Round Robin</strong></td><td data-lang="zh">輪流分配時間片</td><td data-lang="en">Time-quantum rotation</td><td data-lang="zh">互動式系統反應好</td><td data-lang="en">Great for interactive</td><td data-lang="zh">context switch 多</td><td data-lang="en">Many context switches</td></tr>
+<tr><td><strong>Priority</strong></td><td data-lang="zh">優先權高的先跑</td><td data-lang="en">Highest priority first</td><td data-lang="zh">支援即時系統</td><td data-lang="en">Real-time friendly</td><td data-lang="zh">需處理 priority inversion</td><td data-lang="en">Priority inversion</td></tr>
+<tr><td><strong>MLFQ</strong></td><td data-lang="zh">多級回饋佇列</td><td data-lang="en">Multi-Level Feedback Queue</td><td data-lang="zh">兼顧互動與批次</td><td data-lang="en">Balances interactive & batch</td><td data-lang="zh">參數調校複雜</td><td data-lang="en">Tuning complex</td></tr>
+</tbody></table>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<div data-lang="zh"><strong>真實 OS：</strong>Linux 自 2.6.23 起使用 <strong>CFS (Completely Fair Scheduler)</strong>，用紅黑樹追蹤每個任務累積的「虛擬執行時間」；Windows 用 <strong>Multi-Level Feedback Queue</strong> 共 32 級優先權。</div>
+<div data-lang="en"><strong>Real OSes:</strong> Linux uses the <strong>Completely Fair Scheduler (CFS)</strong> since 2.6.23 — a red-black tree of "virtual runtime" per task. Windows uses a 32-level <strong>Multi-Level Feedback Queue</strong>.</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="同步與鎖" data-en="SYNCHRONIZATION">同步與鎖</div>
+<h2 data-zh="五、同步機制與死結" data-en="V. Synchronization & Deadlock">五、同步與死結</h2>
+<div data-lang="zh"><p>多執行緒共享記憶體時，若兩個執行緒同時讀寫同一變數，會出現 <strong>競態 (race condition)</strong>。OS 提供兩大同步原語：</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>Mutex（互斥鎖）</strong>：同一時間只有 1 個執行緒能持有，常用於保護臨界區。</li>
+<li><strong>Semaphore（號誌）</strong>：計數器，允許 N 個執行緒同時通過——可實作生產者-消費者問題。</li>
+</ul>
+<p><strong>死結 (Deadlock)</strong> 需同時滿足四條件，破壞任一條即可避免：</p></div>
+<div data-lang="en"><p>When threads share memory, simultaneous reads/writes cause <strong>race conditions</strong>. OSes provide two synchronization primitives:</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>Mutex</strong>: held by exactly one thread at a time — protects critical sections.</li>
+<li><strong>Semaphore</strong>: a counter allowing N concurrent threads — used in producer-consumer.</li>
+</ul>
+<p><strong>Deadlock</strong> requires all four conditions simultaneously — break any one to prevent it:</p></div>
+<div class="decision-tree">
+<h4>🌳 <span data-zh="Deadlock 四條件 (Coffman 1971)" data-en="Four Conditions for Deadlock (Coffman 1971)">Deadlock 四條件</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">①</span><div><strong>互斥 (Mutual exclusion)</strong> <span class="dt-arrow">→</span> 資源同時只能被一個行程持有。</div></div>
+<div class="dt-node"><span class="dt-q">②</span><div><strong>持有並等待 (Hold and wait)</strong> <span class="dt-arrow">→</span> 行程持有資源時還能等待新資源。</div></div>
+<div class="dt-node"><span class="dt-q">③</span><div><strong>不可搶佔 (No preemption)</strong> <span class="dt-arrow">→</span> 資源不能被強制收回。</div></div>
+<div class="dt-node"><span class="dt-q">④</span><div><strong>循環等待 (Circular wait)</strong> <span class="dt-arrow">→</span> 形成「行程 A 等 B 等 C 等 A」的環。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">①</span><div><strong>Mutual exclusion</strong> <span class="dt-arrow">→</span> resources held exclusively.</div></div>
+<div class="dt-node"><span class="dt-q">②</span><div><strong>Hold and wait</strong> <span class="dt-arrow">→</span> processes hold while waiting for more.</div></div>
+<div class="dt-node"><span class="dt-q">③</span><div><strong>No preemption</strong> <span class="dt-arrow">→</span> resources cannot be forcibly taken back.</div></div>
+<div class="dt-node"><span class="dt-q">④</span><div><strong>Circular wait</strong> <span class="dt-arrow">→</span> A waits B waits C waits A — a cycle.</div></div>
+</div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="檔案系統" data-en="FILE SYSTEMS">檔案系統</div>
+<h2 data-zh="六、檔案系統一覽" data-en="VI. File Systems Overview">六、檔案系統一覽</h2>
+<table class="comp-table">
+<thead><tr><th data-zh="檔案系統" data-en="File system">檔案系統</th><th data-zh="平台" data-en="Platform">平台</th><th data-zh="特色" data-en="Features">特色</th></tr></thead>
+<tbody>
+<tr><td>FAT32</td><td data-lang="zh">通用 (USB)</td><td data-lang="en">Universal (USB)</td><td data-lang="zh">單檔上限 4 GB；無權限；廣泛相容</td><td data-lang="en">4 GB file limit; no perms; widest compatibility</td></tr>
+<tr><td>NTFS</td><td>Windows</td><td data-lang="zh">journaling、ACL、加密、壓縮</td><td data-lang="en">Journaling, ACLs, encryption, compression</td></tr>
+<tr><td>ext4</td><td>Linux</td><td data-lang="zh">extent、journaling、最高 1 EB</td><td data-lang="en">Extents, journaling, up to 1 EB</td></tr>
+<tr><td>APFS</td><td>macOS / iOS</td><td data-lang="zh">copy-on-write、snapshot、加密</td><td data-lang="en">Copy-on-write, snapshots, encryption</td></tr>
+<tr><td>ZFS / Btrfs</td><td data-lang="zh">伺服器</td><td data-lang="en">Servers</td><td data-lang="zh">內建 RAID、校驗碼、snapshot</td><td data-lang="en">Built-in RAID, checksums, snapshots</td></tr>
+</tbody></table>
+<div data-lang="zh"><p>每個檔案在 Unix-like 系統由 <strong>inode</strong> 描述：包含大小、擁有者、權限 (rwx for user/group/other)、磁碟區塊指標。檔名只是「目錄項目 → inode 號」的對應。</p></div>
+<div data-lang="en"><p>In Unix-like systems each file is described by an <strong>inode</strong>: size, owner, permissions (rwx for user/group/other), and pointers to disk blocks. Filenames are just directory entries mapping name → inode number.</p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="虛擬化" data-en="VIRTUALIZATION">虛擬化與容器</div>
+<h2 data-zh="七、虛擬機 vs 容器" data-en="VII. VM vs Container">七、虛擬機 vs 容器</h2>
+<div class="decision-tree">
+<h4>🌳 <span data-zh="VM vs Container 決策樹" data-en="VM vs Container Decision Tree">VM vs Container 決策樹</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>需執行「不同 OS」（如 Windows app on Linux）？<span class="dt-arrow">→ 是 →</span> 用 <strong>VM</strong>（VMware / KVM / Hyper-V）。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>需「秒級啟動 + 高密度部署」（一台機跑 100 個服務）？<span class="dt-arrow">→ 是 →</span> 用 <strong>Container</strong>（Docker / containerd）。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>跨多台機器編排調度？<span class="dt-arrow">→ 是 →</span> <strong>Kubernetes</strong>（容器 + 自動擴展 + 自癒）。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>需強隔離（多租戶、敵對工作負載）？<span class="dt-arrow">→ 是 →</span> <strong>VM</strong> 或 gVisor / Firecracker 微 VM。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Run a different OS (e.g. Windows app on Linux)? <span class="dt-arrow">→ Yes →</span> <strong>VM</strong> (VMware / KVM / Hyper-V).</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Need sub-second startup + high-density deploy (100 services per host)? <span class="dt-arrow">→ Yes →</span> <strong>Container</strong> (Docker / containerd).</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Orchestrate across many hosts? <span class="dt-arrow">→ Yes →</span> <strong>Kubernetes</strong> (containers + autoscale + self-healing).</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Need strong isolation (multi-tenant)? <span class="dt-arrow">→ Yes →</span> <strong>VM</strong> or microVM (gVisor / Firecracker).</div></div>
+</div>
+</div>
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>關鍵差別：</strong>VM 虛擬化整台機器（含 guest kernel），容器只虛擬化 OS 介面（共享 host kernel）。VM 開機 ~30 秒、印象 GB 級；容器啟動 ~100 ms、印象 MB 級。</div>
+<div data-lang="en"><strong>Key difference:</strong> A VM virtualizes the whole machine (with its own guest kernel); a container virtualizes only the OS interface (sharing the host kernel). VM boots in ~30 s, images in GB; containers start in ~100 ms with MB images.</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="主流 OS" data-en="MAJOR OSes">主流作業系統</div>
+<h2 data-zh="八、2026 年主流作業系統" data-en="VIII. Major OSes in 2026">八、2026 年主流作業系統</h2>
+<div class="card-grid cols-3">
+<div class="card"><h4>🐧 Linux</h4><div data-lang="zh"><p>雲端、超級電腦、Android 的核心。Kernel 6.x，CFS 排程，~95% 公有雲伺服器。</p></div><div data-lang="en"><p>Powers cloud, supercomputers, Android. Kernel 6.x with CFS scheduler. ~95% of public-cloud servers.</p></div></div>
+<div class="card"><h4>🪟 Windows</h4><div data-lang="zh"><p>桌上型 73% 市占。NT 核心、NTFS、PowerShell；WSL 2 直接嵌入 Linux kernel。</p></div><div data-lang="en"><p>73% desktop share. NT kernel, NTFS, PowerShell; WSL 2 embeds a real Linux kernel.</p></div></div>
+<div class="card"><h4>🍎 macOS / iOS</h4><div data-lang="zh"><p>基於 Darwin (BSD + Mach 微核)；ARM Apple Silicon (M-series) 自 2020 起主導。</p></div><div data-lang="en"><p>Built on Darwin (BSD + Mach microkernel). ARM Apple Silicon (M-series) leads since 2020.</p></div></div>
+<div class="card"><h4>🤖 Android</h4><div data-lang="zh"><p>Linux kernel + ART runtime；手機 OS 全球 70% 市占。</p></div><div data-lang="en"><p>Linux kernel + ART runtime; 70% global mobile share.</p></div></div>
+<div class="card"><h4>☁️ Chrome OS</h4><div data-lang="zh"><p>Linux + Chrome 瀏覽器；教育市場主力，Crostini 支援 Linux 容器。</p></div><div data-lang="en"><p>Linux + Chrome browser; dominant in education. Crostini supports Linux containers.</p></div></div>
+<div class="card"><h4>⏱️ RTOS</h4><div data-lang="zh"><p>FreeRTOS、Zephyr、VxWorks——汽車、火箭、IoT 用，毫秒級即時保證。</p></div><div data-lang="en"><p>FreeRTOS, Zephyr, VxWorks — for cars, rockets, IoT. Millisecond-level real-time guarantees.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
+<h2 data-zh="九、Python: threading vs multiprocessing" data-en="IX. Python: threading vs multiprocessing">九、threading 與 multiprocessing</h2>
+<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># 執行緒適合 I/O 密集；多行程適合 CPU 密集（Python 有 GIL）</span>
+<span class="comment"># Threads: I/O-bound. Processes: CPU-bound (Python has the GIL).</span>
+<span class="kw">import</span> threading, multiprocessing, time
+
+<span class="kw">def</span> <span class="func">cpu_work</span>(n):
+    s = <span class="num">0</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="func">range</span>(n): s += i*i
+    <span class="kw">return</span> s
+
+<span class="comment"># 4 個執行緒——受 GIL 限制，CPU 工作不會加速</span>
+ts = [threading.<span class="func">Thread</span>(target=cpu_work, args=(<span class="num">10_000_000</span>,)) <span class="kw">for</span> _ <span class="kw">in</span> <span class="func">range</span>(<span class="num">4</span>)]
+[t.<span class="func">start</span>() <span class="kw">for</span> t <span class="kw">in</span> ts]; [t.<span class="func">join</span>() <span class="kw">for</span> t <span class="kw">in</span> ts]
+
+<span class="comment"># 4 個行程——真正並行（每個有自己的 Python interpreter）</span>
+<span class="kw">with</span> multiprocessing.<span class="func">Pool</span>(<span class="num">4</span>) <span class="kw">as</span> p:
+    p.<span class="func">map</span>(cpu_work, [<span class="num">10_000_000</span>]*<span class="num">4</span>)
+
+<span class="comment"># Mutex 保護共享計數器 / Mutex protects shared counter</span>
+lock = threading.<span class="func">Lock</span>()
+counter = <span class="num">0</span>
+<span class="kw">def</span> <span class="func">inc</span>():
+    <span class="kw">global</span> counter
+    <span class="kw">with</span> lock:
+        counter += <span class="num">1</span>     <span class="comment"># 臨界區 / critical section</span></pre></div>
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// 生產者-消費者問題 (semaphore 解) / Producer-Consumer with semaphores</span>
+<span class="kw">let</span> buffer = []        <span class="comment">// 有界佇列，容量 N</span>
+<span class="kw">let</span> empty = <span class="func">Sem</span>(N)     <span class="comment">// 還剩多少空位</span>
+<span class="kw">let</span> full  = <span class="func">Sem</span>(<span class="num">0</span>)     <span class="comment">// 已放入多少項目</span>
+<span class="kw">let</span> mutex = <span class="func">Mutex</span>()
+
+<span class="kw">function</span> <span class="func">Producer</span>():
+    <span class="kw">while</span> <span class="kw">true</span>:
+        item = <span class="func">make_item</span>()
+        empty.<span class="func">wait</span>()              <span class="comment">// 等空位</span>
+        mutex.<span class="func">lock</span>()
+        buffer.<span class="func">push</span>(item)
+        mutex.<span class="func">unlock</span>()
+        full.<span class="func">signal</span>()             <span class="comment">// 通知消費者</span>
+
+<span class="kw">function</span> <span class="func">Consumer</span>():
+    <span class="kw">while</span> <span class="kw">true</span>:
+        full.<span class="func">wait</span>()               <span class="comment">// 等項目</span>
+        mutex.<span class="func">lock</span>()
+        item = buffer.<span class="func">pop</span>()
+        mutex.<span class="func">unlock</span>()
+        empty.<span class="func">signal</span>()            <span class="comment">// 釋放空位</span>
+        <span class="func">consume</span>(item)</pre></div>
+</div>
+</section>
+
+<section class="quiz-section">
+<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">1. 下列何者「不」是 Coffman 死結四條件之一？</p>
+<p data-lang="en">1. Which is NOT one of Coffman's four deadlock conditions?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 互斥 (mutual exclusion)</span><span data-lang="en">A. Mutual exclusion</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 持有並等待 (hold and wait)</span><span data-lang="en">B. Hold and wait</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 優先權反轉 (priority inversion)</span><span data-lang="en">C. Priority inversion</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 循環等待 (circular wait)</span><span data-lang="en">D. Circular wait</span></div>
+</div><div class="quiz-feedback" id="fb1"></div></div>
+
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">2. 關於 Process 與 Thread，下列敘述何者正確？</p>
+<p data-lang="en">2. Which statement about Process vs Thread is correct?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 執行緒之間擁有獨立的位址空間</span><span data-lang="en">A. Threads have isolated address spaces</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 同一行程內的執行緒共享記憶體，因此通訊比行程間 IPC 快</span><span data-lang="en">B. Threads within a process share memory, so they communicate faster than IPC between processes</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 建立行程比建立執行緒便宜</span><span data-lang="en">C. Creating a process is cheaper than creating a thread</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 一個執行緒崩潰不會影響其行程內的其他執行緒</span><span data-lang="en">D. A thread crash never affects other threads in the same process</span></div>
+</div><div class="quiz-feedback" id="fb2"></div></div>
+
+<div class="quiz-q" data-answer="0">
+<p data-lang="zh">3. 關於 VM 與 Container，下列何者正確？</p>
+<p data-lang="en">3. Which statement about VM vs Container is correct?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 容器共享宿主 kernel，啟動快、印象小；VM 含完整 guest OS，隔離強</span><span data-lang="en">A. Containers share the host kernel (fast, small); VMs include a full guest OS (strong isolation)</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Docker 本質上就是一種 hypervisor</span><span data-lang="en">B. Docker is essentially a hypervisor</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 容器與 VM 的啟動時間幾乎一樣</span><span data-lang="en">C. Containers and VMs start equally fast</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Kubernetes 是一種 Type 1 hypervisor</span><span data-lang="en">D. Kubernetes is a Type 1 hypervisor</span></div>
+</div><div class="quiz-feedback" id="fb3"></div></div>
+</section>
+
+<nav class="page-nav">
+<a href="memory.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 5: 記憶體階層與儲存" data-en="Ch 5: Memory Hierarchy &amp; Storage">Ch 5: 記憶體階層與儲存</span></a>
+<a href="networking.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 7: 電腦網路" data-en="Ch 7: Computer Networking">Ch 7: 電腦網路</span></a>
+</nav>
+</main>
+<footer class="site-footer">© Charlene — Introduction to Computer Science · Interactive Tutorial</footer>
+<script src="i18n.js"></script>
+<script>
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
+function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
+
+// Gantt-chart-style scheduling comparison.
+// Jobs: J1=6ms, J2=2ms, J3=8ms, J4=3ms, all arrive at t=0.
+// FCFS order: J1,J2,J3,J4   SJF order: J2,J4,J1,J3   RR (q=2): interleaved
+const jobColors = ['rgba(29,78,216,.85)','rgba(217,119,6,.85)','rgba(5,150,105,.85)','rgba(190,18,60,.85)'];
+const algos = [
+  {name:'FCFS', segs:[[0,'J1',6],[6,'J2',2],[8,'J3',8],[16,'J4',3]]},
+  {name:'SJF',  segs:[[0,'J2',2],[2,'J4',3],[5,'J1',6],[11,'J3',8]]},
+  {name:'RR(2ms)', segs:[[0,'J1',2],[2,'J2',2],[4,'J3',2],[6,'J4',2],[8,'J1',2],[10,'J3',2],[12,'J1',2],[14,'J4',1],[15,'J3',2],[17,'J3',2]]}
+];
+const jobIdx = j => ({J1:0,J2:1,J3:2,J4:3}[j]);
+const datasets = [];
+algos.forEach((a,ai)=>{a.segs.forEach(s=>{datasets.push({label:a.name+' '+s[1],data:[{x:[s[0],s[0]+s[2]],y:a.name}],backgroundColor:jobColors[jobIdx(s[1])],borderColor:jobColors[jobIdx(s[1])],borderWidth:1});});});
+new Chart(document.getElementById('schedChart'),{type:'bar',data:{datasets:datasets},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>c.dataset.label+': t='+c.raw.x[0]+'→'+c.raw.x[1]+' ms'}}},scales:{x:{stacked:false,title:{display:true,text:'Time (ms)'},min:0,max:20},y:{stacked:true,title:{display:true,text:'Algorithm'}}}}});
+
+const QF={zh:{q1_y:'priority inversion 是另一種同步問題，不屬於死結四條件。',q1_n:'答案 C。',q2_y:'共享記憶體讓 thread 通訊只需讀寫變數（搭配鎖），比 IPC 快得多。',q2_n:'答案 B。',q3_y:'容器共享 host kernel，VM 自帶 guest OS——這是兩者最核心差異。',q3_n:'答案 A。'},en:{q1_y:'Priority inversion is a separate synchronization issue, not a deadlock condition.',q1_n:'Answer: C.',q2_y:'Shared memory lets threads communicate via variables (with locks), much faster than IPC.',q2_n:'Answer: B.',q3_y:'Containers share the host kernel; VMs ship their own guest OS — the core difference.',q3_n:'Answer: A.'}};
+document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
+</script>
+</body></html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ch 8: 資料庫 — Intro CS</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head><body>
+<nav class="top-nav"><div class="top-nav-inner">
+  <a href="index.html" class="top-nav-brand"><span>💻</span> <span data-zh="計算機概論" data-en="Intro CS">計算機概論</span></a>
+  <ul class="top-nav-links"><li><a href="history.html">History</a></li><li><a href="data-rep.html">Data</a></li><li><a href="logic-gates.html">Logic</a></li><li><a href="cpu-arch.html">CPU</a></li><li><a href="memory.html">Memory</a></li><li><a href="os.html">OS</a></li><li><a href="networking.html">Net</a></li><li><a href="database.html" class="active">DB</a></li><li><a href="programming.html">Prog</a></li><li><a href="algorithms.html">Algo</a></li><li><a href="data-structures.html">DS</a></li><li><a href="software-eng.html">SWE</a></li><li><a href="security.html">Sec</a></li><li><a href="ai-ml.html">AI/ML</a></li><li><a href="cloud-iot.html">Cloud</a></li><li><a href="ethics-future.html">Ethics</a></li>
+    <li><a href="references/index.html" data-zh="📚 參考資料" data-en="📚 References">📚 參考資料</a></li>
+  </ul>
+</div></nav>
+<div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
+<header class="page-hero"><div class="step-badge">CHAPTER 8 / 16</div>
+<h1 data-zh="資料庫系統" data-en="Database Systems">資料庫系統</h1>
+<p class="subtitle" data-lang="zh">為什麼不能用 CSV？因為資料庫提供併發控制、ACID 交易、索引加速與查詢語言——從關聯式到 NoSQL 再到 2026 的向量資料庫。</p>
+<p class="subtitle" data-lang="en">Why not just use a CSV? Because databases offer concurrency, ACID transactions, indexes, and a query language — from relational to NoSQL to 2026's vector DBs.</p>
+</header>
+<main class="content-wrap">
+
+<section class="section">
+<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
+<h2 data-zh="為何需要資料庫？" data-en="Why do we need a database?">為何需要資料庫？</h2>
+<div data-lang="zh"><p>把資料存成 CSV 或 JSON 看似簡單，但一旦遇到「<strong>1000 個使用者同時下單</strong>」就會崩潰：誰先讀寫？讀到一半當機怎辦？要查「過去 30 天台北的訂單」要全表掃描嗎？</p>
+<p>資料庫管理系統 (DBMS) 為此而生，提供四大核心能力：</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>併發 (Concurrency)</strong>：許多使用者同時讀寫不衝突</li>
+<li><strong>ACID 交易</strong>：要嘛全做、要嘛全不做</li>
+<li><strong>查詢語言 (SQL)</strong>：用宣告式語法描述「想要什麼」，由引擎決定「怎麼拿」</li>
+<li><strong>索引 (Index)</strong>：在百萬筆資料中以 ~µs 找到一筆</li>
+</ul></div>
+<div data-lang="en"><p>Storing data as CSV or JSON sounds simple — until <strong>1000 users place orders concurrently</strong> and the file collapses: who wrote first? What if the process crashed mid-write? Does every "orders in Taipei in last 30 days" query scan the whole file?</p>
+<p>A <strong>DBMS</strong> (Database Management System) solves this with four core capabilities:</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>Concurrency</strong> — many users read/write without conflict</li>
+<li><strong>ACID transactions</strong> — all-or-nothing</li>
+<li><strong>Query language (SQL)</strong> — declarative "what I want," engine decides "how to fetch"</li>
+<li><strong>Indexes</strong> — find one row among millions in microseconds</li>
+</ul></div>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<span data-lang="zh"><strong>核心觀念：</strong>資料庫是「<strong>結構化儲存 + 併發控制 + 查詢引擎</strong>」三位一體。沒這三項，就只是檔案。</span>
+<span data-lang="en"><strong>Core idea:</strong> A database is the trinity of <strong>structured storage + concurrency control + query engine</strong>. Strip any of these and it's just a file.</span>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="RDBMS vs NoSQL" data-en="RDBMS vs NoSQL">關聯式 vs NoSQL</div>
+<h2 data-zh="一、關聯式 vs NoSQL 五大家族" data-en="I. Relational vs NoSQL: Five Families">一、關聯式 vs NoSQL</h2>
+<table class="comp-table">
+<thead><tr><th data-zh="類型" data-en="Family">類型</th><th data-zh="資料模型" data-en="Model">資料模型</th><th data-zh="代表產品" data-en="Examples">代表產品</th><th data-zh="使用場景" data-en="Use case">使用場景</th></tr></thead>
+<tbody>
+<tr><td><strong>RDBMS</strong></td><td data-lang="zh">表 (rows × columns)，SQL</td><td data-lang="en">Tables (rows × cols), SQL</td><td>PostgreSQL, MySQL, Oracle, SQL Server</td><td data-lang="zh">交易系統、ERP、財務</td><td data-lang="en">Transactional, ERP, finance</td></tr>
+<tr><td><strong>Key-Value</strong></td><td data-lang="zh">鍵 → 值</td><td data-lang="en">key → value</td><td>Redis, DynamoDB, etcd</td><td data-lang="zh">快取、session、計數器</td><td data-lang="en">Cache, sessions, counters</td></tr>
+<tr><td><strong>Document</strong></td><td data-lang="zh">JSON 文件</td><td data-lang="en">JSON documents</td><td>MongoDB, Couchbase</td><td data-lang="zh">CMS、產品目錄、彈性 schema</td><td data-lang="en">CMS, catalogs, flexible schema</td></tr>
+<tr><td><strong>Column</strong></td><td data-lang="zh">寬列（按欄存）</td><td data-lang="en">Wide-column (column-oriented)</td><td>Cassandra, HBase, BigTable</td><td data-lang="zh">海量寫入、時間序列</td><td data-lang="en">Massive writes, time series</td></tr>
+<tr><td><strong>Graph</strong></td><td data-lang="zh">節點與邊</td><td data-lang="en">Nodes and edges</td><td>Neo4j, ArangoDB</td><td data-lang="zh">社群圖譜、推薦、詐欺偵測</td><td data-lang="en">Social graphs, recommendation, fraud</td></tr>
+<tr><td><strong>Vector</strong></td><td data-lang="zh">高維向量 + 近鄰索引</td><td data-lang="en">High-dim vectors + ANN index</td><td>Pinecone, Milvus, pgvector, Weaviate</td><td data-lang="zh">RAG、語義搜尋、AI 記憶</td><td data-lang="en">RAG, semantic search, AI memory</td></tr>
+</tbody></table>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="關聯模型" data-en="RELATIONAL MODEL">關聯模型基礎</div>
+<h2 data-zh="二、主鍵、外鍵與正規化" data-en="II. Primary Key, Foreign Key, Normalization">二、主鍵、外鍵與正規化</h2>
+<div data-lang="zh"><p><strong>主鍵 (Primary Key, PK)</strong>：唯一識別一筆紀錄的欄位（如 student_id）。<strong>外鍵 (Foreign Key, FK)</strong>：指向另一表主鍵的欄位，建立關聯。</p>
+<p><strong>正規化 (Normalization)</strong> 減少冗餘與更新異常：</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>1NF</strong>：每欄都是「原子值」，不允許重複群組或陣列。</li>
+<li><strong>2NF</strong>：滿足 1NF，且非主鍵欄完全相依於整個主鍵（消除部分相依）。</li>
+<li><strong>3NF</strong>：滿足 2NF，且非主鍵欄不可相依於其他非主鍵欄（消除遞移相依）。</li>
+</ul>
+<p><strong>反正規化 (Denormalization)</strong>：為了讀取效能故意冗餘——常見於資料倉儲與 OLAP。</p></div>
+<div data-lang="en"><p>A <strong>primary key (PK)</strong> uniquely identifies a row (e.g., student_id). A <strong>foreign key (FK)</strong> references a PK in another table, creating a relationship.</p>
+<p><strong>Normalization</strong> reduces redundancy and update anomalies:</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>1NF</strong> — every column is an atomic value (no nested arrays/groups).</li>
+<li><strong>2NF</strong> — 1NF + non-key columns fully depend on the whole PK (no partial dependency).</li>
+<li><strong>3NF</strong> — 2NF + no non-key column depends on another non-key column (no transitive dependency).</li>
+</ul>
+<p><strong>Denormalization</strong> deliberately duplicates data for read speed — common in data warehouses / OLAP.</p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動 JOIN" data-en="INTERACTIVE JOIN">互動：SQL JOIN 演示</div>
+<h2 data-zh="三、互動：JOIN 演示" data-en="III. Interactive: JOIN Demo">三、互動：JOIN 演示</h2>
+<div data-lang="zh"><p>下方有 <strong>students</strong> 與 <strong>enrollments</strong> 兩張表。選擇 JOIN 類型即可看到結果：INNER 只回傳兩邊都有的；LEFT 保留左表所有列；RIGHT 保留右表；FULL 保留兩邊。</p></div>
+<div data-lang="en"><p>Below are two tables: <strong>students</strong> and <strong>enrollments</strong>. Pick a JOIN type to see the result. INNER returns matches only; LEFT keeps all left rows; RIGHT keeps all right; FULL keeps both.</p></div>
+<div class="interactive-panel">
+<div style="display:flex;gap:24px;flex-wrap:wrap;justify-content:center;margin-bottom:16px;">
+  <div><div style="font-size:.85rem;font-weight:700;color:var(--c-ink-muted);margin-bottom:4px;">students</div>
+  <table class="comp-table" style="margin:0;font-size:.88rem;"><thead><tr><th>id</th><th>name</th></tr></thead><tbody>
+  <tr><td>1</td><td>Ada</td></tr><tr><td>2</td><td>Bob</td></tr><tr><td>3</td><td>Cleo</td></tr><tr><td>4</td><td>Dan</td></tr>
+  </tbody></table></div>
+  <div><div style="font-size:.85rem;font-weight:700;color:var(--c-ink-muted);margin-bottom:4px;">enrollments</div>
+  <table class="comp-table" style="margin:0;font-size:.88rem;"><thead><tr><th>student_id</th><th>course</th></tr></thead><tbody>
+  <tr><td>1</td><td>CS101</td></tr><tr><td>2</td><td>CS101</td></tr><tr><td>2</td><td>MATH200</td></tr><tr><td>5</td><td>BIO110</td></tr>
+  </tbody></table></div>
+</div>
+<div style="text-align:center;margin:12px 0;">
+  <label style="font-size:.9rem;font-weight:600;margin-right:8px;" data-zh="JOIN 類型" data-en="JOIN type">JOIN 類型</label>
+  <select id="joinType" style="padding:6px 10px;font-size:.95rem;font-family:var(--font-mono);">
+    <option value="INNER">INNER JOIN</option>
+    <option value="LEFT">LEFT JOIN</option>
+    <option value="RIGHT">RIGHT JOIN</option>
+    <option value="FULL">FULL OUTER JOIN</option>
+  </select>
+</div>
+<pre id="sqlOut" style="text-align:center;font-family:var(--font-mono);margin:8px 0;color:var(--c-accent-dark);font-size:.95rem;"></pre>
+<div id="joinResult" style="display:flex;justify-content:center;"></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="ACID vs BASE" data-en="ACID vs BASE">交易模型</div>
+<h2 data-zh="四、ACID vs BASE 與 CAP 定理" data-en="IV. ACID vs BASE & CAP Theorem">四、ACID、BASE 與 CAP</h2>
+<table class="comp-table">
+<thead><tr><th>ACID</th><th data-zh="意涵" data-en="Meaning">意涵</th></tr></thead>
+<tbody>
+<tr><td><strong>Atomicity</strong></td><td data-lang="zh">交易內所有操作「全部成功或全部失敗」</td><td data-lang="en">All ops in a transaction succeed or all fail</td></tr>
+<tr><td><strong>Consistency</strong></td><td data-lang="zh">交易前後資料庫滿足所有約束（PK/FK、check）</td><td data-lang="en">DB stays valid w.r.t. all constraints (PK/FK, check)</td></tr>
+<tr><td><strong>Isolation</strong></td><td data-lang="zh">同時的多個交易彷彿依序執行（4 個隔離級別）</td><td data-lang="en">Concurrent transactions behave as if serial (4 isolation levels)</td></tr>
+<tr><td><strong>Durability</strong></td><td data-lang="zh">已 commit 的資料即使斷電也不會遺失</td><td data-lang="en">Committed data survives crashes</td></tr>
+</tbody></table>
+<div data-lang="zh"><p><strong>BASE</strong> = Basically Available, Soft state, Eventually consistent。許多 NoSQL（如 DynamoDB、Cassandra）為了水平擴展犧牲嚴格一致性，採用「最終一致」。</p>
+<p><strong>CAP 定理 (Brewer 2000)：</strong>分散式系統最多只能同時滿足三項中的兩項：</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>C</strong>onsistency（所有節點看到相同資料）</li>
+<li><strong>A</strong>vailability（每次請求都得到回應）</li>
+<li><strong>P</strong>artition tolerance（網路分裂仍可運作）</li>
+</ul>
+<p>網路分裂幾乎一定會發生，所以實務上是「C 或 A 二選一」：MongoDB、HBase 選 CP；Cassandra、DynamoDB 選 AP。</p></div>
+<div data-lang="en"><p><strong>BASE</strong> = Basically Available, Soft state, Eventually consistent. Many NoSQL stores (DynamoDB, Cassandra) trade strict consistency for horizontal scale via eventual consistency.</p>
+<p><strong>CAP Theorem (Brewer 2000):</strong> a distributed system can pick at most two of three:</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>C</strong>onsistency (all nodes see the same data)</li>
+<li><strong>A</strong>vailability (every request gets a response)</li>
+<li><strong>P</strong>artition tolerance (works under network splits)</li>
+</ul>
+<p>Network partitions are inevitable, so the real choice is C or A: MongoDB and HBase choose CP; Cassandra and DynamoDB choose AP.</p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="索引" data-en="INDEX">索引</div>
+<h2 data-zh="五、索引：B-tree、Hash、Inverted、Vector" data-en="V. Indexes: B-tree, Hash, Inverted, Vector">五、索引</h2>
+<table class="comp-table">
+<thead><tr><th data-zh="索引類型" data-en="Index">索引類型</th><th data-zh="複雜度" data-en="Complexity">查詢</th><th data-zh="適用" data-en="Best for">適用</th></tr></thead>
+<tbody>
+<tr><td><strong>B-tree / B+tree</strong></td><td>O(log n)</td><td data-lang="zh">範圍查詢、排序（多數 RDBMS 預設）</td><td data-lang="en">Range queries, sorts (RDBMS default)</td></tr>
+<tr><td><strong>Hash</strong></td><td>O(1) avg</td><td data-lang="zh">精確等值查詢，不支援範圍</td><td data-lang="en">Exact equality, no range</td></tr>
+<tr><td><strong>Inverted index</strong></td><td>O(log n)</td><td data-lang="zh">全文搜尋（Elasticsearch、Lucene）</td><td data-lang="en">Full-text search (Elasticsearch, Lucene)</td></tr>
+<tr><td><strong>Bitmap</strong></td><td>O(n/64)</td><td data-lang="zh">低基數欄位（性別、布林）</td><td data-lang="en">Low-cardinality columns</td></tr>
+<tr><td><strong>HNSW / IVF (向量)</strong></td><td>O(log n) ANN</td><td data-lang="zh">高維向量近鄰（RAG、語義搜尋）</td><td data-lang="en">High-dim ANN (RAG, semantic search)</td></tr>
+</tbody></table>
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>索引不是免費的：</strong>每加一個索引，<code>INSERT/UPDATE/DELETE</code> 都得多維護一個結構。寫多讀少的表索引要少；讀多寫少的表（如報表、查詢）可以多。</div>
+<div data-lang="en"><strong>Indexes aren't free:</strong> each one slows down <code>INSERT/UPDATE/DELETE</code>. Write-heavy tables should have fewer; read-heavy tables (reports) can have many.</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">資料庫選型</div>
+<h2 data-zh="六、該選哪種資料庫？" data-en="VI. Which Database to Choose?">六、資料庫選型決策樹</h2>
+<div class="decision-tree">
+<h4>🌳 <span data-zh="資料庫選型決策樹" data-en="DB Selection Decision Tree">資料庫選型決策樹</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>需要強 ACID 交易與固定 schema（金融、訂單）？<span class="dt-arrow">→ 是 →</span> <strong>RDBMS</strong>（PostgreSQL、MySQL）。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>只需快取、session、計數器（µs 級延遲）？<span class="dt-arrow">→ 是 →</span> <strong>Redis</strong>（KV）。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>資料結構彈性大、文件巢狀深（CMS、產品目錄）？<span class="dt-arrow">→ 是 →</span> <strong>MongoDB</strong>（Document）。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>關係查詢深（朋友的朋友的推薦）？<span class="dt-arrow">→ 是 →</span> <strong>Neo4j</strong>（Graph）。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>要做 RAG／語義搜尋（embedding 近鄰）？<span class="dt-arrow">→ 是 →</span> <strong>Pinecone / Milvus / pgvector</strong>（Vector）。</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>每秒寫入 100 萬以上、可接受最終一致？<span class="dt-arrow">→ 是 →</span> <strong>Cassandra / DynamoDB</strong>（Wide-column）。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Need strict ACID + fixed schema (finance, orders)? <span class="dt-arrow">→ Yes →</span> <strong>RDBMS</strong> (PostgreSQL, MySQL).</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Cache, session, counters (µs latency)? <span class="dt-arrow">→ Yes →</span> <strong>Redis</strong> (KV).</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Flexible nested documents (CMS, catalogs)? <span class="dt-arrow">→ Yes →</span> <strong>MongoDB</strong> (Document).</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Deep relational queries (friend-of-friend recs)? <span class="dt-arrow">→ Yes →</span> <strong>Neo4j</strong> (Graph).</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>RAG / semantic search (embedding ANN)? <span class="dt-arrow">→ Yes →</span> <strong>Pinecone / Milvus / pgvector</strong> (Vector).</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>&gt;1M writes/sec, eventual consistency OK? <span class="dt-arrow">→ Yes →</span> <strong>Cassandra / DynamoDB</strong> (Wide-column).</div></div>
+</div>
+</div>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<div data-lang="zh"><strong>2026 趨勢：</strong>向量資料庫成為 LLM/RAG 的標配。PostgreSQL + <code>pgvector</code> 擴充模組讓你不用換資料庫就能做語義搜尋。</div>
+<div data-lang="en"><strong>2026 trend:</strong> Vector DBs have become standard infrastructure for LLM/RAG. PostgreSQL + the <code>pgvector</code> extension lets you do semantic search without leaving your existing DB.</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
+<h2 data-zh="七、Python: sqlite3 與 SQLAlchemy" data-en="VII. Python: sqlite3 & SQLAlchemy">七、Python 操作資料庫</h2>
+<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># 低階：標準函式庫 sqlite3 / Low-level: stdlib sqlite3</span>
+<span class="kw">import</span> sqlite3
+con = sqlite3.<span class="func">connect</span>(<span class="str">"school.db"</span>)
+cur = con.<span class="func">cursor</span>()
+cur.<span class="func">execute</span>(<span class="str">"""CREATE TABLE IF NOT EXISTS students
+                 (id INTEGER PRIMARY KEY, name TEXT, score REAL)"""</span>)
+cur.<span class="func">execute</span>(<span class="str">"INSERT INTO students(name,score) VALUES (?,?)"</span>, (<span class="str">"Ada"</span>,<span class="num">95</span>))
+con.<span class="func">commit</span>()                       <span class="comment"># 結束交易</span>
+
+<span class="comment"># JOIN 查詢 / JOIN query</span>
+cur.<span class="func">execute</span>(<span class="str">"""SELECT s.name, e.course FROM students s
+                 INNER JOIN enrollments e ON e.student_id = s.id
+                 WHERE s.score &gt; ?"""</span>, (<span class="num">80</span>,))
+<span class="kw">for</span> row <span class="kw">in</span> cur.<span class="func">fetchall</span>():
+    <span class="func">print</span>(row)
+
+<span class="comment"># 高階 ORM：SQLAlchemy 2.x / Modern ORM</span>
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine, Column, Integer, String
+<span class="kw">from</span> sqlalchemy.orm <span class="kw">import</span> declarative_base, Session
+Base = <span class="func">declarative_base</span>()
+<span class="kw">class</span> Student(Base):
+    __tablename__ = <span class="str">"students"</span>
+    id = <span class="func">Column</span>(Integer, primary_key=<span class="kw">True</span>)
+    name = <span class="func">Column</span>(String); score = <span class="func">Column</span>(Integer)
+
+engine = <span class="func">create_engine</span>(<span class="str">"sqlite:///school.db"</span>)
+<span class="kw">with</span> <span class="func">Session</span>(engine) <span class="kw">as</span> s:
+    s.<span class="func">add</span>(<span class="func">Student</span>(name=<span class="str">"Bob"</span>, score=<span class="num">88</span>))
+    s.<span class="func">commit</span>()</pre></div>
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// JOIN 的概念演算法（巢狀迴圈版）/ Conceptual JOIN (nested-loop)</span>
+<span class="kw">function</span> <span class="func">InnerJoin</span>(left, right, on_left, on_right):
+    <span class="kw">let</span> result = []
+    <span class="kw">for</span> l <span class="kw">in</span> left:
+        <span class="kw">for</span> r <span class="kw">in</span> right:
+            <span class="kw">if</span> l[on_left] == r[on_right]:
+                result.<span class="func">push</span>(<span class="func">merge</span>(l, r))
+    <span class="kw">return</span> result
+
+<span class="comment">// 實際 DB 引擎會用 hash-join 或 merge-join，把 O(n·m) 降為 O(n+m)</span>
+<span class="comment">// Real engines use hash-join or merge-join, O(n+m) instead of O(n·m)</span>
+
+<span class="comment">// 交易範本 / Transaction template</span>
+<span class="func">BEGIN</span>
+    <span class="func">UPDATE</span> accounts <span class="func">SET</span> balance = balance − <span class="num">100</span> <span class="func">WHERE</span> id = <span class="num">1</span>
+    <span class="func">UPDATE</span> accounts <span class="func">SET</span> balance = balance + <span class="num">100</span> <span class="func">WHERE</span> id = <span class="num">2</span>
+    <span class="kw">if</span> 任一失敗: <span class="func">ROLLBACK</span>
+    <span class="kw">else</span>:       <span class="func">COMMIT</span></pre></div>
+</div>
+</section>
+
+<section class="quiz-section">
+<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">1. ACID 中的「I」代表什麼？</p>
+<p data-lang="en">1. What does the "I" in ACID stand for?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Integrity（完整性）</span><span data-lang="en">A. Integrity</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Isolation（隔離性）</span><span data-lang="en">B. Isolation</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Indexing（索引）</span><span data-lang="en">C. Indexing</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Independence（獨立性）</span><span data-lang="en">D. Independence</span></div>
+</div><div class="quiz-feedback" id="fb1"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">2. 下列情境中，最適合使用 NoSQL（如 MongoDB）而非 RDBMS 的是？</p>
+<p data-lang="en">2. Which scenario most favors NoSQL (e.g., MongoDB) over an RDBMS?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 銀行轉帳系統，需要嚴格的 ACID 保證</span><span data-lang="en">A. A bank transfer system needing strict ACID</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 學生選課系統，schema 固定且要查成績</span><span data-lang="en">B. A student enrollment system with fixed schema and grade queries</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 內容管理系統，每篇文章欄位差異大、schema 彈性</span><span data-lang="en">C. A CMS where article fields vary and schema needs to be flexible</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 月結報表需大量複雜 JOIN</span><span data-lang="en">D. Monthly reports needing many complex JOINs</span></div>
+</div><div class="quiz-feedback" id="fb2"></div></div>
+
+<div class="quiz-q" data-answer="0">
+<p data-lang="zh">3. 為什麼資料庫要建立索引 (Index)？</p>
+<p data-lang="en">3. Why do databases create indexes?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 加速查詢，把 O(n) 全表掃描降為 O(log n) 或 O(1)</span><span data-lang="en">A. Speed up queries — reduce O(n) full scans to O(log n) or O(1)</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 強制 INSERT 操作加速</span><span data-lang="en">B. Make INSERTs faster</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 節省儲存空間</span><span data-lang="en">C. Save storage space</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 取代主鍵的角色</span><span data-lang="en">D. Replace the primary key</span></div>
+</div><div class="quiz-feedback" id="fb3"></div></div>
+</section>
+
+<nav class="page-nav">
+<a href="networking.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 7: 電腦網路" data-en="Ch 7: Computer Networking">Ch 7: 電腦網路</span></a>
+<a href="programming.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 9: 程式設計入門" data-en="Ch 9: Introduction to Programming">Ch 9: 程式設計入門</span></a>
+</nav>
+</main>
+<footer class="site-footer">© Charlene — Introduction to Computer Science · Interactive Tutorial</footer>
+<script src="i18n.js"></script>
+<script>
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
+function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
+
+// Interactive JOIN demo
+const students=[{id:1,name:'Ada'},{id:2,name:'Bob'},{id:3,name:'Cleo'},{id:4,name:'Dan'}];
+const enrollments=[{student_id:1,course:'CS101'},{student_id:2,course:'CS101'},{student_id:2,course:'MATH200'},{student_id:5,course:'BIO110'}];
+function joinDo(type){
+  const rows=[];
+  if(type==='INNER'){students.forEach(s=>enrollments.forEach(e=>{if(s.id===e.student_id)rows.push([s.id,s.name,e.student_id,e.course]);}));}
+  else if(type==='LEFT'){students.forEach(s=>{const m=enrollments.filter(e=>e.student_id===s.id);if(m.length)m.forEach(e=>rows.push([s.id,s.name,e.student_id,e.course]));else rows.push([s.id,s.name,'NULL','NULL']);});}
+  else if(type==='RIGHT'){enrollments.forEach(e=>{const s=students.find(st=>st.id===e.student_id);if(s)rows.push([s.id,s.name,e.student_id,e.course]);else rows.push(['NULL','NULL',e.student_id,e.course]);});}
+  else{const seen=new Set();students.forEach(s=>{const m=enrollments.filter(e=>e.student_id===s.id);if(m.length)m.forEach(e=>{rows.push([s.id,s.name,e.student_id,e.course]);seen.add(e.student_id);});else rows.push([s.id,s.name,'NULL','NULL']);});enrollments.forEach(e=>{if(!seen.has(e.student_id)&&!students.find(s=>s.id===e.student_id))rows.push(['NULL','NULL',e.student_id,e.course]);});}
+  return rows;
+}
+function renderJoin(){
+  const t=document.getElementById('joinType').value;
+  document.getElementById('sqlOut').textContent='SELECT * FROM students s '+t+(t==='FULL'?' OUTER':'')+' JOIN enrollments e ON s.id = e.student_id;';
+  const rows=joinDo(t);
+  let html='<table class="comp-table" style="font-size:.88rem;"><thead><tr><th>s.id</th><th>s.name</th><th>e.student_id</th><th>e.course</th></tr></thead><tbody>';
+  rows.forEach(r=>{html+='<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>';});
+  html+='</tbody></table>';
+  document.getElementById('joinResult').innerHTML=html;
+}
+document.getElementById('joinType').addEventListener('change',renderJoin); renderJoin();
+
+const QF={zh:{q1_y:'Isolation 確保並行交易彼此不互相干擾（4 個隔離級別：read-uncommitted/committed/repeatable-read/serializable）。',q1_n:'答案 B。',q2_y:'NoSQL（Document store）擅長處理 schema 彈性、巢狀結構的資料。',q2_n:'答案 C。',q3_y:'索引是空間換時間：用 B-tree 把線性掃描變成對數查詢。',q3_n:'答案 A。'},en:{q1_y:'Isolation ensures concurrent transactions don\'t interfere (4 levels: read-uncommitted/committed/repeatable-read/serializable).',q1_n:'Answer: B.',q2_y:'NoSQL (document stores) excel at flexible schemas and nested data.',q2_n:'Answer: C.',q3_y:'Indexes trade space for time — a B-tree turns linear scans into log lookups.',q3_n:'Answer: A.'}};
+document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
+</script>
+</body></html>

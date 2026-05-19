@@ -1,0 +1,271 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ch 2: 資料表示法 — Intro CS</title>
+<link rel="stylesheet" href="styles.css">
+</head><body>
+<nav class="top-nav"><div class="top-nav-inner">
+  <a href="index.html" class="top-nav-brand"><span>💻</span> <span data-zh="計算機概論" data-en="Intro CS">計算機概論</span></a>
+  <ul class="top-nav-links"><li><a href="history.html">History</a></li><li><a href="data-rep.html" class="active">Data</a></li><li><a href="logic-gates.html">Logic</a></li><li><a href="cpu-arch.html">CPU</a></li><li><a href="memory.html">Memory</a></li><li><a href="os.html">OS</a></li><li><a href="networking.html">Net</a></li><li><a href="database.html">DB</a></li><li><a href="programming.html">Prog</a></li><li><a href="algorithms.html">Algo</a></li><li><a href="data-structures.html">DS</a></li><li><a href="software-eng.html">SWE</a></li><li><a href="security.html">Sec</a></li><li><a href="ai-ml.html">AI/ML</a></li><li><a href="cloud-iot.html">Cloud</a></li><li><a href="ethics-future.html">Ethics</a></li>
+    <li><a href="references/index.html" data-zh="📚 參考資料" data-en="📚 References">📚 參考資料</a></li>
+  </ul>
+</div></nav>
+<div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
+<header class="page-hero"><div class="step-badge">CHAPTER 2 / 16</div>
+<h1 data-zh="資料表示法" data-en="Data Representation">資料表示法</h1>
+<p class="subtitle" data-lang="zh">電腦的世界只有 0 與 1。本章教你如何用二進位表達整數、實數、文字與多媒體，並理解 IEEE 754 浮點數的精度陷阱。</p>
+<p class="subtitle" data-lang="en">A computer sees only 0s and 1s. This chapter shows how to encode integers, reals, text, and media in binary — and reveals the precision traps of IEEE 754.</p>
+</header>
+<main class="content-wrap">
+
+<section class="section">
+<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
+<h2 data-zh="為什麼計算機只認得 0 與 1？" data-en="Why does a computer understand only 0s and 1s?">為什麼計算機只認得 0 與 1？</h2>
+<div data-lang="zh"><p>因為電子元件最容易、最可靠地表達兩種狀態：「高電壓 / 低電壓」、「導通 / 截止」、「磁化 N / S」、「光點 反射 / 不反射」。將兩種狀態指定為 <strong>1</strong> 和 <strong>0</strong>，就得到一個 <strong>bit (binary digit)</strong>。1 個 bit = 1 個是非題的答案；8 個 bit = 1 個 byte，能表達 0–255 共 256 種狀態。</p>
+<p>所有更高層次的資料——整數、小數、文字、圖片、影片、AI 模型權重——都是「許多個 bit 的不同詮釋」。</p></div>
+<div data-lang="en"><p>Because electronic devices most easily and reliably represent two states: high/low voltage, on/off, magnetized N/S, light reflected/not. Assigning these to <strong>1</strong> and <strong>0</strong> yields a <strong>bit (binary digit)</strong>. One bit = answer to one yes/no question; 8 bits = 1 byte, encoding 256 values (0–255).</p>
+<p>All higher-level data — integers, decimals, text, images, video, AI weights — are simply <em>different interpretations</em> of bit patterns.</p></div>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<span data-lang="zh"><strong>核心觀念：</strong>位元組裡的二進位「沒有自帶意義」。同一個 byte <code>01000001</code> 可以被解讀為整數 65、字元 'A'、或紅綠藍三色中的某個分量——取決於程式上下文。</span>
+<span data-lang="en"><strong>Core idea:</strong> Bits in a byte have <em>no inherent meaning</em>. The byte <code>01000001</code> can be interpreted as integer 65, the letter 'A', or a color channel — depending on the program's context.</span>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="進位制" data-en="NUMBER SYSTEMS">進位制</div>
+<h2 data-zh="一、進位系統：二進位、十進位、十六進位" data-en="I. Number Systems: Binary, Decimal, Hex">一、進位系統</h2>
+<div data-lang="zh"><p>進位制是「以多少種符號表達數字」的規則。日常使用的<strong>十進位</strong>有 10 個符號 (0–9)，計算機用的<strong>二進位</strong>有 2 個 (0, 1)，工程師常用的<strong>十六進位</strong>有 16 個 (0–9, A–F)。</p></div>
+<div data-lang="en"><p>A number system defines how many symbols are used to write numbers. Everyday <strong>decimal</strong> uses 10 symbols (0–9); computers use <strong>binary</strong> (0, 1); engineers often use <strong>hexadecimal</strong> (0–9, A–F).</p></div>
+
+<table class="comp-table">
+<thead><tr><th data-zh="十進位" data-en="Decimal">十進位</th><th data-zh="二進位" data-en="Binary">二進位</th><th data-zh="十六進位" data-en="Hex">十六進位</th><th data-zh="八進位" data-en="Octal">八進位</th></tr></thead>
+<tbody>
+<tr><td>0</td><td>0000</td><td>0</td><td>0</td></tr>
+<tr><td>1</td><td>0001</td><td>1</td><td>1</td></tr>
+<tr><td>5</td><td>0101</td><td>5</td><td>5</td></tr>
+<tr><td>10</td><td>1010</td><td>A</td><td>12</td></tr>
+<tr><td>15</td><td>1111</td><td>F</td><td>17</td></tr>
+<tr><td>16</td><td>0001 0000</td><td>10</td><td>20</td></tr>
+<tr><td>255</td><td>1111 1111</td><td>FF</td><td>377</td></tr>
+<tr><td>2026</td><td>0111 1110 1010</td><td>7EA</td><td>3752</td></tr>
+</tbody></table>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>為什麼工程師愛用十六進位？</strong>一個 hex digit 剛好等於 4 個 bit，閱讀記憶體 dump、MAC 位址、顏色 (#FF8C00) 都很方便。</div>
+<div data-lang="en"><strong>Why hex?</strong> One hex digit equals exactly 4 bits — convenient for memory dumps, MAC addresses, colors (#FF8C00), etc.</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動轉換器" data-en="INTERACTIVE CONVERTER">互動轉換器</div>
+<h2 data-zh="二、互動：十進位 ↔ 二進位 / 十六進位" data-en="II. Interactive: Decimal ↔ Binary / Hex">二、進位轉換器</h2>
+<div class="interactive-panel">
+<div class="slider-group"><label><span data-zh="十進位數字 (0–255)" data-en="Decimal (0–255)">十進位數字</span> <span id="decVal">42</span></label><input type="range" id="decSlider" min="0" max="255" value="42"></div>
+<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:24px;margin:18px 0;">
+  <div style="text-align:center;"><div style="font-size:.8rem;color:var(--c-ink-muted);font-weight:600;letter-spacing:1px;" data-zh="二進位" data-en="BINARY">BINARY</div><div id="binOut" style="font-family:var(--font-mono);font-size:1.4rem;color:var(--c-accent-dark);font-weight:600;margin-top:4px;">0010 1010</div></div>
+  <div style="text-align:center;"><div style="font-size:.8rem;color:var(--c-ink-muted);font-weight:600;letter-spacing:1px;" data-zh="十六進位" data-en="HEX">HEX</div><div id="hexOut" style="font-family:var(--font-mono);font-size:1.4rem;color:var(--c-accent-dark);font-weight:600;margin-top:4px;">0x2A</div></div>
+  <div style="text-align:center;"><div style="font-size:.8rem;color:var(--c-ink-muted);font-weight:600;letter-spacing:1px;" data-zh="八進位" data-en="OCTAL">OCTAL</div><div id="octOut" style="font-family:var(--font-mono);font-size:1.4rem;color:var(--c-accent-dark);font-weight:600;margin-top:4px;">052</div></div>
+</div>
+<div class="bin-row" id="bitRow"></div>
+<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;"><span data-lang="zh">點選位元方塊也能直接切換 0/1</span><span data-lang="en">Click bits to toggle 0/1</span></p>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="負數表示" data-en="NEGATIVE NUMBERS">負數與補數</div>
+<h2 data-zh="三、負數：二補數 (Two's Complement)" data-en="III. Negative Numbers: Two's Complement">三、負數表示與二補數</h2>
+<div data-lang="zh"><p>整數需要表示負數。最流行的方案是 <strong>二補數 (two's complement)</strong>，因為它讓加法器同時處理正負，硬體最簡單。</p>
+<p><strong>二補數規則：</strong>① 取絕對值的二進位；② 全部位元反轉 (0↔1)；③ 加 1。</p>
+<p><strong>範例 (8 bit)：</strong> +5 = <code>0000 0101</code>，所以 −5 = <code>1111 1011</code>（反轉得 1111 1010，再加 1）。最左邊一位為「符號位」：0 正、1 負。</p></div>
+<div data-lang="en"><p>To encode negatives, the most common scheme is <strong>two's complement</strong>: it lets one adder handle both signs in hardware.</p>
+<p><strong>Rule:</strong> (1) take the absolute value in binary; (2) flip every bit; (3) add 1.</p>
+<p><strong>Example (8 bit):</strong> +5 = <code>0000 0101</code>, so −5 = <code>1111 1011</code> (flip → <code>1111 1010</code>, +1). The leftmost bit is the sign bit: 0 = positive, 1 = negative.</p></div>
+
+<table class="comp-table">
+<thead><tr><th data-zh="位元數" data-en="Bits">位元數</th><th data-zh="無號範圍" data-en="Unsigned range">無號範圍</th><th data-zh="有號範圍 (二補數)" data-en="Signed range (2's complement)">有號範圍</th></tr></thead>
+<tbody>
+<tr><td>8-bit (byte)</td><td>0 – 255</td><td>−128 – 127</td></tr>
+<tr><td>16-bit (short)</td><td>0 – 65,535</td><td>−32,768 – 32,767</td></tr>
+<tr><td>32-bit (int)</td><td>0 – 4.29 × 10⁹</td><td>−2.15 × 10⁹ – 2.15 × 10⁹</td></tr>
+<tr><td>64-bit (long)</td><td>0 – 1.84 × 10¹⁹</td><td>±9.22 × 10¹⁸</td></tr>
+</tbody></table>
+
+<div class="callout danger"><span class="callout-icon">🚨</span><div>
+<div data-lang="zh"><strong>整數溢位 (Integer Overflow)：</strong>32-bit 有號整數的最大值是 2,147,483,647。再加 1 會變成 −2,147,483,648——這正是 1996 年阿麗亞娜 5 號火箭爆炸的根本原因（64-bit 浮點數轉 16-bit 整數溢位）。</div>
+<div data-lang="en"><strong>Integer overflow:</strong> A 32-bit signed int maxes at 2,147,483,647. Adding 1 wraps to −2,147,483,648 — the root cause of the 1996 Ariane 5 rocket explosion (a 64-bit float converted to 16-bit int overflowed).</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="浮點數" data-en="FLOATING POINT">IEEE 754 浮點數</div>
+<h2 data-zh="四、實數：IEEE 754 浮點數" data-en="IV. Real Numbers: IEEE 754 Floating Point">四、IEEE 754 浮點數</h2>
+<div data-lang="zh"><p>要在電腦中表達「3.14159」這種實數，使用 <strong>IEEE 754</strong> 標準（1985 制定，2008/2019 修訂）。它將數字拆成三部分：</p>
+<p><strong>(−1)<sup>s</sup> × 1.M × 2<sup>(E − bias)</sup></strong></p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>s（符號位 sign）</strong>：1 bit，0 正 1 負</li>
+<li><strong>E（指數 exponent）</strong>：8 bit (float32) 或 11 bit (float64)，需減 bias (127 或 1023)</li>
+<li><strong>M（尾數 mantissa/significand）</strong>：23 bit (float32) 或 52 bit (float64)，省略前面的隱含 1</li>
+</ul></div>
+<div data-lang="en"><p>For real numbers like 3.14159, computers use the <strong>IEEE 754</strong> standard (1985, revised 2008/2019). Each number has three parts:</p>
+<p><strong>(−1)<sup>s</sup> × 1.M × 2<sup>(E − bias)</sup></strong></p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>s (sign)</strong>: 1 bit, 0 positive / 1 negative</li>
+<li><strong>E (exponent)</strong>: 8 bits (float32) or 11 bits (float64), with bias 127 or 1023</li>
+<li><strong>M (mantissa)</strong>: 23 bits (float32) or 52 bits (float64), with implicit leading 1</li>
+</ul></div>
+
+<table class="comp-table">
+<thead><tr><th data-zh="格式" data-en="Format">格式</th><th data-zh="總位元" data-en="Total bits">總位元</th><th data-zh="尾數位元" data-en="Mantissa">尾數</th><th data-zh="十進位精度" data-en="Decimal digits">十進位精度</th><th data-zh="範圍" data-en="Range">範圍</th></tr></thead>
+<tbody>
+<tr><td>FP16 (half)</td><td>16</td><td>10</td><td>~3</td><td>±6.55 × 10⁴</td></tr>
+<tr><td>BF16 (Brain Float)</td><td>16</td><td>7</td><td>~2.7</td><td>±3.4 × 10³⁸</td></tr>
+<tr><td>FP32 (float)</td><td>32</td><td>23</td><td>~7</td><td>±3.4 × 10³⁸</td></tr>
+<tr><td>FP64 (double)</td><td>64</td><td>52</td><td>~15</td><td>±1.8 × 10³⁰⁸</td></tr>
+<tr><td>FP8 (NV E4M3/E5M2)</td><td>8</td><td>3/2</td><td>~1</td><td>±448 / ±5.7×10⁴</td></tr>
+</tbody></table>
+
+<div class="callout danger"><span class="callout-icon">🚨</span><div>
+<div data-lang="zh"><strong>經典陷阱：</strong>在 Python 試試 <code>0.1 + 0.2</code>，結果是 <code>0.30000000000000004</code>，不等於 0.3！因為 0.1 在二進位中是無窮迴圈小數（類似 1/3 在十進位）。<strong>金融計算絕對不要用浮點數</strong>，要用 <code>decimal.Decimal</code> 或整數（以「分」為單位）。</div>
+<div data-lang="en"><strong>Classic gotcha:</strong> Try <code>0.1 + 0.2</code> in Python — you get <code>0.30000000000000004</code>, not 0.3. Because 0.1 is an infinite repeating fraction in binary (like 1/3 in decimal). <strong>Never use floats for money</strong> — use <code>decimal.Decimal</code> or integers (in cents).</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="文字編碼" data-en="TEXT ENCODING">文字編碼</div>
+<h2 data-zh="五、文字：ASCII → Unicode → UTF-8" data-en="V. Text: ASCII → Unicode → UTF-8">五、文字編碼</h2>
+<div class="workflow">
+<div class="workflow-step" data-step="1"><h4>ASCII (1963)</h4>
+<div data-lang="zh"><p>7 bit 編碼，表達 128 個英文字母、數字、標點與控制字元。<code>'A' = 65</code>、<code>'a' = 97</code>、<code>'0' = 48</code>。優點簡單；缺點不支援其他語言。</p></div>
+<div data-lang="en"><p>7-bit encoding for 128 characters: English letters, digits, punctuation, control codes. <code>'A' = 65</code>, <code>'a' = 97</code>, <code>'0' = 48</code>. Simple but English-only.</p></div></div>
+<div class="workflow-step" data-step="2"><h4>Big5 / GB2312 / Shift-JIS</h4>
+<div data-lang="zh"><p>1980 年代各國各自發展中文/日文編碼。同一個 byte 在不同編碼下意義不同 → 出現「亂碼 / mojibake」災難。</p></div>
+<div data-lang="en"><p>In the 1980s, each region (zh-TW Big5, zh-CN GB2312, Japan Shift-JIS) defined its own encoding. Same bytes meant different things → the "mojibake" disaster.</p></div></div>
+<div class="workflow-step" data-step="3"><h4>Unicode (1991)</h4>
+<div data-lang="zh"><p>給世界上每個字元一個唯一的「碼點 (code point)」，例如 U+4E2D 代表「中」。目前已收錄 14 萬多個字元（含 emoji 😀）。但 Unicode 只是「身份證」，不是儲存格式。</p></div>
+<div data-lang="en"><p>Assigns every character in the world a unique <strong>code point</strong>, e.g., U+4E2D = "中". Now includes 140,000+ characters (and emoji 😀). But Unicode is just the "ID number" — not a storage format.</p></div></div>
+<div class="workflow-step" data-step="4"><h4>UTF-8 (1992) ⭐</h4>
+<div data-lang="zh"><p>把 Unicode 碼點變成 1–4 個 byte：英文 1 byte（與 ASCII 完全相容）、中文 3 byte、emoji 4 byte。<strong>今天 98%+ 網頁使用 UTF-8</strong>，是事實上的網路標準。</p></div>
+<div data-lang="en"><p>Encodes Unicode as 1–4 bytes: ASCII 1 byte (backward-compatible), Chinese 3 bytes, emoji 4 bytes. <strong>98%+ of web pages use UTF-8 today</strong> — the de facto internet standard.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">型別選擇</div>
+<h2 data-zh="六、實務：選用合適的資料型別" data-en="VI. Choosing the Right Data Type">六、選用合適的資料型別</h2>
+<div class="decision-tree">
+<h4>🌳 <span data-zh="資料型別決策樹" data-en="Data Type Decision Tree">資料型別決策樹</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>儲存「金額」嗎？<span class="dt-arrow">→ 是 →</span> 用 <strong>整數（分為單位）</strong>或 <code>decimal.Decimal</code>，<strong>絕不</strong>用 float。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>儲存「科學測量值」？<span class="dt-arrow">→ 是 →</span> <code>float64 (double)</code>，精度約 15 位有效數字。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>訓練「AI 模型」？<span class="dt-arrow">→ 是 →</span> 訓練用 <code>BF16</code> / <code>FP16</code>，推論用 <code>FP8</code> 或 <code>INT8</code> 量化。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>儲存「文字」？<span class="dt-arrow">→ 是 →</span> 一律 <strong>UTF-8</strong>。資料庫 charset 設 <code>utf8mb4</code>（MySQL）。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>儲存「布林 (T/F)」？<span class="dt-arrow">→ 是 →</span> 1 bit 就夠，但記憶體仍按 byte 對齊；若要省，用 bitmask。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Storing money? <span class="dt-arrow">→ Yes →</span> Use <strong>integer cents</strong> or <code>decimal.Decimal</code>; <strong>never</strong> float.</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Scientific measurements? <span class="dt-arrow">→ Yes →</span> <code>float64</code>, ~15 significant digits.</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Training AI models? <span class="dt-arrow">→ Yes →</span> Train in <code>BF16</code>/<code>FP16</code>, infer in <code>FP8</code> or <code>INT8</code> quantized.</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Storing text? <span class="dt-arrow">→ Yes →</span> Always <strong>UTF-8</strong>. DB charset = <code>utf8mb4</code> (MySQL).</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>Storing booleans? <span class="dt-arrow">→ Yes →</span> 1 bit suffices but memory aligns to bytes; pack with bitmasks if it matters.</div></div>
+</div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
+<h2 data-zh="七、Python 動手試" data-en="VII. Hands-on Python">七、動手試</h2>
+<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># 進位轉換 / Base conversion</span>
+<span class="func">print</span>(<span class="func">bin</span>(<span class="num">42</span>))    <span class="comment"># '0b101010'</span>
+<span class="func">print</span>(<span class="func">hex</span>(<span class="num">255</span>))   <span class="comment"># '0xff'</span>
+<span class="func">print</span>(<span class="func">int</span>(<span class="str">'1010'</span>, <span class="num">2</span>))   <span class="comment"># 10  (binary string → int)</span>
+<span class="func">print</span>(<span class="func">int</span>(<span class="str">'FF'</span>, <span class="num">16</span>))     <span class="comment"># 255 (hex string → int)</span>
+
+<span class="comment"># 浮點數精度陷阱 / Floating-point gotcha</span>
+<span class="func">print</span>(<span class="num">0.1</span> + <span class="num">0.2</span>)              <span class="comment"># 0.30000000000000004</span>
+<span class="func">print</span>(<span class="num">0.1</span> + <span class="num">0.2</span> == <span class="num">0.3</span>)       <span class="comment"># False !</span>
+<span class="kw">import</span> math
+<span class="func">print</span>(math.<span class="func">isclose</span>(<span class="num">0.1</span>+<span class="num">0.2</span>, <span class="num">0.3</span>))     <span class="comment"># True (correct way)</span>
+
+<span class="comment"># 金額用 Decimal / Money with Decimal</span>
+<span class="kw">from</span> decimal <span class="kw">import</span> Decimal
+<span class="func">print</span>(<span class="func">Decimal</span>(<span class="str">'0.1'</span>) + <span class="func">Decimal</span>(<span class="str">'0.2'</span>))   <span class="comment"># 0.3 (exact!)</span>
+
+<span class="comment"># 文字編碼 / Text encoding</span>
+s = <span class="str">"中文 Hello 🌏"</span>
+<span class="func">print</span>(s.<span class="func">encode</span>(<span class="str">'utf-8'</span>))      <span class="comment"># b'\xe4\xb8\xad\xe6\x96\x87 Hello \xf0\x9f\x8c\x8f'</span>
+<span class="func">print</span>(<span class="func">len</span>(s.<span class="func">encode</span>(<span class="str">'utf-8'</span>)))   <span class="comment"># 14 bytes (中 3 + 文 3 + ' Hello ' 7 + 🌏 4 − ' ' miscount? recheck)</span>
+
+<span class="comment"># 二補數演示 / Two's complement demo</span>
+n = -<span class="num">5</span>
+<span class="func">print</span>(<span class="func">format</span>(n & <span class="num">0xFF</span>, <span class="str">'08b'</span>))  <span class="comment"># '11111011'  (8-bit two's complement)</span></pre></div>
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// 十進位轉二進位（除 2 取餘法）/ Decimal → binary by repeated division</span>
+<span class="kw">function</span> <span class="func">DecToBin</span>(n):
+    <span class="kw">if</span> n == <span class="num">0</span>: <span class="kw">return</span> <span class="str">"0"</span>
+    <span class="kw">let</span> bits = <span class="str">""</span>
+    <span class="kw">while</span> n > <span class="num">0</span>:
+        bits = (n mod <span class="num">2</span>) + bits      <span class="comment">// 將餘數放最前面</span>
+        n = n ÷ <span class="num">2</span>                    <span class="comment">// 整數除法</span>
+    <span class="kw">return</span> bits
+
+<span class="comment">// 二補數（將正數轉為其 n-bit 負數）/ Two's complement: positive → n-bit negative</span>
+<span class="kw">function</span> <span class="func">TwosComp</span>(value, n_bits):
+    <span class="kw">let</span> mask = <span class="num">2</span>^n_bits − <span class="num">1</span>
+    <span class="kw">return</span> ((NOT value) + <span class="num">1</span>) AND mask</pre></div>
+</div>
+</section>
+
+<section class="quiz-section">
+<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">1. 32-bit 有號整數能表達的最大正整數是？</p>
+<p data-lang="en">1. The maximum positive value of a 32-bit signed integer is?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 2³² − 1 = 4,294,967,295</span><span data-lang="en">A. 2³² − 1 = 4,294,967,295</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 2³² = 4,294,967,296</span><span data-lang="en">B. 2³² = 4,294,967,296</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 2³¹ − 1 = 2,147,483,647</span><span data-lang="en">C. 2³¹ − 1 = 2,147,483,647</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 2³¹ = 2,147,483,648</span><span data-lang="en">D. 2³¹ = 2,147,483,648</span></div>
+</div><div class="quiz-feedback" id="fb1"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">2. 為什麼 <code>0.1 + 0.2 != 0.3</code>？</p>
+<p data-lang="en">2. Why is <code>0.1 + 0.2 != 0.3</code> in most languages?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 因為 Python 的 bug</span><span data-lang="en">A. It's a Python bug</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 因為 CPU 的浮點單元壞了</span><span data-lang="en">B. The CPU's FPU is broken</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 0.1 與 0.2 在二進位中是無窮循環小數，IEEE 754 必須截斷</span><span data-lang="en">C. 0.1 and 0.2 are infinite repeating fractions in binary; IEEE 754 must truncate</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 因為螢幕顯示精度有限</span><span data-lang="en">D. The display has limited precision</span></div>
+</div><div class="quiz-feedback" id="fb2"></div></div>
+
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">3. 關於 UTF-8，下列何者「不」正確？</p>
+<p data-lang="en">3. Which statement about UTF-8 is INCORRECT?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. UTF-8 對 ASCII 完全向後相容（英文字仍為 1 byte）</span><span data-lang="en">A. UTF-8 is fully backward-compatible with ASCII (English = 1 byte)</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. UTF-8 每個字元都是固定 4 byte</span><span data-lang="en">B. Every UTF-8 character is exactly 4 bytes</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. UTF-8 已是當代網頁的主流編碼 (98%+)</span><span data-lang="en">C. UTF-8 is the dominant web encoding today (98%+)</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 中文字在 UTF-8 中通常占 3 個 byte</span><span data-lang="en">D. Chinese characters typically occupy 3 bytes in UTF-8</span></div>
+</div><div class="quiz-feedback" id="fb3"></div></div>
+</section>
+
+<nav class="page-nav">
+<a href="history.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 1: 計算機發展簡史" data-en="Ch 1: History of Computing">Ch 1: 計算機發展簡史</span></a>
+<a href="logic-gates.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 3: 數位邏輯與布林代數" data-en="Ch 3: Digital Logic &amp; Boolean Algebra">Ch 3: 數位邏輯與布林代數</span></a>
+</nav>
+</main>
+<footer class="site-footer">© Charlene — Introduction to Computer Science · Interactive Tutorial</footer>
+<script src="i18n.js"></script>
+<script>
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
+function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
+
+// Base converter with clickable bits
+const bitRow=document.getElementById('bitRow');
+const decSlider=document.getElementById('decSlider');
+let curVal=42;
+function buildBits(){bitRow.innerHTML='';for(let i=7;i>=0;i--){const b=document.createElement('div');b.className='bin-bit'+(((curVal>>i)&1)?' on':'');b.textContent=(curVal>>i)&1;b.dataset.bit=i;b.onclick=()=>{curVal^=(1<<i);decSlider.value=curVal;render();};bitRow.appendChild(b);}}
+function render(){curVal=+decSlider.value;document.getElementById('decVal').textContent=curVal;const b=curVal.toString(2).padStart(8,'0');document.getElementById('binOut').textContent=b.slice(0,4)+' '+b.slice(4);document.getElementById('hexOut').textContent='0x'+curVal.toString(16).toUpperCase().padStart(2,'0');document.getElementById('octOut').textContent='0'+curVal.toString(8).padStart(3,'0');buildBits();}
+decSlider.addEventListener('input',render);render();
+
+const QF={zh:{q1_y:'32-bit 有號整數最高位是符號位，所以正數範圍是 0 到 2³¹−1。',q1_n:'答案 C。',q2_y:'0.1 = 0.0001100110011... (binary)，是無窮循環。',q2_n:'答案 C。',q3_y:'UTF-8 是「變動長度」(1–4 bytes)，不是固定 4 byte。',q3_n:'答案 B。'},en:{q1_y:'A 32-bit signed int uses the highest bit as sign, so positive range is 0 to 2³¹−1.',q1_n:'Answer: C.',q2_y:'0.1 = 0.0001100110011... in binary — an infinite repeating fraction.',q2_n:'Answer: C.',q3_y:'UTF-8 is variable-length (1–4 bytes), not fixed 4.',q3_n:'Answer: B.'}};
+document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
+</script>
+</body></html>

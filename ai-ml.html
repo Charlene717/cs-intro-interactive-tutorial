@@ -1,0 +1,242 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ch 14: 人工智慧與機器學習 — Intro CS</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head><body>
+<nav class="top-nav"><div class="top-nav-inner">
+  <a href="index.html" class="top-nav-brand"><span>💻</span> <span data-zh="計算機概論" data-en="Intro CS">計算機概論</span></a>
+  <ul class="top-nav-links"><li><a href="history.html">History</a></li><li><a href="data-rep.html">Data</a></li><li><a href="logic-gates.html">Logic</a></li><li><a href="cpu-arch.html">CPU</a></li><li><a href="memory.html">Memory</a></li><li><a href="os.html">OS</a></li><li><a href="networking.html">Net</a></li><li><a href="database.html">DB</a></li><li><a href="programming.html">Prog</a></li><li><a href="algorithms.html">Algo</a></li><li><a href="data-structures.html">DS</a></li><li><a href="software-eng.html">SWE</a></li><li><a href="security.html">Sec</a></li><li><a href="ai-ml.html" class="active">AI/ML</a></li><li><a href="cloud-iot.html">Cloud</a></li><li><a href="ethics-future.html">Ethics</a></li>
+    <li><a href="references/index.html" data-zh="📚 參考資料" data-en="📚 References">📚 參考資料</a></li>
+  </ul>
+</div></nav>
+<div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
+<header class="page-hero"><div class="step-badge">CHAPTER 14 / 16</div>
+<h1 data-zh="人工智慧與機器學習" data-en="Artificial Intelligence & Machine Learning">人工智慧與機器學習</h1>
+<p class="subtitle" data-lang="zh">從 ML 三大典範、神經網路、Transformer 到 2026 年的 GPT-5、Claude 4.7、Gemini 3——理解當代 AI 的關鍵概念與選型決策。</p>
+<p class="subtitle" data-lang="en">From the three ML paradigms, neural nets, Transformers, to 2026's GPT-5, Claude 4.7, and Gemini 3 — grasp the key ideas and selection trade-offs of modern AI.</p>
+</header>
+<main class="content-wrap">
+
+<section class="section">
+<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
+<h2 data-zh="AI、ML、DL 到底是什麼關係？" data-en="AI vs ML vs DL — what is what?">AI、ML、DL 到底是什麼關係？</h2>
+<div data-lang="zh"><p>三者像三個同心圓：</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>AI（人工智慧）</strong>：最大圈。任何模仿人類智能的系統——包括早期 1980 年代手寫規則的「專家系統」。</li>
+<li><strong>ML（機器學習）</strong>：中圈。從<em>資料</em>中自動學出規則，不靠人類撰寫 if-else。</li>
+<li><strong>DL（深度學習）</strong>：最內圈。使用多層神經網路的 ML。2012 年 ImageNet 之後成為主流。</li>
+</ul>
+<p>2026 的「<strong>基礎模型 (Foundation Models)</strong>」如 GPT-5、Claude Opus 4.7 是 DL 的最新型態：以兆級 token 訓練的超大 Transformer，可用一個模型處理寫程式、寫文章、看圖、推理。</p></div>
+<div data-lang="en"><p>Think of three nested circles:</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>AI</strong>: the outer circle — any system that mimics human intelligence, including 1980s hand-coded expert systems.</li>
+<li><strong>ML</strong>: the middle — systems that learn rules from <em>data</em> instead of explicit if-else.</li>
+<li><strong>DL</strong>: the inner — ML using multi-layer neural networks. Dominant since ImageNet 2012.</li>
+</ul>
+<p>2026's <strong>foundation models</strong> (GPT-5, Claude Opus 4.7) are the latest DL form: enormous Transformers trained on trillions of tokens, one model handling code, text, images, and reasoning.</p></div>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<span data-lang="zh"><strong>核心觀念：</strong>ML 的本質是「最佳化問題」——定義損失函數，再用梯度下降之類的演算法調整參數讓損失最小。神經網路只是「參數很多、可微分」的彈性函數族。</span>
+<span data-lang="en"><strong>Core idea:</strong> ML is really an <em>optimization problem</em> — define a loss, then nudge parameters (via gradient descent etc.) to minimize it. Neural nets are simply a flexible, differentiable function family with lots of parameters.</span>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="ML 典範" data-en="ML PARADIGMS">三大典範</div>
+<h2 data-zh="一、ML 三大學習典範" data-en="I. Three Learning Paradigms">一、ML 三大學習典範</h2>
+<table class="comp-table">
+<thead><tr><th data-zh="典範" data-en="Paradigm">典範</th><th data-zh="資料形式" data-en="Data">資料形式</th><th data-zh="代表任務" data-en="Tasks">代表任務</th><th data-zh="代表演算法" data-en="Algorithms">代表演算法</th></tr></thead>
+<tbody>
+<tr><td data-lang="zh"><strong>監督式</strong></td><td data-lang="en"><strong>Supervised</strong></td><td data-lang="zh">(x, y) 對：有標籤</td><td data-lang="en">(x, y) pairs with labels</td><td data-lang="zh">分類、回歸</td><td data-lang="en">Classification, regression</td><td>Linear/Logistic Regression、Decision Tree、Random Forest、SVM、CNN</td></tr>
+<tr><td data-lang="zh"><strong>非監督式</strong></td><td data-lang="en"><strong>Unsupervised</strong></td><td data-lang="zh">只有 x，無標籤</td><td data-lang="en">x only, no labels</td><td data-lang="zh">聚類、降維、異常偵測</td><td data-lang="en">Clustering, dim. reduction, anomaly detection</td><td>K-Means、DBSCAN、PCA、t-SNE、Autoencoder</td></tr>
+<tr><td data-lang="zh"><strong>強化學習</strong></td><td data-lang="en"><strong>Reinforcement</strong></td><td data-lang="zh">透過環境互動、獎勵訊號</td><td data-lang="en">Agent ↔ environment with reward</td><td data-lang="zh">下棋、機器人、自駕車</td><td data-lang="en">Game play, robotics, autonomy</td><td>Q-Learning、DQN、PPO、AlphaZero</td></tr>
+</tbody></table>
+
+<div data-lang="zh"><p><strong>監督式經典演算法快覽：</strong></p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>Linear/Logistic Regression</strong>：用一條線（或機率轉換）預測連續值或二元類別。</li>
+<li><strong>Decision Tree / Random Forest</strong>：以「if-else 規則樹」分類，Random Forest 用多棵投票降低過擬合。</li>
+<li><strong>SVM</strong>：找一個邊界把兩類分得最開（最大邊界）。</li>
+<li><strong>K-Means / PCA</strong>（非監督）：K-Means 自動找 K 群中心；PCA 把高維資料投影到主要變化方向。</li>
+</ul></div>
+<div data-lang="en"><p><strong>Classic algorithm cheat sheet:</strong></p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>Linear/Logistic Regression</strong>: fit a line (or sigmoid) to predict continuous or binary outcomes.</li>
+<li><strong>Decision Tree / Random Forest</strong>: if-else rule trees; Random Forest votes across many trees to curb overfitting.</li>
+<li><strong>SVM</strong>: find the boundary that separates classes with maximum margin.</li>
+<li><strong>K-Means / PCA</strong> (unsupervised): K-Means clusters around K centroids; PCA projects onto directions of largest variance.</li>
+</ul></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="神經網路" data-en="NEURAL NETWORKS">神經網路</div>
+<h2 data-zh="二、神經網路與深度學習" data-en="II. Neural Networks & Deep Learning">二、神經網路與深度學習</h2>
+<div data-lang="zh"><p>單一<strong>神經元 (neuron)</strong> 計算 <code>y = activation(Σwᵢxᵢ + b)</code>，疊很多層就是<strong>神經網路</strong>。訓練 = 用<strong>反向傳播 (backpropagation)</strong> + <strong>梯度下降</strong>調整 w、b 讓損失最小。</p>
+<p><strong>激活函數：</strong></p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>ReLU</strong>：<code>max(0, x)</code>，最常用，簡單、避免梯度消失。</li>
+<li><strong>Sigmoid</strong>：把輸出壓到 (0, 1)，適合二元機率。</li>
+<li><strong>Softmax</strong>：把向量轉成「合為 1」的機率分佈，適合多元分類。</li>
+</ul></div>
+<div data-lang="en"><p>A single <strong>neuron</strong> computes <code>y = activation(Σwᵢxᵢ + b)</code>; stacked layers form a <strong>neural network</strong>. Training = <strong>backpropagation</strong> + <strong>gradient descent</strong> adjusting w, b to minimize loss.</p>
+<p><strong>Activation functions:</strong></p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>ReLU</strong>: <code>max(0, x)</code>; the workhorse, mitigates vanishing gradients.</li>
+<li><strong>Sigmoid</strong>: squashes to (0, 1); for binary probabilities.</li>
+<li><strong>Softmax</strong>: turns a vector into a sum-to-one distribution; for multi-class.</li>
+</ul></div>
+
+<table class="comp-table">
+<thead><tr><th data-zh="架構" data-en="Architecture">架構</th><th data-zh="擅長" data-en="Good for">擅長</th><th data-zh="代表模型" data-en="Examples">代表模型</th></tr></thead>
+<tbody>
+<tr><td><strong>CNN</strong> (Convolutional NN)</td><td data-lang="zh">影像、時頻譜</td><td data-lang="en">Images, spectrograms</td><td>ResNet、EfficientNet、ViT 前身</td></tr>
+<tr><td><strong>RNN / LSTM / GRU</strong></td><td data-lang="zh">序列資料</td><td data-lang="en">Sequences</td><td data-lang="zh">早期 NMT、語音辨識</td><td data-lang="en">Early NMT, speech</td></tr>
+<tr><td><strong>Transformer (2017)</strong> ⭐</td><td data-lang="zh">幾乎任何序列／多模態</td><td data-lang="en">Any sequence / multi-modal</td><td>BERT、GPT、Claude、Gemini、Llama</td></tr>
+<tr><td><strong>Diffusion</strong></td><td data-lang="zh">生成式影像/影片</td><td data-lang="en">Image / video generation</td><td>Stable Diffusion、DALL·E 3、Sora</td></tr>
+</tbody></table>
+
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<div data-lang="zh"><strong>Transformer 的關鍵：注意力機制 (Self-Attention)。</strong>讓序列中每個 token 直接「看」到其他所有 token，並計算彼此重要性 (Q·Kᵀ)。摒棄 RNN 的順序計算瓶頸，可大規模並行化於 GPU——這是 2017 年「Attention Is All You Need」論文點燃 LLM 革命的核心。</div>
+<div data-lang="en"><strong>Transformer's secret: self-attention.</strong> Every token attends to every other token via Q·Kᵀ scores. No more sequential RNN bottleneck — fully parallel on GPUs. This is the spark from the 2017 "Attention Is All You Need" paper that ignited the LLM revolution.</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="基礎模型" data-en="FOUNDATION MODELS">2026 LLM 戰場</div>
+<h2 data-zh="三、互動：2026 主流 LLM benchmark 比較" data-en="III. Interactive: 2026 LLM Benchmark Comparison">三、互動：2026 LLM benchmark 比較</h2>
+<div data-lang="zh"><p>2026 年商用 LLM 已進入「混合專家 (Mixture-of-Experts, MoE) + 長思考 (test-time reasoning)」時代：<strong>GPT-5 / 5.5</strong>（OpenAI）、<strong>Claude Opus 4.6 / 4.7</strong>（Anthropic）、<strong>Gemini 3.x</strong>（Google）、<strong>Llama 4</strong>（Meta，仍開源）四強鼎立。常用 benchmark 包括 <strong>MMLU</strong>（學科綜合）、<strong>GPQA Diamond</strong>（博士級科學）、<strong>SWE-bench Verified</strong>（軟體工程）、<strong>LMArena Elo</strong>（人類偏好）。</p></div>
+<div data-lang="en"><p>By 2026 commercial LLMs have entered the era of <strong>Mixture-of-Experts (MoE) + test-time reasoning</strong>: <strong>GPT-5 / 5.5</strong> (OpenAI), <strong>Claude Opus 4.6 / 4.7</strong> (Anthropic), <strong>Gemini 3.x</strong> (Google), and <strong>Llama 4</strong> (Meta, still open-weights). Common benchmarks: <strong>MMLU</strong> (general knowledge), <strong>GPQA Diamond</strong> (PhD-level science), <strong>SWE-bench Verified</strong> (software), <strong>LMArena Elo</strong> (human preference).</p></div>
+<div class="interactive-panel">
+<div class="chart-container"><canvas id="llmChart"></canvas></div>
+<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">資料來源：各廠商公開發布與 LMArena leaderboard，2026-05 概略值；實際隨版本變動。</span><span data-lang="en">Sources: vendor releases and LMArena leaderboard, approx. values as of 2026-05; numbers shift with each version.</span></p>
+</div>
+
+<div data-lang="zh"><p><strong>主要應用里程碑：</strong>AlphaFold（2020 蛋白質結構預測，2024 諾貝爾化學獎）、AlphaGo（2016 圍棋擊敗世界冠軍）、Stable Diffusion（2022 開源生成圖像）、ChatGPT（2022 公開 LLM）、Tesla FSD v13（2025 端對端自駕）。</p></div>
+<div data-lang="en"><p><strong>Landmark applications:</strong> AlphaFold (2020 protein structure, 2024 Nobel in Chemistry), AlphaGo (2016 beat Go world champion), Stable Diffusion (2022 open image gen), ChatGPT (2022 public LLM), Tesla FSD v13 (2025 end-to-end autonomy).</p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">該用哪種 AI？</div>
+<h2 data-zh="四、決策樹：傳統 ML、DL 還是 LLM？" data-en="IV. Decision Tree: Classic ML, DL, or LLM?">四、傳統 ML、DL 還是 LLM？</h2>
+<div class="decision-tree">
+<h4>🌳 <span data-zh="該用哪種 AI 方法？" data-en="Which AI approach should I use?">該用哪種 AI 方法？</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>資料 &lt; 10k 筆且為表格 (CSV)？<span class="dt-arrow">→</span> 用 <strong>Random Forest / XGBoost</strong>（傳統 ML），通常勝過深度學習。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>影像／語音／長序列且有大量資料？<span class="dt-arrow">→</span> 用 <strong>CNN / Transformer</strong>（深度學習）。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>需要「理解自然語言、寫程式、推理」？<span class="dt-arrow">→</span> 用 <strong>LLM API</strong>（Claude / GPT / Gemini）或開源 <strong>Llama 4</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>需要在私有資料上「客製化」LLM？依資料量／預算遞增：① <strong>Prompt engineering</strong>（最便宜，零訓練）→ ② <strong>RAG</strong>（檢索 + 提示）→ ③ <strong>LoRA fine-tune</strong>（10k 筆等級）→ ④ <strong>Full fine-tune</strong>（百萬筆以上）。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>要不要訓練自己的模型？除非有 8×H100 等級 GPU 與資料工程團隊，否則建議先用 API。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Tabular data, &lt; 10k rows? <span class="dt-arrow">→</span> Use <strong>Random Forest / XGBoost</strong> — classic ML usually beats DL here.</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Images / audio / long sequences with lots of data? <span class="dt-arrow">→</span> <strong>CNN / Transformer</strong> (deep learning).</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Need natural language understanding, code, or reasoning? <span class="dt-arrow">→</span> Use an <strong>LLM API</strong> (Claude / GPT / Gemini) or open-weights <strong>Llama 4</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Customize an LLM on private data? Increasing cost: (1) <strong>Prompt engineering</strong> (free) → (2) <strong>RAG</strong> (retrieval + prompt) → (3) <strong>LoRA fine-tune</strong> (~10k samples) → (4) <strong>Full fine-tune</strong> (millions).</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>Should I train my own model? Unless you have 8×H100 and a data team — start with an API.</div></div>
+</div>
+</div>
+
+<div class="callout danger"><span class="callout-icon">🚨</span><div>
+<div data-lang="zh"><strong>AI 風險清單：</strong>① <strong>幻覺 (hallucination)</strong>——LLM 會自信地編造事實；② <strong>偏誤 (bias)</strong>——訓練資料中的社會偏見會被放大；③ <strong>隱私</strong>——可能洩漏訓練資料；④ <strong>智財權</strong>——生成內容是否侵權仍在訴訟；⑤ <strong>能源</strong>——訓練 GPT-4 估計耗電 1300 MWh；⑥ <strong>就業衝擊</strong>——程式設計、客服、設計、法務首當其衝。</div>
+<div data-lang="en"><strong>AI risks:</strong> (1) <strong>hallucination</strong> — LLMs confidently invent facts; (2) <strong>bias</strong> amplified from training data; (3) <strong>privacy</strong> — training data may leak; (4) <strong>IP</strong> — generated-content copyright still in litigation; (5) <strong>energy</strong> — GPT-4 training ~1,300 MWh; (6) <strong>jobs</strong> — coding, support, design, legal hit first.</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
+<h2 data-zh="五、scikit-learn 分類範例" data-en="V. scikit-learn Classification Example">五、scikit-learn 分類</h2>
+<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># 鳶尾花分類：scikit-learn 入門 / Iris classification with sklearn</span>
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> load_iris
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> classification_report
+
+<span class="comment"># 1) 載入資料 / Load data</span>
+X, y = <span class="func">load_iris</span>(return_X_y=<span class="kw">True</span>)             <span class="comment"># 150 筆 × 4 特徵</span>
+
+<span class="comment"># 2) 切分訓練/測試集 / Train-test split</span>
+X_tr, X_te, y_tr, y_te = <span class="func">train_test_split</span>(X, y,
+                            test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>, stratify=y)
+
+<span class="comment"># 3) 訓練 Random Forest / Train</span>
+clf = <span class="func">RandomForestClassifier</span>(n_estimators=<span class="num">100</span>, random_state=<span class="num">42</span>)
+clf.<span class="func">fit</span>(X_tr, y_tr)
+
+<span class="comment"># 4) 評估 / Evaluate</span>
+y_pred = clf.<span class="func">predict</span>(X_te)
+<span class="func">print</span>(<span class="func">classification_report</span>(y_te, y_pred))
+<span class="comment"># precision / recall / f1 通常都 &gt; 0.95</span>
+
+<span class="comment"># 5) 特徵重要性 / Feature importances</span>
+<span class="func">print</span>(<span class="func">dict</span>(<span class="func">zip</span>([<span class="str">"sepal_l"</span>,<span class="str">"sepal_w"</span>,<span class="str">"petal_l"</span>,<span class="str">"petal_w"</span>], clf.feature_importances_)))</pre></div>
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// 梯度下降通用流程 / Generic gradient descent</span>
+<span class="kw">function</span> <span class="func">GradientDescent</span>(model, data, lr, epochs):
+    <span class="kw">for</span> epoch = <span class="num">1</span> <span class="kw">to</span> epochs:
+        <span class="kw">for each</span> (x, y) <span class="kw">in</span> data:
+            y_pred = model.<span class="func">forward</span>(x)        <span class="comment">// 前向傳播</span>
+            loss   = <span class="func">Loss</span>(y_pred, y)
+            grads  = model.<span class="func">backward</span>(loss)     <span class="comment">// 反向傳播</span>
+            <span class="kw">for each</span> parameter w <span class="kw">in</span> model:
+                w = w − lr × grads[w]      <span class="comment">// 沿梯度反方向更新</span>
+        <span class="func">print</span>(<span class="str">"epoch"</span>, epoch, <span class="str">"avg loss="</span>, avg_loss)
+    <span class="kw">return</span> model</pre></div>
+</div>
+</section>
+
+<section class="quiz-section">
+<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">1. 監督學習與非監督學習最本質的差別是？</p>
+<p data-lang="en">1. The essential difference between supervised and unsupervised learning is?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 監督學習用神經網路，非監督不用</span><span data-lang="en">A. Supervised uses neural nets, unsupervised doesn't</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 監督學習的資料有標籤 (y)，非監督只有 x</span><span data-lang="en">B. Supervised data has labels (y); unsupervised has only x</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 監督學習比非監督慢</span><span data-lang="en">C. Supervised is slower than unsupervised</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 非監督學習一定比監督好</span><span data-lang="en">D. Unsupervised always beats supervised</span></div>
+</div><div class="quiz-feedback" id="fb1"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">2. Transformer 架構的核心機制是？</p>
+<p data-lang="en">2. The core mechanism of Transformer is?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 卷積 (Convolution)</span><span data-lang="en">A. Convolution</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. LSTM 細胞</span><span data-lang="en">B. LSTM cells</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 自注意力 (Self-Attention)</span><span data-lang="en">C. Self-Attention</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. K-Means 分群</span><span data-lang="en">D. K-Means clustering</span></div>
+</div><div class="quiz-feedback" id="fb2"></div></div>
+
+<div class="quiz-q" data-answer="0">
+<p data-lang="zh">3. 關於「過擬合 (overfitting)」，下列敘述何者正確？</p>
+<p data-lang="en">3. Which statement about <strong>overfitting</strong> is correct?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 模型在訓練集表現很好，但在測試集（未見資料）表現差</span><span data-lang="en">A. The model fits training data well but performs poorly on test (unseen) data</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 模型在訓練與測試都表現很差</span><span data-lang="en">B. The model performs poorly on both training and test sets</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 過擬合可以靠增加參數解決</span><span data-lang="en">C. Overfitting is fixed by adding more parameters</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 過擬合只發生於深度學習</span><span data-lang="en">D. Overfitting only happens in deep learning</span></div>
+</div><div class="quiz-feedback" id="fb3"></div></div>
+</section>
+
+<nav class="page-nav">
+<a href="security.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 13: 資訊安全與密碼學" data-en="Ch 13: Information Security &amp; Cryptography">Ch 13: 資訊安全與密碼學</span></a>
+<a href="cloud-iot.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 15: 雲端、邊緣與 IoT" data-en="Ch 15: Cloud, Edge &amp; IoT">Ch 15: 雲端、邊緣與 IoT</span></a>
+</nav>
+</main>
+<footer class="site-footer">© Charlene — Introduction to Computer Science · Interactive Tutorial</footer>
+<script src="i18n.js"></script>
+<script>
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
+function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
+
+// 2026 LLM benchmark comparison (approximate values, May 2026)
+const benchLabels = ['MMLU (general)','GPQA Diamond','SWE-bench Verified','LMArena Elo (norm.)'];
+new Chart(document.getElementById('llmChart'),{type:'bar',data:{labels:benchLabels,datasets:[
+  {label:'GPT-5.5',         data:[92,82,75,92],backgroundColor:'rgba(29,78,216,.8)'},
+  {label:'Claude Opus 4.7', data:[91,84,82,94],backgroundColor:'rgba(217,119,6,.8)'},
+  {label:'Gemini 3 Ultra',  data:[91,80,72,90],backgroundColor:'rgba(5,150,105,.8)'},
+  {label:'Llama 4 (open)',  data:[86,68,55,82],backgroundColor:'rgba(124,58,237,.8)'}
+]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'},tooltip:{callbacks:{label:(c)=>c.dataset.label+': '+c.raw+'%'}}},scales:{y:{beginAtZero:true,max:100,title:{display:true,text:'Score (%)'}}}}});
+
+const QF={zh:{q1_y:'監督學習需要 (x, y) 標籤，非監督只看 x 自己找結構（如聚類、降維）。',q1_n:'答案 B。',q2_y:'Self-attention 讓每個 token 直接看所有 token，是 Transformer 的關鍵。',q2_n:'答案 C。',q3_y:'過擬合是模型「死記」訓練集卻無法泛化。可用正則化、Dropout、增加資料解決。',q3_n:'答案 A。'},en:{q1_y:'Supervised needs (x, y) labels; unsupervised gets x only and discovers structure (clustering, dim. reduction).',q1_n:'Answer: B.',q2_y:'Self-attention lets every token see every other token — Transformer’s core.',q2_n:'Answer: C.',q3_y:'Overfitting = memorizing training data, failing to generalize. Fix via regularization, dropout, more data.',q3_n:'Answer: A.'}};
+document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
+</script>
+</body></html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ch 7: 電腦網路 — Intro CS</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head><body>
+<nav class="top-nav"><div class="top-nav-inner">
+  <a href="index.html" class="top-nav-brand"><span>💻</span> <span data-zh="計算機概論" data-en="Intro CS">計算機概論</span></a>
+  <ul class="top-nav-links"><li><a href="history.html">History</a></li><li><a href="data-rep.html">Data</a></li><li><a href="logic-gates.html">Logic</a></li><li><a href="cpu-arch.html">CPU</a></li><li><a href="memory.html">Memory</a></li><li><a href="os.html">OS</a></li><li><a href="networking.html" class="active">Net</a></li><li><a href="database.html">DB</a></li><li><a href="programming.html">Prog</a></li><li><a href="algorithms.html">Algo</a></li><li><a href="data-structures.html">DS</a></li><li><a href="software-eng.html">SWE</a></li><li><a href="security.html">Sec</a></li><li><a href="ai-ml.html">AI/ML</a></li><li><a href="cloud-iot.html">Cloud</a></li><li><a href="ethics-future.html">Ethics</a></li>
+    <li><a href="references/index.html" data-zh="📚 參考資料" data-en="📚 References">📚 參考資料</a></li>
+  </ul>
+</div></nav>
+<div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
+<header class="page-hero"><div class="step-badge">CHAPTER 7 / 16</div>
+<h1 data-zh="電腦網路" data-en="Computer Networking">電腦網路</h1>
+<p class="subtitle" data-lang="zh">從家裡的 Wi-Fi 路由器到全球 Internet，本章帶你穿越 OSI 七層、TCP/IP、HTTP/3、IPv6 與 5G/Wi-Fi 7 的 2026 全貌。</p>
+<p class="subtitle" data-lang="en">From a home Wi-Fi router to the global Internet — traverse the OSI 7 layers, TCP/IP, HTTP/3, IPv6, and the 2026 landscape of 5G and Wi-Fi 7.</p>
+</header>
+<main class="content-wrap">
+
+<section class="section">
+<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
+<h2 data-zh="網路：把每台機器串起來" data-en="Networking: Wiring Every Machine Together">網路：把每台機器串起來</h2>
+<div data-lang="zh"><p>1969 年 ARPANET 把 4 台電腦連起來；2026 年全球已有 <strong>180 億</strong>個聯網裝置——手機、PC、IoT 感測器、汽車、家電。要讓不同廠商的硬體、不同 OS、不同程式能彼此溝通，必須有共同的「協定 (protocol)」。</p>
+<p>網路工程把通訊難題分層解決：每一層只負責一件事，上層使用下層提供的服務。這就是 <strong>OSI 七層模型</strong>與 <strong>TCP/IP 四層模型</strong>的精神。</p></div>
+<div data-lang="en"><p>In 1969 ARPANET linked 4 computers; in 2026 there are <strong>18 billion</strong> connected devices — phones, PCs, IoT sensors, cars, appliances. To let different vendors, OSes, and apps talk to each other, we need shared <strong>protocols</strong>.</p>
+<p>Networking breaks the problem into layers: each layer does one job and uses the services of the layer below. That's the spirit of the <strong>OSI 7-layer</strong> and <strong>TCP/IP 4-layer</strong> models.</p></div>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<span data-lang="zh"><strong>核心觀念：</strong>網路是「分層的抽象」。你的瀏覽器只需呼叫 HTTP，不需要知道 TCP 怎麼握手、IP 怎麼路由、Wi-Fi 怎麼調變射頻——每一層各司其職。</span>
+<span data-lang="en"><strong>Core idea:</strong> Networking is layered abstraction. Your browser calls HTTP without knowing how TCP handshakes, how IP routes, or how Wi-Fi modulates RF — each layer has its own job.</span>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="OSI 七層" data-en="OSI 7 LAYERS">OSI 與 TCP/IP</div>
+<h2 data-zh="一、OSI 七層 vs TCP/IP 四層" data-en="I. OSI 7-Layer vs TCP/IP 4-Layer">一、OSI 七層 vs TCP/IP 四層</h2>
+<table class="comp-table">
+<thead><tr><th>#</th><th data-zh="OSI 層" data-en="OSI Layer">OSI 層</th><th data-zh="負責什麼" data-en="Responsibility">負責什麼</th><th data-zh="代表協定" data-en="Protocols">代表協定</th><th>TCP/IP</th></tr></thead>
+<tbody>
+<tr><td>7</td><td data-lang="zh">應用層 (Application)</td><td data-lang="en">Application</td><td data-lang="zh">使用者程式介面</td><td data-lang="en">User-facing</td><td>HTTP, DNS, SMTP, SSH</td><td rowspan="3" data-lang="zh">Application</td></tr>
+<tr><td>6</td><td data-lang="zh">表現層 (Presentation)</td><td data-lang="en">Presentation</td><td data-lang="zh">編碼、加密、壓縮</td><td data-lang="en">Encoding, encryption</td><td>TLS, JPEG, UTF-8</td></tr>
+<tr><td>5</td><td data-lang="zh">會話層 (Session)</td><td data-lang="en">Session</td><td data-lang="zh">建立/維護對話</td><td data-lang="en">Session control</td><td>NetBIOS, RPC</td></tr>
+<tr><td>4</td><td data-lang="zh">傳輸層 (Transport)</td><td data-lang="en">Transport</td><td data-lang="zh">端對端、可靠性、順序</td><td data-lang="en">End-to-end, reliability</td><td>TCP, UDP, QUIC</td><td>Transport</td></tr>
+<tr><td>3</td><td data-lang="zh">網路層 (Network)</td><td data-lang="en">Network</td><td data-lang="zh">跨網路尋址與路由</td><td data-lang="en">Addressing & routing</td><td>IPv4, IPv6, ICMP</td><td>Internet</td></tr>
+<tr><td>2</td><td data-lang="zh">資料連結層 (Data Link)</td><td data-lang="en">Data Link</td><td data-lang="zh">同網段框架、MAC</td><td data-lang="en">Local-link frames</td><td>Ethernet, Wi-Fi, ARP</td><td rowspan="2" data-lang="zh">Link</td></tr>
+<tr><td>1</td><td data-lang="zh">實體層 (Physical)</td><td data-lang="en">Physical</td><td data-lang="zh">電壓、光、無線電</td><td data-lang="en">Voltage, optics, RF</td><td data-lang="zh">銅纜、光纖、5G</td><td data-lang="en">Copper, fiber, 5G</td></tr>
+</tbody></table>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<div data-lang="zh"><strong>記憶口訣：</strong>「Please Do Not Throw Sausage Pizza Away」（Physical → Application）。實務上工程師多用 TCP/IP 4 層（Link / Internet / Transport / Application）。</div>
+<div data-lang="en"><strong>Mnemonic:</strong> "Please Do Not Throw Sausage Pizza Away" (Physical → Application). In practice engineers use the TCP/IP 4-layer model.</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="IP 位址" data-en="IP ADDRESSES">IP 位址</div>
+<h2 data-zh="二、IPv4 vs IPv6" data-en="II. IPv4 vs IPv6">二、IPv4 vs IPv6</h2>
+<div data-lang="zh"><p>每台聯網裝置都需要一個唯一的 <strong>IP 位址</strong>。1981 年定義的 <strong>IPv4</strong> 用 32 bit，最多 ~43 億個位址——已於 2011 年用盡 (IANA)。<strong>IPv6 (1998)</strong> 用 128 bit，提供 3.4 × 10³⁸ 個位址（地球每平方公分可分到 10²⁸ 個）。</p>
+<p><strong>2026 年實況：</strong>Google 統計，全球約 <strong>45%</strong> 的使用者已透過 IPv6 連線，行動網路採用率更高 (~70%)。</p></div>
+<div data-lang="en"><p>Every connected device needs a unique <strong>IP address</strong>. <strong>IPv4</strong> (1981) uses 32 bits — about 4.3 billion addresses, exhausted by IANA in 2011. <strong>IPv6</strong> (1998) uses 128 bits — 3.4 × 10³⁸ addresses (10²⁸ per square centimeter of Earth).</p>
+<p><strong>2026 reality:</strong> per Google, ~<strong>45%</strong> of users reach Google over IPv6 globally; mobile networks are even higher (~70%).</p></div>
+<table class="comp-table">
+<thead><tr><th></th><th>IPv4</th><th>IPv6</th></tr></thead>
+<tbody>
+<tr><td data-lang="zh">位元長度</td><td data-lang="en">Length</td><td>32 bit</td><td>128 bit</td></tr>
+<tr><td data-lang="zh">位址數量</td><td data-lang="en">Addresses</td><td>~4.3 × 10⁹</td><td>~3.4 × 10³⁸</td></tr>
+<tr><td data-lang="zh">寫法</td><td data-lang="en">Notation</td><td><code>192.168.1.1</code></td><td><code>2001:db8::1</code></td></tr>
+<tr><td data-lang="zh">2026 採用率</td><td data-lang="en">2026 adoption</td><td>~55%</td><td>~45% (rising)</td></tr>
+</tbody></table>
+<div data-lang="zh"><p>輔助協定：<strong>DNS</strong>（網域名稱 → IP，如 www.google.com → 142.250.x.x）、<strong>ARP</strong>（IP → MAC，同網段）、<strong>DHCP</strong>（自動發位址）、<strong>ICMP</strong>（ping、traceroute）、<strong>NAT</strong>（多台內網裝置共用 1 個公網 IP）、<strong>CIDR</strong>（位址聚合，<code>10.0.0.0/8</code> 表前 8 bit 為網路號）。</p></div>
+<div data-lang="en"><p>Helper protocols: <strong>DNS</strong> (name → IP), <strong>ARP</strong> (IP → MAC, local segment), <strong>DHCP</strong> (auto-assign address), <strong>ICMP</strong> (ping, traceroute), <strong>NAT</strong> (many private IPs sharing one public IP), <strong>CIDR</strong> (<code>10.0.0.0/8</code> means first 8 bits are the network part).</p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="TCP vs UDP" data-en="TCP vs UDP">傳輸層協定</div>
+<h2 data-zh="三、TCP vs UDP 與三向交握" data-en="III. TCP vs UDP & 3-Way Handshake">三、TCP vs UDP</h2>
+<table class="comp-table">
+<thead><tr><th></th><th>TCP</th><th>UDP</th></tr></thead>
+<tbody>
+<tr><td data-lang="zh">可靠性</td><td data-lang="en">Reliability</td><td data-lang="zh">保證送達、按序、無重複</td><td data-lang="en">Delivery, order, no duplicates</td><td data-lang="zh">無保證</td><td data-lang="en">Best-effort only</td></tr>
+<tr><td data-lang="zh">連線</td><td data-lang="en">Connection</td><td data-lang="zh">3-way handshake 建立</td><td data-lang="en">3-way handshake</td><td data-lang="zh">無連線</td><td data-lang="en">Connectionless</td></tr>
+<tr><td data-lang="zh">表頭</td><td data-lang="en">Header</td><td>20+ bytes</td><td>8 bytes</td></tr>
+<tr><td data-lang="zh">適用</td><td data-lang="en">Use cases</td><td>HTTP, SSH, email, file transfer</td><td>DNS, VoIP, 遊戲, 串流</td></tr>
+</tbody></table>
+<div data-lang="zh"><p><strong>TCP 三向交握 (3-way handshake)：</strong></p>
+<ol style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li>Client → Server: <code>SYN</code> (seq=x)</li>
+<li>Server → Client: <code>SYN-ACK</code> (seq=y, ack=x+1)</li>
+<li>Client → Server: <code>ACK</code> (ack=y+1) → 連線建立</li>
+</ol></div>
+<div data-lang="en"><p><strong>TCP 3-way handshake:</strong></p>
+<ol style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li>Client → Server: <code>SYN</code> (seq=x)</li>
+<li>Server → Client: <code>SYN-ACK</code> (seq=y, ack=x+1)</li>
+<li>Client → Server: <code>ACK</code> (ack=y+1) → connection established</li>
+</ol></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動比較" data-en="INTERACTIVE">HTTP 版本比較</div>
+<h2 data-zh="四、互動：HTTP/1.1 vs HTTP/2 vs HTTP/3" data-en="IV. Interactive: HTTP/1.1 vs HTTP/2 vs HTTP/3">四、互動：HTTP 演進</h2>
+<div data-lang="zh"><p>下圖比較三個版本載入「同一個有 50 個資源的網頁」所需時間（模擬數據，含 100ms RTT）。<strong>HTTP/1.1</strong> 每連線只能 1 個請求；<strong>HTTP/2 (2015)</strong> 引入多工複用 (multiplexing)；<strong>HTTP/3 (2022, RFC 9114)</strong> 改建立在 <strong>QUIC</strong> (UDP 之上)，消除 TCP head-of-line blocking。</p></div>
+<div data-lang="en"><p>The chart below compares loading a single page with 50 assets across three HTTP versions (simulated, 100ms RTT). <strong>HTTP/1.1</strong> sends one request per connection; <strong>HTTP/2 (2015)</strong> multiplexes; <strong>HTTP/3 (2022, RFC 9114)</strong> runs on <strong>QUIC</strong> (over UDP), eliminating TCP head-of-line blocking.</p></div>
+<div class="interactive-panel">
+<div class="chart-container"><canvas id="httpChart"></canvas></div>
+<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">2026 統計：HTTP/3 已佔約 35% 全球網頁流量 (W3Techs)</span><span data-lang="en">2026 stats: HTTP/3 carries ~35% of global web traffic (W3Techs)</span></p>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">協定選擇</div>
+<h2 data-zh="五、TCP vs UDP 決策樹" data-en="V. TCP vs UDP Decision Tree">五、協定決策樹</h2>
+<div class="decision-tree">
+<h4>🌳 <span data-zh="該選 TCP 還是 UDP？" data-en="Pick TCP or UDP?">該選 TCP 還是 UDP？</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>遺失一個封包會造成「資料毀損」？<span class="dt-arrow">→ 是 →</span> <strong>TCP</strong>（檔案、網頁、SSH）。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>需要「低延遲、即時性」（晚到不如不到）？<span class="dt-arrow">→ 是 →</span> <strong>UDP</strong>（VoIP、線上遊戲、即時影像）。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>想要 TCP 的可靠性 + UDP 的速度？<span class="dt-arrow">→</span> 用 <strong>QUIC / HTTP/3</strong>（建立在 UDP 上，自帶可靠性、加密）。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>多個請求並行載入（大量小檔）？<span class="dt-arrow">→</span> 用 <strong>HTTP/2 或 HTTP/3</strong>（多工複用，避免 head-of-line blocking）。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Would a lost packet corrupt the data? <span class="dt-arrow">→ Yes →</span> <strong>TCP</strong> (files, web, SSH).</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Need ultra-low latency (late = useless)? <span class="dt-arrow">→ Yes →</span> <strong>UDP</strong> (VoIP, games, live video).</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Want TCP reliability + UDP speed? <span class="dt-arrow">→</span> Use <strong>QUIC / HTTP/3</strong> (on UDP, with reliability and encryption built-in).</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Many parallel requests (lots of small assets)? <span class="dt-arrow">→</span> <strong>HTTP/2 or HTTP/3</strong> — multiplexing avoids head-of-line blocking.</div></div>
+</div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="無線與 2026 趨勢" data-en="WIRELESS & 2026">無線與最新趨勢</div>
+<h2 data-zh="六、無線網路與 2026 趨勢" data-en="VI. Wireless Networks & 2026 Trends">六、無線網路與 2026 趨勢</h2>
+<div class="card-grid cols-3">
+<div class="card"><h4>📶 Wi-Fi 7 (802.11be)</h4><div data-lang="zh"><p>2024 正式批准，理論峰值 <strong>46 Gbps</strong>。新功能：320 MHz 通道、多鏈路操作 (MLO)、4096-QAM。</p></div><div data-lang="en"><p>Ratified 2024, theoretical peak <strong>46 Gbps</strong>. New features: 320 MHz channels, Multi-Link Operation (MLO), 4096-QAM.</p></div></div>
+<div class="card"><h4>📱 5G / 6G</h4><div data-lang="zh"><p>5G 商用密度已過 60%。6G 規格化進行中 (3GPP Release 21+, 預計 2030 商用)，目標 1 Tbps、亞毫秒延遲。</p></div><div data-lang="en"><p>5G is in &gt;60% of regions. 6G is being standardized (3GPP Rel 21+, ~2030 launch) — targeting 1 Tbps and sub-ms latency.</p></div></div>
+<div class="card"><h4>🚀 HTTP/3 + QUIC</h4><div data-lang="zh"><p>2026 全球流量約 35% 為 HTTP/3。Google、Cloudflare、Meta 主導推動；TLS 1.3 內建。</p></div><div data-lang="en"><p>~35% of global web traffic in 2026. Driven by Google, Cloudflare, Meta. TLS 1.3 built-in.</p></div></div>
+<div class="card"><h4>🔒 HTTPS = HTTP + TLS 1.3</h4><div data-lang="zh"><p>2026 全球 95%+ 網頁使用 HTTPS；TLS 1.3 (RFC 8446) 將握手從 2-RTT 縮減為 1-RTT，更安全更快。</p></div><div data-lang="en"><p>95%+ of web pages use HTTPS in 2026; TLS 1.3 (RFC 8446) cuts the handshake from 2-RTT to 1-RTT — safer and faster.</p></div></div>
+<div class="card"><h4>🔵 Bluetooth 5.x</h4><div data-lang="zh"><p>低功耗 BLE 主導 IoT；Bluetooth 5.3 提升通道分類、降低干擾；6.0 標準 2025 公布。</p></div><div data-lang="en"><p>BLE dominates IoT. Bluetooth 5.3 improves channel classification; 6.0 was published in 2025.</p></div></div>
+<div class="card"><h4>🛰️ 衛星網路</h4><div data-lang="zh"><p>Starlink、Amazon Kuiper 部署 LEO 衛星群，提供偏遠地區 100+ Mbps、~30ms 延遲。</p></div><div data-lang="en"><p>Starlink, Amazon Kuiper deploy LEO constellations — 100+ Mbps and ~30ms latency in remote areas.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
+<h2 data-zh="七、Python: HTTP 與 socket" data-en="VII. Python: HTTP & sockets">七、HTTP 與 socket</h2>
+<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># 高階：requests 函式庫送 HTTPS 請求 / High-level HTTPS via requests</span>
+<span class="kw">import</span> requests
+r = requests.<span class="func">get</span>(<span class="str">"https://api.github.com/users/torvalds"</span>,
+                 headers={<span class="str">"User-Agent"</span>: <span class="str">"intro-cs"</span>}, timeout=<span class="num">5</span>)
+<span class="func">print</span>(r.status_code, r.json()[<span class="str">"name"</span>])   <span class="comment"># 200 Linus Torvalds</span>
+
+<span class="comment"># 低階：純 TCP socket 對話 / Raw TCP socket</span>
+<span class="kw">import</span> socket
+s = socket.<span class="func">socket</span>(socket.AF_INET, socket.SOCK_STREAM)
+s.<span class="func">connect</span>((<span class="str">"example.com"</span>, <span class="num">80</span>))         <span class="comment"># 三向交握在此完成</span>
+s.<span class="func">sendall</span>(<span class="str">b"GET / HTTP/1.0\r\nHost: example.com\r\n\r\n"</span>)
+data = s.<span class="func">recv</span>(<span class="num">4096</span>)
+<span class="func">print</span>(data[:<span class="num">200</span>])
+s.<span class="func">close</span>()
+
+<span class="comment"># UDP 範例（DNS 查詢）/ UDP example (DNS lookup)</span>
+<span class="kw">import</span> socket
+u = socket.<span class="func">socket</span>(socket.AF_INET, socket.SOCK_DGRAM)   <span class="comment"># SOCK_DGRAM = UDP</span>
+u.<span class="func">sendto</span>(query, (<span class="str">"8.8.8.8"</span>, <span class="num">53</span>))                    <span class="comment"># Google DNS</span></pre></div>
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// TCP 三向交握與資料傳輸 / TCP 3-way handshake and data exchange</span>
+<span class="kw">function</span> <span class="func">TCPConnect</span>(client, server):
+    <span class="comment">// 1. Client 送 SYN</span>
+    client.<span class="func">send</span>(<span class="func">Packet</span>(SYN=<span class="kw">true</span>, seq=x))
+    <span class="comment">// 2. Server 回 SYN-ACK</span>
+    server.<span class="func">send</span>(<span class="func">Packet</span>(SYN=<span class="kw">true</span>, ACK=<span class="kw">true</span>, seq=y, ack=x+<span class="num">1</span>))
+    <span class="comment">// 3. Client 回 ACK</span>
+    client.<span class="func">send</span>(<span class="func">Packet</span>(ACK=<span class="kw">true</span>, ack=y+<span class="num">1</span>))
+    <span class="comment">// 連線建立 / Connection established</span>
+    <span class="kw">return</span> <span class="str">"ESTABLISHED"</span>
+
+<span class="comment">// 之後資料傳輸：每個封包都需被 ACK，未 ACK 則重傳</span>
+<span class="kw">function</span> <span class="func">TCPSend</span>(data):
+    segments = <span class="func">split</span>(data, MSS)         <span class="comment">// 切成最大段大小</span>
+    <span class="kw">for</span> seg <span class="kw">in</span> segments:
+        <span class="func">send</span>(seg); <span class="func">start_timer</span>()
+        <span class="kw">if not</span> <span class="func">wait_for_ack</span>(timeout):
+            <span class="func">retransmit</span>(seg)</pre></div>
+</div>
+</section>
+
+<section class="quiz-section">
+<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">1. 下列哪一個協定屬於 OSI 第 4 層（傳輸層）？</p>
+<p data-lang="en">1. Which protocol belongs to OSI Layer 4 (Transport)?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. HTTP</span><span data-lang="en">A. HTTP</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. IP</span><span data-lang="en">B. IP</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. TCP</span><span data-lang="en">C. TCP</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Ethernet</span><span data-lang="en">D. Ethernet</span></div>
+</div><div class="quiz-feedback" id="fb1"></div></div>
+
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">2. HTTP/3 建立在哪一個傳輸層協定之上？</p>
+<p data-lang="en">2. HTTP/3 is built on top of which transport protocol?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. TCP（與 HTTP/1.1、HTTP/2 相同）</span><span data-lang="en">A. TCP (same as HTTP/1.1 and HTTP/2)</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. UDP（透過 QUIC 提供可靠性與加密）</span><span data-lang="en">B. UDP (via QUIC for reliability and encryption)</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. ICMP</span><span data-lang="en">C. ICMP</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 直接跑在 IP 之上</span><span data-lang="en">D. Directly on IP</span></div>
+</div><div class="quiz-feedback" id="fb2"></div></div>
+
+<div class="quiz-q" data-answer="3">
+<p data-lang="zh">3. IPv6 位址的長度是多少位元？</p>
+<p data-lang="en">3. How many bits long is an IPv6 address?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 32 bit</span><span data-lang="en">A. 32 bits</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 48 bit</span><span data-lang="en">B. 48 bits</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 64 bit</span><span data-lang="en">C. 64 bits</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 128 bit</span><span data-lang="en">D. 128 bits</span></div>
+</div><div class="quiz-feedback" id="fb3"></div></div>
+</section>
+
+<nav class="page-nav">
+<a href="os.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 6: 作業系統" data-en="Ch 6: Operating Systems">Ch 6: 作業系統</span></a>
+<a href="database.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 8: 資料庫系統" data-en="Ch 8: Database Systems">Ch 8: 資料庫系統</span></a>
+</nav>
+</main>
+<footer class="site-footer">© Charlene — Introduction to Computer Science · Interactive Tutorial</footer>
+<script src="i18n.js"></script>
+<script>
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
+function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
+
+// HTTP version comparison: time-to-load 50 assets over a 100ms-RTT link (simulated)
+new Chart(document.getElementById('httpChart'),{type:'bar',data:{
+  labels:['HTTP/1.1','HTTP/2','HTTP/3 (QUIC)'],
+  datasets:[
+    {label:'TCP/QUIC handshake (ms)',data:[300,300,0],backgroundColor:'rgba(190,18,60,.75)'},
+    {label:'TLS handshake (ms)',data:[200,200,100],backgroundColor:'rgba(217,119,6,.75)'},
+    {label:'Asset transfer (ms)',data:[1600,520,420],backgroundColor:'rgba(29,78,216,.75)'}
+  ]
+},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'},title:{display:true,text:'Time to load 50 assets — 100ms RTT (simulated)'}},scales:{x:{stacked:true,title:{display:true,text:'Total time (ms)'}},y:{stacked:true}}}});
+
+const QF={zh:{q1_y:'TCP 與 UDP 是傳輸層協定，提供端對端通訊。',q1_n:'答案 C。',q2_y:'HTTP/3 跑在 QUIC 上，而 QUIC 跑在 UDP 上，所以 RFC 9114 規定 HTTP/3 透過 UDP 傳輸。',q2_n:'答案 B。',q3_y:'IPv6 位址 128 bit，可用 8 組 16-bit hex 表示，例如 2001:db8::1。',q3_n:'答案 D。'},en:{q1_y:'TCP and UDP are transport-layer protocols providing end-to-end delivery.',q1_n:'Answer: C.',q2_y:'HTTP/3 runs on QUIC, which runs on UDP — RFC 9114 defines HTTP/3 over UDP.',q2_n:'Answer: B.',q3_y:'IPv6 addresses are 128 bits, written as eight 16-bit hex groups (e.g. 2001:db8::1).',q3_n:'Answer: D.'}};
+document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
+</script>
+</body></html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ch 3: 數位邏輯與布林代數 — Intro CS</title>
+<link rel="stylesheet" href="styles.css">
+</head><body>
+<nav class="top-nav"><div class="top-nav-inner">
+  <a href="index.html" class="top-nav-brand"><span>💻</span> <span data-zh="計算機概論" data-en="Intro CS">計算機概論</span></a>
+  <ul class="top-nav-links"><li><a href="history.html">History</a></li><li><a href="data-rep.html">Data</a></li><li><a href="logic-gates.html" class="active">Logic</a></li><li><a href="cpu-arch.html">CPU</a></li><li><a href="memory.html">Memory</a></li><li><a href="os.html">OS</a></li><li><a href="networking.html">Net</a></li><li><a href="database.html">DB</a></li><li><a href="programming.html">Prog</a></li><li><a href="algorithms.html">Algo</a></li><li><a href="data-structures.html">DS</a></li><li><a href="software-eng.html">SWE</a></li><li><a href="security.html">Sec</a></li><li><a href="ai-ml.html">AI/ML</a></li><li><a href="cloud-iot.html">Cloud</a></li><li><a href="ethics-future.html">Ethics</a></li>
+    <li><a href="references/index.html" data-zh="📚 參考資料" data-en="📚 References">📚 參考資料</a></li>
+  </ul>
+</div></nav>
+<div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
+<header class="page-hero"><div class="step-badge">CHAPTER 3 / 16</div>
+<h1 data-zh="數位邏輯與布林代數" data-en="Digital Logic & Boolean Algebra">數位邏輯與布林代數</h1>
+<p class="subtitle" data-lang="zh">為什麼電腦能「思考」？因為所有運算——加減乘除、判斷比較、AI 推論——都可分解為 AND、OR、NOT 三個基本邏輯閘的組合。</p>
+<p class="subtitle" data-lang="en">Why can computers "think"? Because every operation — arithmetic, comparison, even AI inference — can be decomposed into combinations of AND, OR, NOT gates.</p>
+</header>
+<main class="content-wrap">
+
+<section class="section">
+<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
+<h2 data-zh="從電子開關到邏輯思維" data-en="From Switches to Logic">從電子開關到邏輯思維</h2>
+<div data-lang="zh"><p>1854 年，英國數學家 <strong>George Boole</strong> 在《思維法則的研究》中以 0/1（False/True）建立「布林代數」，將推理變成代數運算。八十多年後，<strong>Claude Shannon 在 1937 年 MIT 碩士論文</strong>中證明：可以用電子開關（繼電器、後來的電晶體）實作任何布林表達式——這篇論文常被譽為「20 世紀最重要的碩士論文」。</p>
+<p>今天的 CPU 裡有數百億顆電晶體，全部都在做同一件事：執行 AND、OR、NOT。把它們堆疊組合，就能造出加法器、比較器、記憶單元，最終構成整台電腦。</p></div>
+<div data-lang="en"><p>In 1854, English mathematician <strong>George Boole</strong> founded "Boolean algebra" in <em>An Investigation of the Laws of Thought</em>, turning reasoning into algebra over 0/1 (False/True). Eighty-three years later, <strong>Claude Shannon's 1937 MIT master's thesis</strong> proved that electronic switches (relays, later transistors) can implement any Boolean expression — often called "the most important master's thesis of the 20th century."</p>
+<p>Today's CPUs pack tens of billions of transistors, all doing the same thing: AND, OR, NOT. Stack them and you get adders, comparators, memory cells — an entire computer.</p></div>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<span data-lang="zh"><strong>核心觀念：</strong>邏輯閘是「輸入 0/1 → 輸出 0/1」的最小單元。每個閘的行為由<strong>真值表 (truth table)</strong> 完整定義，與電路實作無關。</span>
+<span data-lang="en"><strong>Core idea:</strong> A logic gate is the smallest unit mapping 0/1 inputs to a 0/1 output. Its behavior is fully defined by a <strong>truth table</strong>, independent of physical implementation.</span>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="七大邏輯閘" data-en="SEVEN GATES">七大邏輯閘</div>
+<h2 data-zh="一、七個基本邏輯閘" data-en="I. The Seven Basic Gates">一、七個基本邏輯閘</h2>
+<table class="comp-table">
+<thead><tr><th data-zh="閘" data-en="Gate">閘</th><th data-zh="符號" data-en="Symbol">符號</th><th data-zh="真值表 (A,B → Y)" data-en="Truth Table">真值表</th><th data-zh="說明" data-en="Description">說明</th></tr></thead>
+<tbody>
+<tr><td><strong>AND</strong></td><td><code>A·B</code> 或 <code>A&amp;B</code></td><td>00→0, 01→0, 10→0, 11→1</td><td data-lang="zh">兩者皆 1 才輸出 1（邏輯且）</td><td data-lang="en">Output 1 iff both inputs are 1</td></tr>
+<tr><td><strong>OR</strong></td><td><code>A+B</code> 或 <code>A|B</code></td><td>00→0, 01→1, 10→1, 11→1</td><td data-lang="zh">至少一個 1 就輸出 1（邏輯或）</td><td data-lang="en">Output 1 if at least one input is 1</td></tr>
+<tr><td><strong>NOT</strong></td><td><code>¬A</code> 或 <code>~A</code></td><td>0→1, 1→0</td><td data-lang="zh">反相（唯一單輸入閘）</td><td data-lang="en">Inverter (the only 1-input gate)</td></tr>
+<tr><td><strong>NAND</strong></td><td><code>¬(A·B)</code></td><td>00→1, 01→1, 10→1, 11→0</td><td data-lang="zh">AND 反相；<strong>萬用閘</strong></td><td data-lang="en">NOT AND; <strong>universal gate</strong></td></tr>
+<tr><td><strong>NOR</strong></td><td><code>¬(A+B)</code></td><td>00→1, 01→0, 10→0, 11→0</td><td data-lang="zh">OR 反相；亦為萬用閘</td><td data-lang="en">NOT OR; also universal</td></tr>
+<tr><td><strong>XOR</strong></td><td><code>A⊕B</code></td><td>00→0, 01→1, 10→1, 11→0</td><td data-lang="zh">兩者不同才輸出 1（奇偶/加法核心）</td><td data-lang="en">Output 1 iff inputs differ (parity/adder core)</td></tr>
+<tr><td><strong>XNOR</strong></td><td><code>¬(A⊕B)</code></td><td>00→1, 01→0, 10→0, 11→1</td><td data-lang="zh">XOR 反相；相等檢測</td><td data-lang="en">NOT XOR; equality detector</td></tr>
+</tbody></table>
+
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<div data-lang="zh"><strong>NAND 萬用性：</strong>任何布林函數都能只用 NAND 閘實作。例如 <code>NOT A = A NAND A</code>、<code>A AND B = NOT(A NAND B)</code>。這就是為何商用 IC 工廠最常製造的就是 NAND 閘陣列。</div>
+<div data-lang="en"><strong>NAND universality:</strong> Any Boolean function can be built using only NAND gates — e.g., <code>NOT A = A NAND A</code>, <code>A AND B = NOT(A NAND B)</code>. That's why NAND-gate arrays are the most mass-produced IC building blocks.</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動真值表" data-en="INTERACTIVE TRUTH TABLE">互動真值表</div>
+<h2 data-zh="二、互動：點擊 A、B 觀察所有閘的輸出" data-en="II. Interactive: Toggle A, B and watch all gate outputs">二、互動真值表</h2>
+<div class="interactive-panel">
+<div style="display:flex;justify-content:center;gap:30px;flex-wrap:wrap;margin-bottom:18px;">
+  <button id="toggleA" class="gate-toggle" style="padding:14px 26px;font-size:1.1rem;font-family:var(--font-mono);font-weight:700;cursor:pointer;border:2px solid var(--c-accent);background:var(--c-accent);color:#fff;border-radius:8px;">A = 1</button>
+  <button id="toggleB" class="gate-toggle" style="padding:14px 26px;font-size:1.1rem;font-family:var(--font-mono);font-weight:700;cursor:pointer;border:2px solid var(--c-accent);background:#fff;color:var(--c-accent);border-radius:8px;">B = 0</button>
+</div>
+<div id="gateGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-top:8px;"></div>
+<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:14px;"><span data-lang="zh">按下按鈕切換 0/1，所有閘的輸出會即時更新（綠色=1，灰色=0）</span><span data-lang="en">Click buttons to toggle 0/1 — all gate outputs update live (green=1, gray=0)</span></p>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="布林代數" data-en="BOOLEAN ALGEBRA">布林代數定律</div>
+<h2 data-zh="三、布林代數五大定律" data-en="III. Five Laws of Boolean Algebra">三、布林代數五大定律</h2>
+<div data-lang="zh"><p>布林代數的化簡規則讓我們可以把複雜的邏輯式減化為更少的閘——這是<strong>邏輯閘合成 (logic synthesis)</strong> 的基礎，省晶片面積、降功耗。</p></div>
+<div data-lang="en"><p>Boolean simplification reduces complex expressions to fewer gates — the foundation of <strong>logic synthesis</strong>, saving die area and power.</p></div>
+<table class="comp-table">
+<thead><tr><th data-zh="定律" data-en="Law">定律</th><th data-zh="AND 形式" data-en="AND form">AND</th><th data-zh="OR 形式" data-en="OR form">OR</th></tr></thead>
+<tbody>
+<tr><td data-lang="zh">交換律 (Commutative)</td><td data-lang="en">Commutative</td><td>A·B = B·A</td><td>A+B = B+A</td></tr>
+<tr><td data-lang="zh">結合律 (Associative)</td><td data-lang="en">Associative</td><td>(A·B)·C = A·(B·C)</td><td>(A+B)+C = A+(B+C)</td></tr>
+<tr><td data-lang="zh">分配律 (Distributive)</td><td data-lang="en">Distributive</td><td>A·(B+C) = A·B + A·C</td><td>A+(B·C) = (A+B)·(A+C)</td></tr>
+<tr><td data-lang="zh">互補律 (Complement)</td><td data-lang="en">Complement</td><td>A·¬A = 0</td><td>A+¬A = 1</td></tr>
+<tr><td data-lang="zh">De Morgan 定律</td><td data-lang="en">De Morgan's</td><td>¬(A·B) = ¬A + ¬B</td><td>¬(A+B) = ¬A · ¬B</td></tr>
+</tbody></table>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>De Morgan 在程式中也常出現：</strong>條件 <code>!(a &amp;&amp; b)</code> 等同於 <code>!a || !b</code>。重構巢狀 if 語句時非常實用。</div>
+<div data-lang="en"><strong>De Morgan in code too:</strong> <code>!(a &amp;&amp; b)</code> equals <code>!a || !b</code>. Indispensable when refactoring nested if-statements.</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="加法器" data-en="ADDERS">半加器與全加器</div>
+<h2 data-zh="四、從閘到加法器：XOR + AND 即可實現算術" data-en="IV. Gates to Adders: Arithmetic from XOR + AND">四、半加器與全加器</h2>
+<div data-lang="zh"><p>單個位元的加法只有四種輸入組合，仔細看會發現：</p>
+<ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
+<li>0+0 = 0（和=0，進位=0）</li>
+<li>0+1 = 1（和=1，進位=0）</li>
+<li>1+0 = 1（和=1，進位=0）</li>
+<li>1+1 = 10（和=0，進位=1）</li>
+</ul>
+<p><strong>和 (Sum) = A XOR B；進位 (Carry) = A AND B</strong>——這就是<strong>半加器 (Half Adder)</strong>。把兩個半加器再加一個 OR 閘串接，就能處理「上一位的進位」，成為<strong>全加器 (Full Adder)</strong>。把 32 個全加器串聯，便是 32-bit 整數加法器，CPU 裡的 ALU 核心。</p></div>
+<div data-lang="en"><p>Adding one bit at a time has only four cases:</p>
+<ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
+<li>0+0 = 0 (sum=0, carry=0)</li>
+<li>0+1 = 1 (sum=1, carry=0)</li>
+<li>1+0 = 1 (sum=1, carry=0)</li>
+<li>1+1 = 10 (sum=0, carry=1)</li>
+</ul>
+<p><strong>Sum = A XOR B; Carry = A AND B</strong> — that's a <strong>half adder</strong>. Chain two half adders plus an OR gate to handle an incoming carry → <strong>full adder</strong>. Cascade 32 full adders and you have a 32-bit integer adder — the heart of every ALU.</p></div>
+
+<table class="comp-table">
+<thead><tr><th>A</th><th>B</th><th>Cin</th><th data-zh="和 Sum" data-en="Sum">Sum</th><th data-zh="進位 Cout" data-en="Cout">Cout</th></tr></thead>
+<tbody>
+<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+<tr><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+<tr><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+<tr><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+<tr><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+<tr><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+<tr><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+</tbody></table>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">情境選閘</div>
+<h2 data-zh="五、什麼情境用什麼閘？" data-en="V. Which Gate for Which Scenario?">五、情境選閘</h2>
+<div class="decision-tree">
+<h4>🌳 <span data-zh="邏輯閘選用決策樹" data-en="Gate Selection Decision Tree">邏輯閘選用決策樹</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>「所有條件都需成立」<span class="dt-arrow">→</span> 用 <strong>AND</strong>（例：權限檢查必須 login &amp;&amp; admin &amp;&amp; 2FA）。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>「任一條件成立即可」<span class="dt-arrow">→</span> 用 <strong>OR</strong>（例：通知發送：email OR SMS OR push）。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>「兩者不同才有反應」<span class="dt-arrow">→</span> 用 <strong>XOR</strong>（例：奇偶校驗、加密 one-time pad、差異檢測）。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>「兩者相等才放行」<span class="dt-arrow">→</span> 用 <strong>XNOR</strong>（例：密碼比對、相等性檢測）。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>「想用最少種類閘做所有事」<span class="dt-arrow">→</span> 全用 <strong>NAND</strong> 或全用 <strong>NOR</strong>（晶圓廠最愛）。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>"All conditions must hold" <span class="dt-arrow">→</span> use <strong>AND</strong> (e.g., permission = login &amp;&amp; admin &amp;&amp; 2FA).</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>"Any one condition suffices" <span class="dt-arrow">→</span> use <strong>OR</strong> (e.g., notify via email OR SMS OR push).</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>"Trigger when they differ" <span class="dt-arrow">→</span> use <strong>XOR</strong> (parity check, OTP encryption, diff detection).</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>"Pass only when equal" <span class="dt-arrow">→</span> use <strong>XNOR</strong> (password compare, equality test).</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>"Use the fewest gate types" <span class="dt-arrow">→</span> only <strong>NAND</strong> or only <strong>NOR</strong> (fab favorite).</div></div>
+</div>
+</div>
+
+<div class="callout danger"><span class="callout-icon">🚨</span><div>
+<div data-lang="zh"><strong>常見錯誤：</strong>把短路求值 (<code>&amp;&amp;</code>) 與位元 AND (<code>&amp;</code>) 混用！前者只回傳 true/false 且會短路；後者對所有位元逐一運算且兩邊都會求值。<code>if (ptr &amp;&amp; ptr-&gt;x)</code> 是安全的，<code>if (ptr &amp; ptr-&gt;x)</code> 會 segfault。</div>
+<div data-lang="en"><strong>Common bug:</strong> Confusing short-circuit <code>&amp;&amp;</code> with bitwise <code>&amp;</code>. The former returns true/false and short-circuits; the latter operates per-bit and evaluates both sides. <code>if (ptr &amp;&amp; ptr-&gt;x)</code> is safe; <code>if (ptr &amp; ptr-&gt;x)</code> segfaults.</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
+<h2 data-zh="六、Python 位元運算與半加器" data-en="VI. Python Bitwise Ops & Half Adder">六、動手試</h2>
+<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># 位元運算子 / Bitwise operators: &amp; | ^ ~ &lt;&lt; &gt;&gt;</span>
+a, b = <span class="num">0b1100</span>, <span class="num">0b1010</span>     <span class="comment"># 12, 10</span>
+<span class="func">print</span>(<span class="func">bin</span>(a &amp; b))    <span class="comment"># 0b1000 (AND)</span>
+<span class="func">print</span>(<span class="func">bin</span>(a | b))    <span class="comment"># 0b1110 (OR)</span>
+<span class="func">print</span>(<span class="func">bin</span>(a ^ b))    <span class="comment"># 0b0110 (XOR)</span>
+<span class="func">print</span>(<span class="func">bin</span>(~a &amp; <span class="num">0xF</span>))  <span class="comment"># 0b0011 (NOT, 4-bit masked)</span>
+
+<span class="comment"># 半加器 / Half adder</span>
+<span class="kw">def</span> <span class="func">half_adder</span>(a, b):
+    sum_bit = a ^ b           <span class="comment"># XOR</span>
+    carry   = a &amp; b           <span class="comment"># AND</span>
+    <span class="kw">return</span> sum_bit, carry
+
+<span class="comment"># 全加器 / Full adder (a + b + cin)</span>
+<span class="kw">def</span> <span class="func">full_adder</span>(a, b, cin):
+    s1, c1 = <span class="func">half_adder</span>(a, b)
+    s2, c2 = <span class="func">half_adder</span>(s1, cin)
+    <span class="kw">return</span> s2, c1 | c2          <span class="comment"># carry-out = OR of two carries</span>
+
+<span class="func">print</span>(<span class="func">full_adder</span>(<span class="num">1</span>, <span class="num">1</span>, <span class="num">1</span>))  <span class="comment"># (1, 1)  → 1+1+1 = 3 = 0b11</span>
+
+<span class="comment"># De Morgan 驗證 / Verify De Morgan's law</span>
+<span class="kw">for</span> a <span class="kw">in</span> (<span class="num">0</span>,<span class="num">1</span>):
+    <span class="kw">for</span> b <span class="kw">in</span> (<span class="num">0</span>,<span class="num">1</span>):
+        <span class="kw">assert</span> (~(a &amp; b) &amp; <span class="num">1</span>) == ((~a &amp; <span class="num">1</span>) | (~b &amp; <span class="num">1</span>))</pre></div>
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// 半加器 / Half Adder</span>
+<span class="kw">function</span> <span class="func">HalfAdder</span>(A, B):
+    Sum   = A XOR B
+    Carry = A AND B
+    <span class="kw">return</span> (Sum, Carry)
+
+<span class="comment">// 全加器 / Full Adder (handles carry-in)</span>
+<span class="kw">function</span> <span class="func">FullAdder</span>(A, B, Cin):
+    (S1, C1) = <span class="func">HalfAdder</span>(A, B)
+    (S2, C2) = <span class="func">HalfAdder</span>(S1, Cin)
+    <span class="kw">return</span> (S2, C1 OR C2)
+
+<span class="comment">// 32-bit 加法器 / 32-bit ripple-carry adder</span>
+<span class="kw">function</span> <span class="func">Add32</span>(A[<span class="num">0</span>..<span class="num">31</span>], B[<span class="num">0</span>..<span class="num">31</span>]):
+    <span class="kw">let</span> carry = <span class="num">0</span>
+    <span class="kw">let</span> result = <span class="kw">new</span> bit[<span class="num">32</span>]
+    <span class="kw">for</span> i <span class="kw">from</span> <span class="num">0</span> <span class="kw">to</span> <span class="num">31</span>:
+        (result[i], carry) = <span class="func">FullAdder</span>(A[i], B[i], carry)
+    <span class="kw">return</span> result</pre></div>
+</div>
+</section>
+
+<section class="quiz-section">
+<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">1. 為什麼 NAND 被稱為「萬用閘 (universal gate)」？</p>
+<p data-lang="en">1. Why is NAND called a "universal gate"?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 因為它最便宜</span><span data-lang="en">A. Because it's the cheapest</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 因為它的真值表最對稱</span><span data-lang="en">B. Because its truth table is most symmetric</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 因為只用 NAND 就能組合出 AND、OR、NOT 等任何布林函數</span><span data-lang="en">C. Because NAND alone can build AND, OR, NOT — any Boolean function</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 因為它是 Shannon 親自發明的</span><span data-lang="en">D. Because Shannon personally invented it</span></div>
+</div><div class="quiz-feedback" id="fb1"></div></div>
+
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">2. De Morgan 定律的正確敘述是？</p>
+<p data-lang="en">2. Which is the correct statement of De Morgan's law?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. ¬(A·B) = ¬A · ¬B</span><span data-lang="en">A. ¬(A·B) = ¬A · ¬B</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. ¬(A·B) = ¬A + ¬B 且 ¬(A+B) = ¬A · ¬B</span><span data-lang="en">B. ¬(A·B) = ¬A + ¬B and ¬(A+B) = ¬A · ¬B</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. A·B = A + B</span><span data-lang="en">C. A·B = A + B</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. A + ¬A = 0</span><span data-lang="en">D. A + ¬A = 0</span></div>
+</div><div class="quiz-feedback" id="fb2"></div></div>
+
+<div class="quiz-q" data-answer="0">
+<p data-lang="zh">3. 半加器的「和 (Sum)」與「進位 (Carry)」分別用什麼閘？</p>
+<p data-lang="en">3. In a half adder, what gates produce Sum and Carry respectively?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Sum = XOR, Carry = AND</span><span data-lang="en">A. Sum = XOR, Carry = AND</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Sum = AND, Carry = OR</span><span data-lang="en">B. Sum = AND, Carry = OR</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Sum = OR, Carry = NOT</span><span data-lang="en">C. Sum = OR, Carry = NOT</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Sum = NAND, Carry = NOR</span><span data-lang="en">D. Sum = NAND, Carry = NOR</span></div>
+</div><div class="quiz-feedback" id="fb3"></div></div>
+</section>
+
+<nav class="page-nav">
+<a href="data-rep.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 2: 資料表示法" data-en="Ch 2: Data Representation">Ch 2: 資料表示法</span></a>
+<a href="cpu-arch.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 4: CPU 與計算機組織" data-en="Ch 4: CPU &amp; Computer Organization">Ch 4: CPU 與計算機組織</span></a>
+</nav>
+</main>
+<footer class="site-footer">© Charlene — Introduction to Computer Science · Interactive Tutorial</footer>
+<script src="i18n.js"></script>
+<script>
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
+function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
+
+// Interactive truth table
+let A=1, B=0;
+const gates=[
+  {name:'AND',  fn:(a,b)=>a&b},
+  {name:'OR',   fn:(a,b)=>a|b},
+  {name:'NOT A',fn:(a,b)=>a?0:1},
+  {name:'NAND', fn:(a,b)=>(a&b)?0:1},
+  {name:'NOR',  fn:(a,b)=>(a|b)?0:1},
+  {name:'XOR',  fn:(a,b)=>a^b},
+  {name:'XNOR', fn:(a,b)=>(a^b)?0:1}
+];
+function renderGates(){
+  const g=document.getElementById('gateGrid');g.innerHTML='';
+  gates.forEach(gate=>{
+    const y=gate.fn(A,B);
+    const card=document.createElement('div');
+    card.style.cssText='padding:14px;border-radius:8px;text-align:center;border:2px solid '+(y?'#16a34a':'#9ca3af')+';background:'+(y?'rgba(22,163,74,.12)':'rgba(156,163,175,.08)')+';';
+    card.innerHTML='<div style="font-family:var(--font-mono);font-weight:700;color:var(--c-ink);font-size:.95rem;">'+gate.name+'</div><div style="font-family:var(--font-mono);font-size:1.8rem;font-weight:800;color:'+(y?'#15803d':'#6b7280')+';margin-top:6px;">'+y+'</div>';
+    g.appendChild(card);
+  });
+}
+function updateBtn(btn,val,label){btn.textContent=label+' = '+val;btn.style.background=val?'var(--c-accent)':'#fff';btn.style.color=val?'#fff':'var(--c-accent)';}
+const btnA=document.getElementById('toggleA'),btnB=document.getElementById('toggleB');
+btnA.onclick=()=>{A=A?0:1;updateBtn(btnA,A,'A');renderGates();};
+btnB.onclick=()=>{B=B?0:1;updateBtn(btnB,B,'B');renderGates();};
+updateBtn(btnA,A,'A');updateBtn(btnB,B,'B');renderGates();
+
+// Quiz
+const QF={zh:{q1_y:'NAND 與 NOR 都是萬用閘，僅用一種就能合成所有布林函數。',q1_n:'答案 C。',q2_y:'De Morgan：「非的乘 = 非的加」、「非的加 = 非的乘」。',q2_n:'答案 B。',q3_y:'Sum=XOR、Carry=AND；XOR 處理「不同」，AND 才有進位。',q3_n:'答案 A。'},en:{q1_y:'NAND (and NOR) are universal — alone they can synthesize any Boolean function.',q1_n:'Answer: C.',q2_y:"De Morgan: NOT of AND = OR of NOTs, and NOT of OR = AND of NOTs.",q2_n:'Answer: B.',q3_y:'Sum=XOR, Carry=AND. XOR catches differences; AND signals a carry.',q3_n:'Answer: A.'}};
+document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
+</script>
+</body></html>

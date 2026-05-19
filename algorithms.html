@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ch 10: 演算法與複雜度 — Intro CS</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head><body>
+<nav class="top-nav"><div class="top-nav-inner">
+  <a href="index.html" class="top-nav-brand"><span>💻</span> <span data-zh="計算機概論" data-en="Intro CS">計算機概論</span></a>
+  <ul class="top-nav-links"><li><a href="history.html">History</a></li><li><a href="data-rep.html">Data</a></li><li><a href="logic-gates.html">Logic</a></li><li><a href="cpu-arch.html">CPU</a></li><li><a href="memory.html">Memory</a></li><li><a href="os.html">OS</a></li><li><a href="networking.html">Net</a></li><li><a href="database.html">DB</a></li><li><a href="programming.html">Prog</a></li><li><a href="algorithms.html" class="active">Algo</a></li><li><a href="data-structures.html">DS</a></li><li><a href="software-eng.html">SWE</a></li><li><a href="security.html">Sec</a></li><li><a href="ai-ml.html">AI/ML</a></li><li><a href="cloud-iot.html">Cloud</a></li><li><a href="ethics-future.html">Ethics</a></li>
+    <li><a href="references/index.html" data-zh="📚 參考資料" data-en="📚 References">📚 參考資料</a></li>
+  </ul>
+</div></nav>
+<div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
+<header class="page-hero"><div class="step-badge">CHAPTER 10 / 16</div>
+<h1 data-zh="演算法與複雜度" data-en="Algorithms & Complexity">演算法與複雜度</h1>
+<p class="subtitle" data-lang="zh">演算法是「能解決問題的有限步驟」。寫得對只是起點，寫得快才是工程。本章帶你看懂 Big-O 與經典演算法。</p>
+<p class="subtitle" data-lang="en">An algorithm is a finite sequence of steps that solves a problem. Writing correct code is just the start — writing fast code is engineering. This chapter unpacks Big-O and the classics.</p>
+</header>
+<main class="content-wrap">
+
+<section class="section">
+<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
+<h2 data-zh="為何複雜度比語言更重要？" data-en="Why complexity matters more than language">為何複雜度比語言更重要？</h2>
+<div data-lang="zh"><p>同一個問題，用 C 寫的 O(n²) 演算法在 100 萬筆資料上可能跑 30 分鐘；換成 Python 寫的 O(n log n) 演算法卻只要 3 秒。<strong>選對演算法的提速，遠大於選對語言或硬體升級。</strong></p>
+<p>Knuth 給出演算法的五項條件：① <strong>輸入</strong> (input)；② <strong>輸出</strong> (output)；③ <strong>有限性</strong> (finiteness：一定要停)；④ <strong>確定性</strong> (definiteness：每一步明確)；⑤ <strong>有效性</strong> (effectiveness：每步可在有限時間執行)。</p></div>
+<div data-lang="en"><p>For 1M records, an O(n²) algorithm in C may take 30 minutes — while an O(n log n) algorithm in Python finishes in 3 seconds. <strong>Picking the right algorithm beats picking the right language or upgrading hardware.</strong></p>
+<p>Knuth's five properties of an algorithm: (1) <strong>input</strong>, (2) <strong>output</strong>, (3) <strong>finiteness</strong> (must terminate), (4) <strong>definiteness</strong> (each step unambiguous), (5) <strong>effectiveness</strong> (each step executable in finite time).</p></div>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<span data-lang="zh"><strong>核心觀念：</strong>Big-O 描述「輸入大小 n 趨於無窮時，執行時間的增長等級」。常數、低階項、係數通通忽略——只看「長相」。</span>
+<span data-lang="en"><strong>Core idea:</strong> Big-O describes the growth rate of running time as input size n approaches infinity. Constants, lower-order terms, and coefficients are dropped — only the dominant term matters.</span>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="Big-O" data-en="BIG-O">Big-O 複雜度等級</div>
+<h2 data-zh="一、七種常見的 Big-O" data-en="I. Seven Common Big-O Classes">一、七種常見的 Big-O</h2>
+<table class="comp-table">
+<thead><tr><th data-zh="Big-O" data-en="Big-O">Big-O</th><th data-zh="名稱" data-en="Name">名稱</th><th data-zh="n=1000 大約迭代次數" data-en="Iters at n=1000">n=1000 大約迭代</th><th data-zh="典型例子" data-en="Example">典型例子</th></tr></thead>
+<tbody>
+<tr><td><code>O(1)</code></td><td data-lang="zh">常數時間</td><td data-lang="en">Constant</td><td>1</td><td data-lang="zh">陣列索引、Hash 查找</td><td data-lang="en">Array index, hash lookup</td></tr>
+<tr><td><code>O(log n)</code></td><td data-lang="zh">對數時間</td><td data-lang="en">Logarithmic</td><td>~10</td><td data-lang="zh">二分搜尋、平衡 BST</td><td data-lang="en">Binary search, balanced BST</td></tr>
+<tr><td><code>O(n)</code></td><td data-lang="zh">線性時間</td><td data-lang="en">Linear</td><td>1,000</td><td data-lang="zh">線性掃描、求最大值</td><td data-lang="en">Linear scan, find max</td></tr>
+<tr><td><code>O(n log n)</code></td><td data-lang="zh">線性對數</td><td data-lang="en">Linearithmic</td><td>~10,000</td><td data-lang="zh">Merge Sort、Quick Sort 平均</td><td data-lang="en">Merge sort, average quick sort</td></tr>
+<tr><td><code>O(n²)</code></td><td data-lang="zh">平方時間</td><td data-lang="en">Quadratic</td><td>1,000,000</td><td data-lang="zh">Bubble / Selection / Insertion Sort</td><td data-lang="en">Bubble / selection / insertion sort</td></tr>
+<tr><td><code>O(2ⁿ)</code></td><td data-lang="zh">指數時間</td><td data-lang="en">Exponential</td><td data-lang="zh">天文數字</td><td data-lang="en">Astronomical</td><td data-lang="en">Naïve Fibonacci, subset enumeration</td><td data-lang="zh">樸素費氏數、子集列舉</td></tr>
+<tr><td><code>O(n!)</code></td><td data-lang="zh">階乘時間</td><td data-lang="en">Factorial</td><td data-lang="zh">無解</td><td data-lang="en">Intractable</td><td>Brute-force TSP</td></tr>
+</tbody></table>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動圖" data-en="INTERACTIVE">成長曲線</div>
+<h2 data-zh="二、互動：四大複雜度成長曲線" data-en="II. Interactive: Growth Curves of Four Big-O Classes">二、Big-O 成長曲線</h2>
+<div data-lang="zh"><p>下圖以對數刻度比較 <code>O(n)</code>、<code>O(n log n)</code>、<code>O(n²)</code>、<code>O(2ⁿ)</code> 從 n=1 到 n=40 的成長速度。<strong>注意</strong>：在 n=40 時 2ⁿ 已超過 10¹²，<strong>n² 與 2ⁿ 的差距是宇宙級的</strong>。</p></div>
+<div data-lang="en"><p>Below: log-scale comparison of <code>O(n)</code>, <code>O(n log n)</code>, <code>O(n²)</code>, <code>O(2ⁿ)</code> for n=1…40. At n=40, 2ⁿ exceeds 10¹² — <strong>n² and 2ⁿ are cosmologically far apart</strong>.</p></div>
+<div class="interactive-panel">
+<div class="chart-container"><canvas id="bigoChart"></canvas></div>
+<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">y 軸為對數刻度，能容納指數差距</span><span data-lang="en">Y-axis is log scale to fit exponential gaps</span></p>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="排序" data-en="SORTING">排序演算法</div>
+<h2 data-zh="三、排序演算法總覽" data-en="III. Sorting Algorithms Overview">三、七大排序演算法</h2>
+<table class="comp-table">
+<thead><tr><th data-zh="演算法" data-en="Algorithm">演算法</th><th data-zh="最佳" data-en="Best">最佳</th><th data-zh="平均" data-en="Avg">平均</th><th data-zh="最差" data-en="Worst">最差</th><th data-zh="空間" data-en="Space">空間</th><th data-zh="穩定" data-en="Stable">穩定</th></tr></thead>
+<tbody>
+<tr><td>Bubble</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td data-lang="zh">是</td><td data-lang="en">Yes</td></tr>
+<tr><td>Selection</td><td>O(n²)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td data-lang="zh">否</td><td data-lang="en">No</td></tr>
+<tr><td>Insertion</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td data-lang="zh">是</td><td data-lang="en">Yes</td></tr>
+<tr><td>Merge</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td data-lang="zh">是</td><td data-lang="en">Yes</td></tr>
+<tr><td>Quick</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n²)</td><td>O(log n)</td><td data-lang="zh">否</td><td data-lang="en">No</td></tr>
+<tr><td>Heap</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(1)</td><td data-lang="zh">否</td><td data-lang="en">No</td></tr>
+<tr><td>Tim Sort ⭐</td><td>O(n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td data-lang="zh">是</td><td data-lang="en">Yes</td></tr>
+</tbody></table>
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>Python 的祕密：</strong>內建 <code>list.sort()</code> 與 <code>sorted()</code> 用的是 <strong>Tim Sort</strong>（Java 也是），對「已部分排序」的資料只要 O(n)。</div>
+<div data-lang="en"><strong>Python's secret:</strong> Built-in <code>list.sort()</code> and <code>sorted()</code> use <strong>Tim Sort</strong> (so does Java). For partially-sorted data it can run in O(n).</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="搜尋" data-en="SEARCH">搜尋演算法</div>
+<h2 data-zh="四、搜尋：線性 vs 二分 vs Hash" data-en="IV. Search: Linear vs Binary vs Hash">四、搜尋演算法</h2>
+<div class="card-grid cols-3">
+<div class="card"><h4>🔍 Linear Search — O(n)</h4><div data-lang="zh"><p>從頭找到尾。最簡單、適用於小資料或未排序資料。1000 筆資料平均要看 500 次。</p></div><div data-lang="en"><p>Scan from start to end. Simple; fine for small or unsorted data. On 1000 items, ~500 checks on average.</p></div></div>
+<div class="card"><h4>⚖️ Binary Search — O(log n)</h4><div data-lang="zh"><p>每次砍一半，但<strong>要求陣列已排序</strong>。100 萬筆只需 20 次比較。</p></div><div data-lang="en"><p>Halve the search space each step, but <strong>requires sorted input</strong>. ~20 comparisons for 1M items.</p></div></div>
+<div class="card"><h4>🪣 Hash Lookup — O(1)</h4><div data-lang="zh"><p>透過 hash function 直接定位。理想情況常數時間，但需要記憶體與良好的 hash 函式來避免碰撞。</p></div><div data-lang="en"><p>Hash function maps key directly to a bucket. Constant time on average, at the cost of memory and a good hash to avoid collisions.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="設計典範" data-en="DESIGN PARADIGMS">設計典範</div>
+<h2 data-zh="五、五大演算法設計典範" data-en="V. Five Algorithm Design Paradigms">五、五大設計典範</h2>
+<div class="workflow">
+<div class="workflow-step" data-step="1"><h4>Brute Force</h4>
+<div data-lang="zh"><p>逐一列舉所有可能。簡單但常常爆炸性慢，適用於小規模或當作正確性基準。</p></div>
+<div data-lang="en"><p>Try every possibility. Simple but often explodes; useful for small inputs or as a correctness baseline.</p></div></div>
+<div class="workflow-step" data-step="2"><h4>Divide &amp; Conquer</h4>
+<div data-lang="zh"><p>把問題切成更小的子問題，遞迴解決後合併。Merge Sort、Quick Sort、FFT、Karatsuba 乘法都是經典。</p></div>
+<div data-lang="en"><p>Split into subproblems, recurse, combine. Classics: merge sort, quick sort, FFT, Karatsuba multiplication.</p></div></div>
+<div class="workflow-step" data-step="3"><h4>Greedy</h4>
+<div data-lang="zh"><p>每一步都做「當下最佳」的選擇。Dijkstra 最短路徑、Huffman 編碼、零錢找零（某些幣制）是典型成功例。</p></div>
+<div data-lang="en"><p>Make the locally best choice at each step. Dijkstra's shortest path, Huffman coding, certain coin-change problems are classic successes.</p></div></div>
+<div class="workflow-step" data-step="4"><h4>Dynamic Programming</h4>
+<div data-lang="zh"><p>把重複子問題的結果「記下來」(memoization)。Fibonacci、0/1 Knapsack、編輯距離、最長公共子序列都是 DP 經典。</p></div>
+<div data-lang="en"><p>Memoize results of overlapping subproblems. Fibonacci, 0/1 Knapsack, edit distance, LCS are classic DP problems.</p></div></div>
+<div class="workflow-step" data-step="5"><h4>Backtracking</h4>
+<div data-lang="zh"><p>嘗試 → 失敗 → 退一步再試。八皇后、數獨、迷宮、N-queens 都是經典案例。</p></div>
+<div data-lang="en"><p>Try, fail, back up, try again. N-queens, sudoku, mazes are classic backtracking problems.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">選排序</div>
+<h2 data-zh="六、決策：該選哪種排序？" data-en="VI. Decision: Which sort to choose?">六、該選哪種排序？</h2>
+<div class="decision-tree">
+<h4>🌳 <span data-zh="排序選擇樹" data-en="Sort selector">排序選擇樹</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>使用語言內建？<span class="dt-arrow">→ 是 →</span> 直接用 <code>sort()</code>（Python / Java 是 Tim Sort、C++ 是 Introsort），<strong>99% 的場景</strong>夠用。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>資料量極小 (n ≤ 20)？<span class="dt-arrow">→ 是 →</span> <strong>Insertion Sort</strong>，常數小、實作簡單。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>要求穩定排序（保留相等元素原順序）？<span class="dt-arrow">→ 是 →</span> <strong>Merge Sort</strong> 或 Tim Sort，避免 Quick Sort。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>記憶體極吃緊？<span class="dt-arrow">→ 是 →</span> <strong>Heap Sort</strong>（原地 O(1) 空間且保證 O(n log n)）。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>資料是「整數且範圍有限」？<span class="dt-arrow">→ 是 →</span> 試 <strong>Counting / Radix Sort</strong>，可達 O(n)。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Use the language's built-in? <span class="dt-arrow">→ Yes →</span> Just call <code>sort()</code> (Python/Java use Tim Sort; C++ uses Introsort) — enough for <strong>99%</strong> of cases.</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Very small (n ≤ 20)? <span class="dt-arrow">→ Yes →</span> <strong>Insertion Sort</strong>: tiny constants, easy to write.</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Need stability? <span class="dt-arrow">→ Yes →</span> <strong>Merge Sort</strong> or Tim Sort. Avoid Quick Sort.</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Extremely memory-tight? <span class="dt-arrow">→ Yes →</span> <strong>Heap Sort</strong>: in-place O(1) extra, guaranteed O(n log n).</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>Bounded integers? <span class="dt-arrow">→ Yes →</span> <strong>Counting / Radix Sort</strong> can hit O(n).</div></div>
+</div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
+<h2 data-zh="七、實作：Merge Sort (Python) / Quick Sort (偽碼)" data-en="VII. Implement: Merge Sort (Python) / Quick Sort (Pseudocode)">七、Merge / Quick Sort 實作</h2>
+<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python (Merge)</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode (Quick)</button></div>
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># Merge Sort：分而治之，O(n log n)、stable / Divide-and-conquer, O(n log n), stable</span>
+<span class="kw">def</span> <span class="func">merge_sort</span>(arr: <span class="kw">list</span>) -> <span class="kw">list</span>:
+    <span class="kw">if</span> <span class="func">len</span>(arr) <= <span class="num">1</span>:
+        <span class="kw">return</span> arr
+    mid = <span class="func">len</span>(arr) // <span class="num">2</span>
+    left  = <span class="func">merge_sort</span>(arr[:mid])      <span class="comment"># 遞迴排左半</span>
+    right = <span class="func">merge_sort</span>(arr[mid:])      <span class="comment"># 遞迴排右半</span>
+    <span class="kw">return</span> <span class="func">merge</span>(left, right)             <span class="comment"># 合併兩個有序串列</span>
+
+<span class="kw">def</span> <span class="func">merge</span>(a, b):
+    result, i, j = [], <span class="num">0</span>, <span class="num">0</span>
+    <span class="kw">while</span> i < <span class="func">len</span>(a) <span class="kw">and</span> j < <span class="func">len</span>(b):
+        <span class="kw">if</span> a[i] <= b[j]:
+            result.<span class="func">append</span>(a[i]); i += <span class="num">1</span>
+        <span class="kw">else</span>:
+            result.<span class="func">append</span>(b[j]); j += <span class="num">1</span>
+    result.<span class="func">extend</span>(a[i:]); result.<span class="func">extend</span>(b[j:])
+    <span class="kw">return</span> result
+
+<span class="func">print</span>(<span class="func">merge_sort</span>([<span class="num">5</span>,<span class="num">2</span>,<span class="num">8</span>,<span class="num">1</span>,<span class="num">9</span>,<span class="num">3</span>]))   <span class="comment"># [1, 2, 3, 5, 8, 9]</span></pre></div>
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// Quick Sort：分而治之，平均 O(n log n)，最差 O(n²)</span>
+<span class="kw">function</span> <span class="func">QuickSort</span>(arr, lo, hi):
+    <span class="kw">if</span> lo < hi:
+        <span class="kw">let</span> p = <span class="func">Partition</span>(arr, lo, hi)
+        <span class="func">QuickSort</span>(arr, lo, p − <span class="num">1</span>)
+        <span class="func">QuickSort</span>(arr, p + <span class="num">1</span>, hi)
+
+<span class="kw">function</span> <span class="func">Partition</span>(arr, lo, hi):
+    <span class="kw">let</span> pivot = arr[hi]
+    <span class="kw">let</span> i = lo − <span class="num">1</span>
+    <span class="kw">for</span> j <span class="kw">from</span> lo <span class="kw">to</span> hi − <span class="num">1</span>:
+        <span class="kw">if</span> arr[j] <= pivot:
+            i = i + <span class="num">1</span>
+            <span class="func">SWAP</span>(arr[i], arr[j])
+    <span class="func">SWAP</span>(arr[i + <span class="num">1</span>], arr[hi])
+    <span class="kw">return</span> i + <span class="num">1</span></pre></div>
+</div>
+</section>
+
+<section class="quiz-section">
+<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">1. 一個演算法執行時間為 T(n) = 3n² + 5n + 100，它的 Big-O 是？</p>
+<p data-lang="en">1. An algorithm runs in T(n) = 3n² + 5n + 100. What is its Big-O?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. O(100)</span><span data-lang="en">A. O(100)</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. O(n)</span><span data-lang="en">B. O(n)</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. O(n²)</span><span data-lang="en">C. O(n²)</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. O(3n²)</span><span data-lang="en">D. O(3n²)</span></div>
+</div><div class="quiz-feedback" id="fb1"></div></div>
+
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">2. 在已排序的 100 萬筆資料中使用二分搜尋，最多需要幾次比較？</p>
+<p data-lang="en">2. Binary search on 1,000,000 sorted items needs at most how many comparisons?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 約 1,000,000</span><span data-lang="en">A. ~1,000,000</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 約 20 (log₂ 10⁶ ≈ 20)</span><span data-lang="en">B. ~20 (log₂ 10⁶ ≈ 20)</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 約 1000</span><span data-lang="en">C. ~1000</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 約 500,000</span><span data-lang="en">D. ~500,000</span></div>
+</div><div class="quiz-feedback" id="fb2"></div></div>
+
+<div class="quiz-q" data-answer="0">
+<p data-lang="zh">3. 關於 Dynamic Programming (DP) 與 Greedy，下列何者正確？</p>
+<p data-lang="en">3. Which statement about Dynamic Programming (DP) vs Greedy is correct?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. DP 透過記憶子問題結果保證全域最優；Greedy 每步取局部最佳，可能錯失全域最優</span><span data-lang="en">A. DP memoizes subproblems for the global optimum; Greedy takes local best and may miss the global optimum</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Greedy 一定比 DP 慢</span><span data-lang="en">B. Greedy is always slower than DP</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. DP 只能解圖論問題</span><span data-lang="en">C. DP only solves graph problems</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Greedy 可以解所有 NP-Hard 問題</span><span data-lang="en">D. Greedy can solve any NP-Hard problem</span></div>
+</div><div class="quiz-feedback" id="fb3"></div></div>
+</section>
+
+<nav class="page-nav">
+<a href="programming.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 9: 程式設計入門" data-en="Ch 9: Introduction to Programming">Ch 9: 程式設計入門</span></a>
+<a href="data-structures.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 11: 資料結構" data-en="Ch 11: Data Structures">Ch 11: 資料結構</span></a>
+</nav>
+</main>
+<footer class="site-footer">© Charlene — Introduction to Computer Science · Interactive Tutorial</footer>
+<script src="i18n.js"></script>
+<script>
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
+function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
+
+// Big-O growth chart, log scale
+const ns=[];for(let i=1;i<=40;i++)ns.push(i);
+const lin=ns.map(n=>n);
+const nlogn=ns.map(n=>n*Math.log2(Math.max(n,2)));
+const sq=ns.map(n=>n*n);
+const exp=ns.map(n=>Math.pow(2,n));
+new Chart(document.getElementById('bigoChart'),{type:'line',data:{labels:ns,datasets:[
+  {label:'O(n)',data:lin,borderColor:'rgba(34,197,94,1)',backgroundColor:'rgba(34,197,94,.1)',tension:.2,pointRadius:0},
+  {label:'O(n log n)',data:nlogn,borderColor:'rgba(29,78,216,1)',backgroundColor:'rgba(29,78,216,.1)',tension:.2,pointRadius:0},
+  {label:'O(n²)',data:sq,borderColor:'rgba(217,119,6,1)',backgroundColor:'rgba(217,119,6,.1)',tension:.2,pointRadius:0},
+  {label:'O(2ⁿ)',data:exp,borderColor:'rgba(220,38,38,1)',backgroundColor:'rgba(220,38,38,.1)',tension:.2,pointRadius:0}
+]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{x:{title:{display:true,text:'n'}},y:{type:'logarithmic',title:{display:true,text:'operations (log scale)'},min:1,max:1e13}}}});
+
+// Quiz feedback
+const QF={zh:{q1_y:'Big-O 只保留「最高階項」，常數與低階項都丟掉，所以 O(n²)。',q1_n:'答案 C。',q2_y:'二分搜尋每次砍一半，log₂(10⁶) ≈ 19.93，所以約 20 次。',q2_n:'答案 B。',q3_y:'DP 透過記憶化處理重疊子問題，能找全域最優；Greedy 速度快但不保證最優。',q3_n:'答案 A。'},en:{q1_y:'Big-O keeps only the dominant term, drops constants → O(n²).',q1_n:'Answer: C.',q2_y:'Each step halves the search space; log₂(10⁶) ≈ 19.93 ≈ 20.',q2_n:'Answer: B.',q3_y:'DP memoizes overlapping subproblems for global optimum; Greedy is fast but not always optimal.',q3_n:'Answer: A.'}};
+document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
+</script>
+</body></html>

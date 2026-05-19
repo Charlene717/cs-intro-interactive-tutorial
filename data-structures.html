@@ -1,0 +1,243 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ch 11: 資料結構 — Intro CS</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head><body>
+<nav class="top-nav"><div class="top-nav-inner">
+  <a href="index.html" class="top-nav-brand"><span>💻</span> <span data-zh="計算機概論" data-en="Intro CS">計算機概論</span></a>
+  <ul class="top-nav-links"><li><a href="history.html">History</a></li><li><a href="data-rep.html">Data</a></li><li><a href="logic-gates.html">Logic</a></li><li><a href="cpu-arch.html">CPU</a></li><li><a href="memory.html">Memory</a></li><li><a href="os.html">OS</a></li><li><a href="networking.html">Net</a></li><li><a href="database.html">DB</a></li><li><a href="programming.html">Prog</a></li><li><a href="algorithms.html">Algo</a></li><li><a href="data-structures.html" class="active">DS</a></li><li><a href="software-eng.html">SWE</a></li><li><a href="security.html">Sec</a></li><li><a href="ai-ml.html">AI/ML</a></li><li><a href="cloud-iot.html">Cloud</a></li><li><a href="ethics-future.html">Ethics</a></li>
+    <li><a href="references/index.html" data-zh="📚 參考資料" data-en="📚 References">📚 參考資料</a></li>
+  </ul>
+</div></nav>
+<div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
+<header class="page-hero"><div class="step-badge">CHAPTER 11 / 16</div>
+<h1 data-zh="資料結構" data-en="Data Structures">資料結構</h1>
+<p class="subtitle" data-lang="zh">演算法是邏輯；資料結構是容器——兩者一體兩面。選對容器，演算法的複雜度自然下降。</p>
+<p class="subtitle" data-lang="en">Algorithms are the logic; data structures are the containers — two faces of the same coin. Pick the right container and complexity drops on its own.</p>
+</header>
+<main class="content-wrap">
+
+<section class="section">
+<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
+<h2 data-zh="為什麼資料結構重要？" data-en="Why data structures matter">為什麼資料結構重要？</h2>
+<div data-lang="zh"><p>同一個搜尋任務，用未排序陣列要 O(n)、排序陣列加二分搜尋要 O(log n)、Hash Table 卻只要 O(1)。<strong>資料結構決定了你的演算法能跑多快。</strong></p>
+<p>Linus Torvalds 曾說：「<em>Bad programmers worry about the code. Good programmers worry about data structures and their relationships.</em>」這也是面試的高頻考點。</p></div>
+<div data-lang="en"><p>The same lookup is O(n) in an unsorted array, O(log n) in a sorted array with binary search, and O(1) in a hash table. <strong>Data structures dictate how fast your algorithm can run.</strong></p>
+<p>Linus Torvalds: "<em>Bad programmers worry about the code. Good programmers worry about data structures and their relationships.</em>" Also the most-tested interview topic.</p></div>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<span data-lang="zh"><strong>核心觀念：</strong>每種資料結構都是一組「時空 trade-off」。Hash 快但耗記憶體；Linked List 省記憶體但慢；Array 中庸但插入差。沒有萬能解。</span>
+<span data-lang="en"><strong>Core idea:</strong> Every data structure is a time-space trade-off. Hashes are fast but memory-hungry; linked lists are slim but slow; arrays are middle-of-the-road but slow to insert. No silver bullet.</span>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="線性結構" data-en="LINEAR">線性結構</div>
+<h2 data-zh="一、線性：Array、Linked List、Stack、Queue" data-en="I. Linear: Array, Linked List, Stack, Queue">一、線性資料結構</h2>
+<div class="card-grid cols-2">
+<div class="card"><h4>📦 Array</h4><div data-lang="zh"><p>連續記憶體區塊。<strong>存取 O(1)</strong>，但插入/刪除中間元素需移動其他元素 O(n)。Python 的 <code>list</code>、C 的陣列、Java 的 ArrayList 屬此類。</p></div><div data-lang="en"><p>Contiguous memory. <strong>Random access O(1)</strong>; inserting/deleting in the middle is O(n) because elements must shift. Python <code>list</code>, C arrays, Java ArrayList are arrays.</p></div></div>
+<div class="card"><h4>🔗 Linked List</h4><div data-lang="zh"><p>每個 node 透過指標指向下一個 node。<strong>插入/刪除 O(1)</strong>，但隨機存取 O(n)。雙向、循環、跳表等變體。</p></div><div data-lang="en"><p>Each node points to the next. <strong>Insert/delete O(1)</strong>; random access is O(n). Variants: doubly-linked, circular, skip list.</p></div></div>
+<div class="card"><h4>📚 Stack (LIFO)</h4><div data-lang="zh"><p>「後進先出」（Last In First Out）。瀏覽器返回、函式呼叫、撤銷 (undo) 全靠 stack。操作：push、pop、peek，全為 O(1)。</p></div><div data-lang="en"><p>Last In, First Out. Browser back, function calls, undo — all stacks. Push, pop, peek are O(1).</p></div></div>
+<div class="card"><h4>🎫 Queue (FIFO)</h4><div data-lang="zh"><p>「先進先出」。任務排程、訊息佇列、BFS 都用 queue。雙端佇列 (<strong>deque</strong>) 可雙頭操作，Python 的 <code>collections.deque</code> 是優選。</p></div><div data-lang="en"><p>First In, First Out. Task scheduling, message queues, BFS use queues. A <strong>deque</strong> allows ops at both ends; Python's <code>collections.deque</code> is preferred.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動演示" data-en="INTERACTIVE">Stack vs Queue</div>
+<h2 data-zh="二、互動：Stack push/pop vs Queue enqueue/dequeue" data-en="II. Interactive: Stack push/pop vs Queue enqueue/dequeue">二、互動：Stack vs Queue</h2>
+<div class="interactive-panel">
+<div style="display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-bottom:16px;">
+  <div style="text-align:center;"><div style="font-weight:600;margin-bottom:6px;">📚 Stack (LIFO)</div>
+    <div id="stackDisp" style="min-width:120px;min-height:160px;border:2px solid var(--c-accent);border-radius:6px;padding:6px;display:flex;flex-direction:column-reverse;gap:4px;background:rgba(29,78,216,.05);"></div>
+    <div style="margin-top:8px;"><button class="code-tab-btn" onclick="stackPush()">push</button> <button class="code-tab-btn" onclick="stackPop()">pop</button></div></div>
+  <div style="text-align:center;"><div style="font-weight:600;margin-bottom:6px;">🎫 Queue (FIFO)</div>
+    <div id="queueDisp" style="min-width:120px;min-height:160px;border:2px solid var(--c-accent);border-radius:6px;padding:6px;display:flex;flex-direction:column;gap:4px;background:rgba(29,78,216,.05);"></div>
+    <div style="margin-top:8px;"><button class="code-tab-btn" onclick="queueAdd()">enqueue</button> <button class="code-tab-btn" onclick="queueRemove()">dequeue</button></div></div>
+</div>
+<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;"><span data-lang="zh">點選按鈕觀察兩種容器存取順序的差異</span><span data-lang="en">Click the buttons to compare access order of the two containers</span></p>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="雜湊" data-en="HASH">Hash Table</div>
+<h2 data-zh="三、Hash Table：O(1) 的魔法" data-en="III. Hash Table: The O(1) Magic">三、Hash Table</h2>
+<div data-lang="zh"><p>Hash Table 由 <strong>hash function</strong> 把 key 對應到陣列索引。理想情況下，查找、插入、刪除都是 O(1)。Python 的 <code>dict</code>、JavaScript 的 <code>Object</code> / <code>Map</code>、Java 的 <code>HashMap</code> 都基於 hash。</p>
+<p><strong>碰撞 (collision)</strong>：兩個 key 算出同一個索引時的處理方式：</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>Chaining</strong>：每個 bucket 是一個 linked list。Python、Java 採用。</li>
+<li><strong>Open Addressing</strong>：碰撞時跳到下一個空 bucket。CPU cache 友善，但需要小心 load factor。</li>
+</ul></div>
+<div data-lang="en"><p>A hash table uses a <strong>hash function</strong> to map keys to array indices. Ideally lookup/insert/delete are O(1). Python <code>dict</code>, JS <code>Object</code>/<code>Map</code>, Java <code>HashMap</code> all use hashes.</p>
+<p><strong>Collision</strong> handling — when two keys hash to the same bucket:</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>Chaining</strong>: each bucket is a linked list. Used by Python and Java.</li>
+<li><strong>Open Addressing</strong>: probe to the next empty bucket. Cache-friendly but watch the load factor.</li>
+</ul></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="樹與圖" data-en="TREES & GRAPHS">樹與圖</div>
+<h2 data-zh="四、樹與圖" data-en="IV. Trees and Graphs">四、樹與圖</h2>
+<table class="comp-table">
+<thead><tr><th data-zh="結構" data-en="Structure">結構</th><th data-zh="特性" data-en="Property">特性</th><th data-zh="典型用途" data-en="Use case">典型用途</th></tr></thead>
+<tbody>
+<tr><td>Binary Tree</td><td data-lang="zh">每個 node 最多 2 個子節點</td><td data-lang="en">Each node has ≤ 2 children</td><td data-lang="zh">運算式樹、層次結構</td><td data-lang="en">Expression trees, hierarchies</td></tr>
+<tr><td>BST</td><td data-lang="zh">左 &lt; 根 &lt; 右；搜尋平均 O(log n)</td><td data-lang="en">left &lt; root &lt; right; avg search O(log n)</td><td data-lang="zh">符號表、簡易索引</td><td data-lang="en">Symbol tables, simple indexes</td></tr>
+<tr><td>AVL / Red-Black</td><td data-lang="zh">自平衡 BST，最差仍 O(log n)</td><td data-lang="en">Self-balancing BST, worst-case O(log n)</td><td data-lang="zh">C++ <code>std::map</code>、Linux scheduler</td><td data-lang="en">C++ <code>std::map</code>, Linux scheduler</td></tr>
+<tr><td>Heap (priority queue)</td><td data-lang="zh">完全二元樹；最大/最小在根</td><td data-lang="en">Complete binary tree; max/min at root</td><td data-lang="zh">Dijkstra、Top-K、heapsort</td><td data-lang="en">Dijkstra, top-K, heapsort</td></tr>
+<tr><td>Trie (字典樹)</td><td data-lang="zh">每個 edge 代表一個字元</td><td data-lang="en">Each edge represents a character</td><td data-lang="zh">自動補字、IP 路由</td><td data-lang="en">Autocomplete, IP routing</td></tr>
+<tr><td>Graph</td><td data-lang="zh">node + edge (有向/無向、加權)</td><td data-lang="en">Nodes + edges (directed/undirected, weighted)</td><td data-lang="zh">社交網路、地圖、依賴關係</td><td data-lang="en">Social networks, maps, dependencies</td></tr>
+</tbody></table>
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>圖的表示法：</strong>① <strong>Adjacency Matrix</strong> O(V²) 空間，邊查 O(1)，適合稠密圖；② <strong>Adjacency List</strong> O(V+E) 空間，遍歷快，適合稀疏圖（多數真實場景）。<strong>BFS</strong> 用 queue 找最短「邊數」；<strong>DFS</strong> 用 stack 或遞迴，常用於拓樸排序。</div>
+<div data-lang="en"><strong>Graph representations:</strong> (1) <strong>Adjacency Matrix</strong> uses O(V²) space, O(1) edge lookup — good for dense graphs; (2) <strong>Adjacency List</strong> uses O(V+E) — better for sparse graphs (most real ones). <strong>BFS</strong> uses a queue for shortest edges; <strong>DFS</strong> uses a stack or recursion, often for topological sort.</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="進階結構" data-en="ADVANCED">進階資料結構</div>
+<h2 data-zh="五、進階：Bloom filter、Skip list、LSM-tree" data-en="V. Advanced: Bloom filter, Skip list, LSM-tree">五、進階資料結構</h2>
+<div class="card-grid cols-3">
+<div class="card"><h4>🌸 Bloom Filter</h4><div data-lang="zh"><p>機率性結構：「絕對不存在」或「可能存在」。極省記憶體，常用於 CDN、爬蟲去重、資料庫快取預判。</p></div><div data-lang="en"><p>Probabilistic set: "definitely not" or "maybe." Tiny memory; used for CDN caches, crawler dedup, DB cache prefilter.</p></div></div>
+<div class="card"><h4>🪜 Skip List</h4><div data-lang="zh"><p>多層 linked list，期望 O(log n) 查找。Redis 的 sorted set (zset) 與某些資料庫索引用此結構。</p></div><div data-lang="en"><p>Multi-level linked list with expected O(log n) lookup. Used by Redis sorted sets and some DB indexes.</p></div></div>
+<div class="card"><h4>🌲 LSM-Tree</h4><div data-lang="zh"><p>Log-Structured Merge Tree。寫入快、適合 SSD，LevelDB、RocksDB、Cassandra、ScyllaDB 都用。</p></div><div data-lang="en"><p>Log-Structured Merge Tree. Write-optimized, SSD-friendly; powers LevelDB, RocksDB, Cassandra, ScyllaDB.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">該選哪一種？</div>
+<h2 data-zh="六、決策：該選哪種資料結構？" data-en="VI. Decision: Which data structure to pick?">六、該選哪種資料結構？</h2>
+<div class="decision-tree">
+<h4>🌳 <span data-zh="資料結構選擇樹" data-en="Data structure selector">資料結構選擇樹</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>需要「依鍵快速查值」？<span class="dt-arrow">→ 是 →</span> <strong>Hash Table (dict/map)</strong>，平均 O(1)。若還要排序遍歷 → 改用紅黑樹型 map。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>頻繁從尾端 push/pop？<span class="dt-arrow">→ 是 →</span> <strong>Stack (LIFO)</strong> 用 array-based stack；雙端 push/pop → <strong>deque</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>要先進先出 (任務排程、BFS)？<span class="dt-arrow">→ 是 →</span> <strong>Queue</strong> 或 <strong>deque</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>要「永遠取最大/最小」？<span class="dt-arrow">→ 是 →</span> <strong>Heap / Priority Queue</strong>，<code>heapq</code>、Java <code>PriorityQueue</code>。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>需要範圍查詢 / 排序順序遍歷？<span class="dt-arrow">→ 是 →</span> <strong>BST / Skip List / B-Tree (DB 索引)</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>處理關聯/網路？<span class="dt-arrow">→</span> <strong>Graph + Adjacency List</strong>，搭配 BFS / DFS / Dijkstra。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Fast key→value lookup? <span class="dt-arrow">→ Yes →</span> <strong>Hash Table</strong>, avg O(1). Need sorted iteration too → use a tree-based map.</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Frequent push/pop at one end? <span class="dt-arrow">→ Yes →</span> <strong>Stack (LIFO)</strong>; both ends → <strong>deque</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>FIFO (task scheduling, BFS)? <span class="dt-arrow">→ Yes →</span> <strong>Queue</strong> or <strong>deque</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Always need max/min? <span class="dt-arrow">→ Yes →</span> <strong>Heap / Priority Queue</strong>: <code>heapq</code>, Java <code>PriorityQueue</code>.</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>Range queries / sorted scan? <span class="dt-arrow">→ Yes →</span> <strong>BST / Skip List / B-Tree</strong> (DB indexes).</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>Modeling relationships/networks? <span class="dt-arrow">→</span> <strong>Graph + Adjacency List</strong> with BFS / DFS / Dijkstra.</div></div>
+</div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
+<h2 data-zh="七、實作：Python 容器 + BST / 偽碼 BFS" data-en="VII. Implement: Python containers + BST / Pseudocode BFS">七、Python 容器與 BFS</h2>
+<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode (BFS)</button></div>
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># 1. 內建容器：list / dict / deque</span>
+<span class="kw">from</span> collections <span class="kw">import</span> deque
+arr  = [<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">1</span>, <span class="num">5</span>]                    <span class="comment"># list (array)</span>
+m    = {<span class="str">"apple"</span>: <span class="num">3</span>, <span class="str">"banana"</span>: <span class="num">5</span>}        <span class="comment"># dict (hash table)</span>
+q    = <span class="func">deque</span>()
+q.<span class="func">append</span>(<span class="num">1</span>); q.<span class="func">append</span>(<span class="num">2</span>); q.<span class="func">popleft</span>()    <span class="comment"># queue: enqueue / dequeue → 1</span>
+
+<span class="comment"># 2. 自製 Binary Search Tree</span>
+<span class="kw">class</span> <span class="func">Node</span>:
+    <span class="kw">def</span> __init__(self, key):
+        self.key, self.left, self.right = key, <span class="kw">None</span>, <span class="kw">None</span>
+
+<span class="kw">class</span> <span class="func">BST</span>:
+    <span class="kw">def</span> __init__(self):
+        self.root = <span class="kw">None</span>
+    <span class="kw">def</span> <span class="func">insert</span>(self, key):
+        self.root = self._ins(self.root, key)
+    <span class="kw">def</span> _ins(self, node, key):
+        <span class="kw">if</span> node <span class="kw">is</span> <span class="kw">None</span>: <span class="kw">return</span> <span class="func">Node</span>(key)
+        <span class="kw">if</span> key < node.key: node.left  = self._ins(node.left, key)
+        <span class="kw">elif</span> key > node.key: node.right = self._ins(node.right, key)
+        <span class="kw">return</span> node
+    <span class="kw">def</span> <span class="func">contains</span>(self, key):
+        n = self.root
+        <span class="kw">while</span> n:
+            <span class="kw">if</span> key == n.key: <span class="kw">return</span> <span class="kw">True</span>
+            n = n.left <span class="kw">if</span> key < n.key <span class="kw">else</span> n.right
+        <span class="kw">return</span> <span class="kw">False</span>
+
+t = <span class="func">BST</span>()
+<span class="kw">for</span> v <span class="kw">in</span> [<span class="num">5</span>, <span class="num">3</span>, <span class="num">7</span>, <span class="num">1</span>, <span class="num">4</span>]: t.<span class="func">insert</span>(v)
+<span class="func">print</span>(t.<span class="func">contains</span>(<span class="num">4</span>))   <span class="comment"># True (平均 O(log n))</span></pre></div>
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// BFS：用 queue 走訪圖，找到由 start 出發各點的最短「邊數」</span>
+<span class="kw">function</span> <span class="func">BFS</span>(graph, start):
+    <span class="kw">let</span> visited = <span class="func">new Set</span>()
+    <span class="kw">let</span> queue = <span class="func">new Queue</span>()
+    <span class="func">queue.enqueue</span>(start)
+    <span class="func">visited.add</span>(start)
+    <span class="kw">while</span> <span class="kw">not</span> queue.empty():
+        <span class="kw">let</span> node = <span class="func">queue.dequeue</span>()
+        <span class="func">visit</span>(node)
+        <span class="kw">for</span> neighbor <span class="kw">in</span> graph[node]:
+            <span class="kw">if</span> neighbor <span class="kw">not in</span> visited:
+                <span class="func">visited.add</span>(neighbor)
+                <span class="func">queue.enqueue</span>(neighbor)</pre></div>
+</div>
+</section>
+
+<section class="quiz-section">
+<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">1. Stack 與 Queue 最關鍵的差異是？</p>
+<p data-lang="en">1. What is the key difference between a stack and a queue?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Stack 比 Queue 快</span><span data-lang="en">A. Stacks are faster than queues</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Stack 是 LIFO（後進先出），Queue 是 FIFO（先進先出）</span><span data-lang="en">B. Stack is LIFO; Queue is FIFO</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Stack 只能存整數，Queue 可存任何型別</span><span data-lang="en">C. Stacks only hold ints; queues hold any type</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Stack 用陣列實作，Queue 必須用 linked list</span><span data-lang="en">D. Stacks must use arrays; queues must use linked lists</span></div>
+</div><div class="quiz-feedback" id="fb1"></div></div>
+
+<div class="quiz-q" data-answer="0">
+<p data-lang="zh">2. Hash Table 處理碰撞的兩大策略是？</p>
+<p data-lang="en">2. The two main collision-resolution strategies in a hash table are?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Chaining（鏈結法）與 Open Addressing（開放定址）</span><span data-lang="en">A. Chaining and Open Addressing</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Bubble 與 Merge</span><span data-lang="en">B. Bubble and Merge</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Recursion 與 Iteration</span><span data-lang="en">C. Recursion and Iteration</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. BFS 與 DFS</span><span data-lang="en">D. BFS and DFS</span></div>
+</div><div class="quiz-feedback" id="fb2"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">3. 平衡 BST 上的搜尋平均時間複雜度是？</p>
+<p data-lang="en">3. The average search complexity on a balanced BST is?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. O(1)</span><span data-lang="en">A. O(1)</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. O(n)</span><span data-lang="en">B. O(n)</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. O(log n)</span><span data-lang="en">C. O(log n)</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. O(n²)</span><span data-lang="en">D. O(n²)</span></div>
+</div><div class="quiz-feedback" id="fb3"></div></div>
+</section>
+
+<nav class="page-nav">
+<a href="algorithms.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 10: 演算法與複雜度" data-en="Ch 10: Algorithms &amp; Complexity">Ch 10: 演算法與複雜度</span></a>
+<a href="software-eng.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 12: 軟體工程" data-en="Ch 12: Software Engineering">Ch 12: 軟體工程</span></a>
+</nav>
+</main>
+<footer class="site-footer">© Charlene — Introduction to Computer Science · Interactive Tutorial</footer>
+<script src="i18n.js"></script>
+<script>
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
+function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
+
+// Stack & Queue demo
+let stk=[], que=[], counter=1;
+const stackDisp=document.getElementById('stackDisp');
+const queueDisp=document.getElementById('queueDisp');
+function box(v){return '<div style="background:rgba(29,78,216,.85);color:white;padding:6px 10px;border-radius:4px;font-family:var(--font-mono);font-weight:600;">'+v+'</div>';}
+function renderStack(){stackDisp.innerHTML=stk.map(box).join('');}
+function renderQueue(){queueDisp.innerHTML=que.map(box).join('');}
+function stackPush(){if(stk.length>=6)return;stk.push(counter++);renderStack();}
+function stackPop(){stk.pop();renderStack();}
+function queueAdd(){if(que.length>=6)return;que.push(counter++);renderQueue();}
+function queueRemove(){que.shift();renderQueue();}
+renderStack();renderQueue();
+
+// Quiz feedback
+const QF={zh:{q1_y:'最後進來的元素最先被取出 → Stack；先進來的先離開 → Queue。',q1_n:'答案 B。',q2_y:'Chaining 在每個 bucket 維護一條 linked list；Open Addressing 則探測下一個空位。',q2_n:'答案 A。',q3_y:'平衡 BST (AVL / Red-Black) 樹高保證 O(log n)。',q3_n:'答案 C。'},en:{q1_y:'Latest in first out → Stack; first in first out → Queue.',q1_n:'Answer: B.',q2_y:'Chaining keeps a linked list per bucket; Open Addressing probes for the next empty slot.',q2_n:'Answer: A.',q3_y:'Balanced BSTs (AVL / Red-Black) guarantee O(log n) height.',q3_n:'Answer: C.'}};
+document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
+</script>
+</body></html>

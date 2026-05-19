@@ -1,0 +1,282 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ch 4: CPU 與計算機組織 — Intro CS</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head><body>
+<nav class="top-nav"><div class="top-nav-inner">
+  <a href="index.html" class="top-nav-brand"><span>💻</span> <span data-zh="計算機概論" data-en="Intro CS">計算機概論</span></a>
+  <ul class="top-nav-links"><li><a href="history.html">History</a></li><li><a href="data-rep.html">Data</a></li><li><a href="logic-gates.html">Logic</a></li><li><a href="cpu-arch.html" class="active">CPU</a></li><li><a href="memory.html">Memory</a></li><li><a href="os.html">OS</a></li><li><a href="networking.html">Net</a></li><li><a href="database.html">DB</a></li><li><a href="programming.html">Prog</a></li><li><a href="algorithms.html">Algo</a></li><li><a href="data-structures.html">DS</a></li><li><a href="software-eng.html">SWE</a></li><li><a href="security.html">Sec</a></li><li><a href="ai-ml.html">AI/ML</a></li><li><a href="cloud-iot.html">Cloud</a></li><li><a href="ethics-future.html">Ethics</a></li>
+    <li><a href="references/index.html" data-zh="📚 參考資料" data-en="📚 References">📚 參考資料</a></li>
+  </ul>
+</div></nav>
+<div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
+<header class="page-hero"><div class="step-badge">CHAPTER 4 / 16</div>
+<h1 data-zh="CPU 與計算機組織" data-en="CPU & Computer Organization">CPU 與計算機組織</h1>
+<p class="subtitle" data-lang="zh">CPU 是計算機的大腦——每秒可執行數十億次指令。本章拆解 von Neumann 架構、Fetch-Decode-Execute 週期、管線化、與 RISC/CISC、CPU/GPU 的設計權衡。</p>
+<p class="subtitle" data-lang="en">The CPU is the computer's brain — billions of instructions per second. This chapter unpacks the von Neumann model, fetch-decode-execute, pipelining, and the RISC/CISC and CPU/GPU trade-offs.</p>
+</header>
+<main class="content-wrap">
+
+<section class="section">
+<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
+<h2 data-zh="CPU 是怎麼運作的？" data-en="How does a CPU work?">CPU 是怎麼運作的？</h2>
+<div data-lang="zh"><p>中央處理單元 (<strong>Central Processing Unit, CPU</strong>) 是執行程式指令的核心晶片。一顆 2026 年的桌面 CPU 內含數百億顆電晶體，組成數十個核心，每秒可完成上兆 (10¹²) 次基本運算。</p>
+<p>無論是手機、伺服器、汽車 ECU 還是 AI 推論加速器，內部運作都遵循同一個套路：<strong>取指 (Fetch) → 解碼 (Decode) → 執行 (Execute) → 寫回 (Writeback)</strong>，俗稱「機器週期」。</p></div>
+<div data-lang="en"><p>The <strong>Central Processing Unit (CPU)</strong> is the chip that executes program instructions. A 2026 desktop CPU contains tens of billions of transistors organized into dozens of cores, performing trillions (10¹²) of basic operations per second.</p>
+<p>Whether it's a phone, server, car ECU, or AI accelerator, the routine is the same: <strong>Fetch → Decode → Execute → Writeback</strong> — the "machine cycle."</p></div>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<span data-lang="zh"><strong>核心觀念：</strong>CPU 並不「理解」程式，它只是不斷讀取記憶體裡的 0/1，按照硬體電路的規則動作。所謂「智慧」來自程式設計師寫的指令序列。</span>
+<span data-lang="en"><strong>Core idea:</strong> A CPU does not "understand" programs — it just reads 0/1 from memory and reacts per hardware rules. The "intelligence" comes from the programmer's instruction sequence.</span>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="架構" data-en="ARCHITECTURE">兩大架構</div>
+<h2 data-zh="一、von Neumann vs Harvard 架構" data-en="I. von Neumann vs Harvard">一、von Neumann vs Harvard 架構</h2>
+<table class="comp-table">
+<thead><tr><th data-zh="特性" data-en="Feature">特性</th><th>von Neumann</th><th>Harvard</th></tr></thead>
+<tbody>
+<tr><td data-lang="zh">指令與資料記憶體</td><td data-lang="en">Instruction &amp; data memory</td><td data-lang="zh">共用同一記憶體</td><td data-lang="zh">分開存放</td></tr>
+<tr><td data-lang="zh">匯流排</td><td data-lang="en">Buses</td><td data-lang="zh">單條（瓶頸）</td><td data-lang="zh">分離（指令+資料可同時讀）</td></tr>
+<tr><td data-lang="zh">代表應用</td><td data-lang="en">Typical use</td><td>PC、伺服器、智慧手機</td><td>微控制器、DSP、AI 加速器</td></tr>
+<tr><td data-lang="zh">優點</td><td data-lang="en">Pros</td><td data-lang="zh">設計簡單、彈性高</td><td data-lang="zh">效能高、可同時取指與資料</td></tr>
+<tr><td data-lang="zh">缺點</td><td data-lang="en">Cons</td><td data-lang="zh">"von Neumann 瓶頸"</td><td data-lang="zh">硬體成本高</td></tr>
+</tbody></table>
+<div data-lang="zh"><p>實務上，現代 CPU 是「<strong>修改型 Harvard</strong>」：主記憶體共用（von Neumann），但 L1 cache 分為 L1-I（指令）和 L1-D（資料），兼具兩者優點。</p></div>
+<div data-lang="en"><p>In practice, modern CPUs are <strong>modified Harvard</strong>: main memory is shared (von Neumann), but L1 cache splits into L1-I (instruction) and L1-D (data) — best of both.</p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="五大組件" data-en="FIVE COMPONENTS">CPU 五大組件</div>
+<h2 data-zh="二、CPU 五大組件" data-en="II. The Five CPU Components">二、CPU 五大組件</h2>
+<div class="card-grid cols-3">
+<div class="card"><h4>🧮 ALU (算術邏輯單元)</h4><div data-lang="zh"><p>Arithmetic Logic Unit：執行加減乘除、比較、AND/OR/XOR 等運算。現代 CPU 含多個 ALU 與一個獨立 FPU（浮點單元）。</p></div><div data-lang="en"><p>Arithmetic Logic Unit — performs add, sub, mul, div, compare, AND/OR/XOR. Modern CPUs have several ALUs and a separate FPU (float unit).</p></div></div>
+<div class="card"><h4>🎛️ Control Unit (控制單元)</h4><div data-lang="zh"><p>解碼指令、發送控制訊號協調其他單元。可視為 CPU 的「交通指揮」。</p></div><div data-lang="en"><p>Decodes instructions and emits control signals coordinating every other unit. Think of it as the CPU's traffic cop.</p></div></div>
+<div class="card"><h4>📥 Registers (暫存器)</h4><div data-lang="zh"><p>CPU 內部最快的儲存單元，僅幾十到幾百個，但存取只需 1 個時脈週期。x86-64 有 16 個通用暫存器；ARM64 有 31 個。</p></div><div data-lang="en"><p>The fastest storage inside a CPU — dozens to hundreds of slots, accessed in 1 cycle. x86-64 has 16 general-purpose registers; ARM64 has 31.</p></div></div>
+<div class="card"><h4>📌 Program Counter (PC)</h4><div data-lang="zh"><p>儲存「下一條要執行的指令位址」。每執行一條指令就自動加 4（32-bit）或 8（64-bit），跳轉指令會直接改寫它。</p></div><div data-lang="en"><p>Holds the address of the next instruction. Auto-increments by 4 (32-bit) or 8 (64-bit) per cycle; jumps rewrite it directly.</p></div></div>
+<div class="card"><h4>📋 Instruction Register (IR)</h4><div data-lang="zh"><p>暫存當前正在執行的指令，供 Control Unit 解碼。</p></div><div data-lang="en"><p>Holds the instruction currently being decoded by the Control Unit.</p></div></div>
+<div class="card"><h4>💨 Cache</h4><div data-lang="zh"><p>L1 / L2 / L3 多級快取，緩衝 CPU 與主記憶體之間的速度差距（Ch 5 詳述）。</p></div><div data-lang="en"><p>Multi-level L1/L2/L3 caches that bridge the CPU-DRAM speed gap (see Ch 5).</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="機器週期" data-en="MACHINE CYCLE">Fetch-Decode-Execute</div>
+<h2 data-zh="三、機器週期：Fetch → Decode → Execute" data-en="III. Machine Cycle: Fetch → Decode → Execute">三、機器週期</h2>
+<div class="workflow">
+<div class="workflow-step" data-step="1"><h4 data-zh="① 取指 (Fetch)" data-en="① Fetch">① Fetch</h4>
+<div data-lang="zh"><p>Control Unit 根據 PC 的位址，從記憶體（或 L1-I cache）讀出指令，存入 IR。PC 自動加 4。</p></div>
+<div data-lang="en"><p>Control unit uses PC to read an instruction from memory (or L1-I cache) into IR. PC auto-increments by 4.</p></div></div>
+<div class="workflow-step" data-step="2"><h4 data-zh="② 解碼 (Decode)" data-en="② Decode">② Decode</h4>
+<div data-lang="zh"><p>把 IR 中的 0/1 譯成「動作」：是加法？要讀哪個暫存器？要寫回哪？產生控制訊號。</p></div>
+<div data-lang="en"><p>Translate IR bits into actions: which op? which registers? where to write? Produce control signals.</p></div></div>
+<div class="workflow-step" data-step="3"><h4 data-zh="③ 執行 (Execute)" data-en="③ Execute">③ Execute</h4>
+<div data-lang="zh"><p>ALU 完成運算；分支指令會比較條件並設旗標。</p></div>
+<div data-lang="en"><p>ALU performs the operation; branch instructions compare and set flags.</p></div></div>
+<div class="workflow-step" data-step="4"><h4 data-zh="④ 存取記憶體 (Memory)" data-en="④ Memory">④ Memory</h4>
+<div data-lang="zh"><p>load/store 指令會在此階段讀寫主記憶體；非記憶體指令直接跳過。</p></div>
+<div data-lang="en"><p>Load/store instructions read or write main memory; others skip this stage.</p></div></div>
+<div class="workflow-step" data-step="5"><h4 data-zh="⑤ 寫回 (Writeback)" data-en="⑤ Writeback">⑤ Writeback</h4>
+<div data-lang="zh"><p>運算結果寫回目的暫存器。週期結束，回到 Fetch。</p></div>
+<div data-lang="en"><p>Write the result back to the destination register. End of cycle — return to Fetch.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="管線化" data-en="PIPELINING">管線化與危險</div>
+<h2 data-zh="四、5-stage Pipeline 與 Hazards" data-en="IV. 5-Stage Pipeline & Hazards">四、管線化 (Pipelining)</h2>
+<div data-lang="zh"><p>若一條指令花 5 個週期，CPU 每 5 cycle 才完成一條，太慢。<strong>管線化</strong>把五個階段重疊：第 1 條指令在 Execute 時，第 2 條在 Decode、第 3 條在 Fetch——理想上 <strong>每 cycle 完成 1 條指令</strong>（IPC=1），效能提升 5 倍。</p>
+<p>但管線會遇到三種「危險 (hazard)」：</p>
+<ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
+<li><strong>資料危險 (Data hazard)</strong>：後一條指令需要前一條尚未寫回的結果 → 用<em>轉送 (forwarding)</em>或插入<em>氣泡 (bubble)</em>。</li>
+<li><strong>控制危險 (Control hazard)</strong>：遇到分支，不確定下一條該取哪個位址 → 用<em>分支預測 (branch prediction)</em>，2026 年高階 CPU 預測準確率 &gt; 98%。</li>
+<li><strong>結構危險 (Structural hazard)</strong>：兩條指令同時需要同一硬體資源 → 增加單元或排程。</li>
+</ul></div>
+<div data-lang="en"><p>If one instruction takes 5 cycles, completing one every 5 cycles is too slow. <strong>Pipelining</strong> overlaps stages: while instruction 1 is in Execute, 2 is in Decode, 3 in Fetch — ideally <strong>1 instruction per cycle</strong> (IPC=1), a 5× speedup.</p>
+<p>Three classic <strong>hazards</strong>:</p>
+<ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
+<li><strong>Data hazard</strong>: a later instruction needs a result not yet written back → use <em>forwarding</em> or insert a <em>bubble</em>.</li>
+<li><strong>Control hazard</strong>: branches make next-fetch ambiguous → use <em>branch prediction</em> (2026 high-end CPUs &gt; 98% accurate).</li>
+<li><strong>Structural hazard</strong>: two instructions need the same hardware → add units or schedule around it.</li>
+</ul></div>
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>Spectre / Meltdown (2018)：</strong>分支預測的「投機執行」造成了史上最嚴重的 CPU 漏洞，幾乎所有 1995 年後的 CPU 都受影響。修補方案使部分指令慢了 5%–30%。</div>
+<div data-lang="en"><strong>Spectre / Meltdown (2018):</strong> Speculative execution behind branch prediction caused the worst CPU vulnerabilities ever — nearly every CPU since 1995 was affected. Mitigations slowed some workloads by 5–30%.</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動比較" data-en="INTERACTIVE">2026 CPU/GPU 規格</div>
+<h2 data-zh="五、互動：2026 旗艦處理器規格比較" data-en="V. Interactive: 2026 Flagship Chip Comparison">五、2026 旗艦處理器比較</h2>
+<div data-lang="zh"><p>下圖比較 2026 年四款代表性處理器在<strong>核心數</strong>、<strong>最高時脈 (GHz)</strong> 與 <strong>TDP (W)</strong> 三項規格上的差異。NVIDIA H100 是 GPU——核心極多 (14592 CUDA cores)、單一時脈低；CPU 則時脈高、核心少。</p></div>
+<div data-lang="en"><p>The chart compares four representative 2026 processors on <strong>cores</strong>, <strong>boost clock (GHz)</strong>, and <strong>TDP (W)</strong>. NVIDIA H100 is a GPU — many cores (14592 CUDA), lower clock; CPUs have higher clocks but fewer cores.</p></div>
+<div class="interactive-panel">
+<div class="chart-container"><canvas id="cpuChart"></canvas></div>
+<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">資料：廠商規格表，2026-05。GPU CUDA cores 為計算單元，與 CPU 核心定義不同，僅作量級對照。</span><span data-lang="en">Source: vendor spec sheets, 2026-05. GPU CUDA cores are compute lanes, not directly comparable to CPU cores — order-of-magnitude only.</span></p>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">選對處理器</div>
+<h2 data-zh="六、決策樹：選 CPU 還是 GPU？x86 還是 ARM？" data-en="VI. Decision Tree: CPU vs GPU? x86 vs ARM?">六、選對處理器</h2>
+<div class="decision-tree">
+<h4>🌳 <span data-zh="處理器選用決策樹" data-en="Processor Choice Decision Tree">處理器選用決策樹</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>工作負載「高度可平行、矩陣運算為主」？<span class="dt-arrow">→ 是 →</span> <strong>GPU</strong>（AI 訓練、影像處理、科學模擬）。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>需要「低延遲、分支複雜的序列邏輯」？<span class="dt-arrow">→ 是 →</span> <strong>CPU</strong>（資料庫、編譯器、作業系統）。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>「行動裝置 / 電池供電」？<span class="dt-arrow">→ 是 →</span> <strong>ARM</strong>（功耗低、效率高，Apple M、Qualcomm、AWS Graviton）。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>「需相容 Windows 應用 / 老牌 x86 軟體」？<span class="dt-arrow">→ 是 →</span> <strong>x86</strong>（Intel、AMD）。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>「LLM 推論在邊緣裝置」？<span class="dt-arrow">→ 是 →</span> <strong>NPU</strong>（Apple Neural Engine、Qualcomm Hexagon、Intel AI Boost）。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Highly parallel matrix workload? <span class="dt-arrow">→ Yes →</span> <strong>GPU</strong> (AI training, graphics, scientific simulation).</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Low-latency, branchy sequential logic? <span class="dt-arrow">→ Yes →</span> <strong>CPU</strong> (databases, compilers, OS).</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Mobile / battery-powered? <span class="dt-arrow">→ Yes →</span> <strong>ARM</strong> (low power, high efficiency — Apple M, Qualcomm, AWS Graviton).</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Need Windows / legacy x86 compatibility? <span class="dt-arrow">→ Yes →</span> <strong>x86</strong> (Intel, AMD).</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>LLM inference on-device? <span class="dt-arrow">→ Yes →</span> <strong>NPU</strong> (Apple Neural Engine, Qualcomm Hexagon, Intel AI Boost).</div></div>
+</div>
+</div>
+
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<div data-lang="zh"><strong>2026 趨勢：</strong>① <strong>chiplet</strong>（多顆小晶粒封裝在一起，良率高、可混搭製程）；② <strong>3D 堆疊</strong>（TSMC SoIC、Intel Foveros、AMD 3D V-Cache）；③ <strong>NPU</strong> 已內建於消費級 CPU；④ <strong>RISC-V</strong> 開源指令集快速崛起（嵌入式、AI 加速器、印度政府力推）。</div>
+<div data-lang="en"><strong>2026 trends:</strong> (1) <strong>chiplets</strong> — multiple smaller dies in one package (better yield, mixed process); (2) <strong>3D stacking</strong> (TSMC SoIC, Intel Foveros, AMD 3D V-Cache); (3) <strong>NPUs</strong> now standard in consumer CPUs; (4) <strong>RISC-V</strong> open ISA surging in embedded, AI accelerators, and government-backed Indian/EU chips.</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="效能指標" data-en="METRICS">效能指標</div>
+<h2 data-zh="七、性能指標 & RISC vs CISC" data-en="VII. Performance Metrics & RISC vs CISC">七、性能指標</h2>
+<table class="comp-table">
+<thead><tr><th data-zh="指標" data-en="Metric">指標</th><th data-zh="定義" data-en="Definition">定義</th><th data-zh="典型值 (2026)" data-en="Typical (2026)">典型值</th></tr></thead>
+<tbody>
+<tr><td>Clock</td><td data-lang="zh">時脈頻率</td><td data-lang="en">Clock frequency</td><td>3–6 GHz</td></tr>
+<tr><td>IPC</td><td data-lang="zh">每週期指令數</td><td data-lang="en">Instructions per cycle</td><td>4–8</td></tr>
+<tr><td>MIPS</td><td data-lang="zh">百萬指令/秒</td><td data-lang="en">Million instructions/sec</td><td>~10⁵ MIPS</td></tr>
+<tr><td>FLOPS</td><td data-lang="zh">浮點運算/秒</td><td data-lang="en">Floating-point ops/sec</td><td>CPU ~1 TFLOPS / GPU ~1 PFLOPS</td></tr>
+<tr><td>TDP</td><td data-lang="zh">熱設計功耗</td><td data-lang="en">Thermal Design Power</td><td>15 W (筆電) – 700 W (H100)</td></tr>
+</tbody></table>
+<table class="comp-table" style="margin-top:18px;">
+<thead><tr><th></th><th>RISC</th><th>CISC</th></tr></thead>
+<tbody>
+<tr><td data-lang="zh">指令集大小</td><td data-lang="en">ISA size</td><td data-lang="zh">少 (~100 條)、定長</td><td data-lang="zh">多 (~1500 條)、變長</td></tr>
+<tr><td data-lang="zh">每指令週期</td><td data-lang="en">Cycles/instr</td><td>1（單純）</td><td data-lang="zh">數個（複雜）</td></tr>
+<tr><td data-lang="zh">代表架構</td><td data-lang="en">Examples</td><td>ARM、RISC-V、MIPS</td><td>x86 / x86-64</td></tr>
+<tr><td data-lang="zh">優勢</td><td data-lang="en">Strength</td><td data-lang="zh">省電、易管線化</td><td data-lang="zh">向後相容、單指令做更多事</td></tr>
+</tbody></table>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
+<h2 data-zh="八、Python：量測你 CPU 的單核心吞吐量" data-en="VIII. Python: Measure Your CPU's Single-Core Throughput">八、動手試</h2>
+<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># 量測 CPU 單核加法吞吐量 / Measure single-core add throughput</span>
+<span class="kw">import</span> time
+
+N = <span class="num">10_000_000</span>
+start = time.<span class="func">perf_counter</span>()
+total = <span class="num">0</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="func">range</span>(N):
+    total += i
+elapsed = time.<span class="func">perf_counter</span>() - start
+
+<span class="func">print</span>(<span class="str">f"{N:,} adds in {elapsed:.3f}s"</span>)
+<span class="func">print</span>(<span class="str">f"≈ {N/elapsed/1e6:.1f} M adds/sec"</span>)
+<span class="comment"># 純 Python ~50M/s；NumPy 向量化可達 ~5000M/s（用 SIMD）</span>
+<span class="comment"># Pure Python ~50M/s; NumPy vectorized ~5000M/s (uses SIMD)</span>
+
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+a = np.<span class="func">arange</span>(N, dtype=<span class="str">'int64'</span>)
+start = time.<span class="func">perf_counter</span>()
+total = a.<span class="func">sum</span>()
+elapsed = time.<span class="func">perf_counter</span>() - start
+<span class="func">print</span>(<span class="str">f"NumPy sum: {N/elapsed/1e9:.2f} G ops/sec"</span>)
+
+<span class="comment"># 觀察分支預測效果 / Observe branch prediction</span>
+<span class="comment"># 已排序陣列 → 分支可預測 → 快；隨機陣列 → 預測失敗 → 慢 2–3 倍</span>
+<span class="comment"># Sorted array → predictable branches; random → 2-3× slowdown</span></pre></div>
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// Fetch-Decode-Execute 主迴圈 / Machine cycle main loop</span>
+<span class="kw">while</span> CPU is running:
+    instr = MEMORY[PC]              <span class="comment">// ① Fetch</span>
+    PC = PC + <span class="num">4</span>
+    (op, rs, rt, rd) = <span class="func">Decode</span>(instr) <span class="comment">// ② Decode</span>
+    <span class="kw">switch</span> op:                      <span class="comment">// ③ Execute</span>
+        <span class="kw">case</span> ADD:  REG[rd] = REG[rs] + REG[rt]
+        <span class="kw">case</span> SUB:  REG[rd] = REG[rs] − REG[rt]
+        <span class="kw">case</span> LOAD: REG[rd] = MEMORY[REG[rs]]   <span class="comment">// ④ Memory</span>
+        <span class="kw">case</span> STORE: MEMORY[REG[rs]] = REG[rt]
+        <span class="kw">case</span> BEQ:  <span class="kw">if</span> REG[rs] == REG[rt]: PC = target
+    <span class="comment">// ⑤ Writeback already happened above</span></pre></div>
+</div>
+</section>
+
+<section class="quiz-section">
+<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">1. 5-stage pipeline 中，「分支指令導致下一條取錯位址」屬於哪種危險？</p>
+<p data-lang="en">1. In a 5-stage pipeline, "a branch makes the next fetch ambiguous" is which kind of hazard?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 資料危險 (Data hazard)</span><span data-lang="en">A. Data hazard</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 控制危險 (Control hazard)</span><span data-lang="en">B. Control hazard</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 結構危險 (Structural hazard)</span><span data-lang="en">C. Structural hazard</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 熱危險 (Thermal hazard)</span><span data-lang="en">D. Thermal hazard</span></div>
+</div><div class="quiz-feedback" id="fb1"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">2. 下列關於 RISC vs CISC 的敘述，何者正確？</p>
+<p data-lang="en">2. Which RISC vs CISC statement is correct?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. RISC 指令多、CISC 指令少</span><span data-lang="en">A. RISC has more instructions; CISC has fewer</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. x86 是 RISC、ARM 是 CISC</span><span data-lang="en">B. x86 is RISC; ARM is CISC</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. RISC 指令定長、易管線化，常見於行動裝置</span><span data-lang="en">C. RISC has fixed-length instructions, pipelines easily, common in mobile</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. RISC 完全淘汰 CISC，x86 已停止生產</span><span data-lang="en">D. RISC has replaced CISC; x86 is discontinued</span></div>
+</div><div class="quiz-feedback" id="fb2"></div></div>
+
+<div class="quiz-q" data-answer="3">
+<p data-lang="zh">3. von Neumann 瓶頸 (bottleneck) 指的是什麼？</p>
+<p data-lang="en">3. What is the "von Neumann bottleneck"?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. CPU 過熱無法繼續執行</span><span data-lang="en">A. CPU overheats and stops</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. GPU 與 CPU 通訊速度太慢</span><span data-lang="en">B. GPU-CPU link is too slow</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 記憶體容量永遠不夠</span><span data-lang="en">C. Memory capacity is never enough</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 指令與資料共用一條匯流排，造成 CPU 等待記憶體</span><span data-lang="en">D. Instructions and data share one bus, leaving the CPU waiting on memory</span></div>
+</div><div class="quiz-feedback" id="fb3"></div></div>
+</section>
+
+<nav class="page-nav">
+<a href="logic-gates.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 3: 數位邏輯與布林代數" data-en="Ch 3: Digital Logic &amp; Boolean Algebra">Ch 3: 數位邏輯與布林代數</span></a>
+<a href="memory.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 5: 記憶體階層與儲存" data-en="Ch 5: Memory Hierarchy &amp; Storage">Ch 5: 記憶體階層與儲存</span></a>
+</nav>
+</main>
+<footer class="site-footer">© Charlene — Introduction to Computer Science · Interactive Tutorial</footer>
+<script src="i18n.js"></script>
+<script>
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
+function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
+
+// 2026 processor comparison
+const cpuData = {
+  labels: ['Intel Core Ultra 9 285K','Apple M4 Max','AMD Ryzen 9 9950X','NVIDIA H100 (GPU)'],
+  cores: [24, 16, 16, 14592],
+  clock: [5.7, 4.5, 5.7, 1.98],
+  tdp:   [125, 40, 170, 700]
+};
+new Chart(document.getElementById('cpuChart'),{
+  type:'bar',
+  data:{labels:cpuData.labels,datasets:[
+    {label:'Cores (log)',data:cpuData.cores.map(c=>Math.log10(c)),backgroundColor:'rgba(29,78,216,.75)',yAxisID:'y'},
+    {label:'Clock (GHz)',data:cpuData.clock,backgroundColor:'rgba(218,165,32,.85)',yAxisID:'y'},
+    {label:'TDP (W, log)',data:cpuData.tdp.map(t=>Math.log10(t)),backgroundColor:'rgba(220,38,38,.75)',yAxisID:'y'}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{tooltip:{callbacks:{label:(c)=>{const i=c.dataIndex,lbl=c.dataset.label;
+      if(lbl.includes('Cores')) return 'Cores: '+cpuData.cores[i].toLocaleString();
+      if(lbl.includes('Clock')) return 'Clock: '+cpuData.clock[i]+' GHz';
+      return 'TDP: '+cpuData.tdp[i]+' W';
+    }}}},
+    scales:{y:{title:{display:true,text:'log-scaled mixed metric'}}}}
+});
+
+// Quiz
+const QF={zh:{q1_y:'分支去向未知 → 取指錯誤 → 控制危險。',q1_n:'答案 B。',q2_y:'RISC 指令簡單、定長、易管線；ARM/RISC-V 主導行動與嵌入式。',q2_n:'答案 C。',q3_y:'von Neumann 共用匯流排造成指令與資料無法同時取——這就是瓶頸的本質。',q3_n:'答案 D。'},en:{q1_y:'Unknown branch target → wrong fetch → control hazard.',q1_n:'Answer: B.',q2_y:'RISC has simple, fixed-length, pipeline-friendly instructions; ARM/RISC-V dominate mobile and embedded.',q2_n:'Answer: C.',q3_y:'Sharing one bus prevents simultaneous instruction+data access — that is the bottleneck.',q3_n:'Answer: D.'}};
+document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
+</script>
+</body></html>

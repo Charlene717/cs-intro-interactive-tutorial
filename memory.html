@@ -1,0 +1,292 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ch 5: 記憶體階層與儲存 — Intro CS</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head><body>
+<nav class="top-nav"><div class="top-nav-inner">
+  <a href="index.html" class="top-nav-brand"><span>💻</span> <span data-zh="計算機概論" data-en="Intro CS">計算機概論</span></a>
+  <ul class="top-nav-links"><li><a href="history.html">History</a></li><li><a href="data-rep.html">Data</a></li><li><a href="logic-gates.html">Logic</a></li><li><a href="cpu-arch.html">CPU</a></li><li><a href="memory.html" class="active">Memory</a></li><li><a href="os.html">OS</a></li><li><a href="networking.html">Net</a></li><li><a href="database.html">DB</a></li><li><a href="programming.html">Prog</a></li><li><a href="algorithms.html">Algo</a></li><li><a href="data-structures.html">DS</a></li><li><a href="software-eng.html">SWE</a></li><li><a href="security.html">Sec</a></li><li><a href="ai-ml.html">AI/ML</a></li><li><a href="cloud-iot.html">Cloud</a></li><li><a href="ethics-future.html">Ethics</a></li>
+    <li><a href="references/index.html" data-zh="📚 參考資料" data-en="📚 References">📚 參考資料</a></li>
+  </ul>
+</div></nav>
+<div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
+<header class="page-hero"><div class="step-badge">CHAPTER 5 / 16</div>
+<h1 data-zh="記憶體階層與儲存" data-en="Memory Hierarchy & Storage">記憶體階層與儲存</h1>
+<p class="subtitle" data-lang="zh">為什麼一台電腦需要 6 種不同的儲存？因為「快、大、便宜」三者不可兼得。本章揭開金字塔結構、快取局部性與虛擬記憶體的設計巧思。</p>
+<p class="subtitle" data-lang="en">Why does one computer have six kinds of storage? Because "fast, big, cheap" cannot all coexist. This chapter unpacks the memory pyramid, cache locality, and virtual memory.</p>
+</header>
+<main class="content-wrap">
+
+<section class="section">
+<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
+<h2 data-zh="記憶體階層的根本矛盾" data-en="The Fundamental Trade-off">記憶體階層的根本矛盾</h2>
+<div data-lang="zh"><p>設計儲存系統有「<strong>不可能三角</strong>」：<strong>快</strong>、<strong>大</strong>、<strong>便宜</strong>三者頂多只能取兩個。SRAM 快但貴又小，磁帶大又便宜但慢得像蝸牛。工程師的解法是「<strong>分層</strong>」：把最常用的少量資料放在快速但小的層，整體資料放在慢但大的層。透過<strong>局部性原理</strong>，大多數存取都能命中最快的層。</p>
+<p>2026 年一台典型電腦的速度差距：CPU 暫存器存取 &lt; 1 ns，但讀 1 PB 磁帶可能要幾分鐘——<strong>9 個數量級</strong>的差異！</p></div>
+<div data-lang="en"><p>Storage systems have an "<strong>impossible triangle</strong>": you can pick at most two of <strong>fast / large / cheap</strong>. SRAM is fast but pricey and tiny; tape is huge and cheap but glacially slow. The engineering answer is the <strong>hierarchy</strong>: hot data in small fast layers, cold data in big slow layers. Thanks to <strong>locality of reference</strong>, most accesses hit the top.</p>
+<p>The 2026 speed spread: a CPU register access takes &lt; 1 ns, while reading 1 PB from tape can take minutes — <strong>9 orders of magnitude</strong>.</p></div>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<span data-lang="zh"><strong>核心觀念：</strong>整個 OS 與 CPU 的「記憶體管理」其實是在玩「猜熱資料」的遊戲——猜對則快，猜錯則慢千百倍。</span>
+<span data-lang="en"><strong>Core idea:</strong> OS and CPU memory management is essentially a game of "guess the hot data." A right guess is fast; a miss can be 100×–1000× slower.</span>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="金字塔" data-en="THE PYRAMID">記憶體金字塔</div>
+<h2 data-zh="一、六層記憶體金字塔" data-en="I. The Six-Level Memory Pyramid">一、六層記憶體金字塔</h2>
+<table class="comp-table">
+<thead><tr><th data-zh="層" data-en="Layer">層</th><th data-zh="技術" data-en="Tech">技術</th><th data-zh="存取延遲" data-en="Latency">延遲</th><th data-zh="典型容量" data-en="Capacity">容量</th><th data-zh="每 GB 成本" data-en="$/GB (2026)">每 GB 成本</th></tr></thead>
+<tbody>
+<tr><td>① Registers</td><td>SRAM (CPU 內)</td><td>~0.3 ns</td><td>1 KB</td><td>—</td></tr>
+<tr><td>② L1 Cache</td><td>SRAM</td><td>~1 ns</td><td>64 KB / 核心</td><td>~$1000</td></tr>
+<tr><td>③ L2 Cache</td><td>SRAM</td><td>~3 ns</td><td>1 MB / 核心</td><td>~$200</td></tr>
+<tr><td>④ L3 Cache</td><td>SRAM</td><td>~10 ns</td><td>32–128 MB</td><td>~$50</td></tr>
+<tr><td>⑤ Main Memory</td><td>DRAM / HBM3e</td><td>~80 ns / ~20 ns</td><td>16 GB–1 TB</td><td>~$2 / ~$10</td></tr>
+<tr><td>⑥ NVMe SSD</td><td>3D NAND Flash</td><td>~50 µs</td><td>1–8 TB</td><td>~$0.05</td></tr>
+<tr><td>⑦ HDD</td><td data-lang="zh">機械硬碟</td><td>~5 ms</td><td>4–24 TB</td><td>~$0.015</td></tr>
+<tr><td>⑧ Tape (LTO-10)</td><td data-lang="zh">磁帶（離線）</td><td data-lang="zh">~分鐘（裝載）</td><td>30 TB / 卷</td><td>~$0.005</td></tr>
+</tbody></table>
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>數量級對比：</strong>若 L1 cache 像「伸手拿桌上的杯子」(1 秒)，那 DRAM 就像「下樓買咖啡」(80 秒)、SSD 像「搭飛機去鄰國取貨」(2 週)、磁帶就像「等船從遠洋運回」(數十年)。<strong>I/O 速度差異徹底主宰了系統設計</strong>。</div>
+<div data-lang="en"><strong>Order of magnitude:</strong> If an L1 hit feels like "grabbing a cup on your desk" (1 sec), then DRAM is "walking downstairs for coffee" (80 sec), SSD is "flying abroad for a parcel" (2 weeks), and tape is "waiting for a transoceanic shipment" (decades). <strong>I/O gaps dictate system design.</strong></div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動圖表" data-en="INTERACTIVE">延遲對數圖</div>
+<h2 data-zh="二、互動：各層延遲（對數刻度）" data-en="II. Interactive: Latency by Layer (log scale)">二、延遲對比圖</h2>
+<div data-lang="zh"><p>下圖用對數刻度顯示從 CPU 暫存器到磁帶的存取延遲，跨越 <strong>10⁹ 倍</strong>。可以理解為何 cache miss 對程式效能殺傷力如此巨大——一次「L1 → DRAM」的跌落，等於一秒對八十秒的差距。</p></div>
+<div data-lang="en"><p>The chart below plots access latency from registers to tape on a log scale — spanning <strong>10⁹×</strong>. A cache miss from L1 to DRAM alone is like a 1-second vs 80-second gap.</p></div>
+<div class="interactive-panel">
+<div class="chart-container"><canvas id="latencyChart"></canvas></div>
+<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">數據近似值（2026 旗艦消費級平台）。HBM3e 用於 H100/B100 GPU 與部分 CPU。</span><span data-lang="en">Approximate values (2026 flagship consumer platform). HBM3e is used in H100/B100 GPUs and select CPUs.</span></p>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="記憶體類型" data-en="MEMORY TYPES">DRAM / SRAM / ROM / Flash</div>
+<h2 data-zh="三、四大記憶體類型" data-en="III. Four Memory Types">三、四大記憶體類型</h2>
+<table class="comp-table">
+<thead><tr><th data-zh="類型" data-en="Type">類型</th><th data-zh="揮發性" data-en="Volatile?">揮發性</th><th data-zh="速度" data-en="Speed">速度</th><th data-zh="特性" data-en="Note">特性</th></tr></thead>
+<tbody>
+<tr><td>SRAM</td><td data-lang="zh">揮發</td><td data-lang="en">Volatile</td><td>~1 ns</td><td data-lang="zh">6 顆電晶體/bit；用於 cache</td><td data-lang="en">6T per bit; used in cache</td></tr>
+<tr><td>DRAM</td><td data-lang="zh">揮發</td><td data-lang="en">Volatile</td><td>~80 ns</td><td data-lang="zh">1T+1C/bit；需 refresh；用於主記憶體</td><td data-lang="en">1T+1C per bit; needs refresh; main memory</td></tr>
+<tr><td>ROM / EEPROM</td><td data-lang="zh">非揮發</td><td data-lang="en">Non-volatile</td><td>~50 ns</td><td data-lang="zh">寫入難；存 BIOS / 韌體</td><td data-lang="en">Hard to write; stores BIOS / firmware</td></tr>
+<tr><td>Flash (NAND/NOR)</td><td data-lang="zh">非揮發</td><td data-lang="en">Non-volatile</td><td>~50 µs</td><td data-lang="zh">塊讀寫；SSD/隨身碟/手機儲存</td><td data-lang="en">Block r/w; SSD, USB, phone storage</td></tr>
+</tbody></table>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="快取與局部性" data-en="CACHE & LOCALITY">Cache 設計核心</div>
+<h2 data-zh="四、Cache 設計：局部性與 3C miss" data-en="IV. Cache Design: Locality and the 3 Cs">四、Cache 與局部性</h2>
+<div data-lang="zh"><p>Cache 之所以有效，靠的是「<strong>程式的存取模式並不隨機</strong>」這個經驗事實：</p>
+<ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
+<li><strong>時間局部性 (Temporal locality)</strong>：剛存取過的位址，很快又會被存取（如迴圈變數）。</li>
+<li><strong>空間局部性 (Spatial locality)</strong>：剛存取的位址附近，很快也會被存取（如陣列走訪）。</li>
+</ul>
+<p>因此 cache 一次搬「<strong>一條 cache line</strong>」(64 B)，不只搬目標位元組。Cache 的「<strong>關聯性 (associativity)</strong>」決定每條 line 能放哪幾個位置：direct-mapped 最快但衝突高、fully-associative 最靈活但硬體貴、現代 CPU 多用 <strong>4–16 way set-associative</strong>。</p>
+<p>當資料不在 cache，就發生 <strong>cache miss</strong>，分為三大類（3C）：</p></div>
+<div data-lang="en"><p>Caches work because <strong>access patterns are not random</strong>:</p>
+<ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
+<li><strong>Temporal locality</strong>: addresses just accessed are likely accessed again soon (e.g., loop counter).</li>
+<li><strong>Spatial locality</strong>: addresses near a recent access are likely next (e.g., array traversal).</li>
+</ul>
+<p>So caches move <strong>a whole cache line</strong> (64 B), not just the target byte. <strong>Associativity</strong> sets how many lines can map to the same slot: direct-mapped is fastest but conflict-prone, fully-associative is flexible but expensive — modern CPUs use <strong>4–16-way set-associative</strong>.</p>
+<p>When data isn't in cache, you get a <strong>cache miss</strong>, in three classic flavors (the 3 Cs):</p></div>
+<table class="comp-table">
+<thead><tr><th>Miss</th><th data-zh="名稱" data-en="Name">名稱</th><th data-zh="原因" data-en="Cause">原因</th><th data-zh="緩解" data-en="Mitigation">緩解</th></tr></thead>
+<tbody>
+<tr><td><strong>Compulsory</strong></td><td data-lang="zh">強制 / 首次未命中</td><td data-lang="en">First-time / cold</td><td data-lang="zh">第一次存取必發生</td><td data-lang="zh">prefetch、加大 cache line</td></tr>
+<tr><td><strong>Capacity</strong></td><td data-lang="zh">容量未命中</td><td data-lang="en">Capacity</td><td data-lang="zh">工作集 &gt; cache 大小</td><td data-lang="zh">加大 cache、改演算法 (blocking)</td></tr>
+<tr><td><strong>Conflict</strong></td><td data-lang="zh">衝突未命中</td><td data-lang="en">Conflict</td><td data-lang="zh">多個位址映射到同一 set</td><td data-lang="zh">提高 associativity、改記憶體佈局</td></tr>
+</tbody></table>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="虛擬記憶體" data-en="VIRTUAL MEMORY">分頁與 MMU</div>
+<h2 data-zh="五、虛擬記憶體：Page、Page Table、TLB" data-en="V. Virtual Memory: Pages, Page Table, TLB">五、虛擬記憶體</h2>
+<div data-lang="zh"><p>虛擬記憶體讓每個程式以為自己「獨占」整個 64-bit 位址空間，實際上：</p>
+<ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
+<li>記憶體切成固定大小的 <strong>page</strong>（通常 4 KB；大頁 2 MB / 1 GB）。</li>
+<li><strong>Page Table</strong> 記錄「虛擬位址 → 物理位址」的對應，由 OS 維護。</li>
+<li><strong>MMU (Memory Management Unit)</strong> 是 CPU 內的硬體，每次存取自動查表轉址。</li>
+<li><strong>TLB (Translation Lookaside Buffer)</strong> 是 page table 的小型 cache（~64 條），讓常見轉址 &lt; 1 ns。</li>
+<li>若 page 在 DRAM 中找不到 → <strong>Page Fault</strong>，OS 從 SSD 載入該 page（典型延遲：~100 µs，比 DRAM 慢 1000 倍）。</li>
+</ul>
+<p><strong>好處：</strong>① 程式隔離（A 程式無法看到 B 程式的記憶體）；② 可用空間 &gt; 物理 RAM（用 SSD 作 swap）；③ 同一份程式碼可被多個程序共享。</p></div>
+<div data-lang="en"><p>Virtual memory makes every program believe it owns the entire 64-bit address space. In reality:</p>
+<ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
+<li>Memory is sliced into fixed-size <strong>pages</strong> (usually 4 KB; huge pages 2 MB / 1 GB).</li>
+<li>The <strong>page table</strong> maps virtual → physical addresses, maintained by the OS.</li>
+<li>The <strong>MMU</strong> (Memory Management Unit) is in-CPU hardware that does the translation on every access.</li>
+<li>The <strong>TLB</strong> (Translation Lookaside Buffer) caches page-table entries (~64 entries), keeping common lookups &lt; 1 ns.</li>
+<li>If a page isn't in DRAM → <strong>page fault</strong>, OS loads it from SSD (~100 µs — 1000× slower than DRAM).</li>
+</ul>
+<p><strong>Benefits:</strong> (1) process isolation (program A can't see program B's memory); (2) addressable space &gt; physical RAM (SSD swap); (3) shared code pages across processes.</p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="儲存裝置" data-en="STORAGE EVOLUTION">儲存裝置演進</div>
+<h2 data-zh="六、儲存：HDD → SATA SSD → NVMe → CXL Memory" data-en="VI. Storage: HDD → SATA SSD → NVMe → CXL Memory">六、儲存裝置演進</h2>
+<div class="workflow">
+<div class="workflow-step" data-step="1"><h4>HDD (1956+)</h4>
+<div data-lang="zh"><p>機械式磁碟，5400/7200 RPM 旋轉，磁頭讀寫。延遲 ~5 ms（seek + rotate）。容量大、單位成本最低，仍用於冷儲存與資料中心備份。</p></div>
+<div data-lang="en"><p>Spinning disk, 5400/7200 RPM, magnetic head. ~5 ms latency (seek + rotate). Big and cheap — still used for cold storage and data-center backups.</p></div></div>
+<div class="workflow-step" data-step="2"><h4>SATA SSD (2008+)</h4>
+<div data-lang="zh"><p>用 NAND Flash 取代磁片，無機械延遲。SATA 介面限制最高 ~600 MB/s。</p></div>
+<div data-lang="en"><p>NAND Flash replaces platters — no mechanical latency. SATA interface caps throughput at ~600 MB/s.</p></div></div>
+<div class="workflow-step" data-step="3"><h4>NVMe SSD (2015+) ⭐</h4>
+<div data-lang="zh"><p>直接走 PCIe 通道，2026 PCIe 5.0 可達 14 GB/s。延遲 ~50 µs，是 HDD 的 100 倍快。</p></div>
+<div data-lang="en"><p>Bypasses SATA, runs on PCIe. PCIe 5.0 (2026) hits 14 GB/s. Latency ~50 µs — 100× faster than HDD.</p></div></div>
+<div class="workflow-step" data-step="4"><h4>CXL Memory (2024+)</h4>
+<div data-lang="zh"><p><strong>Compute Express Link 3.0</strong>：透過 PCIe 連接「記憶體擴充模組」，DRAM 容量可跨機架共享。AI 大型模型訓練的救星。</p></div>
+<div data-lang="en"><p><strong>Compute Express Link 3.0</strong>: connect DRAM expansion modules over PCIe; capacity is poolable across racks. A lifesaver for large-model AI training.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">何時擴什麼？</div>
+<h2 data-zh="七、何時加 cache？擴 RAM？換 SSD？" data-en="VII. When to Add Cache? RAM? SSD?">七、效能瓶頸決策樹</h2>
+<div class="decision-tree">
+<h4>🌳 <span data-zh="記憶體 / 儲存升級決策樹" data-en="Memory & Storage Upgrade Decision Tree">記憶體 / 儲存升級決策樹</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>程式「重複存取小資料集」？<span class="dt-arrow">→ 是 →</span> 改善 <strong>cache 局部性</strong>（blocking、loop tiling、SoA → AoS）。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>系統頻繁「swap to disk」？<span class="dt-arrow">→ 是 →</span> <strong>加 RAM</strong>；32 GB → 64 GB 通常見效。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>磁碟 I/O wait &gt; 30%？<span class="dt-arrow">→ 是 →</span> 換成 <strong>NVMe SSD</strong>，效能可飆 50–100 倍。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>單機 RAM 已達上限但仍不夠（LLM 訓練）？<span class="dt-arrow">→ 是 →</span> 用 <strong>CXL memory pool</strong> 或分散式記憶體。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>冷資料佔大量空間（&gt; 1 PB 歸檔）？<span class="dt-arrow">→ 是 →</span> 用 <strong>磁帶 / 物件儲存冷層</strong>（AWS Glacier Deep Archive）。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Program repeatedly hits a small working set? <span class="dt-arrow">→ Yes →</span> Improve <strong>cache locality</strong> (blocking, loop tiling, SoA ↔ AoS).</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>System swapping to disk a lot? <span class="dt-arrow">→ Yes →</span> <strong>Add RAM</strong>; 32 GB → 64 GB often unlocks performance.</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Disk I/O wait &gt; 30%? <span class="dt-arrow">→ Yes →</span> Switch to <strong>NVMe SSD</strong> — 50–100× faster.</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Single node RAM maxed but still short (LLM training)? <span class="dt-arrow">→ Yes →</span> Use a <strong>CXL memory pool</strong> or distributed memory.</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>Huge cold-data archive (&gt; 1 PB)? <span class="dt-arrow">→ Yes →</span> Use <strong>tape / cold object storage</strong> (AWS Glacier Deep Archive).</div></div>
+</div>
+</div>
+
+<div class="callout danger"><span class="callout-icon">🚨</span><div>
+<div data-lang="zh"><strong>2026 趨勢：</strong>① <strong>HBM3e</strong>（堆疊式 DRAM）+ AI 加速器，頻寬達 8 TB/s；② <strong>CXL 3.0</strong> 讓記憶體可跨機架共享；③ <strong>Storage-Class Memory</strong>（Intel Optane 雖已停產，但 MRAM、ReRAM 取而代之）；④ <strong>Computational Storage</strong>（SSD 內建 CPU，就地處理資料，省 PCIe 頻寬）。</div>
+<div data-lang="en"><strong>2026 trends:</strong> (1) <strong>HBM3e</strong> stacked DRAM + AI accelerators hits 8 TB/s bandwidth; (2) <strong>CXL 3.0</strong> enables rack-scale memory pooling; (3) <strong>Storage-Class Memory</strong> (Intel Optane sunset, but MRAM/ReRAM rising); (4) <strong>Computational Storage</strong> — SSDs with onboard CPUs that process data in place, saving PCIe bandwidth.</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
+<h2 data-zh="八、Python：cache 友善 vs 非友善存取" data-en="VIII. Python: Cache-Friendly vs Unfriendly Access">八、動手試</h2>
+<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># NumPy 預設為 row-major (C-order)：橫向掃描比直向掃描快很多</span>
+<span class="comment"># NumPy default is row-major (C-order): scanning rows is much faster than columns</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np, time
+
+N = <span class="num">5000</span>
+a = np.<span class="func">ones</span>((N, N), dtype=<span class="str">'float32'</span>)   <span class="comment"># 100 MB array</span>
+
+<span class="comment"># 友善：沿 row 走，連續位址 → 命中 cache</span>
+<span class="comment"># Friendly: walk along rows → contiguous addresses → cache hits</span>
+t = time.<span class="func">perf_counter</span>()
+s = <span class="num">0.0</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="func">range</span>(N):
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="func">range</span>(N):
+        s += a[i, j]
+<span class="func">print</span>(<span class="str">f"Row-major:    {time.perf_counter()-t:.2f}s"</span>)
+
+<span class="comment"># 非友善：沿 column 走，每次跳 N*4 byte → 大量 cache miss</span>
+<span class="comment"># Unfriendly: walk by column, stride N*4 bytes → many cache misses</span>
+t = time.<span class="func">perf_counter</span>()
+s = <span class="num">0.0</span>
+<span class="kw">for</span> j <span class="kw">in</span> <span class="func">range</span>(N):
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="func">range</span>(N):
+        s += a[i, j]
+<span class="func">print</span>(<span class="str">f"Column-major: {time.perf_counter()-t:.2f}s"</span>)
+<span class="comment"># Column 版通常慢 2–10 倍 / Column version is typically 2-10× slower</span>
+
+<span class="comment"># 用向量化 (SIMD) 一次處理整個 row → 最快</span>
+<span class="comment"># Vectorized (SIMD) processes whole rows at once — fastest</span>
+t = time.<span class="func">perf_counter</span>()
+s = a.<span class="func">sum</span>()
+<span class="func">print</span>(<span class="str">f"Vectorized:   {time.perf_counter()-t:.3f}s"</span>)</pre></div>
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// Cache-blocking 矩陣乘法 / Cache-blocked matrix multiplication</span>
+<span class="kw">function</span> <span class="func">MatMulBlocked</span>(A, B, C, N, BLOCK):
+    <span class="kw">for</span> ii <span class="kw">from</span> <span class="num">0</span> <span class="kw">to</span> N <span class="kw">step</span> BLOCK:
+        <span class="kw">for</span> jj <span class="kw">from</span> <span class="num">0</span> <span class="kw">to</span> N <span class="kw">step</span> BLOCK:
+            <span class="kw">for</span> kk <span class="kw">from</span> <span class="num">0</span> <span class="kw">to</span> N <span class="kw">step</span> BLOCK:
+                <span class="comment">// 在 BLOCK×BLOCK 子矩陣內完成全部乘加，</span>
+                <span class="comment">// 讓子矩陣完全裝進 L1 / L2 cache</span>
+                <span class="kw">for</span> i <span class="kw">from</span> ii <span class="kw">to</span> min(ii+BLOCK, N):
+                    <span class="kw">for</span> j <span class="kw">from</span> jj <span class="kw">to</span> min(jj+BLOCK, N):
+                        <span class="kw">for</span> k <span class="kw">from</span> kk <span class="kw">to</span> min(kk+BLOCK, N):
+                            C[i][j] += A[i][k] × B[k][j]
+    <span class="kw">return</span> C
+<span class="comment">// BLOCK 通常選 64 或 128，視 L1 大小調整</span>
+<span class="comment">// Typical BLOCK = 64 or 128, tuned to L1 size</span></pre></div>
+</div>
+</section>
+
+<section class="quiz-section">
+<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">1. 一次 cache line 通常是多少 byte？</p>
+<p data-lang="en">1. How many bytes are in a typical cache line?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 8 byte</span><span data-lang="en">A. 8 bytes</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 64 byte</span><span data-lang="en">B. 64 bytes</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 4096 byte</span><span data-lang="en">C. 4096 bytes</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 1 MB</span><span data-lang="en">D. 1 MB</span></div>
+</div><div class="quiz-feedback" id="fb1"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">2. TLB 主要的功能是什麼？</p>
+<p data-lang="en">2. What is the main purpose of the TLB?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 快取最近執行的指令</span><span data-lang="en">A. Cache recently executed instructions</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 預測分支跳轉方向</span><span data-lang="en">B. Predict branch directions</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 快取 page table 的轉址結果，加速虛擬位址轉換</span><span data-lang="en">C. Cache page-table translations to accelerate virtual-address lookup</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 緩衝 I/O 資料</span><span data-lang="en">D. Buffer I/O data</span></div>
+</div><div class="quiz-feedback" id="fb2"></div></div>
+
+<div class="quiz-q" data-answer="3">
+<p data-lang="zh">3. 程式以「按欄走訪」NumPy 矩陣比「按列走訪」慢得多，主要原因是？</p>
+<p data-lang="en">3. Why is column-wise NumPy traversal much slower than row-wise?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. NumPy 對欄存取有 bug</span><span data-lang="en">A. NumPy has a bug for column access</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. CPU 不支援 column-major</span><span data-lang="en">B. CPUs do not support column-major</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Python 直譯器在 column 模式慢</span><span data-lang="en">C. The Python interpreter is slower in column mode</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. NumPy 預設 row-major，按欄走訪會破壞空間局部性，cache miss 大增</span><span data-lang="en">D. NumPy is row-major; column traversal breaks spatial locality, exploding cache misses</span></div>
+</div><div class="quiz-feedback" id="fb3"></div></div>
+</section>
+
+<nav class="page-nav">
+<a href="cpu-arch.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 4: CPU 與計算機組織" data-en="Ch 4: CPU &amp; Computer Organization">Ch 4: CPU 與計算機組織</span></a>
+<a href="os.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 6: 作業系統" data-en="Ch 6: Operating Systems">Ch 6: 作業系統</span></a>
+</nav>
+</main>
+<footer class="site-footer">© Charlene — Introduction to Computer Science · Interactive Tutorial</footer>
+<script src="i18n.js"></script>
+<script>
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
+function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
+
+// Latency chart (log scale, nanoseconds)
+const latencyLabels = ['Register','L1 Cache','L2 Cache','L3 Cache','HBM3e','DRAM','NVMe SSD','SATA SSD','HDD','Tape (load)'];
+const latencyNs     = [0.3, 1, 3, 10, 20, 80, 50_000, 200_000, 5_000_000, 60_000_000_000];
+new Chart(document.getElementById('latencyChart'),{
+  type:'bar',
+  data:{labels:latencyLabels,datasets:[{label:'Access latency (ns, log scale)',data:latencyNs,
+    backgroundColor:latencyNs.map(v=>v<100?'rgba(22,163,74,.8)':v<1e5?'rgba(218,165,32,.85)':'rgba(220,38,38,.8)'),
+    borderColor:'rgba(15,23,42,.4)',borderWidth:1}]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>{
+      const v=c.parsed.y;
+      if(v<1000) return v+' ns';
+      if(v<1e6)  return (v/1000).toFixed(1)+' µs';
+      if(v<1e9)  return (v/1e6).toFixed(1)+' ms';
+      return (v/1e9).toFixed(1)+' s';
+    }}}},
+    scales:{y:{type:'logarithmic',title:{display:true,text:'Latency (nanoseconds, log)'},min:0.1,max:1e11}}}
+});
+
+// Quiz
+const QF={zh:{q1_y:'絕大多數 x86/ARM CPU 的 cache line 都是 64 byte。',q1_n:'答案 B。',q2_y:'TLB 是 page table 的 cache，沒有它每次存取都要走慢速 page-table walk。',q2_n:'答案 C。',q3_y:'row-major 表示同一列元素在記憶體中連續，按欄走會每次跨 N×4 byte → 不命中 cache。',q3_n:'答案 D。'},en:{q1_y:'64 bytes is standard for nearly all x86/ARM CPUs.',q1_n:'Answer: B.',q2_y:'TLB caches page-table entries — without it, every access would do a slow page-table walk.',q2_n:'Answer: C.',q3_y:'Row-major means row elements are contiguous; column traversal strides N×4 bytes, missing the cache.',q3_n:'Answer: D.'}};
+document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
+</script>
+</body></html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ch 15: 雲端、邊緣與 IoT — Intro CS</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head><body>
+<nav class="top-nav"><div class="top-nav-inner">
+  <a href="index.html" class="top-nav-brand"><span>💻</span> <span data-zh="計算機概論" data-en="Intro CS">計算機概論</span></a>
+  <ul class="top-nav-links"><li><a href="history.html">History</a></li><li><a href="data-rep.html">Data</a></li><li><a href="logic-gates.html">Logic</a></li><li><a href="cpu-arch.html">CPU</a></li><li><a href="memory.html">Memory</a></li><li><a href="os.html">OS</a></li><li><a href="networking.html">Net</a></li><li><a href="database.html">DB</a></li><li><a href="programming.html">Prog</a></li><li><a href="algorithms.html">Algo</a></li><li><a href="data-structures.html">DS</a></li><li><a href="software-eng.html">SWE</a></li><li><a href="security.html">Sec</a></li><li><a href="ai-ml.html">AI/ML</a></li><li><a href="cloud-iot.html" class="active">Cloud</a></li><li><a href="ethics-future.html">Ethics</a></li>
+    <li><a href="references/index.html" data-zh="📚 參考資料" data-en="📚 References">📚 參考資料</a></li>
+  </ul>
+</div></nav>
+<div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
+<header class="page-hero"><div class="step-badge">CHAPTER 15 / 16</div>
+<h1 data-zh="雲端、邊緣與 IoT" data-en="Cloud, Edge & IoT">雲端、邊緣與 IoT</h1>
+<p class="subtitle" data-lang="zh">從 IaaS/PaaS/SaaS、Docker/Kubernetes 到 5G、Matter 與邊緣 AI——「計算」如何從本地搬到無處不在。</p>
+<p class="subtitle" data-lang="en">From IaaS/PaaS/SaaS, Docker/Kubernetes to 5G, Matter, and edge AI — how computation moved from desktops to everywhere.</p>
+</header>
+<main class="content-wrap">
+
+<section class="section">
+<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
+<h2 data-zh="為什麼「雲」改變了一切？" data-en="Why did the cloud change everything?">為什麼「雲」改變了一切？</h2>
+<div data-lang="zh"><p>2006 年 AWS 推出 EC2 之前，新創公司要先花數十萬美元買伺服器、租機房、僱 SRE，才能上線。雲端讓「以分鐘計費、隨需擴充」成為現實——所有層次的基礎建設都變成可程式化資源：</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>IaaS</strong>（Infrastructure as a Service）：租 CPU/記憶體/網路（EC2、Azure VM、GCE）。</li>
+<li><strong>PaaS</strong>（Platform）：租「runtime + 資料庫」（Heroku、Cloud Run、Vercel）。</li>
+<li><strong>SaaS</strong>（Software）：直接用軟體（Gmail、Salesforce、Slack）。</li>
+<li><strong>FaaS / Serverless</strong>：只為「函數的每次執行」付費（AWS Lambda、Cloudflare Workers）。</li>
+</ul>
+<p>2026 的常態是<strong>混合雲 (hybrid)</strong> 與<strong>多雲 (multi-cloud)</strong>——大型企業同時用 AWS、Azure、GCP，並把敏感資料留在私有資料中心。</p></div>
+<div data-lang="en"><p>Before AWS launched EC2 in 2006, a startup had to spend six figures on servers, colo, and ops before going live. The cloud turned infrastructure into pay-per-minute, on-demand, programmable resources across every layer:</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>IaaS</strong>: rent CPU / RAM / network (EC2, Azure VM, GCE).</li>
+<li><strong>PaaS</strong>: rent runtime + database (Heroku, Cloud Run, Vercel).</li>
+<li><strong>SaaS</strong>: use the software directly (Gmail, Salesforce, Slack).</li>
+<li><strong>FaaS / Serverless</strong>: pay per function invocation (AWS Lambda, Cloudflare Workers).</li>
+</ul>
+<p>By 2026 the norm is <strong>hybrid</strong> and <strong>multi-cloud</strong> — large enterprises mix AWS, Azure, GCP, and keep sensitive workloads on private infrastructure.</p></div>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<span data-lang="zh"><strong>核心觀念：</strong>「The cloud is just someone else's computer」——這句俏皮話點出本質：雲端不是魔法，而是把計算、儲存、網路抽象成 API。便利的代價是「鎖定 (vendor lock-in)」與「成本失控」(2024 Cloud Optimization 報告：30% 雲端支出是浪費)。</span>
+<span data-lang="en"><strong>Core idea:</strong> "The cloud is just someone else's computer." It's not magic — just compute/storage/network exposed as APIs. The trade-offs: vendor lock-in and runaway cost (FinOps 2024: ~30% of cloud spend is waste).</span>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="三大公有雲" data-en="HYPERSCALERS">公有雲市占</div>
+<h2 data-zh="一、互動：三大公有雲市占" data-en="I. Interactive: Hyperscaler Market Share">一、互動：AWS / Azure / GCP 市占</h2>
+<div data-lang="zh"><p>根據 Synergy Research 2026 Q1 估計，全球 IaaS+PaaS 市場約 <strong>3,400 億美元</strong>，前三大廠瓜分近七成：</p></div>
+<div data-lang="en"><p>Per Synergy Research Q1 2026 estimates, the global IaaS+PaaS market is ~<strong>USD 340B</strong>, with the top three taking nearly 70%:</p></div>
+<div class="interactive-panel">
+<div class="chart-container"><canvas id="cloudChart"></canvas></div>
+<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">資料來源：Synergy Research Group, 2026 Q1 估計（市占百分比）</span><span data-lang="en">Source: Synergy Research Group, Q1 2026 estimates (market share %)</span></p>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="容器" data-en="CONTAINERS">容器化與 K8s</div>
+<h2 data-zh="二、Docker 與 Kubernetes" data-en="II. Docker & Kubernetes">二、Docker 與 Kubernetes</h2>
+<div data-lang="zh"><p><strong>Docker (2013)：</strong>用 Linux namespaces + cgroups 把應用「打包」進可移植映像 (image)，啟動只需毫秒。相較 VM，<strong>容器共享 host 核心</strong>，啟動快、佔資源少。</p>
+<p><strong>Kubernetes (K8s, 2014 Google 開源)：</strong>容器數量上百上千時的編排系統。核心物件：</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>Pod</strong>：一或多個容器組成的最小部署單位。</li>
+<li><strong>Deployment</strong>：宣告「我要 5 個 Pod」，K8s 自動維持狀態。</li>
+<li><strong>Service</strong>：把一群 Pod 暴露為一個穩定的網路端點（內建負載平衡）。</li>
+<li><strong>HPA (Horizontal Pod Autoscaler)</strong>：依 CPU / 自訂指標自動擴縮 Pod 數。</li>
+</ul></div>
+<div data-lang="en"><p><strong>Docker (2013):</strong> uses Linux namespaces + cgroups to package an app into a portable image; starts in milliseconds. Unlike VMs, <strong>containers share the host kernel</strong> — fast, lightweight.</p>
+<p><strong>Kubernetes (K8s, 2014 by Google):</strong> orchestrator for hundreds-to-thousands of containers. Core objects:</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>Pod</strong>: smallest deployable unit — one or more containers.</li>
+<li><strong>Deployment</strong>: declare "I want 5 Pods" and K8s reconciles.</li>
+<li><strong>Service</strong>: stable network endpoint fronting a set of Pods, with built-in load balancing.</li>
+<li><strong>HPA</strong>: auto-scales Pod count based on CPU or custom metrics.</li>
+</ul></div>
+
+<table class="comp-table">
+<thead><tr><th></th><th data-zh="VM" data-en="VM">VM</th><th data-zh="Container" data-en="Container">Container</th></tr></thead>
+<tbody>
+<tr><td data-lang="zh">啟動時間</td><td data-lang="en">Boot time</td><td data-lang="zh">30 秒 – 數分鐘</td><td data-lang="en">30s – minutes</td><td data-lang="zh">毫秒 – 秒</td><td data-lang="en">ms – seconds</td></tr>
+<tr><td data-lang="zh">大小</td><td data-lang="en">Size</td><td>GB</td><td>MB</td></tr>
+<tr><td data-lang="zh">隔離強度</td><td data-lang="en">Isolation</td><td data-lang="zh">完整 OS</td><td data-lang="en">Full OS</td><td data-lang="zh">共享 kernel（弱）</td><td data-lang="en">Share kernel (weaker)</td></tr>
+<tr><td data-lang="zh">每台機器數量</td><td data-lang="en">Per host</td><td>10s</td><td>100s – 1000s</td></tr>
+</tbody></table>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>微服務 vs 單體：</strong>微服務 (microservices) 把系統拆成數十個獨立部署的小服務，每個服務只負責一件事。優點：團隊自治、可獨立擴展；缺點：分散式除錯困難、需要 service mesh (Istio / Linkerd) 做流量管理。2024 起出現「<strong>從微服務回歸 modular monolith</strong>」聲浪——Shopify、Amazon Prime Video 是知名案例。</div>
+<div data-lang="en"><strong>Microservices vs monolith:</strong> microservices split a system into dozens of independently deployable services. Pros: team autonomy, independent scaling. Cons: distributed debugging is hard, needs a service mesh (Istio/Linkerd). Since 2024 the "<strong>back to modular monolith</strong>" backlash has grown — Shopify and Amazon Prime Video are notable examples.</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="邊緣與 IoT" data-en="EDGE & IoT">邊緣運算與 IoT</div>
+<h2 data-zh="三、CDN、邊緣運算與 IoT" data-en="III. CDN, Edge Computing & IoT">三、CDN / 邊緣 / IoT</h2>
+<div data-lang="zh"><p><strong>CDN / Edge Computing：</strong>把計算與快取放到「離使用者最近的節點」。Cloudflare、Fastly、AWS CloudFront 等業者在全球部署數百個 PoP（Point of Presence）。傳統來回美國西岸的延遲 50 ms，邊緣節點可降到 <strong>~5 ms</strong>。</p>
+<p>2026 主流範式：<strong>Cloudflare Workers</strong>、<strong>AWS Lambda@Edge</strong>、<strong>Vercel Edge Functions</strong>——在 V8 isolate 中於 100+ 個地理位置同時執行你的 JS / WASM 程式碼。</p>
+<p><strong>IoT 三層架構：</strong></p>
+<ol style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>感測層</strong>：sensors + MCU (ESP32, Arduino, Raspberry Pi Pico)。</li>
+<li><strong>邊緣層</strong>：邊緣 AI (TinyML)、本地閘道。</li>
+<li><strong>雲端層</strong>：彙整、分析、模型訓練。</li>
+</ol></div>
+<div data-lang="en"><p><strong>CDN / Edge Computing:</strong> push compute and cache to the user's nearest node. Cloudflare, Fastly, AWS CloudFront operate hundreds of global PoPs. A trip to US-West that used to cost 50 ms latency drops to <strong>~5 ms</strong> at the edge.</p>
+<p>2026 mainstream: <strong>Cloudflare Workers</strong>, <strong>AWS Lambda@Edge</strong>, <strong>Vercel Edge Functions</strong> — running your JS / WASM in V8 isolates across 100+ locations.</p>
+<p><strong>IoT three-tier architecture:</strong></p>
+<ol style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>Sensor tier</strong>: sensors + MCUs (ESP32, Arduino, RPi Pico).</li>
+<li><strong>Edge tier</strong>: edge AI (TinyML), local gateway.</li>
+<li><strong>Cloud tier</strong>: aggregation, analytics, model training.</li>
+</ol></div>
+
+<table class="comp-table">
+<thead><tr><th data-zh="協定" data-en="Protocol">協定</th><th data-zh="運輸層" data-en="Transport">運輸層</th><th data-zh="特性" data-en="Traits">特性</th><th data-zh="典型場景" data-en="Use cases">典型場景</th></tr></thead>
+<tbody>
+<tr><td><strong>MQTT</strong></td><td>TCP</td><td data-lang="zh">發佈-訂閱、極輕量 (2 byte header)</td><td data-lang="en">Pub/Sub, ultra-light (2-byte header)</td><td data-lang="zh">感測器回傳、智慧家居</td><td data-lang="en">Sensor telemetry, smart home</td></tr>
+<tr><td><strong>CoAP</strong></td><td>UDP</td><td data-lang="zh">類 REST、適合低耗電裝置</td><td data-lang="en">REST-like over UDP, low-power</td><td data-lang="zh">受限裝置</td><td data-lang="en">Constrained devices</td></tr>
+<tr><td><strong>AMQP</strong></td><td>TCP</td><td data-lang="zh">企業級訊息佇列、保證遞送</td><td data-lang="en">Enterprise message queue, reliable delivery</td><td data-lang="zh">B2B 整合</td><td data-lang="en">B2B integration</td></tr>
+<tr><td><strong>LoRaWAN</strong></td><td data-lang="zh">無線</td><td data-lang="en">Radio</td><td data-lang="zh">公里級長距離、電池可用數年</td><td data-lang="en">Km range, multi-year battery</td><td data-lang="zh">智慧城市、農業</td><td data-lang="en">Smart city, agriculture</td></tr>
+<tr><td><strong>Matter</strong></td><td data-lang="zh">Wi-Fi/Thread</td><td data-lang="en">Wi-Fi/Thread</td><td data-lang="zh">2022 智慧家居統一標準</td><td data-lang="en">2022 unified smart-home standard</td><td data-lang="zh">Apple/Google/Amazon 互通</td><td data-lang="en">Apple/Google/Amazon interop</td></tr>
+</tbody></table>
+
+<div data-lang="zh"><p><strong>5G 三大用例：</strong>① <strong>eMBB</strong>（增強型行動寬頻，1–10 Gbps）；② <strong>URLLC</strong>（超可靠低延遲通訊，1 ms 等級——自駕、遠距手術）；③ <strong>mMTC</strong>（大規模機器型通訊，每平方公里百萬連接——IoT 感測器）。<strong>6G</strong> 預計 2030 商用，目標亞毫秒延遲與 1 Tbps 峰值。</p></div>
+<div data-lang="en"><p><strong>5G's three use cases:</strong> (1) <strong>eMBB</strong> (1–10 Gbps mobile broadband), (2) <strong>URLLC</strong> (1 ms latency — autonomy, remote surgery), (3) <strong>mMTC</strong> (millions of connections per km² — IoT). <strong>6G</strong> is targeted for 2030 commercialization, aiming sub-ms latency and 1 Tbps peak.</p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">部署選型</div>
+<h2 data-zh="四、決策樹：VM、Container 還是 Serverless？" data-en="IV. Decision Tree: VM, Container, or Serverless?">四、決策樹：選擇部署模式</h2>
+<div class="decision-tree">
+<h4>🌳 <span data-zh="該用 VM、Container 還是 Serverless？" data-en="VM, container, or serverless?">該用 VM、Container 還是 Serverless？</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>需要完整作業系統控制權（核心模組、特殊驅動）？<span class="dt-arrow">→</span> 用 <strong>VM</strong>（EC2、Azure VM）。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>長時間運行的微服務、需要精確的擴縮控制？<span class="dt-arrow">→</span> 用 <strong>Container + K8s</strong>（EKS、GKE、AKS）。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>事件驅動、流量不規則、短時間執行（&lt; 15 分鐘）？<span class="dt-arrow">→</span> 用 <strong>Serverless / FaaS</strong>（Lambda、Cloud Run、Workers）。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>全球低延遲（&lt; 50 ms）？<span class="dt-arrow">→</span> 用 <strong>Edge Functions</strong>（Cloudflare Workers、Vercel Edge）。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Need full OS control (kernel modules, special drivers)? <span class="dt-arrow">→</span> Use <strong>VM</strong> (EC2, Azure VM).</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Long-running microservices with fine-grained scaling? <span class="dt-arrow">→</span> <strong>Container + K8s</strong> (EKS, GKE, AKS).</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Event-driven, spiky traffic, short executions (&lt; 15 min)? <span class="dt-arrow">→</span> <strong>Serverless / FaaS</strong> (Lambda, Cloud Run, Workers).</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Global low-latency (&lt; 50 ms)? <span class="dt-arrow">→</span> <strong>Edge Functions</strong> (Cloudflare Workers, Vercel Edge).</div></div>
+</div>
+</div>
+
+<div class="decision-tree" style="margin-top:24px;">
+<h4>🌳 <span data-zh="IoT：該用哪個通訊協定？" data-en="IoT: which protocol?">IoT：該用哪個通訊協定？</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>低耗電、有 Wi-Fi、需要訂閱推播？<span class="dt-arrow">→</span> <strong>MQTT</strong>（最主流）。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>記憶體 KB 等級、需要 REST 風格？<span class="dt-arrow">→</span> <strong>CoAP</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>跨公里、田野部署、電池一次用 5 年？<span class="dt-arrow">→</span> <strong>LoRaWAN</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>家用、需與 Apple/Google/Amazon 都互通？<span class="dt-arrow">→</span> <strong>Matter</strong>。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Low-power, has Wi-Fi, needs pub/sub push? <span class="dt-arrow">→</span> <strong>MQTT</strong> (most common).</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>KB-scale memory, want REST-like? <span class="dt-arrow">→</span> <strong>CoAP</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Multi-km range, field deployment, 5-year battery? <span class="dt-arrow">→</span> <strong>LoRaWAN</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Smart home interop with Apple/Google/Amazon? <span class="dt-arrow">→</span> <strong>Matter</strong>.</div></div>
+</div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
+<h2 data-zh="五、Docker Compose 與 boto3 範例" data-en="V. Docker Compose & boto3 Examples">五、動手做</h2>
+<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python (boto3)</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">K8s Pseudocode</button></div>
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># 用 boto3 上傳檔案到 AWS S3 / Upload to AWS S3</span>
+<span class="kw">import</span> boto3
+
+<span class="comment"># 自動讀取 ~/.aws/credentials</span>
+s3 = boto3.<span class="func">client</span>(<span class="str">"s3"</span>, region_name=<span class="str">"us-east-1"</span>)
+
+<span class="comment"># 上傳 / Upload</span>
+s3.<span class="func">upload_file</span>(<span class="str">"report.pdf"</span>, <span class="str">"my-bucket-2026"</span>, <span class="str">"reports/2026-05.pdf"</span>)
+
+<span class="comment"># 列出 bucket 中所有物件 / List objects</span>
+<span class="kw">for</span> obj <span class="kw">in</span> s3.<span class="func">list_objects_v2</span>(Bucket=<span class="str">"my-bucket-2026"</span>).<span class="func">get</span>(<span class="str">"Contents"</span>, []):
+    <span class="func">print</span>(obj[<span class="str">"Key"</span>], obj[<span class="str">"Size"</span>])
+
+<span class="comment"># 啟動一台 EC2 t3.micro / Launch an EC2 t3.micro</span>
+ec2 = boto3.<span class="func">resource</span>(<span class="str">"ec2"</span>)
+ec2.<span class="func">create_instances</span>(ImageId=<span class="str">"ami-0c02fb55956c7d316"</span>,
+                     InstanceType=<span class="str">"t3.micro"</span>,
+                     MinCount=<span class="num">1</span>, MaxCount=<span class="num">1</span>)
+
+<span class="comment"># --- docker-compose.yml 範例 (用 YAML 起一組 web + db) ---</span>
+<span class="comment"># version: '3.9'</span>
+<span class="comment"># services:</span>
+<span class="comment">#   web:</span>
+<span class="comment">#     image: nginx:1.27</span>
+<span class="comment">#     ports: ["80:80"]</span>
+<span class="comment">#   db:</span>
+<span class="comment">#     image: postgres:17</span>
+<span class="comment">#     environment: { POSTGRES_PASSWORD: secret }</span></pre></div>
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// K8s Pod 生命週期（簡化）/ Pod lifecycle (simplified)</span>
+<span class="kw">function</span> <span class="func">PodLifecycle</span>(pod_spec):
+    state = <span class="str">"Pending"</span>
+    scheduler.<span class="func">choose_node</span>(pod_spec)            <span class="comment">// 1. 選一台符合資源需求的 node</span>
+    kubelet.<span class="func">pull_image</span>(pod_spec.image)         <span class="comment">// 2. 拉取容器映像</span>
+    state = <span class="str">"ContainerCreating"</span>
+    kubelet.<span class="func">start_containers</span>(pod_spec)
+    state = <span class="str">"Running"</span>
+
+    <span class="kw">while</span> <span class="kw">true</span>:
+        <span class="kw">if</span> liveness_probe.<span class="func">fails</span>():
+            kubelet.<span class="func">restart_container</span>()         <span class="comment">// 自動重啟</span>
+        <span class="kw">if</span> readiness_probe.<span class="func">fails</span>():
+            service.<span class="func">remove_endpoint</span>(pod)         <span class="comment">// 從流量中暫時移除</span>
+        <span class="kw">if</span> hpa.<span class="func">should_scale_up</span>():
+            deployment.<span class="func">scale</span>(+<span class="num">1</span>)                <span class="comment">// 水平擴展</span>
+    <span class="comment">// 終止：先送 SIGTERM 給 30 秒 grace period，再 SIGKILL</span></pre></div>
+</div>
+</section>
+
+<section class="quiz-section">
+<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">1. IaaS、PaaS、SaaS 三者最大的差別在於？</p>
+<p data-lang="en">1. The key difference between IaaS, PaaS, and SaaS is?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 價格高低</span><span data-lang="en">A. Price level</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 是否使用容器</span><span data-lang="en">B. Whether containers are used</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 使用者要自己管理多少層（OS、Runtime、App）</span><span data-lang="en">C. How many layers (OS, runtime, app) the user must manage</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 是否支援 AI</span><span data-lang="en">D. Whether AI is supported</span></div>
+</div><div class="quiz-feedback" id="fb1"></div></div>
+
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">2. 關於 Docker container 與 VM，下列敘述何者正確？</p>
+<p data-lang="en">2. Which is correct about Docker containers vs VMs?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Container 比 VM 慢</span><span data-lang="en">A. Containers are slower than VMs</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Container 共享 host 核心，啟動快、佔資源少</span><span data-lang="en">B. Containers share the host kernel, start fast, and use less resources</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Container 與 VM 隔離強度完全相同</span><span data-lang="en">C. Containers and VMs offer identical isolation</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Container 不能用在生產環境</span><span data-lang="en">D. Containers cannot be used in production</span></div>
+</div><div class="quiz-feedback" id="fb2"></div></div>
+
+<div class="quiz-q" data-answer="0">
+<p data-lang="zh">3. MQTT 在 IoT 中的主要用途是？</p>
+<p data-lang="en">3. The primary use of MQTT in IoT is?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 輕量級「發佈-訂閱」訊息協定，適合感測器回傳資料</span><span data-lang="en">A. Lightweight pub/sub messaging — ideal for sensor telemetry</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 用來訓練 AI 模型</span><span data-lang="en">B. Used to train AI models</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 用來取代 HTTPS</span><span data-lang="en">C. Replacement for HTTPS</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 用來編排容器</span><span data-lang="en">D. To orchestrate containers</span></div>
+</div><div class="quiz-feedback" id="fb3"></div></div>
+</section>
+
+<nav class="page-nav">
+<a href="ai-ml.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 14: 人工智慧與機器學習" data-en="Ch 14: Artificial Intelligence &amp; Machine Learning">Ch 14: 人工智慧與機器學習</span></a>
+<a href="ethics-future.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 16: 資訊倫理與新興科技" data-en="Ch 16: Information Ethics &amp; Emerging Tech">Ch 16: 資訊倫理與新興科技</span></a>
+</nav>
+</main>
+<footer class="site-footer">© Charlene — Introduction to Computer Science · Interactive Tutorial</footer>
+<script src="i18n.js"></script>
+<script>
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
+function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
+
+// Global IaaS+PaaS market share (Synergy Q1 2026 approx.)
+new Chart(document.getElementById('cloudChart'),{type:'bar',data:{
+  labels:['AWS','Microsoft Azure','Google Cloud','Alibaba Cloud','Oracle Cloud','Others'],
+  datasets:[{label:'Market share (%)',data:[30,24,13,4,3,26],
+    backgroundColor:['rgba(217,119,6,.85)','rgba(29,78,216,.85)','rgba(5,150,105,.85)','rgba(220,38,38,.75)','rgba(190,24,93,.75)','rgba(120,113,108,.65)']}]
+},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>c.label+': '+c.raw+'%'}}},scales:{x:{beginAtZero:true,max:35,title:{display:true,text:'Market share (%)'}}}}});
+
+const QF={zh:{q1_y:'IaaS 你管 OS 以上一切；PaaS 你只管 app；SaaS 你只用軟體。',q1_n:'答案 C。',q2_y:'Container 共享 host 核心，毫秒啟動、佔資源少；但隔離較 VM 弱。',q2_n:'答案 B。',q3_y:'MQTT 是 IoT 最常用的 Pub/Sub 協定，header 僅 2 byte，極省頻寬。',q3_n:'答案 A。'},en:{q1_y:'IaaS: you manage everything above OS. PaaS: just the app. SaaS: just use the software.',q1_n:'Answer: C.',q2_y:'Containers share the host kernel — ms startup, light footprint, but weaker isolation than VMs.',q2_n:'Answer: B.',q3_y:'MQTT is the most common IoT pub/sub protocol — only a 2-byte header, extremely bandwidth-efficient.',q3_n:'Answer: A.'}};
+document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
+</script>
+</body></html>

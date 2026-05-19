@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>計算機概論 參考資料 · References</title>
+<meta name="description" content="計算機概論 Interactive Tutorial 16 章主題的學術論文、教科書、官方標準與 best practices 整理。">
+<link rel="stylesheet" href="../styles.css">
+<style>
+/* References-specific styling */
+.ref-list{list-style:none;padding:0;margin:14px 0 0}
+.ref-list li{padding:14px 16px;background:var(--c-surface-alt);border:1px solid var(--c-border-light);border-radius:var(--radius);margin-bottom:10px;font-size:.92rem;line-height:1.65}
+.ref-list li:hover{background:var(--c-surface);border-color:var(--c-border)}
+.ref-tag{display:inline-block;font-family:var(--font-mono);font-size:.72rem;font-weight:600;padding:2px 8px;border-radius:6px;margin-right:8px;letter-spacing:.5px}
+.ref-tag.paper{background:var(--c-accent-light);color:var(--c-accent-dark)}
+.ref-tag.doc{background:#e3f2fd;color:#1565c0}
+.ref-tag.bench{background:#fff3e0;color:#e65100}
+.ref-tag.db{background:#fce4ec;color:#ad1457}
+.ref-tag.book{background:#f3e5f5;color:#6a1b9a}
+.ref-tag.bestp{background:var(--c-highlight-light);color:#a06a00;border:1px solid var(--c-highlight)}
+.ref-tag.standard{background:#e0f2f1;color:#00695c;border:1px solid #4db6ac}
+.ref-author{color:var(--c-ink);font-weight:600}
+.ref-title{color:var(--c-ink);font-weight:500}
+.ref-meta{color:var(--c-ink-muted);font-size:.85rem;margin-top:4px;display:block}
+.ref-list a{color:var(--c-accent);text-decoration:none;border-bottom:1px dotted var(--c-accent)}
+.ref-list a:hover{color:var(--c-accent-dark);border-bottom-style:solid}
+.errata{background:#fef3c7;border-left:4px solid #d97706;border-radius:0 var(--radius-lg) var(--radius-lg) 0;padding:18px 22px;margin:18px 0;font-size:.9rem}
+.errata h4{margin:0 0 8px;color:#92400e;font-family:var(--font-display);font-size:1.05rem}
+.errata p{color:#78350f;margin-bottom:8px}
+.errata p:last-child{margin-bottom:0}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:18px 0}
+.toc-grid a{padding:10px 14px;background:var(--c-surface);border:1px solid var(--c-border-light);border-radius:var(--radius);text-decoration:none;color:var(--c-ink);font-size:.88rem;transition:var(--transition);display:flex;align-items:center;gap:8px}
+.toc-grid a:hover{border-color:var(--c-accent);background:var(--c-accent-light);color:var(--c-accent-dark)}
+.toc-grid a .step-tag{font-family:var(--font-mono);font-size:.72rem;color:var(--c-accent);font-weight:600}
+.section-anchor{scroll-margin-top:80px}
+</style>
+</head>
+<body>
+
+<nav class="top-nav"><div class="top-nav-inner">
+  <a href="../index.html" class="top-nav-brand"><span>💻</span> <span data-zh="計算機概論" data-en="Intro CS">計算機概論</span></a>
+  <ul class="top-nav-links">
+    <li><a href="../history.html">History</a></li>
+    <li><a href="../data-rep.html">Data</a></li>
+    <li><a href="../logic-gates.html">Logic</a></li>
+    <li><a href="../cpu-arch.html">CPU</a></li>
+    <li><a href="../memory.html">Memory</a></li>
+    <li><a href="../os.html">OS</a></li>
+    <li><a href="../networking.html">Net</a></li>
+    <li><a href="../database.html">DB</a></li>
+    <li><a href="../programming.html">Prog</a></li>
+    <li><a href="../algorithms.html">Algo</a></li>
+    <li><a href="../data-structures.html">DS</a></li>
+    <li><a href="../software-eng.html">SWE</a></li>
+    <li><a href="../security.html">Sec</a></li>
+    <li><a href="../ai-ml.html">AI/ML</a></li>
+    <li><a href="../cloud-iot.html">Cloud</a></li>
+    <li><a href="../ethics-future.html">Ethics</a></li>
+    <li><a href="index.html" class="active" style="font-weight:700" data-zh="📚 參考資料" data-en="📚 References">📚 參考資料</a></li>
+  </ul>
+</div></nav>
+
+<header class="page-hero">
+<div class="step-badge" data-zh="參考資料 · REFERENCES" data-en="REFERENCES">REFERENCES</div>
+<h1 data-zh="參考資料 · References" data-en="Computer Science Intro References Index">Computer Science Intro References Index</h1>
+<p class="subtitle" data-lang="zh">為計算機概論 Interactive Tutorial 16 章主題提供原始論文、經典教科書、官方標準、權威文件與 best practices 的完整佐證。</p>
+<p class="subtitle" data-lang="en">References, citations, and sources for the Computer Science Intro Interactive Tutorial — papers, official documents, and benchmarks with DOI / URL links.</p>
+</header>
+
+<main class="content-wrap">
+
+<!-- Overview -->
+<section class="section">
+<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
+<h2 data-zh="如何使用這份資料？" data-en="How to use this page">如何使用這份資料？</h2>
+<p data-lang="zh">本頁針對教學中提到的每個概念、演算法、標準與里程碑事件，整理學術出處與官方來源供讀者深入查閱。引用標籤含義：</p>
+<p data-lang="en">For every concept, algorithm, standard, and milestone event mentioned in the tutorial, this page collects academic sources and official references for deeper reading. Citation tag meanings:</p>
+<div class="card-grid cols-3">
+  <div class="card"><div class="card-icon" style="background:var(--c-accent-light)">📄</div><h4>Paper</h4><p data-lang="zh">原始論文 · 含 DOI / arXiv</p><p data-lang="en">Original papers with DOI or arXiv links</p></div>
+  <div class="card"><div class="card-icon" style="background:#e3f2fd">📘</div><h4>Doc</h4><p data-lang="zh">官方文件、規範、tutorial</p><p data-lang="en">Official documentation, specifications, tutorials</p></div>
+  <div class="card"><div class="card-icon" style="background:var(--c-highlight-light)">⭐</div><h4>Best Practice</h4><p data-lang="zh">社群推薦或產業權威建議</p><p data-lang="en">Community-recommended and industry-authoritative practices</p></div>
+  <div class="card"><div class="card-icon" style="background:#fff3e0">📊</div><h4>Benchmark</h4><p data-lang="zh">方法評比 / 獨立排行榜</p><p data-lang="en">Method comparisons and independent leaderboards</p></div>
+  <div class="card"><div class="card-icon" style="background:#fce4ec">🗄️</div><h4>Database</h4><p data-lang="zh">知識庫、索引、目錄</p><p data-lang="en">Knowledge bases, indexes, directories</p></div>
+  <div class="card"><div class="card-icon" style="background:#f3e5f5">📚</div><h4>Book</h4><p data-lang="zh">經典教科書與線上免費書</p><p data-lang="en">Classic textbooks and free online books</p></div>
+  <div class="card"><div class="card-icon" style="background:#e0f2f1">⚙️</div><h4>Standard</h4><p data-lang="zh">IEEE / ISO / RFC / NIST 標準</p><p data-lang="en">IEEE, ISO, RFC, and NIST standards</p></div>
+</div>
+
+<h3 data-zh="本頁目錄" data-en="Table of contents">本頁目錄</h3>
+<div class="toc-grid">
+  <a href="#ch01"><span class="step-tag">Ch 1</span><span data-zh="計算機歷史" data-en="History of Computing">計算機歷史</span></a>
+  <a href="#ch02"><span class="step-tag">Ch 2</span><span data-zh="資料表示法" data-en="Data Representation">資料表示法</span></a>
+  <a href="#ch03"><span class="step-tag">Ch 3</span><span data-zh="數位邏輯" data-en="Digital Logic">數位邏輯</span></a>
+  <a href="#ch04"><span class="step-tag">Ch 4</span><span data-zh="CPU 架構" data-en="CPU Architecture">CPU 架構</span></a>
+  <a href="#ch05"><span class="step-tag">Ch 5</span><span data-zh="記憶體儲存" data-en="Memory & Storage">記憶體儲存</span></a>
+  <a href="#ch06"><span class="step-tag">Ch 6</span><span data-zh="作業系統" data-en="Operating Systems">作業系統</span></a>
+  <a href="#ch07"><span class="step-tag">Ch 7</span><span data-zh="電腦網路" data-en="Computer Networks">電腦網路</span></a>
+  <a href="#ch08"><span class="step-tag">Ch 8</span><span data-zh="資料庫" data-en="Databases">資料庫</span></a>
+  <a href="#ch09"><span class="step-tag">Ch 9</span><span data-zh="程式設計" data-en="Programming">程式設計</span></a>
+  <a href="#ch10"><span class="step-tag">Ch 10</span><span data-zh="演算法" data-en="Algorithms">演算法</span></a>
+  <a href="#ch11"><span class="step-tag">Ch 11</span><span data-zh="資料結構" data-en="Data Structures">資料結構</span></a>
+  <a href="#ch12"><span class="step-tag">Ch 12</span><span data-zh="軟體工程" data-en="Software Engineering">軟體工程</span></a>
+  <a href="#ch13"><span class="step-tag">Ch 13</span><span data-zh="資安密碼學" data-en="Security & Cryptography">資安密碼學</span></a>
+  <a href="#ch14"><span class="step-tag">Ch 14</span><span data-zh="AI / ML" data-en="AI / ML">AI / ML</span></a>
+  <a href="#ch15"><span class="step-tag">Ch 15</span><span data-zh="雲端 IoT" data-en="Cloud & IoT">雲端 IoT</span></a>
+  <a href="#ch16"><span class="step-tag">Ch 16</span><span data-zh="倫理與未來" data-en="Ethics & Future">倫理與未來</span></a>
+  <a href="#errata"><span class="step-tag">!</span><span data-zh="教學註記與細節" data-en="Tutorial Notes & Details">教學註記與細節</span></a>
+</div>
+</section>
+
+<!-- ===================== Ch 1 ===================== -->
+<section class="section section-anchor" id="ch01">
+<div class="section-label" data-zh="Chapter 1" data-en="Chapter 1">Chapter 1</div>
+<h2 data-zh="🕰️ Ch 1 · 計算機發展簡史" data-en="🕰️ Ch 1 · A Brief History of Computing">🕰️ Ch 1 · 計算機發展簡史</h2>
+<p data-lang="zh">從圖靈機的數學基礎、von Neumann 架構藍圖，到 ENIAC、電晶體、IC 與量子優勢，涵蓋七十年計算機發展的關鍵原始文獻。</p>
+<p data-lang="en">From the mathematical foundations of the Turing machine and the von Neumann architecture blueprint to ENIAC, transistors, ICs, and quantum advantage — the key original literature spanning seventy years of computing history.</p>
+<ul class="ref-list">
+  <li>
+    <span class="ref-tag paper">PAPER</span>
+    <span class="ref-author">Turing AM.</span>
+    <span class="ref-title"> On Computable Numbers, with an Application to the Entscheidungsproblem. </span>
+    <em>Proc London Math Soc</em>, s2-42(1), 230–265 (1936).
+    <span class="ref-meta"><span data-lang="zh">DOI: <a href="https://doi.org/10.1112/plms/s2-42.1.230" target="_blank" rel="noopener">10.1112/plms/s2-42.1.230</a> · 圖靈機與可計算性的奠基論文</span><span data-lang="en">DOI: <a href="https://doi.org/10.1112/plms/s2-42.1.230" target="_blank" rel="noopener">10.1112/plms/s2-42.1.230</a> · Foundational paper on the Turing machine and computability</span></span>
+  </li>
+  <li>
+    <span class="ref-tag paper">PAPER</span>
+    <span class="ref-author">von Neumann J.</span>
+    <span class="ref-title"> First Draft of a Report on the EDVAC. </span>
+    <em>Moore School of Electrical Engineering, University of Pennsylvania</em> (1945).
+    <span class="ref-meta"><span data-lang="zh">儲存程式架構（von Neumann architecture）原始報告 · <a href="https://web.mit.edu/STS.035/www/PDFs/edvac.pdf" target="_blank" rel="noopener">MIT 重印版</a></span><span data-lang="en">Original report on the stored-program (von Neumann) architecture · <a href="https://web.mit.edu/STS.035/www/PDFs/edvac.pdf" target="_blank" rel="noopener">MIT reprint</a></span></span>
+  </li>
+  <li>
+    <span class="ref-tag paper">PAPER</span>
+    <span class="ref-author">Moore GE.</span>
+    <span class="ref-title"> Cramming more components onto integrated circuits. </span>
+    <em>Electronics</em>, 38(8), 114–117 (1965).
+    <span class="ref-meta"><span data-lang="zh">「摩爾定律」原始論文 · <a href="https://newsroom.intel.com/wp-content/uploads/sites/11/2018/05/moores-law-electronics.pdf" target="_blank" rel="noopener">Intel Newsroom 重印</a></span><span data-lang="en">The original Moore's Law paper · <a href="https://newsroom.intel.com/wp-content/uploads/sites/11/2018/05/moores-law-electronics.pdf" target="_blank" rel="noopener">Intel Newsroom reprint</a></span></span>
+  </li>
+  <li>
+    <span class="ref-tag db">🗄️ DB</span>
+    <span class="ref-author">Computer History Museum.</span>
+    <span class="ref-title"> Timeline of Computer History. </span>
+    <em>CHM, Mountain View, CA</em>.
+    <span class="ref-meta"><span data-lang="zh"><a href="https://computerhistory.org" target="_blank" rel="noopener">computerhistory.org</a> · 完整時間軸與展品檔案</span><span data-lang="en"><a href="https://computerhistory.org" target="_blank" rel="noopener">computerhistory.org</a> · Complete timeline and exhibit archive</span></span>
+  </li>
+  <li>
+    <span class="ref-tag doc">📘 DOC</span>
+    <span class="ref-author">Wikipedia contributors.</span>
+    <span class="ref-title"> History of computing hardware · Transistor count. </span>
+    <em>Wikipedia, the free encyclopedia</em>.
+    <span class="ref-meta"><span data-lang="zh"><a href="https://en.wikipedia.org/wiki/History_of_computing_hardware" target="_blank" rel="noopener">History of computing hardware</a> · <a href="https://en.wikipedia.org/wiki/Transistor_count" target="_blank" rel="noopener">Transistor count</a></span><span data-lang="en"><a href="https://en.wikipedia.org/wiki/History_of_computing_hardware" target="_blank" rel="noopener">History of computing hardware</a> · <a href="https://en.wikipedia.org/wiki/Transistor_count" target="_blank" rel="noopener">Transistor count</a></span></span>
+  </li>
+</ul>
+</section>
+
+<!-- ===================== Ch 2 ===================== -->
+<section class="section section-anchor" id="ch02">
+<div class="section-label" data-zh="Chapter 2" data-en="Chapter 2">Chapter 2</div>
+<h2 data-zh="🔢 Ch 2 · 資料表示法" data-en="🔢 Ch 2 · Data Representation">🔢 Ch 2 · 資料表示法</h2>
+<p data-lang="zh">二進位、補數、IEEE 754 浮點、Unicode 與 UTF-8、現代 ML 數值格式（BF16/FP8）的標準與權威參考。</p>
+<p data-lang="en">Authoritative standards and references for binary, two's complement, IEEE 754 floating-point, Unicode and UTF-8, and modern ML numeric formats (BF16/FP8).</p>
+<ul class="ref-list">
+  <li>
+    <span class="ref-tag standard">⚙️ STANDARD</span>
+    <span class="ref-author">IEEE.</span>
+    <span class="ref-title"> IEEE 754-2019 — IEEE Standard for Floating-Point Arithmetic. </span>
+    <em>IEEE Std</em> (2019).
+    <span class="ref-meta"><span data-lang="zh">DOI: <a href="https://doi.org/10.1109/IEEESTD.2019.8766229" target="_blank" rel="noopener">10.1109/IEEESTD.2019.8766229</a></span><span data-lang="en">DOI: <a href="https://doi.org/10.1109/IEEESTD.2019.8766229" target="_blank" rel="noopener">10.1109/IEEESTD.2019.8766229</a></span></span>
+  </li>
+  <li>
+    <span class="ref-tag bestp">★ BEST</span>
+    <span class="ref-author">Goldberg D.</span>
+    <span class="ref-title"> What Every Computer Scientist Should Know About Floating-Point Arithmetic. </span>
+    <em>ACM Computing Surveys</em>, 23(1), 5–48 (1991).
+    <span class="ref-meta"><span data-lang="zh">DOI: <a href="https://doi.org/10.1145/103162.103163" target="_blank" rel="noopener">10.1145/103162.103163</a> · 浮點數運算的必讀經典</span><span data-lang="en">DOI: <a href="https://doi.org/10.1145/103162.103163" target="_blank" rel="noopener">10.1145/103162.103163</a> · Required reading on floating-point arithmetic</span></span>
+  </li>
+  <li>
+    <span class="ref-tag doc">📘 DOC</span>
+    <span class="ref-author">Unicode Consortium.</span>
+    <span class="ref-title"> The Unicode Standard (latest version). </span>
+    <em>Mountain View, CA</em>.
+    <span class="ref-meta"><span data-lang="zh"><a href="https://unicode.org" target="_blank" rel="noopener">unicode.org</a> · 完整字元表與 normalization 規則</span><span data-lang="en"><a href="https://unicode.org" target="_blank" rel="noopener">unicode.org</a> · Full character tables and normalization rules</span></span>
+  </li>
+  <li>
+    <span class="ref-tag standard">⚙️ STANDARD</span>
+    <span class="ref-author">Yergeau F.</span>
+    <span class="ref-title"> UTF-8, a transformation format of ISO 10646. </span>
+    <em>RFC 3629, IETF</em> (2003).
+    <span class="ref-meta"><span data-lang="zh"><a href="https://datatracker.ietf.org/doc/html/rfc3629" target="_blank" rel="noopener">datatracker.ietf.org/doc/html/rfc3629</a></span><span data-lang="en"><a href="https://datatracker.ietf.org/doc/html/rfc3629" target="_blank" rel="noopener">datatracker.ietf.org/doc/html/rfc3629</a></span></span>
+  </li>
+  <li>
+    <span class="ref-tag paper">PAPER</span>
+    <span class="ref-author">Wang S, Kanwar P (Intel/Google).</span>
+    <span class="ref-title"> BFloat16: The secret to high performance on Cloud TPUs. </span>
+    <em>Google Cloud Blog / Intel whitepaper</em> (2019).
+    <span class="ref-meta"><span data-lang="zh"><a href="https://cloud.google.com/blog/products/ai-machine-learning/bfloat16-the-secret-to-high-performance-on-cloud-tpus" target="_blank" rel="noopener">cloud.google.com</a> · BF16 數值格式提案</span><span data-lang="en"><a href="https://cloud.google.com/blog/products/ai-machine-learning/bfloat16-the-secret-to-high-performance-on-cloud-tpus" target="_blank" rel="noopener">cloud.google.com</a> · The BF16 numeric format proposal</span></span>
+  </li>
+</ul>
+</section>
+
+<!-- ===================== Ch 3 ===================== -->
+<section class="section section-anchor" id="ch03">
+<div class="section-label" data-zh="Chapter 3" data-en="Chapter 3">Chapter 3</div>
+<h2 data-zh="🔌 Ch 3 · 數位邏輯與布林代數" data-en="🔌 Ch 3 · Digital Logic and Boolean Algebra">🔌 Ch 3 · 數位邏輯與布林代數</h2>
+<p data-lang="zh">從 Boole 的邏輯代數、Shannon 的開關電路、到現代數位設計教材，理解 AND/OR/NOT/XOR、組合邏輯與時序邏輯的理論基礎。</p>
+<p data-lang="en">From Boole's algebra of logic and Shannon's switching circuits to modern digital design textbooks — understanding the theoretical foundations of AND/OR/NOT/XOR, combinational logic, and sequential logic.</p>
+<ul class="ref-list">
+  <li>
+    <span class="ref-tag paper">PAPER</span>
+    <span class="ref-author">Shannon CE.</span>
+    <span class="ref-title"> A Symbolic Analysis of Relay and Switching Circuits. </span>
+    <em>MIT MSc thesis / Trans. AIEE</em>, 57, 713–723 (1937/1938).
+    <span class="ref-meta"><span data-lang="zh">DOI: <a href="https://doi.org/10.1109/T-AIEE.1938.5057767" target="_blank" rel="noopener">10.1109/T-AIEE.1938.5057767</a> · 將布林代數應用於電路設計的奠基論文</span><span data-lang="en">DOI: <a href="https://doi.org/10.1109/T-AIEE.1938.5057767" target="_blank" rel="noopener">10.1109/T-AIEE.1938.5057767</a> · Foundational paper applying Boolean algebra to circuit design</span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Boole G.</span>
+    <span class="ref-title"> An Investigation of the Laws of Thought. </span>
+    <em>Walton and Maberly, London</em> (1854).
+    <span class="ref-meta"><span data-lang="zh">布林代數的原始著作 · <a href="https://www.gutenberg.org/ebooks/15114" target="_blank" rel="noopener">Project Gutenberg 全文</a></span><span data-lang="en">The original work on Boolean algebra · <a href="https://www.gutenberg.org/ebooks/15114" target="_blank" rel="noopener">Project Gutenberg full text</a></span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Mano MM, Ciletti MD.</span>
+    <span class="ref-title"> Digital Design: With an Introduction to the Verilog HDL, VHDL, and SystemVerilog. </span>
+    <em>6th ed., Pearson</em> (2018).
+    <span class="ref-meta"><span data-lang="zh">大學部數位邏輯設計的標準教科書</span><span data-lang="en">Standard undergraduate textbook for digital logic design</span></span>
+  </li>
+  <li>
+    <span class="ref-tag doc">📘 DOC</span>
+    <span class="ref-author">Wakerly JF.</span>
+    <span class="ref-title"> Digital Design: Principles and Practices. </span>
+    <em>5th ed., Pearson</em> (2018).
+    <span class="ref-meta"><span data-lang="zh">組合與時序邏輯設計、CMOS 與 PLD 介紹</span><span data-lang="en">Combinational and sequential logic design, with introductions to CMOS and PLD</span></span>
+  </li>
+</ul>
+</section>
+
+<!-- ===================== Ch 4 ===================== -->
+<section class="section section-anchor" id="ch04">
+<div class="section-label" data-zh="Chapter 4" data-en="Chapter 4">Chapter 4</div>
+<h2 data-zh="🖥️ Ch 4 · CPU 與計算機組織" data-en="🖥️ Ch 4 · CPU and Computer Organization">🖥️ Ch 4 · CPU 與計算機組織</h2>
+<p data-lang="zh">RISC-V 教科書、量化方法的計算機架構聖經，與 ARM/RISC-V 官方規範。</p>
+<p data-lang="en">The RISC-V textbook, the quantitative-approach bible of computer architecture, and the official ARM and RISC-V specifications.</p>
+<ul class="ref-list">
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Patterson DA, Hennessy JL.</span>
+    <span class="ref-title"> Computer Organization and Design: The Hardware/Software Interface (RISC-V Edition). </span>
+    <em>6th ed., Morgan Kaufmann</em> (2020).
+    <span class="ref-meta"><span data-lang="zh">大學部 Computer Organization 標準教材，2017 Turing Award 得主合著</span><span data-lang="en">Standard undergraduate Computer Organization textbook, co-authored by 2017 Turing Award winners</span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Hennessy JL, Patterson DA.</span>
+    <span class="ref-title"> Computer Architecture: A Quantitative Approach. </span>
+    <em>6th ed., Morgan Kaufmann</em> (2017).
+    <span class="ref-meta"><span data-lang="zh">研究所等級的計算機架構聖經 · 含 GPU、DSA、warehouse-scale computing</span><span data-lang="en">The graduate-level bible of computer architecture · covers GPU, DSA, and warehouse-scale computing</span></span>
+  </li>
+  <li>
+    <span class="ref-tag standard">⚙️ STANDARD</span>
+    <span class="ref-author">RISC-V International.</span>
+    <span class="ref-title"> The RISC-V Instruction Set Manual (Unprivileged & Privileged). </span>
+    <em>Latest ratified specs</em>.
+    <span class="ref-meta"><span data-lang="zh"><a href="https://riscv.org" target="_blank" rel="noopener">riscv.org</a> · 開放標準 ISA 完整規範</span><span data-lang="en"><a href="https://riscv.org" target="_blank" rel="noopener">riscv.org</a> · Complete open-standard ISA specification</span></span>
+  </li>
+  <li>
+    <span class="ref-tag doc">📘 DOC</span>
+    <span class="ref-author">Arm Limited.</span>
+    <span class="ref-title"> Arm Architecture Reference Manual (Armv9-A). </span>
+    <em>Arm Developer</em>.
+    <span class="ref-meta"><span data-lang="zh"><a href="https://developer.arm.com" target="_blank" rel="noopener">developer.arm.com</a> · ARM ISA 與系統架構規範</span><span data-lang="en"><a href="https://developer.arm.com" target="_blank" rel="noopener">developer.arm.com</a> · ARM ISA and system architecture specifications</span></span>
+  </li>
+</ul>
+</section>
+
+<!-- ===================== Ch 5 ===================== -->
+<section class="section section-anchor" id="ch05">
+<div class="section-label" data-zh="Chapter 5" data-en="Chapter 5">Chapter 5</div>
+<h2 data-zh="💾 Ch 5 · 記憶體與儲存" data-en="💾 Ch 5 · Memory and Storage">💾 Ch 5 · 記憶體與儲存</h2>
+<p data-lang="zh">從 cache hierarchy、virtual memory、SSD 到 CXL 記憶體擴展，涵蓋傳統 DRAM 階層到 2026 雲端資料中心的記憶體解構（disaggregation）。</p>
+<p data-lang="en">From cache hierarchy, virtual memory, and SSDs to CXL memory expansion — spanning the traditional DRAM hierarchy through memory disaggregation in 2026 cloud data centers.</p>
+<ul class="ref-list">
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Patterson DA, Hennessy JL.</span>
+    <span class="ref-title"> Computer Organization and Design (RISC-V Edition), Ch 5: Memory Hierarchy. </span>
+    <em>6th ed., Morgan Kaufmann</em> (2020).
+    <span class="ref-meta"><span data-lang="zh">Cache、virtual memory、DRAM 階層的權威教材</span><span data-lang="en">Authoritative textbook on cache, virtual memory, and the DRAM hierarchy</span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Bryant RE, O'Hallaron DR.</span>
+    <span class="ref-title"> Computer Systems: A Programmer's Perspective (CS:APP). </span>
+    <em>3rd ed., Pearson</em> (2015).
+    <span class="ref-meta"><span data-lang="zh">Cache locality、memory mapping、performance tuning 從程式設計師視角切入</span><span data-lang="en">Cache locality, memory mapping, and performance tuning from a programmer's perspective</span></span>
+  </li>
+  <li>
+    <span class="ref-tag standard">⚙️ STANDARD</span>
+    <span class="ref-author">CXL Consortium.</span>
+    <span class="ref-title"> Compute Express Link (CXL) Specification 3.1. </span>
+    <em>CXL Consortium</em> (2023–2026).
+    <span class="ref-meta"><span data-lang="zh"><a href="https://www.computeexpresslink.org" target="_blank" rel="noopener">computeexpresslink.org</a> · 記憶體共享與 pooling 的開放互連標準</span><span data-lang="en"><a href="https://www.computeexpresslink.org" target="_blank" rel="noopener">computeexpresslink.org</a> · Open interconnect standard for memory sharing and pooling</span></span>
+  </li>
+  <li>
+    <span class="ref-tag doc">📘 DOC</span>
+    <span class="ref-author">JEDEC Solid State Technology Association.</span>
+    <span class="ref-title"> DDR5 SDRAM Standard (JESD79-5C) · NVMe & UFS spec families. </span>
+    <em>JEDEC</em>.
+    <span class="ref-meta"><span data-lang="zh"><a href="https://www.jedec.org" target="_blank" rel="noopener">jedec.org</a> · 記憶體與儲存業界標準制定組織</span><span data-lang="en"><a href="https://www.jedec.org" target="_blank" rel="noopener">jedec.org</a> · Industry standards body for memory and storage</span></span>
+  </li>
+</ul>
+</section>
+
+<!-- ===================== Ch 6 ===================== -->
+<section class="section section-anchor" id="ch06">
+<div class="section-label" data-zh="Chapter 6" data-en="Chapter 6">Chapter 6</div>
+<h2 data-zh="⚙️ Ch 6 · 作業系統" data-en="⚙️ Ch 6 · Operating Systems">⚙️ Ch 6 · 作業系統</h2>
+<p data-lang="zh">OS 概念聖經（恐龍書）、Tanenbaum 現代作業系統，搭配 Linux 與 POSIX 官方文件。</p>
+<p data-lang="en">The OS-concepts bible (the "Dinosaur Book"), Tanenbaum's Modern Operating Systems, together with the official Linux and POSIX documentation.</p>
+<ul class="ref-list">
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Silberschatz A, Galvin PB, Gagne G.</span>
+    <span class="ref-title"> Operating System Concepts ("Dinosaur Book"). </span>
+    <em>10th ed., Wiley</em> (2018).
+    <span class="ref-meta"><span data-lang="zh">大學部 OS 課程最被廣泛採用的教科書</span><span data-lang="en">The most widely adopted textbook for undergraduate OS courses</span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Tanenbaum AS, Bos H.</span>
+    <span class="ref-title"> Modern Operating Systems. </span>
+    <em>5th ed., Pearson</em> (2022).
+    <span class="ref-meta"><span data-lang="zh">Process、threads、memory management、file systems、security 全覆蓋</span><span data-lang="en">Comprehensive coverage of processes, threads, memory management, file systems, and security</span></span>
+  </li>
+  <li>
+    <span class="ref-tag doc">📘 DOC</span>
+    <span class="ref-author">The Linux Kernel Organization.</span>
+    <span class="ref-title"> The Linux Kernel documentation. </span>
+    <em>kernel.org</em>.
+    <span class="ref-meta"><span data-lang="zh"><a href="https://www.kernel.org/doc/" target="_blank" rel="noopener">kernel.org/doc</a> · scheduler、cgroups、namespaces、eBPF 第一手文件</span><span data-lang="en"><a href="https://www.kernel.org/doc/" target="_blank" rel="noopener">kernel.org/doc</a> · First-hand documentation for the scheduler, cgroups, namespaces, and eBPF</span></span>
+  </li>
+  <li>
+    <span class="ref-tag standard">⚙️ STANDARD</span>
+    <span class="ref-author">The Open Group.</span>
+    <span class="ref-title"> POSIX.1-2017 (IEEE Std 1003.1-2017) — Portable Operating System Interface. </span>
+    <em>The Open Group Base Specifications Issue 7, 2018 ed</em>.
+    <span class="ref-meta"><span data-lang="zh"><a href="https://pubs.opengroup.org/onlinepubs/9699919799/" target="_blank" rel="noopener">pubs.opengroup.org</a></span><span data-lang="en"><a href="https://pubs.opengroup.org/onlinepubs/9699919799/" target="_blank" rel="noopener">pubs.opengroup.org</a></span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Arpaci-Dusseau RH, Arpaci-Dusseau AC.</span>
+    <span class="ref-title"> Operating Systems: Three Easy Pieces. </span>
+    <em>Online, free</em>.
+    <span class="ref-meta"><span data-lang="zh"><a href="https://pages.cs.wisc.edu/~remzi/OSTEP/" target="_blank" rel="noopener">OSTEP 免費全書</a> · Wisconsin Madison 教材</span><span data-lang="en"><a href="https://pages.cs.wisc.edu/~remzi/OSTEP/" target="_blank" rel="noopener">OSTEP free full book</a> · University of Wisconsin-Madison course material</span></span>
+  </li>
+</ul>
+</section>
+
+<!-- ===================== Ch 7 ===================== -->
+<section class="section section-anchor" id="ch07">
+<div class="section-label" data-zh="Chapter 7" data-en="Chapter 7">Chapter 7</div>
+<h2 data-zh="🌐 Ch 7 · 電腦網路" data-en="🌐 Ch 7 · Computer Networks">🌐 Ch 7 · 電腦網路</h2>
+<p data-lang="zh">從 Kurose top-down approach 到 Tanenbaum 全層次切入，以及 TCP/IPv6/QUIC/HTTP/3 的最新 IETF RFCs。</p>
+<p data-lang="en">From Kurose's top-down approach to Tanenbaum's full-stack treatment, together with the latest IETF RFCs for TCP, IPv6, QUIC, and HTTP/3.</p>
+<ul class="ref-list">
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Kurose JF, Ross KW.</span>
+    <span class="ref-title"> Computer Networking: A Top-Down Approach. </span>
+    <em>8th ed., Pearson</em> (2021).
+    <span class="ref-meta"><span data-lang="zh">從應用層往下、Socket 程式設計切入的主流教材</span><span data-lang="en">A mainstream textbook taking a top-down approach starting from the application layer and socket programming</span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Tanenbaum AS, Wetherall DJ.</span>
+    <span class="ref-title"> Computer Networks. </span>
+    <em>6th ed., Pearson</em> (2021).
+    <span class="ref-meta"><span data-lang="zh">從實體層往上、OSI 完整層次分析</span><span data-lang="en">A bottom-up analysis from the physical layer through the full OSI stack</span></span>
+  </li>
+  <li>
+    <span class="ref-tag standard">⚙️ STANDARD</span>
+    <span class="ref-author">Iyengar J, Thomson M (Eds).</span>
+    <span class="ref-title"> RFC 9000 — QUIC: A UDP-Based Multiplexed and Secure Transport. </span>
+    <em>IETF</em> (2021).
+    <span class="ref-meta"><span data-lang="zh"><a href="https://datatracker.ietf.org/doc/html/rfc9000" target="_blank" rel="noopener">RFC 9000</a></span><span data-lang="en"><a href="https://datatracker.ietf.org/doc/html/rfc9000" target="_blank" rel="noopener">RFC 9000</a></span></span>
+  </li>
+  <li>
+    <span class="ref-tag standard">⚙️ STANDARD</span>
+    <span class="ref-author">Bishop M (Ed).</span>
+    <span class="ref-title"> RFC 9114 — HTTP/3. </span>
+    <em>IETF</em> (2022).
+    <span class="ref-meta"><span data-lang="zh"><a href="https://datatracker.ietf.org/doc/html/rfc9114" target="_blank" rel="noopener">RFC 9114</a></span><span data-lang="en"><a href="https://datatracker.ietf.org/doc/html/rfc9114" target="_blank" rel="noopener">RFC 9114</a></span></span>
+  </li>
+  <li>
+    <span class="ref-tag standard">⚙️ STANDARD</span>
+    <span class="ref-author">Eddy W (Ed).</span>
+    <span class="ref-title"> RFC 9293 — Transmission Control Protocol (TCP). </span>
+    <em>IETF</em> (2022).
+    <span class="ref-meta"><span data-lang="zh"><a href="https://datatracker.ietf.org/doc/html/rfc9293" target="_blank" rel="noopener">RFC 9293</a> · 取代舊版 TCP 規格的整合 RFC</span><span data-lang="en"><a href="https://datatracker.ietf.org/doc/html/rfc9293" target="_blank" rel="noopener">RFC 9293</a> · Consolidated RFC superseding the older TCP specifications</span></span>
+  </li>
+  <li>
+    <span class="ref-tag standard">⚙️ STANDARD</span>
+    <span class="ref-author">Deering S, Hinden R.</span>
+    <span class="ref-title"> RFC 8200 — Internet Protocol, Version 6 (IPv6) Specification. </span>
+    <em>IETF</em> (2017).
+    <span class="ref-meta"><span data-lang="zh"><a href="https://datatracker.ietf.org/doc/html/rfc8200" target="_blank" rel="noopener">RFC 8200</a></span><span data-lang="en"><a href="https://datatracker.ietf.org/doc/html/rfc8200" target="_blank" rel="noopener">RFC 8200</a></span></span>
+  </li>
+  <li>
+    <span class="ref-tag doc">📘 DOC</span>
+    <span class="ref-author">Internet Engineering Task Force.</span>
+    <span class="ref-title"> IETF Datatracker. </span>
+    <em>IETF</em>.
+    <span class="ref-meta"><span data-lang="zh"><a href="https://www.ietf.org" target="_blank" rel="noopener">ietf.org</a> · 所有網路協議 RFC 的權威來源</span><span data-lang="en"><a href="https://www.ietf.org" target="_blank" rel="noopener">ietf.org</a> · The authoritative source for all networking protocol RFCs</span></span>
+  </li>
+</ul>
+</section>
+
+<!-- ===================== Ch 8 ===================== -->
+<section class="section section-anchor" id="ch08">
+<div class="section-label" data-zh="Chapter 8" data-en="Chapter 8">Chapter 8</div>
+<h2 data-zh="🗄️ Ch 8 · 資料庫" data-en="🗄️ Ch 8 · Databases">🗄️ Ch 8 · 資料庫</h2>
+<p data-lang="zh">從 Codd 1970 年的關聯式模型奠基論文，到 Elmasri、Garcia-Molina 的標準教材，以及 ISO/IEC 9075 SQL 標準。</p>
+<p data-lang="en">From Codd's 1970 foundational paper on the relational model to the standard textbooks by Elmasri and Garcia-Molina, plus the ISO/IEC 9075 SQL standard.</p>
+<ul class="ref-list">
+  <li>
+    <span class="ref-tag paper">PAPER</span>
+    <span class="ref-author">Codd EF.</span>
+    <span class="ref-title"> A Relational Model of Data for Large Shared Data Banks. </span>
+    <em>Communications of the ACM</em>, 13(6), 377–387 (1970).
+    <span class="ref-meta"><span data-lang="zh">DOI: <a href="https://doi.org/10.1145/362384.362685" target="_blank" rel="noopener">10.1145/362384.362685</a> · 關聯式資料庫的奠基論文（1981 Turing Award）</span><span data-lang="en">DOI: <a href="https://doi.org/10.1145/362384.362685" target="_blank" rel="noopener">10.1145/362384.362685</a> · Foundational paper on the relational database (1981 Turing Award)</span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Elmasri R, Navathe SB.</span>
+    <span class="ref-title"> Fundamentals of Database Systems. </span>
+    <em>7th ed., Pearson</em> (2016).
+    <span class="ref-meta"><span data-lang="zh">ER 模型、SQL、normalization、transaction、indexing 全覆蓋</span><span data-lang="en">Comprehensive coverage of ER modeling, SQL, normalization, transactions, and indexing</span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Garcia-Molina H, Ullman JD, Widom J.</span>
+    <span class="ref-title"> Database Systems: The Complete Book. </span>
+    <em>2nd ed., Pearson</em> (2008).
+    <span class="ref-meta"><span data-lang="zh">Stanford 派系深度教材 · 含查詢處理、optimization、分散式 DB</span><span data-lang="en">An in-depth textbook in the Stanford tradition · covers query processing, optimization, and distributed databases</span></span>
+  </li>
+  <li>
+    <span class="ref-tag standard">⚙️ STANDARD</span>
+    <span class="ref-author">ISO/IEC.</span>
+    <span class="ref-title"> ISO/IEC 9075 — Information technology · Database languages · SQL. </span>
+    <em>International Organization for Standardization</em>.
+    <span class="ref-meta"><span data-lang="zh">SQL 國際標準（多 part：framework、foundation、CLI、PSM 等） · <a href="https://www.iso.org/standard/76583.html" target="_blank" rel="noopener">iso.org/standard/76583</a></span><span data-lang="en">The international SQL standard (multi-part: framework, foundation, CLI, PSM, etc.) · <a href="https://www.iso.org/standard/76583.html" target="_blank" rel="noopener">iso.org/standard/76583</a></span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Kleppmann M.</span>
+    <span class="ref-title"> Designing Data-Intensive Applications. </span>
+    <em>O'Reilly</em> (2017).
+    <span class="ref-meta"><span data-lang="zh">NoSQL、分散式系統、replication、consensus 的當代必讀</span><span data-lang="en">Contemporary must-read on NoSQL, distributed systems, replication, and consensus</span></span>
+  </li>
+</ul>
+</section>
+
+<!-- ===================== Ch 9 ===================== -->
+<section class="section section-anchor" id="ch09">
+<div class="section-label" data-zh="Chapter 9" data-en="Chapter 9">Chapter 9</div>
+<h2 data-zh="💬 Ch 9 · 程式設計" data-en="💬 Ch 9 · Programming">💬 Ch 9 · 程式設計</h2>
+<p data-lang="zh">程式語言概念教材、Python 官方文件、與 2025/2026 流行度排行榜。</p>
+<p data-lang="en">Programming-language concepts textbooks, the official Python documentation, and 2025/2026 popularity rankings.</p>
+<ul class="ref-list">
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Sebesta RW.</span>
+    <span class="ref-title"> Concepts of Programming Languages. </span>
+    <em>12th ed., Pearson</em> (2019).
+    <span class="ref-meta"><span data-lang="zh">系統性比較 imperative / OO / functional / logic 範式</span><span data-lang="en">A systematic comparison of the imperative, OO, functional, and logic paradigms</span></span>
+  </li>
+  <li>
+    <span class="ref-tag doc">📘 DOC</span>
+    <span class="ref-author">Python Software Foundation.</span>
+    <span class="ref-title"> The Python Tutorial. </span>
+    <em>docs.python.org</em>.
+    <span class="ref-meta"><span data-lang="zh"><a href="https://docs.python.org/3/tutorial/" target="_blank" rel="noopener">docs.python.org/3/tutorial</a> · 官方初學教學</span><span data-lang="en"><a href="https://docs.python.org/3/tutorial/" target="_blank" rel="noopener">docs.python.org/3/tutorial</a> · Official beginner tutorial</span></span>
+  </li>
+  <li>
+    <span class="ref-tag bench">📊 BENCH</span>
+    <span class="ref-author">TIOBE Software.</span>
+    <span class="ref-title"> TIOBE Programming Community Index. </span>
+    <em>tiobe.com</em> (monthly, 2026).
+    <span class="ref-meta"><span data-lang="zh"><a href="https://www.tiobe.com/tiobe-index/" target="_blank" rel="noopener">tiobe.com/tiobe-index</a> · 程式語言流行度指標</span><span data-lang="en"><a href="https://www.tiobe.com/tiobe-index/" target="_blank" rel="noopener">tiobe.com/tiobe-index</a> · Programming-language popularity index</span></span>
+  </li>
+  <li>
+    <span class="ref-tag bench">📊 BENCH</span>
+    <span class="ref-author">IEEE Spectrum.</span>
+    <span class="ref-title"> Top Programming Languages 2025 / 2026. </span>
+    <em>IEEE Spectrum</em>.
+    <span class="ref-meta"><span data-lang="zh"><a href="https://spectrum.ieee.org/top-programming-languages" target="_blank" rel="noopener">spectrum.ieee.org/top-programming-languages</a></span><span data-lang="en"><a href="https://spectrum.ieee.org/top-programming-languages" target="_blank" rel="noopener">spectrum.ieee.org/top-programming-languages</a></span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Scott ML.</span>
+    <span class="ref-title"> Programming Language Pragmatics. </span>
+    <em>4th ed., Morgan Kaufmann</em> (2015).
+    <span class="ref-meta"><span data-lang="zh">編譯器、執行期模型、型別系統的深度教材</span><span data-lang="en">An in-depth textbook on compilers, runtime models, and type systems</span></span>
+  </li>
+</ul>
+</section>
+
+<!-- ===================== Ch 10 ===================== -->
+<section class="section section-anchor" id="ch10">
+<div class="section-label" data-zh="Chapter 10" data-en="Chapter 10">Chapter 10</div>
+<h2 data-zh="🧮 Ch 10 · 演算法" data-en="🧮 Ch 10 · Algorithms">🧮 Ch 10 · 演算法</h2>
+<p data-lang="zh">CLRS、Sedgewick、Knuth：演算法三大經典教材。</p>
+<p data-lang="en">CLRS, Sedgewick, and Knuth: the three classic textbooks on algorithms.</p>
+<ul class="ref-list">
+  <li>
+    <span class="ref-tag bestp">★ BEST</span>
+    <span class="ref-author">Cormen TH, Leiserson CE, Rivest RL, Stein C.</span>
+    <span class="ref-title"> Introduction to Algorithms (CLRS). </span>
+    <em>4th ed., MIT Press</em> (2022).
+    <span class="ref-meta"><span data-lang="zh">演算法教科書的「聖經」 · 涵蓋分析、排序、圖、DP、NP-completeness</span><span data-lang="en">The "bible" of algorithms textbooks · covers analysis, sorting, graphs, DP, and NP-completeness</span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Sedgewick R, Wayne K.</span>
+    <span class="ref-title"> Algorithms. </span>
+    <em>4th ed., Addison-Wesley</em> (2011).
+    <span class="ref-meta"><span data-lang="zh">Princeton 配套課程 · Java 實作風格、實務取向 · <a href="https://algs4.cs.princeton.edu/" target="_blank" rel="noopener">algs4 線上書站</a></span><span data-lang="en">Companion course at Princeton · Java implementation style and practice-oriented · <a href="https://algs4.cs.princeton.edu/" target="_blank" rel="noopener">algs4 online book site</a></span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Knuth DE.</span>
+    <span class="ref-title"> The Art of Computer Programming, Volumes 1–4A. </span>
+    <em>Addison-Wesley</em> (1968–ongoing).
+    <span class="ref-meta"><span data-lang="zh">演算法分析的歷史標竿著作（1974 Turing Award）</span><span data-lang="en">A landmark historical work on algorithm analysis (1974 Turing Award)</span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Kleinberg J, Tardos É.</span>
+    <span class="ref-title"> Algorithm Design. </span>
+    <em>1st ed., Pearson</em> (2005).
+    <span class="ref-meta"><span data-lang="zh">以「問題分類」教學的另一風格教材 · 強調貪婪、divide-and-conquer、DP、network flow</span><span data-lang="en">A different style of textbook organized by problem class · emphasizes greedy, divide-and-conquer, DP, and network flow</span></span>
+  </li>
+</ul>
+</section>
+
+<!-- ===================== Ch 11 ===================== -->
+<section class="section section-anchor" id="ch11">
+<div class="section-label" data-zh="Chapter 11" data-en="Chapter 11">Chapter 11</div>
+<h2 data-zh="🌲 Ch 11 · 資料結構" data-en="🌲 Ch 11 · Data Structures">🌲 Ch 11 · 資料結構</h2>
+<p data-lang="zh">從 Python 視角切入的當代教材，與面試導向的演算法設計手冊。</p>
+<p data-lang="en">A contemporary textbook taking a Python perspective, alongside an interview-oriented algorithm design manual.</p>
+<ul class="ref-list">
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Goodrich MT, Tamassia R, Goldwasser MH.</span>
+    <span class="ref-title"> Data Structures and Algorithms in Python. </span>
+    <em>Wiley</em> (2013).
+    <span class="ref-meta"><span data-lang="zh">Python 實作完整資料結構教材：list、stack、queue、tree、hash table、graph</span><span data-lang="en">A complete data structures textbook with Python implementations: list, stack, queue, tree, hash table, and graph</span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Cormen TH, Leiserson CE, Rivest RL, Stein C.</span>
+    <span class="ref-title"> Introduction to Algorithms (CLRS), Part III — Data Structures. </span>
+    <em>4th ed., MIT Press</em> (2022).
+    <span class="ref-meta"><span data-lang="zh">Hash table、tree、disjoint set、B-tree 等的權威教材</span><span data-lang="en">Authoritative textbook on hash tables, trees, disjoint sets, B-trees, and more</span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Skiena SS.</span>
+    <span class="ref-title"> The Algorithm Design Manual. </span>
+    <em>3rd ed., Springer</em> (2020).
+    <span class="ref-meta"><span data-lang="zh">面試 / 競賽導向、附「演算法目錄」實務指南</span><span data-lang="en">Interview- and competition-oriented, with a practical "algorithm catalog" guide</span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Weiss MA.</span>
+    <span class="ref-title"> Data Structures and Algorithm Analysis in C++. </span>
+    <em>4th ed., Pearson</em> (2014).
+    <span class="ref-meta"><span data-lang="zh">嚴謹的複雜度分析、AVL、splay tree、B-tree、graph 演算法</span><span data-lang="en">Rigorous complexity analysis, AVL, splay tree, B-tree, and graph algorithms</span></span>
+  </li>
+</ul>
+</section>
+
+<!-- ===================== Ch 12 ===================== -->
+<section class="section section-anchor" id="ch12">
+<div class="section-label" data-zh="Chapter 12" data-en="Chapter 12">Chapter 12</div>
+<h2 data-zh="🛠️ Ch 12 · 軟體工程" data-en="🛠️ Ch 12 · Software Engineering">🛠️ Ch 12 · 軟體工程</h2>
+<p data-lang="zh">傳統 SE 教科書 + 敏捷宣言 + Git 官方手冊。</p>
+<p data-lang="en">Traditional SE textbooks, the Agile Manifesto, and the official Git book.</p>
+<ul class="ref-list">
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Sommerville I.</span>
+    <span class="ref-title"> Software Engineering. </span>
+    <em>10th ed., Pearson</em> (2015).
+    <span class="ref-meta"><span data-lang="zh">需求分析、設計、驗證、演化、可靠性與安全</span><span data-lang="en">Requirements analysis, design, validation, evolution, reliability, and security</span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Pressman RS, Maxim BR.</span>
+    <span class="ref-title"> Software Engineering: A Practitioner's Approach. </span>
+    <em>9th ed., McGraw-Hill</em> (2019).
+    <span class="ref-meta"><span data-lang="zh">SDLC、敏捷、DevOps、quality assurance 全覆蓋</span><span data-lang="en">Comprehensive coverage of SDLC, agile, DevOps, and quality assurance</span></span>
+  </li>
+  <li>
+    <span class="ref-tag doc">📘 DOC</span>
+    <span class="ref-author">Beck K, Beedle M, van Bennekum A, et al.</span>
+    <span class="ref-title"> Manifesto for Agile Software Development. </span>
+    <em>agilemanifesto.org</em> (2001).
+    <span class="ref-meta"><span data-lang="zh"><a href="https://agilemanifesto.org" target="_blank" rel="noopener">agilemanifesto.org</a> · 敏捷宣言原文與十二原則</span><span data-lang="en"><a href="https://agilemanifesto.org" target="_blank" rel="noopener">agilemanifesto.org</a> · The original Agile Manifesto and its twelve principles</span></span>
+  </li>
+  <li>
+    <span class="ref-tag doc">📘 DOC</span>
+    <span class="ref-author">Chacon S, Straub B.</span>
+    <span class="ref-title"> Pro Git. </span>
+    <em>2nd ed., Apress</em> (Online free).
+    <span class="ref-meta"><span data-lang="zh"><a href="https://git-scm.com/book" target="_blank" rel="noopener">git-scm.com/book</a> · Git 官方書籍</span><span data-lang="en"><a href="https://git-scm.com/book" target="_blank" rel="noopener">git-scm.com/book</a> · The official Git book</span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Fowler M.</span>
+    <span class="ref-title"> Refactoring: Improving the Design of Existing Code. </span>
+    <em>2nd ed., Addison-Wesley</em> (2018).
+    <span class="ref-meta"><span data-lang="zh">重構模式與技術債管理的經典</span><span data-lang="en">A classic on refactoring patterns and managing technical debt</span></span>
+  </li>
+</ul>
+</section>
+
+<!-- ===================== Ch 13 ===================== -->
+<section class="section section-anchor" id="ch13">
+<div class="section-label" data-zh="Chapter 13" data-en="Chapter 13">Chapter 13</div>
+<h2 data-zh="🔒 Ch 13 · 資安與密碼學" data-en="🔒 Ch 13 · Security and Cryptography">🔒 Ch 13 · 資安與密碼學</h2>
+<p data-lang="zh">從 Stallings、Katz-Lindell 教科書、OWASP Top 10、到 NIST 後量子密碼學標準 FIPS 203/204/205。</p>
+<p data-lang="en">From the Stallings and Katz-Lindell textbooks and the OWASP Top 10 to NIST's post-quantum cryptography standards FIPS 203/204/205.</p>
+<ul class="ref-list">
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Stallings W.</span>
+    <span class="ref-title"> Cryptography and Network Security: Principles and Practice. </span>
+    <em>8th ed., Pearson</em> (2022).
+    <span class="ref-meta"><span data-lang="zh">對稱／非對稱密碼、雜湊、PKI、TLS、IPsec 全覆蓋</span><span data-lang="en">Comprehensive coverage of symmetric and asymmetric cryptography, hashing, PKI, TLS, and IPsec</span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Katz J, Lindell Y.</span>
+    <span class="ref-title"> Introduction to Modern Cryptography. </span>
+    <em>3rd ed., CRC Press</em> (2020).
+    <span class="ref-meta"><span data-lang="zh">證明導向的密碼學標準教材</span><span data-lang="en">A proof-oriented standard cryptography textbook</span></span>
+  </li>
+  <li>
+    <span class="ref-tag bestp">★ BEST</span>
+    <span class="ref-author">OWASP Foundation.</span>
+    <span class="ref-title"> OWASP Top 10:2025 — The Ten Most Critical Web Application Security Risks. </span>
+    <em>OWASP</em> (2025).
+    <span class="ref-meta"><span data-lang="zh"><a href="https://owasp.org/Top10/2025/" target="_blank" rel="noopener">owasp.org/Top10/2025</a> · 業界最廣為引用的 web 風險清單</span><span data-lang="en"><a href="https://owasp.org/Top10/2025/" target="_blank" rel="noopener">owasp.org/Top10/2025</a> · The most widely cited web-risk list in the industry</span></span>
+  </li>
+  <li>
+    <span class="ref-tag standard">⚙️ STANDARD</span>
+    <span class="ref-author">NIST.</span>
+    <span class="ref-title"> FIPS 203 — Module-Lattice-Based Key-Encapsulation Mechanism (ML-KEM). </span>
+    <em>National Institute of Standards and Technology</em> (2024).
+    <span class="ref-meta"><span data-lang="zh">CRYSTALS-Kyber 後量子 KEM · <a href="https://csrc.nist.gov/projects/post-quantum-cryptography" target="_blank" rel="noopener">csrc.nist.gov/projects/post-quantum-cryptography</a></span><span data-lang="en">CRYSTALS-Kyber post-quantum KEM · <a href="https://csrc.nist.gov/projects/post-quantum-cryptography" target="_blank" rel="noopener">csrc.nist.gov/projects/post-quantum-cryptography</a></span></span>
+  </li>
+  <li>
+    <span class="ref-tag standard">⚙️ STANDARD</span>
+    <span class="ref-author">NIST.</span>
+    <span class="ref-title"> FIPS 204 — Module-Lattice-Based Digital Signature Standard (ML-DSA). </span>
+    <em>NIST</em> (2024).
+    <span class="ref-meta"><span data-lang="zh">CRYSTALS-Dilithium 後量子簽章</span><span data-lang="en">CRYSTALS-Dilithium post-quantum signature</span></span>
+  </li>
+  <li>
+    <span class="ref-tag standard">⚙️ STANDARD</span>
+    <span class="ref-author">NIST.</span>
+    <span class="ref-title"> FIPS 205 — Stateless Hash-Based Digital Signature Standard (SLH-DSA). </span>
+    <em>NIST</em> (2024).
+    <span class="ref-meta"><span data-lang="zh">SPHINCS+ 雜湊基底簽章</span><span data-lang="en">SPHINCS+ hash-based signature</span></span>
+  </li>
+  <li>
+    <span class="ref-tag standard">⚙️ STANDARD</span>
+    <span class="ref-author">Rescorla E.</span>
+    <span class="ref-title"> RFC 8446 — The Transport Layer Security (TLS) Protocol Version 1.3. </span>
+    <em>IETF</em> (2018).
+    <span class="ref-meta"><span data-lang="zh"><a href="https://datatracker.ietf.org/doc/html/rfc8446" target="_blank" rel="noopener">RFC 8446</a></span><span data-lang="en"><a href="https://datatracker.ietf.org/doc/html/rfc8446" target="_blank" rel="noopener">RFC 8446</a></span></span>
+  </li>
+</ul>
+</section>
+
+<!-- ===================== Ch 14 ===================== -->
+<section class="section section-anchor" id="ch14">
+<div class="section-label" data-zh="Chapter 14" data-en="Chapter 14">Chapter 14</div>
+<h2 data-zh="🤖 Ch 14 · 人工智慧與機器學習" data-en="🤖 Ch 14 · Artificial Intelligence and Machine Learning">🤖 Ch 14 · 人工智慧與機器學習</h2>
+<p data-lang="zh">AIMA 經典 + 深度學習聖經 + Transformer 原始論文 + AlphaFold + 2026 LLM 排行榜。</p>
+<p data-lang="en">The AIMA classic, the deep learning bible, the original Transformer paper, AlphaFold, and 2026 LLM leaderboards.</p>
+<ul class="ref-list">
+  <li>
+    <span class="ref-tag bestp">★ BEST</span>
+    <span class="ref-author">Russell S, Norvig P.</span>
+    <span class="ref-title"> Artificial Intelligence: A Modern Approach (AIMA). </span>
+    <em>4th ed., Pearson</em> (2020).
+    <span class="ref-meta"><span data-lang="zh">AI 教科書事實上的標準參考</span><span data-lang="en">The de facto standard reference textbook for AI</span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Goodfellow I, Bengio Y, Courville A.</span>
+    <span class="ref-title"> Deep Learning. </span>
+    <em>MIT Press</em> (2016).
+    <span class="ref-meta"><span data-lang="zh"><a href="https://www.deeplearningbook.org" target="_blank" rel="noopener">deeplearningbook.org</a> · 線上免費全文，深度學習的奠基教材</span><span data-lang="en"><a href="https://www.deeplearningbook.org" target="_blank" rel="noopener">deeplearningbook.org</a> · Free full text online; the foundational deep-learning textbook</span></span>
+  </li>
+  <li>
+    <span class="ref-tag paper">PAPER</span>
+    <span class="ref-author">Vaswani A, Shazeer N, Parmar N, et al.</span>
+    <span class="ref-title"> Attention Is All You Need. </span>
+    <em>Advances in Neural Information Processing Systems (NeurIPS)</em>, 30 (2017).
+    <span class="ref-meta"><span data-lang="zh">arXiv: <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">1706.03762</a> · Transformer 架構的原始論文</span><span data-lang="en">arXiv: <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">1706.03762</a> · The original paper on the Transformer architecture</span></span>
+  </li>
+  <li>
+    <span class="ref-tag paper">PAPER</span>
+    <span class="ref-author">Jumper J, Evans R, Pritzel A, et al.</span>
+    <span class="ref-title"> Highly accurate protein structure prediction with AlphaFold. </span>
+    <em>Nature</em>, 596, 583–589 (2021).
+    <span class="ref-meta"><span data-lang="zh">DOI: <a href="https://doi.org/10.1038/s41586-021-03819-2" target="_blank" rel="noopener">10.1038/s41586-021-03819-2</a> · 2024 Nobel Prize in Chemistry</span><span data-lang="en">DOI: <a href="https://doi.org/10.1038/s41586-021-03819-2" target="_blank" rel="noopener">10.1038/s41586-021-03819-2</a> · 2024 Nobel Prize in Chemistry</span></span>
+  </li>
+  <li>
+    <span class="ref-tag bench">📊 BENCH</span>
+    <span class="ref-author">LM Council.</span>
+    <span class="ref-title"> LM Council Benchmarks 2026. </span>
+    <em>lmcouncil.ai</em>.
+    <span class="ref-meta"><span data-lang="zh"><a href="https://lmcouncil.ai/benchmarks" target="_blank" rel="noopener">lmcouncil.ai/benchmarks</a> · 大型語言模型評比</span><span data-lang="en"><a href="https://lmcouncil.ai/benchmarks" target="_blank" rel="noopener">lmcouncil.ai/benchmarks</a> · Large language model evaluations</span></span>
+  </li>
+  <li>
+    <span class="ref-tag bench">📊 BENCH</span>
+    <span class="ref-author">Vellum AI.</span>
+    <span class="ref-title"> Vellum LLM Leaderboard 2026. </span>
+    <em>vellum.ai</em>.
+    <span class="ref-meta"><span data-lang="zh"><a href="https://www.vellum.ai/llm-leaderboard" target="_blank" rel="noopener">vellum.ai/llm-leaderboard</a></span><span data-lang="en"><a href="https://www.vellum.ai/llm-leaderboard" target="_blank" rel="noopener">vellum.ai/llm-leaderboard</a></span></span>
+  </li>
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Murphy KP.</span>
+    <span class="ref-title"> Probabilistic Machine Learning: An Introduction & Advanced Topics. </span>
+    <em>MIT Press</em> (2022/2023).
+    <span class="ref-meta"><span data-lang="zh">機率視角的當代 ML 教材 · <a href="https://probml.github.io/pml-book/" target="_blank" rel="noopener">probml.github.io/pml-book</a></span><span data-lang="en">A contemporary ML textbook from a probabilistic perspective · <a href="https://probml.github.io/pml-book/" target="_blank" rel="noopener">probml.github.io/pml-book</a></span></span>
+  </li>
+</ul>
+</section>
+
+<!-- ===================== Ch 15 ===================== -->
+<section class="section section-anchor" id="ch15">
+<div class="section-label" data-zh="Chapter 15" data-en="Chapter 15">Chapter 15</div>
+<h2 data-zh="☁️ Ch 15 · 雲端、邊緣與 IoT" data-en="☁️ Ch 15 · Cloud, Edge, and IoT">☁️ Ch 15 · 雲端、邊緣與 IoT</h2>
+<p data-lang="zh">雲端原理教材、AWS Well-Architected、Kubernetes、Matter IoT 規範、3GPP 5G。</p>
+<p data-lang="en">Cloud-principles textbooks, AWS Well-Architected, Kubernetes, the Matter IoT specification, and 3GPP 5G.</p>
+<ul class="ref-list">
+  <li>
+    <span class="ref-tag book">📚 BOOK</span>
+    <span class="ref-author">Buyya R, Broberg J, Goscinski AM (Eds).</span>
+    <span class="ref-title"> Cloud Computing: Principles and Paradigms. </span>
+    <em>Wiley</em> (2011).
+    <span class="ref-meta"><span data-lang="zh">雲端模型、虛擬化、資源管理的綜合教材</span><span data-lang="en">A comprehensive textbook on cloud models, virtualization, and resource management</span></span>
+  </li>
+  <li>
+    <span class="ref-tag bestp">★ BEST</span>
+    <span class="ref-author">Amazon Web Services.</span>
+    <span class="ref-title"> AWS Well-Architected Framework. </span>
+    <em>aws.amazon.com</em>.
+    <span class="ref-meta"><span data-lang="zh"><a href="https://aws.amazon.com/architecture/well-architected/" target="_blank" rel="noopener">aws.amazon.com/architecture/well-architected</a> · 6 大支柱設計準則</span><span data-lang="en"><a href="https://aws.amazon.com/architecture/well-architected/" target="_blank" rel="noopener">aws.amazon.com/architecture/well-architected</a> · Six-pillar design principles</span></span>
+  </li>
+  <li>
+    <span class="ref-tag doc">📘 DOC</span>
+    <span class="ref-author">Cloud Native Computing Foundation.</span>
+    <span class="ref-title"> Kubernetes Documentation. </span>
+    <em>kubernetes.io</em>.
+    <span class="ref-meta"><span data-lang="zh"><a href="https://kubernetes.io/docs/" target="_blank" rel="noopener">kubernetes.io/docs</a> · 容器編排事實標準的官方文件</span><span data-lang="en"><a href="https://kubernetes.io/docs/" target="_blank" rel="noopener">kubernetes.io/docs</a> · Official documentation for the de facto container-orchestration standard</span></span>
+  </li>
+  <li>
+    <span class="ref-tag standard">⚙️ STANDARD</span>
+    <span class="ref-author">Connectivity Standards Alliance.</span>
+    <span class="ref-title"> Matter Specification 1.4. </span>
+    <em>CSA</em> (2024–2026).
+    <span class="ref-meta"><span data-lang="zh"><a href="https://csa-iot.org/all-solutions/matter/" target="_blank" rel="noopener">csa-iot.org/all-solutions/matter</a> · 跨廠商 IoT 互通標準</span><span data-lang="en"><a href="https://csa-iot.org/all-solutions/matter/" target="_blank" rel="noopener">csa-iot.org/all-solutions/matter</a> · Cross-vendor IoT interoperability standard</span></span>
+  </li>
+</ul>
+</section>
+
+<!-- ===================== Footnote ===================== -->
+<section class="section">
+<div class="callout tip">
+<span class="callout-icon">📖</span>
+<div>
+<strong data-zh="查找指南：" data-en="How to find a paper:">查找指南：</strong>
+<span data-zh="所有 DOI 連結指向出版社頁面。若需下載 PDF，可搭配 " data-en="DOI links point to publisher pages. For free PDFs, try ">所有 DOI 連結指向出版社頁面。若需下載 PDF，可搭配 </span>
+<a href="https://pubmed.ncbi.nlm.nih.gov/" target="_blank" rel="noopener">PubMed</a>、
+<a href="https://www.ncbi.nlm.nih.gov/pmc/" target="_blank" rel="noopener">PMC</a>、
+<a href="https://arxiv.org/" target="_blank" rel="noopener">arXiv</a>、
+<a href="https://www.biorxiv.org/" target="_blank" rel="noopener">bioRxiv</a>
+<span data-zh=" 找開放近用版本。" data-en=" for open-access versions."> 找開放近用版本。</span>
+</div>
+</div>
+</section>
+
+<!-- ===================== Errata / Extended discussion ===================== -->
+<section class="section section-anchor" id="errata">
+<div class="section-label" data-zh="教學註記" data-en="TUTORIAL NOTES">教學註記</div>
+<h2 data-zh="📌 教學註記與細節" data-en="📌 Tutorial Notes & Details">📌 教學註記與細節</h2>
+<p data-lang="zh">以下整理計算機概論常見誤解、概念混淆與時下被忽略的細節；部分屬於勘誤，多數屬於補充說明。每則皆附權威來源便於進一步查閱。</p>
+<p data-lang="en">Common misconceptions, blurred distinctions, and frequently overlooked details across the Computer Science Intro tutorial; some are errata, most are supplementary notes with authoritative sources for further reading.</p>
+
+<div class="errata">
+  <span class="errata-label" data-zh="補充說明" data-en="Notes" style="display:inline-block;background:#e0e7ff;color:#3730a3;padding:2px 10px;border-radius:4px;font-size:.72rem;font-weight:700;letter-spacing:.5px;margin-bottom:8px">補充說明 · Notes</span>
+  <h4 data-zh="Big-O 是「上界」不是「執行時間」：worst-case vs amortized vs Θ/Ω" data-en="Big-O is an upper bound, not a runtime — worst-case vs amortized vs Θ/Ω">Big-O 是「上界」不是「執行時間」：worst-case vs amortized vs Θ/Ω</h4>
+  <p data-lang="zh">教科書常把 Big-O 等同於「時間複雜度」，但嚴格定義 O(f(n)) 只是「漸近上界」（asymptotic upper bound），Θ(f(n)) 才是緊界、Ω(f(n)) 是下界。說「快排是 O(n²)」雖技術上正確卻誤導 — 應說 worst-case Θ(n²)、平均 Θ(n log n)。另外 dynamic array 的 push_back 是 worst-case O(n)（觸發 resize）但 amortized O(1)（Tarjan 1985 accounting method），兩者不可混為「平均」。實務上請明確標註是 worst / average / amortized。</p>
+  <p data-lang="en">Textbooks often equate Big-O with "running time", but strictly O(f(n)) is only an asymptotic upper bound; Θ(f(n)) is a tight bound and Ω(f(n)) is a lower bound. Saying "quicksort is O(n²)" is technically correct but misleading — say worst-case Θ(n²), average Θ(n log n). Likewise, dynamic-array push_back is worst-case O(n) (on resize) but amortized O(1) (Tarjan's 1985 accounting method); these are not the same as "average". Always state explicitly whether a bound is worst, average, or amortized.</p>
+  <p data-lang="zh">來源：<a href="https://doi.org/10.1137/0606031" target="_blank" rel="noopener">Tarjan 1985 (SIAM J Algebraic Discrete Methods, amortized analysis)</a> · <a href="https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/" target="_blank" rel="noopener">CLRS 4th ed. (2022) ch. 3 & 16</a></p>
+  <p data-lang="en">Source: <a href="https://doi.org/10.1137/0606031" target="_blank" rel="noopener">Tarjan 1985 (SIAM J Algebraic Discrete Methods, amortized analysis)</a> · <a href="https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/" target="_blank" rel="noopener">CLRS 4th ed. (2022) ch. 3 & 16</a></p>
+</div>
+
+<div class="errata">
+  <span class="errata-label" data-zh="補充說明" data-en="Notes" style="display:inline-block;background:#e0e7ff;color:#3730a3;padding:2px 10px;border-radius:4px;font-size:.72rem;font-weight:700;letter-spacing:.5px;margin-bottom:8px">補充說明 · Notes</span>
+  <h4 data-zh="Stack 與 Heap 不是語言規定的：escape analysis 與「在哪配置」的真相" data-en="Stack vs Heap is not a language guarantee — escape analysis decides allocation">Stack 與 Heap 不是語言規定的：escape analysis 與「在哪配置」的真相</h4>
+  <p data-lang="zh">「primitive 放 stack、object 放 heap」是常見過簡說法。JVM HotSpot 自 Java 6u14（2009）起即透過 escape analysis 與 scalar replacement 將不逃逸的物件配置於 stack 或拆解為暫存器；Go compiler 也用 escape analysis 決定變數實際位置（go build -gcflags="-m" 可觀察）。C++ struct 也可在 heap 上（new）。正確說法：stack/heap 是 runtime 配置策略，不是語言型別的固有屬性；別在面試誤答。</p>
+  <p data-lang="en">"Primitives live on the stack, objects on the heap" is an oversimplification. JVM HotSpot has used escape analysis with scalar replacement since Java 6u14 (2009) to allocate non-escaping objects on the stack or break them into registers; Go's compiler likewise uses escape analysis to decide actual placement (observable via go build -gcflags="-m"). A C++ struct can also live on the heap (via new). Correct framing: stack vs heap is a runtime allocation strategy, not an inherent property of language types — don't get this wrong in interviews.</p>
+  <p data-lang="zh">來源：<a href="https://wiki.openjdk.org/display/HotSpot/EscapeAnalysis" target="_blank" rel="noopener">OpenJDK HotSpot · Escape Analysis</a> · <a href="https://go.dev/doc/faq#stack_or_heap" target="_blank" rel="noopener">Go FAQ — stack or heap?</a></p>
+  <p data-lang="en">Source: <a href="https://wiki.openjdk.org/display/HotSpot/EscapeAnalysis" target="_blank" rel="noopener">OpenJDK HotSpot · Escape Analysis</a> · <a href="https://go.dev/doc/faq#stack_or_heap" target="_blank" rel="noopener">Go FAQ — stack or heap?</a></p>
+</div>
+
+<div class="errata">
+  <span class="errata-label" data-zh="補充說明" data-en="Notes" style="display:inline-block;background:#e0e7ff;color:#3730a3;padding:2px 10px;border-radius:4px;font-size:.72rem;font-weight:700;letter-spacing:.5px;margin-bottom:8px">補充說明 · Notes</span>
+  <h4 data-zh="TCP/IP 4 層 vs OSI 7 層：實務用 4 層，OSI 是教學模型" data-en="TCP/IP 4 layers vs OSI 7 layers — practice uses 4, OSI is a teaching model">TCP/IP 4 層 vs OSI 7 層：實務用 4 層，OSI 是教學模型</h4>
+  <p data-lang="zh">教科書同時介紹 OSI 7 層與 TCP/IP 4 層，但實際運作的網際網路只實作 TCP/IP 模型（RFC 1122：Link、Internet、Transport、Application）。OSI 模型的 Session（L5）與 Presentation（L6）在實務上幾乎不對應任何具體協定 — HTTPS 的 TLS 同時跨 L5/L6/L7，DNS 也橫跨多層。把交換器叫「L2 設備」、路由器叫「L3 設備」是業界口語，不要把它套回 OSI 七層做精確對位。OSI 1984 標準在 1990 年代基本上輸給 TCP/IP。</p>
+  <p data-lang="en">Textbooks present both OSI's 7 layers and TCP/IP's 4 layers, but the operational Internet implements only the TCP/IP model (RFC 1122: Link, Internet, Transport, Application). OSI's Session (L5) and Presentation (L6) layers have almost no concrete protocol counterparts in practice — HTTPS's TLS spans L5/L6/L7, and DNS straddles multiple layers. Calling a switch an "L2 device" or a router an "L3 device" is industry shorthand, not a precise OSI mapping. The 1984 OSI standard effectively lost to TCP/IP by the 1990s.</p>
+  <p data-lang="zh">來源：<a href="https://datatracker.ietf.org/doc/html/rfc1122" target="_blank" rel="noopener">RFC 1122 (Internet host requirements)</a> · <a href="https://www.itu.int/rec/T-REC-X.200" target="_blank" rel="noopener">ITU-T X.200 (OSI Reference Model)</a></p>
+  <p data-lang="en">Source: <a href="https://datatracker.ietf.org/doc/html/rfc1122" target="_blank" rel="noopener">RFC 1122 (Internet host requirements)</a> · <a href="https://www.itu.int/rec/T-REC-X.200" target="_blank" rel="noopener">ITU-T X.200 (OSI Reference Model)</a></p>
+</div>
+
+<div class="errata">
+  <span class="errata-label" data-zh="補充說明" data-en="Notes" style="display:inline-block;background:#e0e7ff;color:#3730a3;padding:2px 10px;border-radius:4px;font-size:.72rem;font-weight:700;letter-spacing:.5px;margin-bottom:8px">補充說明 · Notes</span>
+  <h4 data-zh="ACID 與 BASE 不對立；CAP 不是萬能，PACELC 才完整" data-en="ACID and BASE are not opposites; CAP is incomplete — use PACELC">ACID 與 BASE 不對立；CAP 不是萬能，PACELC 才完整</h4>
+  <p data-lang="zh">「SQL = ACID、NoSQL = BASE」屬於誤解。現代分散式 SQL（CockroachDB、Spanner）同樣 ACID 並可水平擴展；MongoDB 自 4.0（2018）起亦支援多文件 ACID 交易。CAP 定理（Brewer 2000；Gilbert & Lynch 2002 正式證明）的「2 選 1」常被過度簡化：實際上 P（分割）不是選項而是常態，真正權衡是 C vs A。Abadi 2012 PACELC 更完整：分割發生時選 P vs A，否則選 L（latency）vs C — 這才解釋為何 DynamoDB「最終一致」是設計選擇而非技術限制。</p>
+  <p data-lang="en">The slogan "SQL = ACID, NoSQL = BASE" is misleading. Modern distributed SQL (CockroachDB, Spanner) is ACID and horizontally scalable, and MongoDB has supported multi-document ACID transactions since 4.0 (2018). The "pick two" framing of CAP (Brewer 2000; Gilbert & Lynch 2002 proof) is oversimplified — partition tolerance (P) is a fact of life, not a choice; the real trade-off is C vs A. Abadi's 2012 PACELC is more complete: during a partition, choose P vs A; otherwise choose L (latency) vs C — which explains why DynamoDB's eventual consistency is a design choice, not a limitation.</p>
+  <p data-lang="zh">來源：<a href="https://doi.org/10.1145/564585.564601" target="_blank" rel="noopener">Gilbert & Lynch 2002 (CAP proof, SIGACT News)</a> · <a href="https://doi.org/10.1109/MC.2012.33" target="_blank" rel="noopener">Abadi 2012 (PACELC, IEEE Computer)</a></p>
+  <p data-lang="en">Source: <a href="https://doi.org/10.1145/564585.564601" target="_blank" rel="noopener">Gilbert & Lynch 2002 (CAP proof, SIGACT News)</a> · <a href="https://doi.org/10.1109/MC.2012.33" target="_blank" rel="noopener">Abadi 2012 (PACELC, IEEE Computer)</a></p>
+</div>
+
+<div class="errata">
+  <span class="errata-label" data-zh="勘誤注意" data-en="Erratum" style="display:inline-block;background:#fee2e2;color:#991b1b;padding:2px 10px;border-radius:4px;font-size:.72rem;font-weight:700;letter-spacing:.5px;margin-bottom:8px">勘誤注意 · Erratum</span>
+  <h4 data-zh="量子電腦不是「同時嘗試所有答案」 — 量子優勢來自干涉" data-en="Quantum computers do NOT 'try all answers at once' — speedup comes from interference">量子電腦不是「同時嘗試所有答案」 — 量子優勢來自干涉</h4>
+  <p data-lang="zh">最常見的科普誤導是「N qubit 可同時計算 2^N 個答案」。實際上量子演算法的加速來自精心安排的干涉（interference），讓正確答案的振幅相加、錯誤答案彼此相消；最後測量仍只取得一個 classical bit string。Shor 演算法的指數加速是 quantum Fourier transform 的結構，Grover 只給 √N 加速、非指數。Aaronson 多次強調此點：「Quantum is not parallel classical.」NISQ 時代（2026）Google Willow（105 qubit, 2024 Dec）展示糾錯里程碑但仍未達 cryptographically-relevant scale。</p>
+  <p data-lang="en">The most common pop-science mistake: "N qubits compute 2^N answers in parallel." In reality, quantum speedups arise from carefully engineered interference — amplitudes of correct answers add constructively while wrong ones cancel — and measurement still yields just one classical bit string. Shor's exponential speedup comes from the structure of the quantum Fourier transform; Grover gives only a √N speedup, not exponential. Aaronson stresses repeatedly: "Quantum is not parallel classical." In the NISQ era (2026), Google's Willow chip (105 qubits, Dec 2024) demonstrated an error-correction milestone but still far from cryptographically relevant scale.</p>
+  <p data-lang="zh">來源：<a href="https://www.scottaaronson.com/qclec.pdf" target="_blank" rel="noopener">Aaronson · Quantum Computing Lecture Notes</a> · <a href="https://doi.org/10.1038/s41586-024-08449-y" target="_blank" rel="noopener">Acharya et al. 2024 (Google Willow, Nature)</a></p>
+  <p data-lang="en">Source: <a href="https://www.scottaaronson.com/qclec.pdf" target="_blank" rel="noopener">Aaronson · Quantum Computing Lecture Notes</a> · <a href="https://doi.org/10.1038/s41586-024-08449-y" target="_blank" rel="noopener">Acharya et al. 2024 (Google Willow, Nature)</a></p>
+</div>
+
+<div class="errata">
+  <span class="errata-label" data-zh="補充說明" data-en="Notes" style="display:inline-block;background:#e0e7ff;color:#3730a3;padding:2px 10px;border-radius:4px;font-size:.72rem;font-weight:700;letter-spacing:.5px;margin-bottom:8px">補充說明 · Notes</span>
+  <h4 data-zh="雲端定價的三大「隱形成本」：egress、API 呼叫、vendor lock-in" data-en="Three hidden costs of cloud pricing — egress, API calls, vendor lock-in">雲端定價的三大「隱形成本」：egress、API 呼叫、vendor lock-in</h4>
+  <p data-lang="zh">教科書常以 EC2 / S3 每小時或每 GB 單價估算雲端費用，但實際帳單最痛的三項常被忽略：(1) Egress（離開該雲的傳輸流量）— AWS / GCP / Azure 跨區與外網下載每 GB 約 0.08–0.12 USD，遠高於儲存本身；(2) API 呼叫費（S3 GET / PUT、Lambda invocations）對大量小檔工作流可達數百美元；(3) Vendor lock-in：自管 Kubernetes 數據往 managed 服務（DynamoDB、BigQuery）寫死後遷移成本極高。EU Data Act 2024 已生效規範 egress 並推動可攜性。Cloudflare R2 / Backblaze B2 等 zero-egress 競品近年成長即因此而起。</p>
+  <p data-lang="en">Textbooks estimate cloud cost from per-hour EC2 or per-GB S3 unit price, but the three line items that bite hardest are routinely missed: (1) Egress — outbound transfer from AWS / GCP / Azure across regions or to the internet runs roughly USD 0.08–0.12 per GB, often dwarfing storage itself; (2) API call fees (S3 GET/PUT, Lambda invocations) can reach hundreds of dollars for many-small-files workflows; (3) Vendor lock-in — once data is wired into managed services (DynamoDB, BigQuery), migration cost is enormous. The EU Data Act 2024 now regulates egress and mandates portability. The recent rise of zero-egress competitors like Cloudflare R2 and Backblaze B2 is a direct response.</p>
+  <p data-lang="zh">來源：<a href="https://eur-lex.europa.eu/eli/reg/2023/2854/oj" target="_blank" rel="noopener">EU Data Act (Regulation 2023/2854)</a> · <a href="https://aws.amazon.com/ec2/pricing/on-demand/" target="_blank" rel="noopener">AWS Data Transfer Pricing</a></p>
+  <p data-lang="en">Source: <a href="https://eur-lex.europa.eu/eli/reg/2023/2854/oj" target="_blank" rel="noopener">EU Data Act (Regulation 2023/2854)</a> · <a href="https://aws.amazon.com/ec2/pricing/on-demand/" target="_blank" rel="noopener">AWS Data Transfer Pricing</a></p>
+</div>
+
+<div class="errata">
+  <span class="errata-label" data-zh="補充說明" data-en="Notes" style="display:inline-block;background:#e0e7ff;color:#3730a3;padding:2px 10px;border-radius:4px;font-size:.72rem;font-weight:700;letter-spacing:.5px;margin-bottom:8px">補充說明 · Notes</span>
+  <h4 data-zh="Cache 不只是「比 RAM 快的記憶體」：SRAM/DRAM/cache line/MESI" data-en="Cache is not just 'faster RAM' — SRAM vs DRAM, cache lines, and MESI">Cache 不只是「比 RAM 快的記憶體」：SRAM/DRAM/cache line/MESI</h4>
+  <p data-lang="zh">教科書常把 L1/L2/L3 cache 簡化為「比 RAM 快」，但有幾個關鍵點：(1) Cache 是 SRAM（6T 一 cell，無需 refresh）、主記憶體是 DRAM（1T1C 需 refresh）— SRAM 每位元面積與成本高 6–10 倍，所以 cache 小；(2) Cache 以 cache line（典型 64 B）為單位讀寫，故 struct 排列不當會造成 false sharing — 多核同時寫同一條 line 上的不同變數會觸發 MESI（Modified-Exclusive-Shared-Invalid）反覆同步、效能骨折 10–100 倍；(3) NUMA 架構下跨 socket 訪問遠端 cache 比本地慢 2–3 倍。Drepper《What Every Programmer Should Know About Memory》是這題目的經典。</p>
+  <p data-lang="en">Textbooks often reduce L1/L2/L3 to "faster than RAM," but several details matter: (1) Cache is SRAM (6 transistors per cell, no refresh); main memory is DRAM (1T1C, requires refresh) — SRAM per-bit area and cost are 6–10× higher, which is why cache is small; (2) Caches read and write in cache-line units (typically 64 B), so poor struct layout causes false sharing — two cores writing distinct variables on the same line trigger repeated MESI (Modified-Exclusive-Shared-Invalid) syncs and 10–100× slowdowns; (3) Under NUMA, cross-socket access to remote cache is 2–3× slower than local. Drepper's "What Every Programmer Should Know About Memory" remains the canonical reference.</p>
+  <p data-lang="zh">來源：<a href="https://www.akkadia.org/drepper/cpumemory.pdf" target="_blank" rel="noopener">Drepper 2007 · What Every Programmer Should Know About Memory</a> · <a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-64-and-ia-32-architectures-software-developer-vol-3a-part-1-manual.html" target="_blank" rel="noopener">Intel SDM Vol. 3A · MESI cache coherence</a></p>
+  <p data-lang="en">Source: <a href="https://www.akkadia.org/drepper/cpumemory.pdf" target="_blank" rel="noopener">Drepper 2007 · What Every Programmer Should Know About Memory</a> · <a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-64-and-ia-32-architectures-software-developer-vol-3a-part-1-manual.html" target="_blank" rel="noopener">Intel SDM Vol. 3A · MESI cache coherence</a></p>
+</div>
+
+</section>
+
+<nav class="page-nav">
+  <a href="../index.html"><span class="nav-dir" data-zh="← 教學首頁" data-en="← Tutorial home">← 教學首頁</span><span class="nav-title" data-zh="回到主教學頁" data-en="Back to tutorial hub">回到主教學頁</span></a>
+  <a href="../cs-intro-quiz/index.html" target="_blank" rel="noopener"><span class="nav-dir" data-zh="互動考題 →" data-en="Interactive quiz →">互動考題 →</span><span class="nav-title" data-zh="互動式考題" data-en="Interactive Quiz">互動式考題</span></a>
+</nav>
+
+</main>
+
+<footer class="site-footer" style="text-align:center;color:var(--c-ink-muted);padding:20px;font-size:.85rem;border-top:1px solid var(--c-border-light);margin-top:40px">
+  © Charlene · Introduction to Computer Science — References<br>
+  <span data-zh="學術論文、官方文件與工具連結 · 最後更新 2026-05" data-en="Papers, official docs and tool links · Last updated 2026-05">學術論文、官方文件與工具連結 · 最後更新 2026-05</span>
+</footer>
+
+<script src="../i18n.js"></script>
+</body>
+</html>

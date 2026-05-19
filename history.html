@@ -1,0 +1,186 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ch 1: 計算機發展簡史 — Intro CS</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head><body>
+<nav class="top-nav"><div class="top-nav-inner">
+  <a href="index.html" class="top-nav-brand"><span>💻</span> <span data-zh="計算機概論" data-en="Intro CS">計算機概論</span></a>
+  <ul class="top-nav-links"><li><a href="history.html" class="active">History</a></li><li><a href="data-rep.html">Data</a></li><li><a href="logic-gates.html">Logic</a></li><li><a href="cpu-arch.html">CPU</a></li><li><a href="memory.html">Memory</a></li><li><a href="os.html">OS</a></li><li><a href="networking.html">Net</a></li><li><a href="database.html">DB</a></li><li><a href="programming.html">Prog</a></li><li><a href="algorithms.html">Algo</a></li><li><a href="data-structures.html">DS</a></li><li><a href="software-eng.html">SWE</a></li><li><a href="security.html">Sec</a></li><li><a href="ai-ml.html">AI/ML</a></li><li><a href="cloud-iot.html">Cloud</a></li><li><a href="ethics-future.html">Ethics</a></li>
+    <li><a href="references/index.html" data-zh="📚 參考資料" data-en="📚 References">📚 參考資料</a></li>
+  </ul>
+</div></nav>
+<div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
+<header class="page-hero"><div class="step-badge">CHAPTER 1 / 16</div>
+<h1 data-zh="計算機發展簡史" data-en="History of Computing">計算機發展簡史</h1>
+<p class="subtitle" data-lang="zh">從算盤、Babbage 分析機到圖靈、von Neumann、ENIAC 與 2026 年量子優勢——理解七十年來計算機如何形塑現代生活。</p>
+<p class="subtitle" data-lang="en">From abacus and Babbage to Turing, von Neumann, ENIAC, and 2026's quantum advantage — understand how seven decades of computing have shaped modern life.</p>
+</header>
+<main class="content-wrap">
+
+<section class="section">
+<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
+<h2 data-zh="為什麼要懂計算機歷史？" data-en="Why learn computing history?">為什麼要懂計算機歷史？</h2>
+<div data-lang="zh"><p>每一項你今天使用的技術——從手機、雲端服務到 ChatGPT——都站在數十年累積的概念之上。<strong>圖靈機 (1936)</strong> 定義了「可計算」的數學邊界，<strong>von Neumann 架構 (1945)</strong> 至今仍是 99% 計算機的設計藍圖，<strong>摩爾定律 (1965)</strong> 推動了半導體產業的指數成長。</p><p>理解歷史能幫你：① 避免重新發明輪子；② 看清當前技術的限制來自何處；③ 預測下一波典範轉移（如量子運算、神經型態運算）。</p></div>
+<div data-lang="en"><p>Every technology you use today — phones, cloud, ChatGPT — rests on decades of accumulated ideas. The <strong>Turing Machine (1936)</strong> defined the mathematical boundary of "computable," <strong>von Neumann architecture (1945)</strong> remains the blueprint for 99% of computers, and <strong>Moore's Law (1965)</strong> drove exponential semiconductor growth.</p><p>Understanding history helps you: (1) avoid reinventing wheels, (2) see where current limits come from, (3) predict the next paradigm shift (quantum, neuromorphic).</p></div>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<span data-lang="zh"><strong>核心觀念：</strong>計算機 ≠ 電子產品。計算機是「能執行演算法、儲存資料」的任何系統，從機械齒輪、繼電器、真空管、電晶體、積體電路一路演進到今天的量子位元。</span>
+<span data-lang="en"><strong>Core idea:</strong> A computer is not just an electronic device. It is <em>any</em> system that executes algorithms and stores data — from mechanical gears to relays, vacuum tubes, transistors, ICs, and quantum bits.</span>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="五大世代" data-en="FIVE GENERATIONS">世代演進</div>
+<h2 data-zh="一、計算機的五大世代" data-en="I. The Five Generations of Computers">一、計算機的五大世代</h2>
+<table class="comp-table">
+<thead><tr><th data-zh="世代" data-en="Generation">世代</th><th data-zh="年代" data-en="Era">年代</th><th data-zh="代表技術" data-en="Tech">代表技術</th><th data-zh="代表機器" data-en="Examples">代表機器</th></tr></thead>
+<tbody>
+<tr><td><strong>0</strong></td><td>BC 2700 – 1940</td><td data-lang="zh">機械式（齒輪、繼電器）</td><td data-lang="en">Mechanical (gears, relays)</td><td>算盤、Pascaline、Z3 (Zuse, 1941)</td></tr>
+<tr><td><strong>1</strong></td><td>1940 – 1956</td><td data-lang="zh">真空管（Vacuum tube）</td><td data-lang="en">Vacuum tubes</td><td>ENIAC (1945)、UNIVAC I (1951)</td></tr>
+<tr><td><strong>2</strong></td><td>1956 – 1963</td><td data-lang="zh">電晶體（Transistor）</td><td data-lang="en">Transistors</td><td>IBM 7090、PDP-1</td></tr>
+<tr><td><strong>3</strong></td><td>1964 – 1971</td><td data-lang="zh">積體電路（IC）</td><td data-lang="en">Integrated circuits</td><td>IBM System/360 (1964)</td></tr>
+<tr><td><strong>4</strong></td><td>1971 – present</td><td data-lang="zh">微處理器（VLSI/ULSI）</td><td data-lang="en">Microprocessor (VLSI/ULSI)</td><td>Intel 4004 (1971)、Apple II、PC、smartphone</td></tr>
+<tr><td><strong>5+</strong></td><td>2020+</td><td data-lang="zh">AI + 量子 + 邊緣（爭議性世代劃分）</td><td data-lang="en">AI + Quantum + Edge (debated)</td><td>Apple M-series、IBM Heron/Nighthawk、Google Willow</td></tr>
+</tbody></table>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="關鍵人物" data-en="KEY FIGURES">關鍵人物</div>
+<h2 data-zh="二、十位塑造計算機科學的人" data-en="II. Ten People Who Shaped Computer Science">二、十位塑造計算機科學的人</h2>
+<div class="card-grid cols-3">
+<div class="card"><h4>🧮 Charles Babbage (1791–1871)</h4><div data-lang="zh"><p>設計「分析機 (Analytical Engine)」——史上第一台可程式化機械計算機，雖未完工，但定義了 CPU + 記憶體 + I/O 的架構雛形。</p></div><div data-lang="en"><p>Designed the Analytical Engine — the first programmable mechanical computer. Never completed, but laid out the CPU + memory + I/O architecture.</p></div></div>
+<div class="card"><h4>🌹 Ada Lovelace (1815–1852)</h4><div data-lang="zh"><p>為 Babbage 分析機寫出第一個「程式」，被譽為史上第一位程式設計師。預言計算機能處理「非數字」的符號。</p></div><div data-lang="en"><p>Wrote the first "program" for Babbage's machine. Considered the first computer programmer. Foresaw that computers could manipulate non-numeric symbols.</p></div></div>
+<div class="card"><h4>🧠 Alan Turing (1912–1954)</h4><div data-lang="zh"><p>提出 <strong>圖靈機</strong> 與 <strong>圖靈測試</strong>。二戰期間破解 Enigma 密碼。所有現代計算機在數學上都等價於圖靈機。</p></div><div data-lang="en"><p>Defined the <strong>Turing machine</strong> and <strong>Turing test</strong>. Cracked the Enigma cipher in WWII. All modern computers are mathematically equivalent to a Turing machine.</p></div></div>
+<div class="card"><h4>📡 Claude Shannon (1916–2001)</h4><div data-lang="zh"><p><strong>資訊理論之父</strong>。1948 年定義「位元 (bit)」與通道容量公式 C = B·log₂(1+S/N)，奠定了所有數位通訊的基礎。</p></div><div data-lang="en"><p>Father of <strong>information theory</strong>. Defined the "bit" in 1948 and the channel capacity formula C = B·log₂(1+S/N), foundational to all digital communications.</p></div></div>
+<div class="card"><h4>🏛️ John von Neumann (1903–1957)</h4><div data-lang="zh"><p>1945 年提出「儲存程式概念 (stored-program)」——程式與資料儲存在同一記憶體中。所有現代 CPU 都基於 von Neumann 架構。</p></div><div data-lang="en"><p>Proposed the <strong>stored-program concept</strong> in 1945 — programs and data live in the same memory. All modern CPUs use von Neumann architecture.</p></div></div>
+<div class="card"><h4>🔋 Gordon Moore (1929–2023)</h4><div data-lang="zh"><p>Intel 創辦人之一。1965 年提出「摩爾定律」：IC 上的電晶體數每 18–24 個月增為兩倍。已維持 60 年，2020 年代開始放緩。</p></div><div data-lang="en"><p>Intel co-founder. In 1965 stated <strong>Moore's Law</strong>: transistors per IC double every 18–24 months. Held for 60 years, slowing in the 2020s.</p></div></div>
+<div class="card"><h4>👩‍💻 Grace Hopper (1906–1992)</h4><div data-lang="zh"><p>美國海軍少將。設計第一個編譯器 (A-0, 1952)、共同創造 COBOL；命名了「bug」與「debug」術語。</p></div><div data-lang="en"><p>U.S. Navy Rear Admiral. Built the first compiler (A-0, 1952); co-created COBOL. Coined the terms "bug" and "debug."</p></div></div>
+<div class="card"><h4>🐧 Linus Torvalds (1969–)</h4><div data-lang="zh"><p>21 歲時開發 Linux kernel (1991) 與後來的 Git (2005)。Linux 驅動了今天 90%+ 的雲端、超級電腦與 Android 裝置。</p></div><div data-lang="en"><p>At 21, created Linux kernel (1991) and later Git (2005). Linux powers 90%+ of today's cloud, supercomputers, and Android devices.</p></div></div>
+<div class="card"><h4>🌐 Tim Berners-Lee (1955–)</h4><div data-lang="zh"><p>1989 年於 CERN 發明 World Wide Web、HTTP 與 HTML。1990 年寫出世界第一個瀏覽器與網頁伺服器。</p></div><div data-lang="en"><p>Invented the World Wide Web, HTTP, and HTML at CERN in 1989. Built the first browser and web server in 1990.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動時間軸" data-en="INTERACTIVE TIMELINE">互動時間軸</div>
+<h2 data-zh="三、互動：摩爾定律與電晶體成長" data-en="III. Interactive: Moore's Law & Transistor Growth">三、互動：摩爾定律與電晶體成長</h2>
+<div data-lang="zh"><p>下圖以對數刻度顯示 1971–2024 年代表性微處理器的電晶體數量。可以看到 1971 年 Intel 4004 只有 2,300 顆電晶體，到 2024 年 Apple M4 Max 已達 280 億顆——50 年成長 <strong>1200 萬倍</strong>。</p></div>
+<div data-lang="en"><p>Below is a log-scale plot of transistor counts in representative microprocessors from 1971 to 2024. Intel 4004 had just 2,300 transistors in 1971; by 2024, Apple M4 Max reached <strong>28 billion</strong> — a 12-million-fold increase in 50 years.</p></div>
+<div class="interactive-panel">
+<div class="chart-container"><canvas id="mooreChart"></canvas></div>
+<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">資料來源：Wikipedia "Transistor count" entry, accessed 2026-05</span><span data-lang="en">Source: Wikipedia "Transistor count" entry, accessed 2026-05</span></p>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">里程碑判讀</div>
+<h2 data-zh="四、五大里程碑判讀" data-en="IV. Five Milestones to Remember">四、五大里程碑判讀</h2>
+<div class="decision-tree">
+<h4>🌳 <span data-zh="計算機歷史五大轉折" data-en="Five Pivotal Moments">計算機歷史五大轉折</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">1936</span><div>Turing 提出可計算性理論 <span class="dt-arrow">→</span> 任何「可計算」問題都可被機器解決，定義了 CS 的數學基礎。</div></div>
+<div class="dt-node"><span class="dt-q">1945</span><div>von Neumann 報告 <span class="dt-arrow">→</span> 統一程式與資料儲存，奠定 99% 現代 CPU 的設計。</div></div>
+<div class="dt-node"><span class="dt-q">1947</span><div>Bell Labs 發明電晶體 <span class="dt-arrow">→</span> 取代真空管，啟動半導體革命；發明者獲 1956 諾貝爾物理獎。</div></div>
+<div class="dt-node"><span class="dt-q">1969</span><div>ARPANET 上線 <span class="dt-arrow">→</span> 第一個封包交換網路，互聯網的雛形。</div></div>
+<div class="dt-node"><span class="dt-q">2022</span><div>ChatGPT 公開 <span class="dt-arrow">→</span> 大型語言模型走入大眾，標誌「生成式 AI 時代」開端。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">1936</span><div>Turing's computability paper <span class="dt-arrow">→</span> defined what is "computable" and the math foundation of CS.</div></div>
+<div class="dt-node"><span class="dt-q">1945</span><div>von Neumann report <span class="dt-arrow">→</span> unified program + data storage; blueprint for 99% of modern CPUs.</div></div>
+<div class="dt-node"><span class="dt-q">1947</span><div>Bell Labs invents the transistor <span class="dt-arrow">→</span> replaces vacuum tubes; launches the semiconductor era. Inventors win the 1956 Nobel Prize.</div></div>
+<div class="dt-node"><span class="dt-q">1969</span><div>ARPANET goes live <span class="dt-arrow">→</span> first packet-switched network — direct ancestor of today's internet.</div></div>
+<div class="dt-node"><span class="dt-q">2022</span><div>ChatGPT public release <span class="dt-arrow">→</span> LLMs reach mass consumers; marks the start of the "generative AI era."</div></div>
+</div>
+</div>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>2026 觀察：</strong>摩爾定律的「每 18 個月翻倍」已減速到約 30 個月。新的成長動力來自：① <strong>3D 堆疊封裝</strong> (Intel Foveros、TSMC SoIC)；② <strong>chiplet 架構</strong>；③ <strong>專用 AI 加速器</strong>（GPU/NPU/TPU）；④ <strong>後 CMOS 技術</strong>（量子、光子、神經型態）。</div>
+<div data-lang="en"><strong>2026 perspective:</strong> Moore's classic "18-month doubling" has slowed to ~30 months. New growth drivers: (1) <strong>3D-stacked packaging</strong> (Intel Foveros, TSMC SoIC); (2) <strong>chiplet architectures</strong>; (3) <strong>specialized AI accelerators</strong> (GPUs/NPUs/TPUs); (4) <strong>post-CMOS</strong> (quantum, photonic, neuromorphic).</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
+<h2 data-zh="五、體驗：用 Python 計算摩爾定律" data-en="V. Hands-on: Compute Moore's Law in Python">五、用 Python 計算摩爾定律</h2>
+<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># 摩爾定律：電晶體數每 18 個月翻倍 / Moore's law: transistors double every 18 months</span>
+<span class="kw">def</span> <span class="func">moore_predict</span>(start_year, start_count, target_year, doubling_months=<span class="num">18</span>):
+    months = (target_year - start_year) * <span class="num">12</span>
+    doublings = months / doubling_months
+    <span class="kw">return</span> start_count * (<span class="num">2</span> ** doublings)
+
+<span class="comment"># Intel 4004 (1971) 有 2,300 顆電晶體 / Intel 4004 had 2,300 transistors in 1971</span>
+predicted_2024 = <span class="func">moore_predict</span>(<span class="num">1971</span>, <span class="num">2300</span>, <span class="num">2024</span>)
+<span class="func">print</span>(<span class="str">f"Predicted 2024: {predicted_2024:,.0f}"</span>)
+<span class="comment"># 預測：~5.7 兆顆，但實際 Apple M4 Max ~280 億 → 摩爾定律已減速</span>
+<span class="comment"># Prediction: ~5.7 trillion, but Apple M4 Max has ~28 billion → Moore's slowing</span></pre></div>
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// 演算法：估算指定年份的電晶體數 / Algorithm: estimate transistor count at year Y</span>
+<span class="kw">function</span> <span class="func">MoorePredict</span>(start_year, start_count, target_year, doubling_months):
+    <span class="kw">let</span> months = (target_year - start_year) × <span class="num">12</span>
+    <span class="kw">let</span> doublings = months ÷ doubling_months
+    <span class="kw">return</span> start_count × <span class="num">2</span>^doublings
+
+<span class="comment">// 主程式 / Main</span>
+<span class="kw">let</span> result = <span class="func">MoorePredict</span>(<span class="num">1971</span>, <span class="num">2300</span>, <span class="num">2024</span>, <span class="num">18</span>)
+<span class="func">print</span>(result)</pre></div>
+</div>
+</section>
+
+<section class="quiz-section">
+<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">1. von Neumann 架構最核心的創新是什麼？</p>
+<p data-lang="en">1. What is the core innovation of von Neumann architecture?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 使用真空管取代繼電器</span><span data-lang="en">A. Replacing relays with vacuum tubes</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 程式與資料儲存於同一記憶體 (stored-program)</span><span data-lang="en">B. Storing programs and data in the same memory (stored-program)</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 引入快取記憶體</span><span data-lang="en">C. Introducing cache memory</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 採用 RISC 指令集</span><span data-lang="en">D. Adopting RISC instruction sets</span></div>
+</div><div class="quiz-feedback" id="fb1"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">2. 摩爾定律最原始的敘述是？</p>
+<p data-lang="en">2. What is the original statement of Moore's Law?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. CPU 時脈每年翻倍</span><span data-lang="en">A. CPU clock speed doubles every year</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 記憶體價格每年減半</span><span data-lang="en">B. Memory prices halve every year</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 積體電路上的電晶體數每 18–24 個月增為兩倍</span><span data-lang="en">C. Transistors per IC double every 18–24 months</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 網路頻寬每三年增為十倍</span><span data-lang="en">D. Network bandwidth grows 10× every 3 years</span></div>
+</div><div class="quiz-feedback" id="fb2"></div></div>
+
+<div class="quiz-q" data-answer="0">
+<p data-lang="zh">3. 下列何者「不」是 Alan Turing 的貢獻？</p>
+<p data-lang="en">3. Which of the following is NOT a contribution of Alan Turing?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 設計 ENIAC 並建造第一台通用電子計算機</span><span data-lang="en">A. Designing ENIAC and building the first general-purpose electronic computer</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 提出圖靈機，定義可計算性的數學模型</span><span data-lang="en">B. Proposing the Turing machine — math model of computability</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 二戰期間參與破解德國 Enigma 密碼</span><span data-lang="en">C. Helping crack the German Enigma cipher in WWII</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 提出圖靈測試，討論機器智能</span><span data-lang="en">D. Proposing the Turing test for machine intelligence</span></div>
+</div><div class="quiz-feedback" id="fb3"></div></div>
+</section>
+
+<nav class="page-nav"><div class="placeholder"></div>
+<a href="data-rep.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 2: 資料表示法" data-en="Ch 2: Data Representation">Ch 2: 資料表示法</span></a>
+</nav>
+</main>
+<footer class="site-footer">© Charlene — Introduction to Computer Science · Interactive Tutorial</footer>
+<script src="i18n.js"></script>
+<script>
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
+function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
+
+// Moore's law chart
+const mooreData = [
+  {y:1971,n:'Intel 4004',c:2300},{y:1978,n:'Intel 8086',c:29000},{y:1985,n:'Intel 386',c:275000},
+  {y:1993,n:'Pentium',c:3.1e6},{y:1999,n:'Pentium III',c:9.5e6},{y:2006,n:'Core 2 Duo',c:2.91e8},
+  {y:2010,n:'Core i7 Nehalem',c:7.74e8},{y:2014,n:'Apple A8',c:2e9},{y:2017,n:'AMD Epyc',c:1.94e10},
+  {y:2020,n:'Apple M1',c:1.6e10},{y:2022,n:'AMD MI250X',c:5.81e10},{y:2024,n:'Apple M4 Max',c:2.8e10},
+  {y:2025,n:'NVIDIA Blackwell',c:2.08e11}
+];
+new Chart(document.getElementById('mooreChart'),{type:'scatter',data:{datasets:[
+  {label:"Transistor count",data:mooreData.map(d=>({x:d.y,y:d.c,name:d.n})),backgroundColor:'rgba(29,78,216,.7)',borderColor:'rgba(29,78,216,1)',pointRadius:6,pointHoverRadius:9}
+]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>c.raw.name+' ('+c.raw.x+'): '+c.raw.y.toExponential(2)+' transistors'}}},scales:{x:{title:{display:true,text:'Year'},min:1970,max:2026},y:{type:'logarithmic',title:{display:true,text:'Transistor count (log scale)'},min:1000,max:5e11}}}});
+
+// Quiz
+const QF={zh:{q1_y:'stored-program 概念讓計算機真正成為「通用機器」——軟體即資料，可改寫指令。',q1_n:'正確答案已標示。',q2_y:'摩爾在 1965 年的 Electronics 雜誌中提出，後修正為 24 個月。',q2_n:'正確答案已標示。',q3_y:'ENIAC 由 Eckert 與 Mauchly 在賓州大學設計，與 Turing 無直接關連。',q3_n:'正確答案已標示。'},en:{q1_y:'The stored-program concept made computers true general-purpose machines — software is data, instructions can be rewritten.',q1_n:'Correct answer highlighted.',q2_y:'Moore stated this in Electronics magazine in 1965; later revised to 24 months.',q2_n:'Correct answer highlighted.',q3_y:'ENIAC was designed by Eckert & Mauchly at UPenn — unrelated to Turing.',q3_n:'Correct answer highlighted.'}};
+document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
+</script>
+</body></html>
