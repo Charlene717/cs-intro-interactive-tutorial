@@ -12,240 +12,623 @@
 <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
 <header class="page-hero"><div class="step-badge">CHAPTER 15 / 16</div>
 <h1 data-zh="雲端、邊緣與 IoT" data-en="Cloud, Edge & IoT">雲端、邊緣與 IoT</h1>
-<p class="subtitle" data-lang="zh">從 IaaS/PaaS/SaaS、Docker/Kubernetes 到 5G、Matter 與邊緣 AI——「計算」如何從本地搬到無處不在。</p>
-<p class="subtitle" data-lang="en">From IaaS/PaaS/SaaS, Docker/Kubernetes to 5G, Matter, and edge AI — how computation moved from desktops to everywhere.</p>
+<p class="subtitle" data-lang="zh">從 Jeff Bezos 一封改變世界的內部信，到 2026 年「按需開 GPU」的生資工作流——理解計算經濟學如何被重寫，以及 Kubernetes、Lambda、MinION 邊緣裝置如何改變你的研究。</p>
+<p class="subtitle" data-lang="en">From Jeff Bezos's world-changing memo to 2026's "GPUs on demand" bioinformatics — understanding how compute economics got rewritten and how Kubernetes, Lambda, and edge MinION reshape your science.</p>
 </header>
 <main class="content-wrap">
 
+<!-- ===== Section 1: Opening ===== -->
 <section class="section">
-<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
-<h2 data-zh="為什麼「雲」改變了一切？" data-en="Why did the cloud change everything?">為什麼「雲」改變了一切？</h2>
-<div data-lang="zh"><p>2006 年 AWS 推出 EC2 之前，新創公司要先花數十萬美元買伺服器、租機房、僱 SRE，才能上線。雲端讓「以分鐘計費、隨需擴充」成為現實——所有層次的基礎建設都變成可程式化資源：</p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>IaaS</strong>（Infrastructure as a Service）：租 CPU/記憶體/網路（EC2、Azure VM、GCE）。</li>
-<li><strong>PaaS</strong>（Platform）：租「runtime + 資料庫」（Heroku、Cloud Run、Vercel）。</li>
-<li><strong>SaaS</strong>（Software）：直接用軟體（Gmail、Salesforce、Slack）。</li>
-<li><strong>FaaS / Serverless</strong>：只為「函數的每次執行」付費（AWS Lambda、Cloudflare Workers）。</li>
-</ul>
-<p>2026 的常態是<strong>混合雲 (hybrid)</strong> 與<strong>多雲 (multi-cloud)</strong>——大型企業同時用 AWS、Azure、GCP，並把敏感資料留在私有資料中心。</p></div>
-<div data-lang="en"><p>Before AWS launched EC2 in 2006, a startup had to spend six figures on servers, colo, and ops before going live. The cloud turned infrastructure into pay-per-minute, on-demand, programmable resources across every layer:</p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>IaaS</strong>: rent CPU / RAM / network (EC2, Azure VM, GCE).</li>
-<li><strong>PaaS</strong>: rent runtime + database (Heroku, Cloud Run, Vercel).</li>
-<li><strong>SaaS</strong>: use the software directly (Gmail, Salesforce, Slack).</li>
-<li><strong>FaaS / Serverless</strong>: pay per function invocation (AWS Lambda, Cloudflare Workers).</li>
-</ul>
-<p>By 2026 the norm is <strong>hybrid</strong> and <strong>multi-cloud</strong> — large enterprises mix AWS, Azure, GCP, and keep sensitive workloads on private infrastructure.</p></div>
+<div class="section-label" data-zh="開場故事" data-en="OPENING STORY">改變世界的一封內部信</div>
+<h2 data-zh="一、2002 Bezos「API Mandate」如何養出 AWS" data-en="I. The 2002 'API Mandate' That Birthed AWS">一、改變世界的一封信</h2>
+<div data-lang="zh">
+<p>2002 年某個沒人記得的星期一，Amazon 創辦人 Jeff Bezos 對所有工程主管寄出一封內部信，後人稱為「<strong>API Mandate</strong>」，內容大致如下：</p>
+<blockquote style="margin:16px 0;padding:16px 24px;background:var(--c-accent-light);border-left:4px solid var(--c-accent);font-style:italic;">
+<p data-lang="zh">「即日起，所有團隊將透過 service interfaces 對外暴露資料與功能。團隊之間沒有任何其他通訊形式——不准直接連對方資料庫、不准共享記憶體、不准走後門。所有 service interface 必須<strong>設計成可對外發布</strong>——亦即未來可給第三方使用。<strong>不照做的人就走路。</strong>謝謝大家，祝有美好的一天。」</p>
+<p data-lang="en">"All teams will henceforth expose their data and functionality through service interfaces. Teams must communicate with each other through these interfaces. There will be no other form of inter-process communication — no direct linking, no direct reads of another team's data store, no shared-memory model, no back-doors. The only communication allowed is via service interface calls over the network. It doesn't matter what technology they use… All service interfaces, without exception, must be <strong>designed from the ground up to be externalizable</strong>. <strong>Anyone who doesn't do this will be fired.</strong> Thank you; have a nice day!"</p>
+</blockquote>
+<p>15 年後，Amazon 把這套內部架構商品化成 <strong>AWS</strong>——2024 年 AWS 年營收達 1,150 億美元，相當於整個丹麥 GDP，<strong>支撐了 Netflix、Airbnb、AlphaFold 線上服務、UK Biobank 50 萬人 WGS 分析</strong>。雲端徹底改寫了計算的經濟學：你不需要買 100 萬美元的伺服器集群，按小時租 1000 顆 GPU、跑完即刪，總價可能只要 200 美元。</p>
+</div>
+<div data-lang="en">
+<p>One forgettable Monday in 2002, Amazon's Jeff Bezos sent a memo to every engineering leader — the now-legendary "<strong>API Mandate</strong>":</p>
+<blockquote style="margin:16px 0;padding:16px 24px;background:var(--c-accent-light);border-left:4px solid var(--c-accent);font-style:italic;">
+<p data-lang="en">"All teams will henceforth expose their data and functionality through service interfaces. <strong>No other form of inter-process communication is allowed.</strong> All service interfaces, without exception, must be designed from the ground up to be externalizable. <strong>Anyone who doesn't do this will be fired.</strong>"</p>
+</blockquote>
+<p>Fifteen years later, Amazon productized that internal architecture as <strong>AWS</strong> — in 2024 AWS hit $115 B in annual revenue (roughly Denmark's GDP) and <strong>underpins Netflix, Airbnb, AlphaFold online, and UK Biobank's 500 k WGS analyses</strong>. The cloud completely rewrote compute economics: you no longer buy a million-dollar cluster — you rent 1,000 GPUs by the hour, kill them when done, and pay maybe $200.</p>
+</div>
 <div class="callout tip"><span class="callout-icon">💡</span><div>
-<span data-lang="zh"><strong>核心觀念：</strong>「The cloud is just someone else's computer」——這句俏皮話點出本質：雲端不是魔法，而是把計算、儲存、網路抽象成 API。便利的代價是「鎖定 (vendor lock-in)」與「成本失控」(2024 Cloud Optimization 報告：30% 雲端支出是浪費)。</span>
-<span data-lang="en"><strong>Core idea:</strong> "The cloud is just someone else's computer." It's not magic — just compute/storage/network exposed as APIs. The trade-offs: vendor lock-in and runaway cost (FinOps 2024: ~30% of cloud spend is waste).</span>
+<span data-lang="zh"><strong>核心轉變：</strong>從「我的伺服器、我管」(<em>on-prem CapEx</em>) 變成「按需付費」(<em>cloud OpEx</em>)。再進一步是 <strong>Serverless</strong>：「我連伺服器都不用想，只給 code、按執行次數收費」。</span>
+<span data-lang="en"><strong>The shift:</strong> from "my server, my problem" (<em>on-prem CapEx</em>) to "pay as you go" (<em>cloud OpEx</em>). The next step is <strong>Serverless</strong>: "I don't even think about a server — just hand off code, pay per execution".</span>
 </div></div>
 </section>
 
+<!-- ===== Section 2: Core Concepts ===== -->
 <section class="section">
-<div class="section-label" data-zh="三大公有雲" data-en="HYPERSCALERS">公有雲市占</div>
-<h2 data-zh="一、互動：三大公有雲市占" data-en="I. Interactive: Hyperscaler Market Share">一、互動：AWS / Azure / GCP 市占</h2>
-<div data-lang="zh"><p>根據 Synergy Research 2026 Q1 估計，全球 IaaS+PaaS 市場約 <strong>3,400 億美元</strong>，前三大廠瓜分近七成：</p></div>
-<div data-lang="en"><p>Per Synergy Research Q1 2026 estimates, the global IaaS+PaaS market is ~<strong>USD 340B</strong>, with the top three taking nearly 70%:</p></div>
-<div class="interactive-panel">
-<div class="chart-container"><canvas id="cloudChart"></canvas></div>
-<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">資料來源：Synergy Research Group, 2026 Q1 估計（市占百分比）</span><span data-lang="en">Source: Synergy Research Group, Q1 2026 estimates (market share %)</span></p>
+<div class="section-label" data-zh="核心概念" data-en="CORE CONCEPTS">給初學者的入口</div>
+<h2 data-zh="二、雲端服務五層 + 部署四模型" data-en="II. Five Service Tiers + Four Deployment Models">二、五層服務模型</h2>
+
+<div data-lang="zh"><p>雲端服務按「自己管多少」由低到高分五層：</p></div>
+<div data-lang="en"><p>Cloud services stack into five layers by "how much you manage" (least → most automated):</p></div>
+
+<div class="card-grid cols-3">
+<div class="card"><div class="card-icon">🏗️</div><h4>IaaS <span data-zh="基礎設施即服務" data-en="Infrastructure">基礎設施</span></h4>
+<div data-lang="zh"><p>租虛擬機 / 儲存 / 網路，作業系統以上自己管。代表：AWS EC2、Azure VM、GCP Compute Engine、Linode、DigitalOcean Droplet。最像「租伺服器」。</p></div>
+<div data-lang="en"><p>Rent VMs / storage / networking; you own the OS and up. Examples: AWS EC2, Azure VM, GCP Compute Engine, Linode, DigitalOcean Droplets. The most "server-like" experience.</p></div></div>
+
+<div class="card"><div class="card-icon">🛠️</div><h4>PaaS <span data-zh="平台即服務" data-en="Platform">平台</span></h4>
+<div data-lang="zh"><p>給你 runtime + 資料庫 + scaling，你只丟程式碼。代表：Heroku、Google App Engine、AWS Elastic Beanstalk、Vercel、Fly.io、Render。</p></div>
+<div data-lang="en"><p>Runtime + DB + scaling provided; you just ship code. Examples: Heroku, Google App Engine, AWS Elastic Beanstalk, Vercel, Fly.io, Render.</p></div></div>
+
+<div class="card"><div class="card-icon">📱</div><h4>SaaS <span data-zh="軟體即服務" data-en="Software">軟體</span></h4>
+<div data-lang="zh"><p>整個應用都託管，你只當使用者。代表：Gmail、Salesforce、Slack、Notion、Galaxy Server、Terra.bio。</p></div>
+<div data-lang="en"><p>The entire app is hosted; you're just a user. Examples: Gmail, Salesforce, Slack, Notion, Galaxy Server, Terra.bio.</p></div></div>
+
+<div class="card"><div class="card-icon">⚡</div><h4>FaaS / Serverless <span data-zh="函式即服務" data-en="Function">函式</span></h4>
+<div data-lang="zh"><p>給一個函數，平台執行時才啟動容器。代表：AWS Lambda、Azure Functions、Google Cloud Functions、Cloudflare Workers。<strong>按執行毫秒收費</strong>，idle 不花錢。</p></div>
+<div data-lang="en"><p>Give a function, platform spins a container only when invoked. Examples: AWS Lambda, Azure Functions, Google Cloud Functions, Cloudflare Workers. <strong>Pay per millisecond</strong>; idle is free.</p></div></div>
+
+<div class="card"><div class="card-icon">📦</div><h4>CaaS <span data-zh="容器即服務" data-en="Container">容器</span></h4>
+<div data-lang="zh"><p>跑你的 Docker 容器，平台管 orchestration。代表：AWS ECS / EKS、Google GKE、Azure AKS、AWS Fargate。<strong>Kubernetes</strong> 是事實標準。</p></div>
+<div data-lang="en"><p>Runs your Docker containers; platform handles orchestration. Examples: AWS ECS/EKS, GKE, AKS, AWS Fargate. <strong>Kubernetes</strong> is the de facto standard.</p></div></div>
+
+<div class="card"><div class="card-icon">🤖</div><h4>MLaaS / AIaaS <span data-zh="AI 即服務" data-en="AI">AI 即服務</span></h4>
+<div data-lang="zh"><p>2024 起興起的新層級：直接呼叫預訓 LLM / 向量資料庫。代表：OpenAI API、Anthropic Bedrock、Azure OpenAI、HuggingFace Inference、Modal。</p></div>
+<div data-lang="en"><p>The 2024+ new tier: call hosted LLMs / vector DBs directly. Examples: OpenAI API, Anthropic Bedrock, Azure OpenAI, HuggingFace Inference, Modal.</p></div></div>
 </div>
-</section>
 
-<section class="section">
-<div class="section-label" data-zh="容器" data-en="CONTAINERS">容器化與 K8s</div>
-<h2 data-zh="二、Docker 與 Kubernetes" data-en="II. Docker & Kubernetes">二、Docker 與 Kubernetes</h2>
-<div data-lang="zh"><p><strong>Docker (2013)：</strong>用 Linux namespaces + cgroups 把應用「打包」進可移植映像 (image)，啟動只需毫秒。相較 VM，<strong>容器共享 host 核心</strong>，啟動快、佔資源少。</p>
-<p><strong>Kubernetes (K8s, 2014 Google 開源)：</strong>容器數量上百上千時的編排系統。核心物件：</p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>Pod</strong>：一或多個容器組成的最小部署單位。</li>
-<li><strong>Deployment</strong>：宣告「我要 5 個 Pod」，K8s 自動維持狀態。</li>
-<li><strong>Service</strong>：把一群 Pod 暴露為一個穩定的網路端點（內建負載平衡）。</li>
-<li><strong>HPA (Horizontal Pod Autoscaler)</strong>：依 CPU / 自訂指標自動擴縮 Pod 數。</li>
-</ul></div>
-<div data-lang="en"><p><strong>Docker (2013):</strong> uses Linux namespaces + cgroups to package an app into a portable image; starts in milliseconds. Unlike VMs, <strong>containers share the host kernel</strong> — fast, lightweight.</p>
-<p><strong>Kubernetes (K8s, 2014 by Google):</strong> orchestrator for hundreds-to-thousands of containers. Core objects:</p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>Pod</strong>: smallest deployable unit — one or more containers.</li>
-<li><strong>Deployment</strong>: declare "I want 5 Pods" and K8s reconciles.</li>
-<li><strong>Service</strong>: stable network endpoint fronting a set of Pods, with built-in load balancing.</li>
-<li><strong>HPA</strong>: auto-scales Pod count based on CPU or custom metrics.</li>
-</ul></div>
-
+<h3 data-zh="四種部署模型" data-en="Four deployment models">四種部署模型</h3>
 <table class="comp-table">
-<thead><tr><th></th><th data-zh="VM" data-en="VM">VM</th><th data-zh="Container" data-en="Container">Container</th></tr></thead>
+<thead><tr><th data-zh="模型" data-en="Model">模型</th><th data-zh="使用者" data-en="User">使用者</th><th data-zh="優點" data-en="Pros">優點</th><th data-zh="缺點" data-en="Cons">缺點</th></tr></thead>
 <tbody>
-<tr><td data-lang="zh">啟動時間</td><td data-lang="en">Boot time</td><td data-lang="zh">30 秒 – 數分鐘</td><td data-lang="en">30s – minutes</td><td data-lang="zh">毫秒 – 秒</td><td data-lang="en">ms – seconds</td></tr>
-<tr><td data-lang="zh">大小</td><td data-lang="en">Size</td><td>GB</td><td>MB</td></tr>
-<tr><td data-lang="zh">隔離強度</td><td data-lang="en">Isolation</td><td data-lang="zh">完整 OS</td><td data-lang="en">Full OS</td><td data-lang="zh">共享 kernel（弱）</td><td data-lang="en">Share kernel (weaker)</td></tr>
-<tr><td data-lang="zh">每台機器數量</td><td data-lang="en">Per host</td><td>10s</td><td>100s – 1000s</td></tr>
+<tr><td data-lang="zh"><strong>公有雲</strong> Public</td><td data-lang="en"><strong>Public</strong></td><td data-lang="zh">任何人 (AWS / Azure / GCP)</td><td data-lang="en">Anyone (AWS / Azure / GCP)</td><td data-lang="zh">彈性、便宜、不需 CapEx</td><td data-lang="en">Elastic, cheap, no CapEx</td><td data-lang="zh">資料外送、合規挑戰</td><td data-lang="en">Data egress, compliance</td></tr>
+<tr><td data-lang="zh"><strong>私有雲</strong> Private</td><td data-lang="en"><strong>Private</strong></td><td data-lang="zh">單一組織 (院內 OpenStack)</td><td data-lang="en">Single org (in-house OpenStack)</td><td data-lang="zh">資料完全自主、合規</td><td data-lang="en">Full data sovereignty</td><td data-lang="zh">CapEx 高、彈性差</td><td data-lang="en">High CapEx, less elastic</td></tr>
+<tr><td data-lang="zh"><strong>混合雲</strong> Hybrid</td><td data-lang="en"><strong>Hybrid</strong></td><td data-lang="zh">機敏資料留本地 + 算力上雲</td><td data-lang="en">Sensitive data on-prem + cloud burst</td><td data-lang="zh">兩者兼顧、合規 + 彈性</td><td data-lang="en">Best of both</td><td data-lang="zh">架構複雜、人力成本</td><td data-lang="en">Complex; staffing cost</td></tr>
+<tr><td data-lang="zh"><strong>多雲</strong> Multi-cloud</td><td data-lang="en"><strong>Multi-cloud</strong></td><td data-lang="zh">同時用 AWS + Azure + GCP</td><td data-lang="en">AWS + Azure + GCP at once</td><td data-lang="zh">不被綁定、議價權</td><td data-lang="en">No vendor lock-in, leverage</td><td data-lang="zh">運維 3 倍、技能 3 倍</td><td data-lang="en">3× ops, 3× expertise</td></tr>
 </tbody></table>
 
 <div class="callout warn"><span class="callout-icon">⚠️</span><div>
-<div data-lang="zh"><strong>微服務 vs 單體：</strong>微服務 (microservices) 把系統拆成數十個獨立部署的小服務，每個服務只負責一件事。優點：團隊自治、可獨立擴展；缺點：分散式除錯困難、需要 service mesh (Istio / Linkerd) 做流量管理。2024 起出現「<strong>從微服務回歸 modular monolith</strong>」聲浪——Shopify、Amazon Prime Video 是知名案例。</div>
-<div data-lang="en"><strong>Microservices vs monolith:</strong> microservices split a system into dozens of independently deployable services. Pros: team autonomy, independent scaling. Cons: distributed debugging is hard, needs a service mesh (Istio/Linkerd). Since 2024 the "<strong>back to modular monolith</strong>" backlash has grown — Shopify and Amazon Prime Video are notable examples.</div>
+<span data-lang="zh"><strong>共擔責任模型 (Shared Responsibility)：</strong>AWS / Azure / GCP 都明確說「<strong>我們保護雲端的安全 (security <em>of</em> the cloud)，你保護雲端裡的安全 (security <em>in</em> the cloud)</strong>」——他們管實體機房、虛擬化、底層網路；你管你的 OS patching、IAM 規則、應用程式漏洞、資料加密、S3 bucket 是否公開。<strong>絕大多數雲端外洩事件都是「客戶側設定錯誤」</strong>，不是雲商被入侵。</span>
+<span data-lang="en"><strong>The Shared Responsibility model:</strong> AWS/Azure/GCP all spell it out — "<strong>we secure the cloud (security <em>of</em> the cloud); you secure what's <em>in</em> the cloud</strong>". They handle physical DCs, virtualization, baseline network; you handle OS patching, IAM, app vulns, encryption, and whether your S3 bucket is public. <strong>Almost every cloud breach is a customer misconfiguration</strong>, not a provider compromise.</span>
 </div></div>
 </section>
 
+<!-- ===== Section 3: Interactive #1 (Market Share) ===== -->
 <section class="section">
-<div class="section-label" data-zh="邊緣與 IoT" data-en="EDGE & IoT">邊緣運算與 IoT</div>
-<h2 data-zh="三、CDN、邊緣運算與 IoT" data-en="III. CDN, Edge Computing & IoT">三、CDN / 邊緣 / IoT</h2>
-<div data-lang="zh"><p><strong>CDN / Edge Computing：</strong>把計算與快取放到「離使用者最近的節點」。Cloudflare、Fastly、AWS CloudFront 等業者在全球部署數百個 PoP（Point of Presence）。傳統來回美國西岸的延遲 50 ms，邊緣節點可降到 <strong>~5 ms</strong>。</p>
-<p>2026 主流範式：<strong>Cloudflare Workers</strong>、<strong>AWS Lambda@Edge</strong>、<strong>Vercel Edge Functions</strong>——在 V8 isolate 中於 100+ 個地理位置同時執行你的 JS / WASM 程式碼。</p>
-<p><strong>IoT 三層架構：</strong></p>
-<ol style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>感測層</strong>：sensors + MCU (ESP32, Arduino, Raspberry Pi Pico)。</li>
-<li><strong>邊緣層</strong>：邊緣 AI (TinyML)、本地閘道。</li>
-<li><strong>雲端層</strong>：彙整、分析、模型訓練。</li>
-</ol></div>
-<div data-lang="en"><p><strong>CDN / Edge Computing:</strong> push compute and cache to the user's nearest node. Cloudflare, Fastly, AWS CloudFront operate hundreds of global PoPs. A trip to US-West that used to cost 50 ms latency drops to <strong>~5 ms</strong> at the edge.</p>
-<p>2026 mainstream: <strong>Cloudflare Workers</strong>, <strong>AWS Lambda@Edge</strong>, <strong>Vercel Edge Functions</strong> — running your JS / WASM in V8 isolates across 100+ locations.</p>
-<p><strong>IoT three-tier architecture:</strong></p>
-<ol style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>Sensor tier</strong>: sensors + MCUs (ESP32, Arduino, RPi Pico).</li>
-<li><strong>Edge tier</strong>: edge AI (TinyML), local gateway.</li>
-<li><strong>Cloud tier</strong>: aggregation, analytics, model training.</li>
-</ol></div>
+<div class="section-label" data-zh="互動 #1" data-en="INTERACTIVE #1">2026 雲端市場</div>
+<h2 data-zh="三、互動：2026 全球雲端市占率" data-en="III. Interactive: 2026 Global Cloud Market Share">三、雲端三強鼎立</h2>
+<div data-lang="zh"><p>2026 年雲端服務（IaaS + PaaS）已是 7,000 億美元的市場。AWS 仍領先但 Azure 追近；Google Cloud 受惠於 AI 工作負載成長；Alibaba 主導亞太；Oracle 則靠 AI GPU 供給後來居上。下圖比較五家市占與其全球 region 數。</p></div>
+<div data-lang="en"><p>The 2026 cloud market (IaaS + PaaS) is ~$700 B. AWS still leads but Azure is closing the gap; Google Cloud rides the AI workload tailwind; Alibaba dominates APAC; Oracle has surged thanks to AI-GPU supply. Compare market share and global region counts below.</p></div>
+<div class="interactive-panel">
+<div class="chart-container"><canvas id="cloudShareChart"></canvas></div>
+<p style="font-size:.78rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">資料來源：Synergy Research Group、Gartner、各家 10-K (Q1 2026 估計)。市占基於 IaaS + PaaS 全球營收。</span><span data-lang="en">Sources: Synergy Research Group, Gartner, 10-K filings (Q1 2026 estimate). Share by global IaaS + PaaS revenue.</span></p>
+</div>
+</section>
+
+<!-- ===== Section 4: Deep Dive ===== -->
+<section class="section">
+<div class="section-label" data-zh="深入剖析" data-en="DEEP DIVE">進階：Docker / Kubernetes / Serverless</div>
+<h2 data-zh="四、進階：Docker、Kubernetes、Serverless 內部" data-en="IV. Inside Docker, Kubernetes, and Serverless">四、深入剖析</h2>
+
+<h3 data-zh="Docker — 容器革命" data-en="Docker — the container revolution">Docker — 容器革命</h3>
+<div data-lang="zh"><p>2013 年 Solomon Hykes 在 PyCon 開源 Docker，把 Linux 已有 10 年的 <strong>cgroups + namespaces</strong> 包成簡單易用的 CLI。「容器」與「虛擬機」差異：</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>VM</strong>：每個 VM 含完整 OS kernel + 應用，啟動需 60 秒、體積 GB 級。</li>
+<li><strong>Container</strong>：共享 host kernel，只裝應用 + libs，啟動 &lt; 1 秒、體積 MB 級。</li>
+</ul>
+<p>Dockerfile 範例：<code>FROM python:3.11-slim → COPY app.py → RUN pip install ... → CMD python app.py</code>。建置出來的 image 在<strong>任何裝有 Docker 的機器</strong>都能跑——「在我電腦上能跑」終於名副其實。</p></div>
+<div data-lang="en"><p>In 2013 Solomon Hykes open-sourced Docker at PyCon, wrapping Linux's 10-year-old <strong>cgroups + namespaces</strong> into a simple CLI. Container vs VM:</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>VM</strong>: each carries a full OS kernel + app — boots in 60 s, GB-sized.</li>
+<li><strong>Container</strong>: shares the host kernel, ships just app + libs — boots in &lt; 1 s, MB-sized.</li>
+</ul>
+<p>A Dockerfile: <code>FROM python:3.11-slim → COPY app.py → RUN pip install ... → CMD python app.py</code>. The resulting image runs <strong>on any Docker-equipped machine</strong> — "works on my machine" finally means something.</p></div>
+
+<h3 data-zh="Kubernetes — 容器的指揮中心" data-en="Kubernetes — the container conductor">Kubernetes — 容器指揮中心</h3>
+<div data-lang="zh"><p>2014 年 Google 開源 Kubernetes（源自內部 Borg 系統），今天是事實上的 container orchestration 標準。核心物件：</p></div>
+<div data-lang="en"><p>Google open-sourced Kubernetes in 2014 (descended from internal Borg). Today it's <em>the</em> container orchestration standard. Core objects:</p></div>
 
 <table class="comp-table">
-<thead><tr><th data-zh="協定" data-en="Protocol">協定</th><th data-zh="運輸層" data-en="Transport">運輸層</th><th data-zh="特性" data-en="Traits">特性</th><th data-zh="典型場景" data-en="Use cases">典型場景</th></tr></thead>
+<thead><tr><th data-zh="物件" data-en="Object">物件</th><th data-zh="意義" data-en="Meaning">意義</th><th data-zh="生資對照" data-en="Bio analogy">生資對照</th></tr></thead>
 <tbody>
-<tr><td><strong>MQTT</strong></td><td>TCP</td><td data-lang="zh">發佈-訂閱、極輕量 (2 byte header)</td><td data-lang="en">Pub/Sub, ultra-light (2-byte header)</td><td data-lang="zh">感測器回傳、智慧家居</td><td data-lang="en">Sensor telemetry, smart home</td></tr>
-<tr><td><strong>CoAP</strong></td><td>UDP</td><td data-lang="zh">類 REST、適合低耗電裝置</td><td data-lang="en">REST-like over UDP, low-power</td><td data-lang="zh">受限裝置</td><td data-lang="en">Constrained devices</td></tr>
-<tr><td><strong>AMQP</strong></td><td>TCP</td><td data-lang="zh">企業級訊息佇列、保證遞送</td><td data-lang="en">Enterprise message queue, reliable delivery</td><td data-lang="zh">B2B 整合</td><td data-lang="en">B2B integration</td></tr>
-<tr><td><strong>LoRaWAN</strong></td><td data-lang="zh">無線</td><td data-lang="en">Radio</td><td data-lang="zh">公里級長距離、電池可用數年</td><td data-lang="en">Km range, multi-year battery</td><td data-lang="zh">智慧城市、農業</td><td data-lang="en">Smart city, agriculture</td></tr>
-<tr><td><strong>Matter</strong></td><td data-lang="zh">Wi-Fi/Thread</td><td data-lang="en">Wi-Fi/Thread</td><td data-lang="zh">2022 智慧家居統一標準</td><td data-lang="en">2022 unified smart-home standard</td><td data-lang="zh">Apple/Google/Amazon 互通</td><td data-lang="en">Apple/Google/Amazon interop</td></tr>
+<tr><td><strong>Pod</strong></td><td data-lang="zh">最小執行單位，1+ 個 container 共享網路與 volume</td><td data-lang="en">Smallest unit; 1+ containers sharing network & volume</td><td data-lang="zh">一個 STAR aligner job</td><td data-lang="en">One STAR aligner job</td></tr>
+<tr><td><strong>Deployment</strong></td><td data-lang="zh">宣告「我要 5 個一樣的 Pod 永遠跑著」</td><td data-lang="en">"I want 5 identical Pods always running"</td><td data-lang="zh">5 個 web server 副本</td><td data-lang="en">5 replicas of a web service</td></tr>
+<tr><td><strong>Service</strong></td><td data-lang="zh">給一群 Pod 一個穩定 IP + DNS</td><td data-lang="en">Stable IP + DNS for a Pod set</td><td data-lang="zh">stable VCF endpoint</td><td data-lang="en">Stable VCF endpoint</td></tr>
+<tr><td><strong>Ingress</strong></td><td data-lang="zh">外部 HTTPS 入口 + TLS 終結</td><td data-lang="en">External HTTPS entry + TLS</td><td data-lang="zh">Galaxy Server 外網入口</td><td data-lang="en">Galaxy public entry</td></tr>
+<tr><td><strong>HPA</strong></td><td data-lang="zh">CPU 高就自動加 Pod (auto-scaling)</td><td data-lang="en">Auto-scale Pods on CPU/metric</td><td data-lang="zh">大批 RNA-seq 進來時自動擴</td><td data-lang="en">Burst when many RNA-seq jobs arrive</td></tr>
+<tr><td><strong>ConfigMap / Secret</strong></td><td data-lang="zh">設定與密碼分離程式</td><td data-lang="en">Config/secret decoupled from code</td><td data-lang="zh">DB password、API key</td><td data-lang="en">DB password, API keys</td></tr>
+<tr><td><strong>kubelet / etcd / api-server</strong></td><td data-lang="zh">控制平面：節點代理 / 分散式 KV / API</td><td data-lang="en">Control plane: node agent / distributed KV / API</td><td data-lang="zh">「總指揮 + 各節點班長」</td><td data-lang="en">"HQ + section leaders"</td></tr>
 </tbody></table>
 
-<div data-lang="zh"><p><strong>5G 三大用例：</strong>① <strong>eMBB</strong>（增強型行動寬頻，1–10 Gbps）；② <strong>URLLC</strong>（超可靠低延遲通訊，1 ms 等級——自駕、遠距手術）；③ <strong>mMTC</strong>（大規模機器型通訊，每平方公里百萬連接——IoT 感測器）。<strong>6G</strong> 預計 2030 商用，目標亞毫秒延遲與 1 Tbps 峰值。</p></div>
-<div data-lang="en"><p><strong>5G's three use cases:</strong> (1) <strong>eMBB</strong> (1–10 Gbps mobile broadband), (2) <strong>URLLC</strong> (1 ms latency — autonomy, remote surgery), (3) <strong>mMTC</strong> (millions of connections per km² — IoT). <strong>6G</strong> is targeted for 2030 commercialization, aiming sub-ms latency and 1 Tbps peak.</p></div>
+<h3 data-zh="Serverless 與冷啟動陷阱" data-en="Serverless and cold-start traps">Serverless 與冷啟動</h3>
+<div data-lang="zh"><p>AWS Lambda（2014 推出）開創了「給函數、按毫秒計費」的時代。Cloudflare Workers 把 V8 isolate 跑在邊緣節點，冷啟動 &lt; 5 ms。但 serverless 有兩大現實挑戰：</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>冷啟動 (cold start)</strong>：函數久未呼叫，下次需 200 ms–3 s 啟動容器（Python ML 模型尤其慢）。解法：provisioned concurrency、保持 warm 的 keep-alive。</li>
+<li><strong>限制</strong>：Lambda 最長 15 分鐘、記憶體 ≤ 10 GB；長時間/大檔案任務應用 ECS Fargate、Batch、Step Functions。</li>
+</ul></div>
+<div data-lang="en"><p>AWS Lambda (launched 2014) opened the "function-as-a-service, billed by ms" era. Cloudflare Workers runs V8 isolates on edge nodes with &lt; 5 ms cold start. Two real-world serverless gotchas:</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>Cold start</strong>: idle functions take 200 ms–3 s to warm up (Python ML especially). Fix: provisioned concurrency or keep-alive pings.</li>
+<li><strong>Hard limits</strong>: Lambda ≤ 15 min, RAM ≤ 10 GB. For long jobs or big files use ECS Fargate, AWS Batch, or Step Functions.</li>
+</ul></div>
+
+<h3 data-zh="CDN & Edge Computing" data-en="CDN & Edge Computing">CDN & 邊緣運算</h3>
+<div data-lang="zh"><p><strong>CDN (Content Delivery Network)</strong>：Cloudflare、Akamai、Fastly 把靜態資源（圖片、JS、影片）快取到全球 300+ 個 edge 節點，延遲從 200 ms 降到 20 ms。</p>
+<p><strong>Edge Computing</strong>：把運算搬到接近使用者的邊緣節點。<strong>Cloudflare Workers</strong>、<strong>AWS Lambda@Edge</strong>、<strong>Vercel Edge Functions</strong>讓你的程式碼在 300 個城市同時跑。對 IoT / 自駕車 / 即時 ML 推理特別重要——不需把資料送到中央雲端。</p></div>
+<div data-lang="en"><p><strong>CDN (Content Delivery Network)</strong>: Cloudflare, Akamai, Fastly cache static assets at 300+ edge nodes worldwide — latency drops from 200 ms to 20 ms.</p>
+<p><strong>Edge Computing</strong>: pushes compute to nodes near users. <strong>Cloudflare Workers</strong>, <strong>AWS Lambda@Edge</strong>, <strong>Vercel Edge Functions</strong> let your code run in 300 cities simultaneously. Critical for IoT, self-driving, and real-time ML inference where you can't ship data to a central cloud.</p></div>
+
+<h3 data-zh="FinOps — 雲端成本控管" data-en="FinOps — cloud cost control">FinOps — 別讓雲端燒錢</h3>
+<div data-lang="zh"><p>新手最常被坑：<strong>egress 費用</strong>（資料送出 AWS 每 GB $0.09）、<strong>idle GPU 燒錢</strong>（A100 spot $1/hr、忘記關 1 個月就 720 美元）、<strong>S3 PUT 請求次數費</strong>。FinOps 三大實務：</p>
+<ol style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li>用 <strong>Reserved Instances</strong> 或 <strong>Savings Plans</strong> 鎖 1–3 年，可省 30–70%。</li>
+<li>用 <strong>Spot Instances</strong>（被搶可中斷）跑可重啟的批次任務，省 70–90%。</li>
+<li>設 <strong>budget alert</strong> 與每日成本 dashboard，避免「下個月帳單嚇死人」。</li>
+</ol></div>
+<div data-lang="en"><p>Common newbie traps: <strong>egress fees</strong> (AWS charges $0.09/GB out), <strong>idle GPUs</strong> ($1/hr A100 spot × 720 hr = $720 if you forget to stop), <strong>S3 PUT request counts</strong>. FinOps essentials:</p>
+<ol style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li>Lock in 1–3 yr <strong>Reserved Instances</strong> or <strong>Savings Plans</strong> for 30–70 % off.</li>
+<li>Run interruptible batch on <strong>Spot Instances</strong> — 70–90 % off.</li>
+<li>Set <strong>budget alerts</strong> + daily cost dashboards so the next bill doesn't shock you.</li>
+</ol></div>
 </section>
 
+<!-- ===== Section 5: Historical Timeline ===== -->
 <section class="section">
-<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">部署選型</div>
-<h2 data-zh="四、決策樹：VM、Container 還是 Serverless？" data-en="IV. Decision Tree: VM, Container, or Serverless?">四、決策樹：選擇部署模式</h2>
+<div class="section-label" data-zh="歷史故事" data-en="HISTORICAL TIMELINE">雲端 25 年</div>
+<h2 data-zh="五、雲端 25 年的關鍵節點" data-en="V. 25 Years of Cloud Milestones">五、歷史故事</h2>
+<div class="workflow">
+<div class="workflow-step" data-step="1"><h4>1999 — <span data-zh="Salesforce「No Software」" data-en="Salesforce 'No Software'">SaaS 開山祖</span></h4>
+<div data-lang="zh"><p>Marc Benioff 創立 Salesforce，把 CRM 從本地安裝改為「瀏覽器訪問」——SaaS 概念誕生。當時的 logo 是 "Software" 加禁止符號。</p></div>
+<div data-lang="en"><p>Marc Benioff founds Salesforce, taking CRM from on-prem installation to "open the browser" — the SaaS concept is born. Their iconic logo: the word "Software" with a slash through it.</p></div></div>
+
+<div class="workflow-step" data-step="2"><h4>2006 — <span data-zh="AWS S3 / EC2 上線" data-en="AWS S3 / EC2 launches">公有雲商業化</span></h4>
+<div data-lang="zh"><p>3 月 S3、8 月 EC2 上線——按小時租 Linux VM、$0.10/hr。當時被視為「Amazon 副業」，事實證明是史上最賺的副業之一。Netflix 在 2008 一場資料中心災難後決定 all-in AWS。</p></div>
+<div data-lang="en"><p>March: S3. August: EC2 — Linux VMs at $0.10/hr. Initially dismissed as "Amazon's side project", it became one of history's most lucrative pivots. Netflix went all-in on AWS after a 2008 data-center outage.</p></div></div>
+
+<div class="workflow-step" data-step="3"><h4>2008 — <span data-zh="Google App Engine" data-en="Google App Engine">PaaS 浪潮</span></h4>
+<div data-lang="zh"><p>Google 推出 App Engine——「丟 Python/Java code、我們處理一切」。Heroku 同年成立，2010 被 Salesforce 收購。PaaS 從此成為「中間層」服務模式。</p></div>
+<div data-lang="en"><p>Google ships App Engine — "drop in Python/Java code, we handle everything". Heroku launches the same year (Salesforce buys it in 2010). PaaS becomes the canonical middle-tier model.</p></div></div>
+
+<div class="workflow-step" data-step="4"><h4>2013 — <span data-zh="Docker 開源" data-en="Docker open-sourced">容器革命</span></h4>
+<div data-lang="zh"><p>Solomon Hykes 在 PyCon 5 分鐘 lightning talk 公開 Docker，把已存在的 Linux LXC 包成簡單 CLI。三年內成為部署事實標準。</p></div>
+<div data-lang="en"><p>Solomon Hykes unveils Docker in a 5-minute PyCon lightning talk, wrapping existing Linux LXC in a simple CLI. Within three years it becomes the de facto deployment standard.</p></div></div>
+
+<div class="workflow-step" data-step="5"><h4>2014 — <span data-zh="Kubernetes 開源 + Lambda 上線" data-en="Kubernetes & Lambda launch">orchestration + serverless</span></h4>
+<div data-lang="zh"><p>6 月 Google 開源 Kubernetes，源自內部 Borg；11 月 AWS Lambda 上線開啟 serverless 紀元。同年 Cloud Native Computing Foundation (CNCF) 成立，整個雲原生生態系蓬勃發展。</p></div>
+<div data-lang="en"><p>June: Google open-sources Kubernetes (descended from internal Borg). November: AWS Lambda launches and kicks off serverless. The Cloud Native Computing Foundation (CNCF) is born the same year.</p></div></div>
+
+<div class="workflow-step" data-step="6"><h4>2018 — <span data-zh="Multi-cloud + Service Mesh" data-en="Multi-cloud + Service Mesh">複雜度爆炸</span></h4>
+<div data-lang="zh"><p>IBM 以 340 億美元收購 Red Hat（OpenShift）；Istio、Linkerd 把 service mesh 帶入主流；GDPR 5 月生效，企業開始嚴肅看待資料主權。</p></div>
+<div data-lang="en"><p>IBM acquires Red Hat (OpenShift) for $34 B; Istio and Linkerd push service mesh mainstream; GDPR (May 25, 2018) makes data sovereignty a board-level conversation.</p></div></div>
+
+<div class="workflow-step" data-step="7"><h4>2022 — <span data-zh="Cloudflare R2 vs S3" data-en="Cloudflare R2 vs S3">免 egress 戰爭</span></h4>
+<div data-lang="zh"><p>Cloudflare R2 推出「<strong>零 egress fee</strong>」對象儲存，直接挑戰 AWS S3 鎖定效應。同年 GitHub Codespaces / Gitpod 普及「雲端 IDE」，開發者可從 iPad 開始寫程式。</p></div>
+<div data-lang="en"><p>Cloudflare R2 launches "<strong>zero egress fee</strong>" object storage, directly attacking S3's lock-in. Same year, GitHub Codespaces / Gitpod normalize "cloud IDEs" — devs code from iPads.</p></div></div>
+
+<div class="workflow-step" data-step="8"><h4>2024–2026 — <span data-zh="AI GPU 短缺 + Sovereign Cloud" data-en="AI GPU crunch + Sovereign Cloud">主權雲與 AI 工作負載</span></h4>
+<div data-lang="zh"><p>ChatGPT 後遺症：H100 GPU 供不應求，雲端 GPU 排隊月計。歐盟推 <strong>EU Sovereign Cloud</strong> 計畫；台灣經濟部 2025 公布主權雲規範。<strong>FinOps</strong> 成為新的工程職能。</p></div>
+<div data-lang="en"><p>Post-ChatGPT fallout: H100s sell out, cloud GPU queues run for months. The EU launches its <strong>Sovereign Cloud</strong> initiative; Taiwan's MOEA issued sovereign-cloud guidelines in 2025. <strong>FinOps</strong> becomes a recognized engineering specialty.</p></div></div>
+</div>
+</section>
+
+<!-- ===== Section 6: Interactive #2 (K8s Pod Lifecycle) ===== -->
+<section class="section">
+<div class="section-label" data-zh="互動 #2" data-en="INTERACTIVE #2">K8s Pod 生命週期</div>
+<h2 data-zh="六、互動：Kubernetes Pod 生命週期模擬" data-en="VI. Interactive: Kubernetes Pod Lifecycle Simulator">六、Pod 生命週期</h2>
+<div data-lang="zh"><p>點擊「Scale Up」要求 Kubernetes 建立 5 個 Pod，觀察狀態從 <em>Pending → ContainerCreating → Running</em>；點擊「模擬節點壞掉」看 K8s 自動 reschedule 到健康節點。</p></div>
+<div data-lang="en"><p>Click "Scale Up" to ask Kubernetes to create 5 Pods — watch states roll from <em>Pending → ContainerCreating → Running</em>. Click "Kill Node" to see K8s auto-reschedule Pods to healthy nodes.</p></div>
+
+<div class="interactive-panel">
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+<button id="scaleBtn" style="background:var(--c-accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:600;cursor:pointer;">▲ Scale +1</button>
+<button id="scaleDownBtn" style="background:var(--c-accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:600;cursor:pointer;">▼ Scale −1</button>
+<button id="killNodeBtn" style="background:var(--c-danger);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:600;cursor:pointer;">💥 <span data-zh="模擬節點壞掉" data-en="Kill Node">模擬節點壞掉</span></button>
+<button id="resetBtn" style="background:var(--c-ink-muted);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-weight:600;cursor:pointer;">↻ Reset</button>
+</div>
+<div id="k8sCluster" style="display:flex;gap:18px;flex-wrap:wrap;"></div>
+<p style="font-size:.78rem;color:var(--c-ink-muted);text-align:center;margin-top:14px;"><span data-lang="zh">綠色 = Running，黃色 = Pending，紅色 = Failed，灰色 = 節點壞</span><span data-lang="en">Green = Running, yellow = Pending, red = Failed, gray = Node down</span></p>
+</div>
+</section>
+
+<!-- ===== Section 7: 🧬 For Bioinformaticians ===== -->
+<section class="section">
+<div class="section-label" data-zh="🧬 生資連結" data-en="🧬 FOR BIOINFORMATICIANS">雲端 × 生資</div>
+<h2 data-zh="七、雲端如何改寫生資工作流" data-en="VII. How the Cloud Rewrites Bioinformatics">七、生資連結點</h2>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;">
+<span class="callout-icon">🧬</span>
+<div>
+<strong data-zh="從 HPC 到 Cloud：基因組學的計算革命" data-en="From HPC to cloud: bioinformatics' compute revolution">從 HPC 到雲端</strong>
+<p data-lang="zh">2010 年代的生資人都熟悉「<strong>排隊 HPC</strong>」：寫 SLURM script、submit、等 12 小時、看到 job died——重新 debug。2020 年代起雲端徹底改寫遊戲：彈性、按需、整合 AWS Open Data 公開資料集、一鍵跑 nf-core pipeline。但成本與合規仍是顯著挑戰。</p>
+<p data-lang="en">Bioinformaticians of the 2010s lived on "<strong>HPC queues</strong>": write SLURM scripts, submit, wait 12 hours, see "job died", debug, repeat. From the 2020s, the cloud rewrote the rules: elastic, on-demand, integrated AWS Open Data, one-click nf-core. Cost and compliance remain the chief headaches.</p>
+</div></div>
+
+<div class="card-grid cols-2">
+<div class="card"><div class="card-icon">📦</div><h4>AWS Open Data Program <span data-zh="（1000+ 公開資料集）" data-en="(1000+ public datasets)">公開資料</span></h4>
+<div data-lang="zh"><p>AWS Open Data 託管 <strong>1000+ 公開生物資料集</strong>：<strong>1000 Genomes</strong>、<strong>TCGA</strong>（部分 open access）、<strong>GTEx</strong>、<strong>UK Biobank summary</strong>、<strong>SRA mirror</strong>、<strong>refseq</strong>。最大好處是「資料就在 S3，computation 也在 AWS——不用 egress」，分析速度大幅提升。對應 GCP Public Datasets、Azure Open Datasets。</p></div>
+<div data-lang="en"><p>AWS Open Data hosts <strong>1000+ public bio datasets</strong>: <strong>1000 Genomes</strong>, <strong>TCGA</strong> (open tiers), <strong>GTEx</strong>, <strong>UK Biobank summaries</strong>, <strong>SRA mirror</strong>, <strong>RefSeq</strong>. The killer feature: data lives in S3, compute lives next door — <strong>no egress fees</strong>, blazing throughput. GCP Public Datasets and Azure Open Datasets play the same role.</p></div></div>
+
+<div class="card"><div class="card-icon">🧬</div><h4>Terra / DNAstack / Seven Bridges <span data-zh="（GENOMICS 平台）" data-en="(genomics platforms)">基因組雲</span></h4>
+<div data-lang="zh"><p><strong>Terra</strong>（Broad Institute + Verily 2019，基於 GCP）：NIH 旗艦研究雲，承載 All of Us、AnVIL、BioData Catalyst。<strong>DNAstack Omics</strong>：聯邦查詢多個基因組資料源。<strong>Seven Bridges</strong>：NIH NCI Cloud Resource 之一。三家都用 <strong>WDL / CWL workflow language</strong> + Cromwell 引擎。一個 RNA-seq pipeline 可在數小時跑完數百樣本。</p></div>
+<div data-lang="en"><p><strong>Terra</strong> (Broad + Verily, 2019, GCP-based) is NIH's flagship research cloud, hosting All of Us, AnVIL, BioData Catalyst. <strong>DNAstack Omics</strong> federates queries across genomic repos. <strong>Seven Bridges</strong> is an NCI Cloud Resource partner. All three use <strong>WDL/CWL</strong> + Cromwell. One RNA-seq pipeline can process hundreds of samples in hours.</p></div></div>
+
+<div class="card"><div class="card-icon">🌳</div><h4>Galaxy on the Cloud <span data-zh="（點按式 bioinformatics）" data-en="(GUI bioinformatics)">Galaxy</span></h4>
+<div data-lang="zh"><p><strong>Galaxy</strong>（Penn State + Johns Hopkins）：開源網頁式分析平台，提供 <strong>9000+ 工具</strong>，乾乾淨淨的 GUI 讓溼實驗人員也能跑 RNA-seq、ChIP-seq、變異呼叫。usegalaxy.org（美）、usegalaxy.eu（歐）公開免費；可在 AWS / GCP / Azure 自架。2024 年活躍用戶超過 25 萬。</p></div>
+<div data-lang="en"><p><strong>Galaxy</strong> (Penn State + Johns Hopkins): open-source web platform with <strong>9000+ tools</strong> behind a clean GUI — wet-lab folks can run RNA-seq, ChIP-seq, variant calling. usegalaxy.org (US) and usegalaxy.eu (EU) are free public instances; self-host on AWS/GCP/Azure. 250 k+ active users in 2024.</p></div></div>
+
+<div class="card"><div class="card-icon">⚡</div><h4>nf-core + Snakemake on Cloud <span data-zh="（彈性 pipeline）" data-en="(elastic pipelines)">標準化 pipeline</span></h4>
+<div data-lang="zh"><p><strong>nf-core</strong>（Nextflow 社群）提供 100+ 標準化、版本可追溯的 genomics pipeline，支援 AWS Batch、Azure Batch、GCP Life Sciences、Kubernetes。<strong>Snakemake</strong>（Köster lab）類似 Python + Makefile 風格。一次寫 pipeline，可從筆電跑到 1000 顆 spot instance；省 70–90% 成本。</p></div>
+<div data-lang="en"><p><strong>nf-core</strong> (Nextflow community) ships 100+ standardized, version-pinned genomics pipelines — runs on AWS Batch, Azure Batch, GCP Life Sciences, Kubernetes. <strong>Snakemake</strong> (Köster lab) gives a Python/Makefile feel. Write once, run from laptop to 1000 spot instances — saves 70–90 % vs on-demand.</p></div></div>
+
+<div class="card"><div class="card-icon">🔬</div><h4>Edge AI in MinION / Real-Time Sequencing <span data-zh="（邊緣定序）" data-en="(edge sequencing)">邊緣定序</span></h4>
+<div data-lang="zh"><p>Oxford Nanopore <strong>MinION</strong> 是 USB 大小的可攜定序儀，內建 GPU 即時 basecalling——一架飛機/野外採樣都能做。<strong>Adaptive sampling</strong>：邊讀邊判斷是否目標序列，不是就「踢出」感興趣的孔位。2014 西非伊波拉、2020 SARS-CoV-2、2023 美國禽流感都靠它即時追蹤變異。真正的「邊緣 AI for genomics」。</p></div>
+<div data-lang="en"><p>Oxford Nanopore <strong>MinION</strong> is a USB-sized portable sequencer with onboard GPU basecalling — sequence on a plane or in the field. <strong>Adaptive sampling</strong>: judges in real time whether to keep reading a pore. Tracked the 2014 West African Ebola outbreak, 2020 SARS-CoV-2 variants, and 2023 US H5N1 in real time. The genuine "edge AI for genomics".</p></div></div>
+
+<div class="card"><div class="card-icon">🤖</div><h4>IoT in Lab Automation <span data-zh="（實驗室自動化）" data-en="(lab automation)">機械手臂 + MQTT</span></h4>
+<div data-lang="zh"><p><strong>Opentrons OT-2 / Flex</strong> 開源液體處理機械手臂，Python API 即可控制；<strong>Hamilton STAR</strong> 是商業級。<strong>MQTT</strong> 通訊協定（IBM 1999、IoT 標準）讓培養儀、冷凍櫃、PCR 機等設備即時上報溫度與狀態到雲端 dashboard。2024 起 <strong>Lab-as-a-Service</strong>（Emerald Cloud Lab, Strateos）讓你在家用 web 介面下實驗單。</p></div>
+<div data-lang="en"><p><strong>Opentrons OT-2 / Flex</strong> are open-source liquid-handling robots controlled by Python; <strong>Hamilton STAR</strong> is the commercial standard. <strong>MQTT</strong> (IBM 1999, IoT staple) lets incubators, freezers, PCR machines report temperature and status to cloud dashboards in real time. From 2024, <strong>Lab-as-a-Service</strong> (Emerald Cloud Lab, Strateos) lets you submit experiments from home via a web UI.</p></div></div>
+</div>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<span data-lang="zh"><strong>把基因組搬上雲的合規檢核：</strong>① <strong>HIPAA BAA</strong>（Business Associate Agreement）必須與雲商簽署；② <strong>dbGaP 控制存取資料</strong>原則上不可放公有雲，除非走 NIH 認證的「<em>NIH Trusted Partners</em>」如 Terra、Seven Bridges；③ <strong>歐盟資料</strong>須留在 EU region（資料主權）；④ <strong>台灣 PDPA</strong> 對醫療資料要求 ISMS 認證。<strong>絕不要</strong>把 PHI 隨手丟到個人 S3 bucket！</span>
+<span data-lang="en"><strong>Moving genomes to the cloud — compliance checklist:</strong> (1) sign a <strong>HIPAA BAA</strong> with your cloud vendor; (2) <strong>dbGaP controlled-access data</strong> generally must not go to public cloud unless via NIH-Trusted Partners (Terra, Seven Bridges); (3) <strong>EU data</strong> must stay in EU regions (data sovereignty); (4) Taiwan's <strong>PDPA</strong> mandates ISMS certification for medical data. <strong>Never</strong> drop PHI into a personal S3 bucket.</span>
+</div></div>
+</section>
+
+<!-- ===== Section 8: Decision Tree ===== -->
+<section class="section">
+<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">VM / Container / Serverless?</div>
+<h2 data-zh="八、決策樹：選擇運算模型" data-en="VIII. Decision Tree: Pick Your Compute">八、決策樹</h2>
 <div class="decision-tree">
-<h4>🌳 <span data-zh="該用 VM、Container 還是 Serverless？" data-en="VM, container, or serverless?">該用 VM、Container 還是 Serverless？</span></h4>
+<h4>🌳 <span data-zh="該選 VM、container、還是 serverless？" data-en="VM, container, or serverless?">該選 VM、container、還是 serverless？</span></h4>
 <div data-lang="zh">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>需要完整作業系統控制權（核心模組、特殊驅動）？<span class="dt-arrow">→</span> 用 <strong>VM</strong>（EC2、Azure VM）。</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>長時間運行的微服務、需要精確的擴縮控制？<span class="dt-arrow">→</span> 用 <strong>Container + K8s</strong>（EKS、GKE、AKS）。</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>事件驅動、流量不規則、短時間執行（&lt; 15 分鐘）？<span class="dt-arrow">→</span> 用 <strong>Serverless / FaaS</strong>（Lambda、Cloud Run、Workers）。</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>全球低延遲（&lt; 50 ms）？<span class="dt-arrow">→</span> 用 <strong>Edge Functions</strong>（Cloudflare Workers、Vercel Edge）。</div></div>
+<div class="dt-node"><span class="dt-q">Q1:</span><div>任務 &lt; 15 分鐘、無狀態、流量爆炸性 (irregular)？<span class="dt-arrow">→</span> <strong>Serverless</strong> (Lambda / Cloud Functions / Cloudflare Workers)。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>需要「永遠跑著」、HTTP 服務、要 auto-scale？<span class="dt-arrow">→</span> <strong>Container + K8s</strong> (EKS / GKE / AKS) 或 PaaS (Fly.io / Render)。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>要跑 GPU 大模型訓練、需要 SSH 進去調整？<span class="dt-arrow">→</span> <strong>VM</strong> (EC2 / GCE) 或 <strong>專用 ML 平台</strong> (Modal, RunPod, Lambda Labs)。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>跑大規模批次（1000 RNA-seq）？<span class="dt-arrow">→</span> <strong>AWS Batch / GCP Life Sciences</strong>，配 spot instances + nf-core。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>機敏資料、需嚴格合規？<span class="dt-arrow">→</span> 走 <strong>GovCloud / Sovereign Cloud / 院內 OpenStack</strong>，或 NIH Trusted Partner (Terra)。</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>低延遲、全球用戶？<span class="dt-arrow">→</span> <strong>Edge (Cloudflare Workers / Lambda@Edge)</strong> + CDN。</div></div>
 </div>
 <div data-lang="en">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>Need full OS control (kernel modules, special drivers)? <span class="dt-arrow">→</span> Use <strong>VM</strong> (EC2, Azure VM).</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>Long-running microservices with fine-grained scaling? <span class="dt-arrow">→</span> <strong>Container + K8s</strong> (EKS, GKE, AKS).</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>Event-driven, spiky traffic, short executions (&lt; 15 min)? <span class="dt-arrow">→</span> <strong>Serverless / FaaS</strong> (Lambda, Cloud Run, Workers).</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>Global low-latency (&lt; 50 ms)? <span class="dt-arrow">→</span> <strong>Edge Functions</strong> (Cloudflare Workers, Vercel Edge).</div></div>
-</div>
-</div>
-
-<div class="decision-tree" style="margin-top:24px;">
-<h4>🌳 <span data-zh="IoT：該用哪個通訊協定？" data-en="IoT: which protocol?">IoT：該用哪個通訊協定？</span></h4>
-<div data-lang="zh">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>低耗電、有 Wi-Fi、需要訂閱推播？<span class="dt-arrow">→</span> <strong>MQTT</strong>（最主流）。</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>記憶體 KB 等級、需要 REST 風格？<span class="dt-arrow">→</span> <strong>CoAP</strong>。</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>跨公里、田野部署、電池一次用 5 年？<span class="dt-arrow">→</span> <strong>LoRaWAN</strong>。</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>家用、需與 Apple/Google/Amazon 都互通？<span class="dt-arrow">→</span> <strong>Matter</strong>。</div></div>
-</div>
-<div data-lang="en">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>Low-power, has Wi-Fi, needs pub/sub push? <span class="dt-arrow">→</span> <strong>MQTT</strong> (most common).</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>KB-scale memory, want REST-like? <span class="dt-arrow">→</span> <strong>CoAP</strong>.</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>Multi-km range, field deployment, 5-year battery? <span class="dt-arrow">→</span> <strong>LoRaWAN</strong>.</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>Smart home interop with Apple/Google/Amazon? <span class="dt-arrow">→</span> <strong>Matter</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Task &lt; 15 min, stateless, bursty traffic? <span class="dt-arrow">→</span> <strong>Serverless</strong> (Lambda / Cloud Functions / Cloudflare Workers).</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Always-on, HTTP service, auto-scale? <span class="dt-arrow">→</span> <strong>Container + K8s</strong> (EKS/GKE/AKS) or PaaS (Fly.io, Render).</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>GPU model training, need SSH tinkering? <span class="dt-arrow">→</span> <strong>VM</strong> (EC2/GCE) or <strong>ML-specific platforms</strong> (Modal, RunPod, Lambda Labs).</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Massive batch (1,000 RNA-seq)? <span class="dt-arrow">→</span> <strong>AWS Batch / GCP Life Sciences</strong> with spot instances + nf-core.</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>Sensitive data, strict compliance? <span class="dt-arrow">→</span> <strong>GovCloud / Sovereign Cloud / on-prem OpenStack</strong> or an NIH Trusted Partner (Terra).</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>Low latency, global users? <span class="dt-arrow">→</span> <strong>Edge (Cloudflare Workers / Lambda@Edge)</strong> + CDN.</div></div>
 </div>
 </div>
 </section>
 
+<!-- ===== Section 9: Code Tabs ===== -->
 <section class="section">
-<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
-<h2 data-zh="五、Docker Compose 與 boto3 範例" data-en="V. Docker Compose & boto3 Examples">五、動手做</h2>
-<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python (boto3)</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">K8s Pseudocode</button></div>
-<div class="code-tab-content active" id="py1"><pre><span class="comment"># 用 boto3 上傳檔案到 AWS S3 / Upload to AWS S3</span>
+<div class="section-label" data-zh="程式碼" data-en="CODE">Python / R / Pseudocode</div>
+<h2 data-zh="九、動手做：S3、Docker、k8s YAML" data-en="IX. Hands-on: S3, Docker, k8s YAML">九、動手做</h2>
+<div class="code-tabs"><div class="code-tab-btns">
+<button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button>
+<button class="code-tab-btn" onclick="switchTab(this,'r1')">R</button>
+<button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Dockerfile / K8s</button>
+</div>
+
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># ---- 1) boto3 上傳/下載 S3 物件 ----</span>
 <span class="kw">import</span> boto3
+s3 = boto3.<span class="func">client</span>(<span class="str">'s3'</span>, region_name=<span class="str">'us-east-1'</span>)
 
-<span class="comment"># 自動讀取 ~/.aws/credentials</span>
-s3 = boto3.<span class="func">client</span>(<span class="str">"s3"</span>, region_name=<span class="str">"us-east-1"</span>)
+<span class="comment"># 上傳一個 FASTQ 到 controlled-access bucket（已簽 BAA）</span>
+s3.<span class="func">upload_file</span>(<span class="str">'sample_R1.fastq.gz'</span>, <span class="str">'my-lab-controlled'</span>, <span class="str">'patient001/R1.fastq.gz'</span>,
+               ExtraArgs={<span class="str">'ServerSideEncryption'</span>: <span class="str">'aws:kms'</span>,
+                          <span class="str">'StorageClass'</span>: <span class="str">'INTELLIGENT_TIERING'</span>})
 
-<span class="comment"># 上傳 / Upload</span>
-s3.<span class="func">upload_file</span>(<span class="str">"report.pdf"</span>, <span class="str">"my-bucket-2026"</span>, <span class="str">"reports/2026-05.pdf"</span>)
+<span class="comment"># 列出 1000 Genomes 公開資料</span>
+<span class="kw">for</span> obj <span class="kw">in</span> s3.<span class="func">list_objects_v2</span>(Bucket=<span class="str">'1000genomes'</span>, MaxKeys=<span class="num">10</span>).<span class="func">get</span>(<span class="str">'Contents'</span>, []):
+    <span class="func">print</span>(obj[<span class="str">'Key'</span>], obj[<span class="str">'Size'</span>])
 
-<span class="comment"># 列出 bucket 中所有物件 / List objects</span>
-<span class="kw">for</span> obj <span class="kw">in</span> s3.<span class="func">list_objects_v2</span>(Bucket=<span class="str">"my-bucket-2026"</span>).<span class="func">get</span>(<span class="str">"Contents"</span>, []):
-    <span class="func">print</span>(obj[<span class="str">"Key"</span>], obj[<span class="str">"Size"</span>])
+<span class="comment"># ---- 2) AWS Lambda handler 範例 ----</span>
+<span class="kw">def</span> <span class="func">lambda_handler</span>(event, context):
+    <span class="comment"># event = S3 trigger payload</span>
+    bucket = event[<span class="str">'Records'</span>][<span class="num">0</span>][<span class="str">'s3'</span>][<span class="str">'bucket'</span>][<span class="str">'name'</span>]
+    key    = event[<span class="str">'Records'</span>][<span class="num">0</span>][<span class="str">'s3'</span>][<span class="str">'object'</span>][<span class="str">'key'</span>]
+    <span class="comment"># 觸發某個 RNA-seq pipeline (e.g. 透過 Step Functions)</span>
+    <span class="kw">return</span> {<span class="str">'statusCode'</span>: <span class="num">200</span>, <span class="str">'body'</span>: f<span class="str">'Triggered on {key}'</span>}
 
-<span class="comment"># 啟動一台 EC2 t3.micro / Launch an EC2 t3.micro</span>
-ec2 = boto3.<span class="func">resource</span>(<span class="str">"ec2"</span>)
-ec2.<span class="func">create_instances</span>(ImageId=<span class="str">"ami-0c02fb55956c7d316"</span>,
-                     InstanceType=<span class="str">"t3.micro"</span>,
-                     MinCount=<span class="num">1</span>, MaxCount=<span class="num">1</span>)
+<span class="comment"># ---- 3) 呼叫 OpenAI / Anthropic API ----</span>
+<span class="kw">from</span> anthropic <span class="kw">import</span> Anthropic
+client = <span class="func">Anthropic</span>()
+msg = client.messages.<span class="func">create</span>(
+    model=<span class="str">"claude-opus-4-7"</span>,
+    max_tokens=<span class="num">512</span>,
+    messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Summarize this VCF variant: chr17:g.43093843C>T"</span>}])
+<span class="func">print</span>(msg.content[<span class="num">0</span>].text)</pre></div>
 
-<span class="comment"># --- docker-compose.yml 範例 (用 YAML 起一組 web + db) ---</span>
-<span class="comment"># version: '3.9'</span>
-<span class="comment"># services:</span>
-<span class="comment">#   web:</span>
-<span class="comment">#     image: nginx:1.27</span>
-<span class="comment">#     ports: ["80:80"]</span>
-<span class="comment">#   db:</span>
-<span class="comment">#     image: postgres:17</span>
-<span class="comment">#     environment: { POSTGRES_PASSWORD: secret }</span></pre></div>
-<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// K8s Pod 生命週期（簡化）/ Pod lifecycle (simplified)</span>
-<span class="kw">function</span> <span class="func">PodLifecycle</span>(pod_spec):
-    state = <span class="str">"Pending"</span>
-    scheduler.<span class="func">choose_node</span>(pod_spec)            <span class="comment">// 1. 選一台符合資源需求的 node</span>
-    kubelet.<span class="func">pull_image</span>(pod_spec.image)         <span class="comment">// 2. 拉取容器映像</span>
-    state = <span class="str">"ContainerCreating"</span>
-    kubelet.<span class="func">start_containers</span>(pod_spec)
-    state = <span class="str">"Running"</span>
+<div class="code-tab-content" id="r1"><pre><span class="comment"># ---- 1) aws.s3 在 R 端 ----</span>
+<span class="kw">library</span>(aws.s3); <span class="kw">library</span>(paws)
 
-    <span class="kw">while</span> <span class="kw">true</span>:
-        <span class="kw">if</span> liveness_probe.<span class="func">fails</span>():
-            kubelet.<span class="func">restart_container</span>()         <span class="comment">// 自動重啟</span>
-        <span class="kw">if</span> readiness_probe.<span class="func">fails</span>():
-            service.<span class="func">remove_endpoint</span>(pod)         <span class="comment">// 從流量中暫時移除</span>
-        <span class="kw">if</span> hpa.<span class="func">should_scale_up</span>():
-            deployment.<span class="func">scale</span>(+<span class="num">1</span>)                <span class="comment">// 水平擴展</span>
-    <span class="comment">// 終止：先送 SIGTERM 給 30 秒 grace period，再 SIGKILL</span></pre></div>
+Sys.setenv(<span class="str">"AWS_DEFAULT_REGION"</span> = <span class="str">"us-east-1"</span>)
+<span class="comment"># 上傳檔案</span>
+put_object(file = <span class="str">"counts.tsv"</span>, object = <span class="str">"rnaseq/counts.tsv"</span>, bucket = <span class="str">"my-lab"</span>)
+<span class="comment"># 列舉公開 GTEx 資料</span>
+bucketlist()
+get_bucket(bucket = <span class="str">"gtex-open"</span>, max = <span class="num">5</span>)
+
+<span class="comment"># ---- 2) 用 paws 呼叫 AWS Batch ----</span>
+batch <- paws::<span class="func">batch</span>()
+batch$<span class="func">submit_job</span>(
+  jobName = <span class="str">"star-align-001"</span>,
+  jobQueue = <span class="str">"high-priority"</span>,
+  jobDefinition = <span class="str">"nfcore-rnaseq:3"</span>,
+  parameters = list(sample_id = <span class="str">"P001"</span>))
+
+<span class="comment"># ---- 3) Snakemake workflow on AWS ----</span>
+<span class="comment"># R script 觸發 snakemake --kubernetes</span>
+system(<span class="str">"snakemake --kubernetes --default-remote-provider S3 \\
+            --default-remote-prefix my-lab/results \\
+            --use-conda --jobs 50"</span>)</pre></div>
+
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment"># ====== Dockerfile：把 STAR aligner 容器化 ======</span>
+<span class="kw">FROM</span> ubuntu:22.04
+<span class="kw">RUN</span> apt-get update && apt-get install -y wget build-essential
+<span class="kw">RUN</span> wget https://github.com/alexdobin/STAR/archive/2.7.11b.tar.gz \
+    && tar -xzf 2.7.11b.tar.gz \
+    && cd STAR-2.7.11b/source && make STAR
+<span class="kw">ENV</span> PATH=/STAR-2.7.11b/source:$PATH
+<span class="kw">WORKDIR</span> /data
+<span class="kw">ENTRYPOINT</span> [<span class="str">"STAR"</span>]
+<span class="comment"># 建置: docker build -t my-star:2.7.11b .</span>
+<span class="comment"># 跑: docker run -v $(pwd):/data my-star --runThreadN 8 ...</span>
+
+<span class="comment"># ====== Kubernetes Deployment YAML ======</span>
+<span class="kw">apiVersion</span>: apps/v1
+<span class="kw">kind</span>: Deployment
+<span class="kw">metadata</span>:
+  name: galaxy-server
+  labels: {app: galaxy}
+<span class="kw">spec</span>:
+  replicas: 3                       <span class="comment"># 永遠保持 3 個 Pod</span>
+  selector: {matchLabels: {app: galaxy}}
+  template:
+    metadata: {labels: {app: galaxy}}
+    spec:
+      containers:
+      - name: galaxy
+        image: bgruening/galaxy-stable:24.0
+        ports: [{containerPort: 8080}]
+        resources:
+          requests: {cpu: <span class="str">"2"</span>, memory: <span class="str">"4Gi"</span>}
+          limits:   {cpu: <span class="str">"8"</span>, memory: <span class="str">"16Gi"</span>}
+        env:
+        - name: GALAXY_DB
+          valueFrom: {secretKeyRef: {name: galaxy-db, key: url}}
+---
+<span class="kw">apiVersion</span>: autoscaling/v2
+<span class="kw">kind</span>: HorizontalPodAutoscaler
+<span class="kw">metadata</span>: {name: galaxy-hpa}
+<span class="kw">spec</span>:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: galaxy-server
+  minReplicas: 3
+  maxReplicas: 20                    <span class="comment"># CPU 高時最多擴 20 個</span>
+  metrics:
+  - type: Resource
+    resource: {name: cpu, target: {type: Utilization, averageUtilization: 70}}</pre></div>
 </div>
 </section>
 
+<!-- ===== Section 10: Misconceptions ===== -->
+<section class="section">
+<div class="section-label" data-zh="常見誤解" data-en="MISCONCEPTIONS">陷阱</div>
+<h2 data-zh="十、雲端常見的 6 個迷思" data-en="X. Six Common Cloud Myths">十、常見誤解</h2>
+<div class="card-grid cols-2">
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「雲端永遠便宜」" data-en="'Cloud is always cheaper'">「雲端永遠便宜」</span></h4>
+<div data-lang="zh"><p>對短期 burst、不穩定工作負載確實便宜；但<strong>長期 24/7 高使用率</strong>機器，自架往往 50% 成本即可。Dropbox 2017 把 90% 資料從 AWS 撤回自建機房省 7,500 萬美元；37signals 2024 也大舉撤離。陷阱：egress、idle GPU、跨 region 流量。</p></div>
+<div data-lang="en"><p>True for bursty / variable workloads. For <strong>steady 24/7 high-utilization</strong> servers, on-prem can be half the cost. Dropbox repatriated 90 % of data from AWS in 2017, saving $75 M; 37signals also did a major exit in 2024. Gotchas: egress, idle GPU, cross-region traffic.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「Serverless 沒有伺服器」" data-en="'Serverless has no server'">「Serverless 沒伺服器」</span></h4>
+<div data-lang="zh"><p>背後仍是伺服器，只是「你不管」。冷啟動、執行時間限制、無狀態約束仍存在。對於需要長時連線（WebSocket、long polling）serverless 並非首選。</p></div>
+<div data-lang="en"><p>There <em>is</em> a server — you just don't manage it. Cold starts, runtime limits, and stateless constraints still apply. Serverless isn't ideal for long-lived connections (WebSocket, long polling).</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「Container = VM」" data-en="'Container = VM'">「Container = VM」</span></h4>
+<div data-lang="zh"><p>VM 含完整 OS kernel，container 共享 host kernel。VM 更隔離（適合多租戶），container 更輕（適合微服務）。混淆會錯估啟動時間、資源用量、安全邊界。</p></div>
+<div data-lang="en"><p>VMs ship a full OS kernel; containers share the host kernel. VMs offer stronger isolation (good for multi-tenant), containers are far lighter (good for micro-services). Confusing them leads to wrong assumptions about startup, footprint, and security boundaries.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「Kubernetes 是萬靈丹」" data-en="'Kubernetes is silver bullet'">「K8s 包治百病」</span></h4>
+<div data-lang="zh"><p>K8s 學習曲線陡、運維成本高、概念繁多（200+ CRD）。小團隊 / 單一應用建議先用 <strong>Fly.io、Render、Heroku</strong> 或 <strong>AWS App Runner、Google Cloud Run</strong>，等真的需要再上 K8s。<em>"Kubernetes is for people who have problems Kubernetes solves."</em></p></div>
+<div data-lang="en"><p>K8s has a steep learning curve, high ops burden, and 200+ CRDs to grok. For small teams / single apps start with <strong>Fly.io, Render, Heroku</strong> or <strong>AWS App Runner / Cloud Run</strong> — adopt K8s only when you actually need it. <em>"Kubernetes is for people who have problems Kubernetes solves."</em></p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「上雲就安全」" data-en="'Cloud = secure'">「上雲就安全」</span></h4>
+<div data-lang="zh"><p>共擔責任模型——雲端商保護<em>基礎設施</em>，你保護<em>資料與設定</em>。Capital One 2019 因 WAF 設錯洩漏 1.06 億顧客；無數 S3 bucket 公開洩 PHI。<strong>絕大多數雲端外洩是客戶設定錯誤</strong>。</p></div>
+<div data-lang="en"><p>The shared responsibility model — provider secures <em>infrastructure</em>; you secure <em>data + config</em>. Capital One leaked 106 M customers in 2019 due to a WAF misconfig; countless S3 buckets have leaked PHI. <strong>The vast majority of cloud breaches are customer misconfigurations.</strong></p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「Multi-cloud 永遠是好」" data-en="'Multi-cloud is always good'">「Multi-cloud 永遠好」</span></h4>
+<div data-lang="zh"><p>避免 vendor lock-in 看起來美好，實際上你要學 3 套 IAM、3 套 networking、3 套 monitoring。除非你是 Netflix 等級或有合規強制要求，多數團隊「all-in 單雲」反而更快、更便宜、更安全。</p></div>
+<div data-lang="en"><p>Avoiding vendor lock-in sounds great, but you now learn 3 IAM systems, 3 networking stacks, 3 monitoring tools. Unless you're Netflix-scale or face regulatory mandates, "all-in on one cloud" is usually faster, cheaper, and safer.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「Local AI 永遠贏 ChatGPT」" data-en="'Local AI always beats ChatGPT'">「Local AI 永遠贏」</span></h4>
+<div data-lang="zh"><p>本地 Llama / Qwen / DeepSeek 對<strong>隱私敏感任務</strong>有絕對優勢（PHI 不出院），但前緣模型仍領先 3–6 個月。<strong>真正的問題不是「誰更強」</strong>，而是「資料敏感度 × 任務複雜度 × 預算」三軸的權衡：日常文書工作用旗艦 API；臨床/基因資料用本地或私有部署；高度標準化任務用 quantized 小模型。</p></div>
+<div data-lang="en"><p>Local Llama / Qwen / DeepSeek win on <strong>privacy-sensitive workloads</strong> (PHI stays on-prem), but frontier models still lead by 3–6 months. <strong>The real question is not "who wins"</strong> but the trade-off of "data sensitivity × task complexity × budget": daily admin work — frontier API; clinical/genomic — local or private deployment; highly standardized tasks — quantized small models.</p></div></div>
+</div>
+</section>
+
+<!-- ===== Section 10.5: Deep Dive — K8s Architecture & Service Mesh & FinOps ===== -->
+<section class="section">
+<div class="section-label" data-zh="進階補充" data-en="ADVANCED ADD-ON">K8s / Service Mesh / FinOps</div>
+<h2 data-zh="十之二、進階補充：K8s 架構、Service Mesh、FinOps、Cold Start" data-en="X-bis. Advanced: K8s Architecture, Service Mesh, FinOps, Cold Start">十之二、進階補充</h2>
+
+<h3 data-zh="Kubernetes 7 個核心物件" data-en="The 7 core Kubernetes objects">Kubernetes 7 個核心物件</h3>
+<table class="comp-table">
+<thead><tr><th data-zh="物件" data-en="Object">物件</th><th data-zh="比喻" data-en="Analogy">比喻</th><th data-zh="生資應用例" data-en="Genomics example">生資例</th></tr></thead>
+<tbody>
+<tr><td><strong>Pod</strong></td><td><span data-lang="zh">最小部署單位，1+ container 共享網路/儲存</span><span data-lang="en">Smallest deployable unit; 1+ containers sharing net/storage</span></td><td><span data-lang="zh">一個 STAR aligner + 一個 sidecar log shipper</span><span data-lang="en">One STAR aligner + a sidecar log shipper</span></td></tr>
+<tr><td><strong>Deployment</strong></td><td><span data-lang="zh">「我要 3 個一樣的 Pod、滾動更新」</span><span data-lang="en">"I want 3 identical Pods with rolling updates"</span></td><td><span data-lang="zh">VEP annotation web service × 3 副本</span><span data-lang="en">VEP annotation web service × 3 replicas</span></td></tr>
+<tr><td><strong>Service</strong></td><td><span data-lang="zh">穩定的 cluster 內 DNS + 負載平衡</span><span data-lang="en">Stable in-cluster DNS + load balancer</span></td><td><span data-lang="zh"><code>blast-svc.lab.svc.cluster.local</code></span><span data-lang="en"><code>blast-svc.lab.svc.cluster.local</code></span></td></tr>
+<tr><td><strong>Ingress</strong></td><td><span data-lang="zh">L7 路由、TLS 終結（外部 HTTPS → 內部 Pod）</span><span data-lang="en">L7 routing, TLS termination (HTTPS in → Pod)</span></td><td><span data-lang="zh"><code>galaxy.lab.edu/api/v2</code> 路由</span><span data-lang="en"><code>galaxy.lab.edu/api/v2</code> routing</span></td></tr>
+<tr><td><strong>HPA / VPA</strong></td><td><span data-lang="zh">Horizontal/Vertical Pod Autoscaler 自動擴縮</span><span data-lang="en">Horizontal/Vertical Pod Autoscaler</span></td><td><span data-lang="zh">夜間批次自動 scale 到 50 個 worker</span><span data-lang="en">Night-batch scales to 50 workers</span></td></tr>
+<tr><td><strong>ConfigMap / Secret</strong></td><td><span data-lang="zh">設定 + 機敏值與 image 分離</span><span data-lang="en">Decouple config + secrets from image</span></td><td><span data-lang="zh">dbGaP API key、Sentieon license</span><span data-lang="en">dbGaP API key, Sentieon license</span></td></tr>
+<tr><td><strong>etcd</strong></td><td><span data-lang="zh">cluster 唯一的 source-of-truth (Raft 一致性)</span><span data-lang="en">Cluster source of truth (Raft consensus)</span></td><td><span data-lang="zh">所有 K8s 狀態都存這——務必備份</span><span data-lang="en">Holds all K8s state — always back up</span></td></tr>
+</tbody></table>
+
+<div class="callout"><span class="callout-icon">💡</span><div>
+<span data-lang="zh"><strong>Service Mesh（Istio、Linkerd、Consul Connect）：</strong>在 Pod 旁注入「sidecar proxy」(Envoy)，自動接管「服務間通訊」的 mTLS、retry、circuit breaker、observability、流量切分（canary、A/B test）。Istio 強大但複雜；Linkerd 輕量、Rust 寫的、適合中小團隊。<strong>2024 起 eBPF-based 方案</strong>（Cilium Service Mesh, Isovalent）讓 mesh 直接在 kernel 跑，省掉 sidecar overhead。</span>
+<span data-lang="en"><strong>Service Mesh (Istio, Linkerd, Consul Connect):</strong> injects a sidecar proxy (Envoy) beside each Pod, transparently handling mTLS, retries, circuit breakers, observability, and traffic splitting (canary, A/B). Istio is powerful but complex; Linkerd is lightweight, Rust-based, ideal for small teams. <strong>2024+ eBPF-based meshes</strong> (Cilium Service Mesh, Isovalent) run inside the kernel, removing sidecar overhead.</span>
+</div></div>
+
+<h3 data-zh="FinOps：雲端的會計新工程" data-en="FinOps: cloud's new accounting engineering">FinOps：雲端的會計新工程</h3>
+<div data-lang="zh"><p><strong>FinOps</strong>（Cloud Financial Operations，2019 由 FinOps Foundation 正式命名）是 2020 後新興工程職能：把「成本」當成「另一個 SLO」管理。三個常見手段：</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>Tagging 紀律</strong>：每個資源標 <code>team / project / env / cost-center</code>，月底自動切帳。</li>
+<li><strong>Savings Plans / Reserved Instances</strong>：穩態工作負載先承諾 1–3 年，可省 30–72%。</li>
+<li><strong>Spot / Preemptible</strong>：可中斷工作（批次、CI、定序 pipeline）省 70–90%。</li>
+<li><strong>Idle Hunt</strong>：未掛載 EBS、零流量 NAT Gateway、未刪 snapshot 是三大「殭屍成本」。</li>
+</ul>
+<p>工具：<strong>AWS Cost Explorer、GCP Recommender、Vantage、CloudHealth、Kubecost</strong>（K8s 專用）。</p></div>
+<div data-lang="en"><p><strong>FinOps</strong> (Cloud Financial Operations; formalized by the FinOps Foundation in 2019) is the post-2020 engineering function that treats "cost" as another SLO. Three common levers:</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>Tagging discipline</strong>: tag every resource with <code>team / project / env / cost-center</code>; auto-split bills monthly.</li>
+<li><strong>Savings Plans / Reserved Instances</strong>: commit 1–3 yrs for steady workloads, save 30–72 %.</li>
+<li><strong>Spot / Preemptible</strong>: 70–90 % off for interruptible jobs (batch, CI, sequencing pipelines).</li>
+<li><strong>Idle hunt</strong>: unattached EBS volumes, zero-traffic NAT Gateways, unaged snapshots are the three biggest "zombie costs".</li>
+</ul>
+<p>Tools: <strong>AWS Cost Explorer, GCP Recommender, Vantage, CloudHealth, Kubecost</strong> (K8s-specific).</p></div>
+
+<h3 data-zh="Serverless Cold Start：被低估的陷阱" data-en="Serverless cold start: the underrated trap">Serverless Cold Start</h3>
+<div data-lang="zh"><p>第一次呼叫或閒置太久後，雲商需「拉一個容器 + 載入 runtime」，這就是 <strong>cold start</strong>。對 Lambda：</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>Node.js / Python</strong>：50–200 ms；<strong>Java / .NET</strong>：500 ms–2 s；<strong>裝大套件（如 numpy + pandas）</strong> 可超過 5 s。</li>
+<li>對話式 LLM API、定序 chat-bot：cold start 會嚴重影響 UX。解法：<strong>Provisioned Concurrency</strong>（永遠預熱一定數量）、<strong>SnapStart</strong>（Java 預初始化 snapshot）、改用 Cloudflare Workers（V8 isolate，&lt; 5 ms cold start）。</li>
+</ul></div>
+<div data-lang="en"><p>The first invocation, or after idle, the provider must "spin up a container + load runtime" — the dreaded <strong>cold start</strong>. On Lambda:</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>Node.js / Python</strong>: 50–200 ms; <strong>Java / .NET</strong>: 500 ms–2 s; <strong>heavy deps</strong> (numpy + pandas) can exceed 5 s.</li>
+<li>For chat-style LLM APIs and conversational sequencing bots, cold starts crush UX. Fixes: <strong>Provisioned Concurrency</strong> (always keep N warm), <strong>SnapStart</strong> (pre-init Java snapshot), or move to Cloudflare Workers (V8 isolates, &lt; 5 ms cold start).</li>
+</ul></div>
+</section>
+
+<!-- ===== Section 10.7: Common Misconceptions Extra (Cloud cost gotchas) ===== -->
+<section class="section">
+<div class="section-label" data-zh="補充警示" data-en="EXTRA WARNINGS">經典 cloud bill 災難</div>
+<h2 data-zh="十之三、4 個真實 cloud 帳單災難（學費）" data-en="X-ter. Four Real Cloud-Bill Disasters">十之三、cloud 帳單地雷</h2>
+<table class="comp-table">
+<thead><tr><th data-zh="案例" data-en="Case">案例</th><th data-zh="原因" data-en="Cause">根因</th><th data-zh="代價" data-en="Cost">代價</th></tr></thead>
+<tbody>
+<tr><td><span data-lang="zh">2020 某新創忘關 GPU instance</span><span data-lang="en">2020 startup forgot a GPU instance</span></td><td><span data-lang="zh">p4d.24xlarge 開了一週、無人發現</span><span data-lang="en">p4d.24xlarge ran for a week, undetected</span></td><td><span data-lang="zh">~$5,500 / 週，幾乎用光月預算</span><span data-lang="en">~$5,500 / week, nearly half the monthly budget</span></td></tr>
+<tr><td><span data-lang="zh">2022 GitHub 公開 AWS key</span><span data-lang="en">2022 AWS key pushed to public GitHub</span></td><td><span data-lang="zh">爬蟲 10 分鐘內利用，挖礦 24 hr</span><span data-lang="en">Bots picked it up within 10 min and mined for 24 h</span></td><td><span data-lang="zh">$45,000+ Bitcoin 挖礦帳單</span><span data-lang="en">$45,000+ in Bitcoin-mining charges</span></td></tr>
+<tr><td><span data-lang="zh">2023 NAT Gateway 跨 AZ 流量</span><span data-lang="en">2023 NAT Gateway cross-AZ traffic</span></td><td><span data-lang="zh">EKS Pod 跨 AZ 走 NAT，每 GB $0.045 × 100 TB/月</span><span data-lang="en">EKS Pods crossed AZ via NAT — $0.045 / GB × 100 TB / month</span></td><td><span data-lang="zh">$4,500 / 月，純粹網路費</span><span data-lang="en">$4,500 / month, pure networking fees</span></td></tr>
+<tr><td><span data-lang="zh">2024 某基因實驗室 S3 egress</span><span data-lang="en">2024 genomics lab S3 egress</span></td><td><span data-lang="zh">下載 50 TB BAM 到院內 HPC，US-EAST → on-prem $0.09/GB</span><span data-lang="en">Downloaded 50 TB of BAMs from us-east to on-prem at $0.09 / GB</span></td><td><span data-lang="zh">$4,500 一次性 egress</span><span data-lang="en">$4,500 one-shot egress</span></td></tr>
+</tbody></table>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<span data-lang="zh"><strong>三條保命規則：</strong>① 開 GPU 必設「auto-shutdown 4 hr」鬧鐘；② 設 Cost Budget 警示（&gt; $500/天 立刻通知）；③ <strong>絕不</strong>把 AWS / GCP key 推上 git——用 <code>git-secrets</code> hook 或 GitHub Push Protection。</span>
+<span data-lang="en"><strong>Three life-saving rules:</strong> (1) any GPU instance gets a 4-hour auto-shutdown alarm; (2) set cost budgets with alerts (&gt; $500/day pages you); (3) <strong>never</strong> push AWS/GCP keys to git — use the <code>git-secrets</code> hook or GitHub Push Protection.</span>
+</div></div>
+</section>
+
+<!-- ===== Section 11: Quiz ===== -->
 <section class="quiz-section">
-<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<h3>📝 <span data-zh="自我檢測（7 題）" data-en="Self-Check (7 Questions)">自我檢測</span></h3>
 <div class="quiz-q" data-answer="2">
-<p data-lang="zh">1. IaaS、PaaS、SaaS 三者最大的差別在於？</p>
-<p data-lang="en">1. The key difference between IaaS, PaaS, and SaaS is?</p>
+<p data-lang="zh">1. 雲端「共擔責任模型」是什麼意思？</p>
+<p data-lang="en">1. What does the cloud "shared responsibility model" mean?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 價格高低</span><span data-lang="en">A. Price level</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 是否使用容器</span><span data-lang="en">B. Whether containers are used</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 使用者要自己管理多少層（OS、Runtime、App）</span><span data-lang="en">C. How many layers (OS, runtime, app) the user must manage</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 是否支援 AI</span><span data-lang="en">D. Whether AI is supported</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 雲商負責所有安全</span><span data-lang="en">A. Provider owns all security</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 客戶與雲商各 50%</span><span data-lang="en">B. 50/50 split</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 雲商管「雲端的安全」（硬體、虛擬化），客戶管「雲端裡的安全」（OS、應用、資料、IAM）</span><span data-lang="en">C. Provider secures the cloud (HW, virtualization); customer secures what's in it (OS, app, data, IAM)</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 政府監管</span><span data-lang="en">D. Government regulates</span></div>
 </div><div class="quiz-feedback" id="fb1"></div></div>
 
 <div class="quiz-q" data-answer="1">
-<p data-lang="zh">2. 關於 Docker container 與 VM，下列敘述何者正確？</p>
-<p data-lang="en">2. Which is correct about Docker containers vs VMs?</p>
+<p data-lang="zh">2. 下列何者是「serverless」的代表？</p>
+<p data-lang="en">2. Which is a representative "serverless" offering?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Container 比 VM 慢</span><span data-lang="en">A. Containers are slower than VMs</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Container 共享 host 核心，啟動快、佔資源少</span><span data-lang="en">B. Containers share the host kernel, start fast, and use less resources</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Container 與 VM 隔離強度完全相同</span><span data-lang="en">C. Containers and VMs offer identical isolation</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Container 不能用在生產環境</span><span data-lang="en">D. Containers cannot be used in production</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. AWS EC2 t3.large</span><span data-lang="en">A. AWS EC2 t3.large</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. AWS Lambda（按執行毫秒收費）</span><span data-lang="en">B. AWS Lambda (pay-per-ms)</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. GCE Compute Engine VM</span><span data-lang="en">C. GCE Compute Engine VM</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Azure VMware Solution</span><span data-lang="en">D. Azure VMware Solution</span></div>
 </div><div class="quiz-feedback" id="fb2"></div></div>
 
-<div class="quiz-q" data-answer="0">
-<p data-lang="zh">3. MQTT 在 IoT 中的主要用途是？</p>
-<p data-lang="en">3. The primary use of MQTT in IoT is?</p>
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">3. 跑大規模 RNA-seq pipeline（500 樣本）最佳實踐？</p>
+<p data-lang="en">3. Best practice for a large RNA-seq pipeline (500 samples)?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 輕量級「發佈-訂閱」訊息協定，適合感測器回傳資料</span><span data-lang="en">A. Lightweight pub/sub messaging — ideal for sensor telemetry</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 用來訓練 AI 模型</span><span data-lang="en">B. Used to train AI models</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 用來取代 HTTPS</span><span data-lang="en">C. Replacement for HTTPS</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 用來編排容器</span><span data-lang="en">D. To orchestrate containers</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 全部在一台筆電跑 30 天</span><span data-lang="en">A. Run on a laptop for 30 days</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 寫一個 1000 行 bash script</span><span data-lang="en">B. Write a 1000-line bash script</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 用 nf-core/rnaseq + AWS Batch + spot instances（省 70–90%）</span><span data-lang="en">C. Use nf-core/rnaseq + AWS Batch + spot instances (70–90 % off)</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 把資料 email 給合作者</span><span data-lang="en">D. Email the data to a collaborator</span></div>
 </div><div class="quiz-feedback" id="fb3"></div></div>
+
+<div class="quiz-q" data-answer="3">
+<p data-lang="zh">4. Kubernetes 的 HPA 是做什麼？</p>
+<p data-lang="en">4. What does Kubernetes' HPA do?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 加密儲存</span><span data-lang="en">A. Encrypts storage</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 防止 DDoS</span><span data-lang="en">B. Blocks DDoS</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 整合 Active Directory</span><span data-lang="en">C. Integrates with AD</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 根據 CPU/metric 自動增減 Pod 數量 (auto-scaling)</span><span data-lang="en">D. Auto-scales Pods based on CPU/metrics</span></div>
+</div><div class="quiz-feedback" id="fb4"></div></div>
+
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">5. 為什麼把 dbGaP controlled-access 資料隨手丟到個人 S3 bucket 是嚴重錯誤？</p>
+<p data-lang="en">5. Why is dropping dbGaP controlled-access data into a personal S3 bucket a serious mistake?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. S3 太貴</span><span data-lang="en">A. S3 is too expensive</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. ① 違反 DUC 條款（資料須在 institutional firewall 內）；② 個人帳號通常未簽 BAA；③ 違規導致永久禁用 + 機構黑名單 + 可能 HIPAA 罰款</span><span data-lang="en">B. (1) Violates DUC (data must stay inside institutional firewall); (2) personal accounts usually have no BAA; (3) violation → permanent ban + institutional blacklist + possible HIPAA fines</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. S3 不支援 .vcf 格式</span><span data-lang="en">C. S3 doesn't support .vcf</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. AWS 不允許基因資料</span><span data-lang="en">D. AWS forbids genomic data</span></div>
+</div><div class="quiz-feedback" id="fb5"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">6. Kubernetes 物件中，「cluster 內部穩定 DNS + 負載平衡」的是？</p>
+<p data-lang="en">6. Which Kubernetes object provides "stable in-cluster DNS + load balancing"?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Pod</span><span data-lang="en">A. Pod</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Deployment</span><span data-lang="en">B. Deployment</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Service</span><span data-lang="en">C. Service</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. etcd</span><span data-lang="en">D. etcd</span></div>
+</div><div class="quiz-feedback" id="fb6"></div></div>
+
+<div class="quiz-q" data-answer="3">
+<p data-lang="zh">7. 跨 region / out-of-region 下載 BAM 大檔在 cloud 帳單上被稱為「最痛」的項目，原因是？</p>
+<p data-lang="en">7. Downloading BAM files cross-region or off-cloud is notoriously the "most painful" cloud-bill item because?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 儲存費太高</span><span data-lang="en">A. Storage fees</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. AWS S3 不支援 BAM 格式</span><span data-lang="en">B. S3 doesn't support BAM</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 上傳費高</span><span data-lang="en">C. Upload fees are high</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Egress 費（每 GB ~$0.09），上 TB 級資料一次出雲就是數千美元；建議「計算去找資料」而非「資料來找計算」</span><span data-lang="en">D. Egress fees (~$0.09/GB); TB-scale exits cost thousands. Best practice: "bring compute to data", not the reverse</span></div>
+</div><div class="quiz-feedback" id="fb7"></div></div>
 </section>
 
+<!-- ===== Section 12: 💭 Discussion ===== -->
+<section class="section" style="background:#fef3c7;border-radius:14px;padding:32px;">
+<div class="section-label">💭 <span data-zh="延伸思考" data-en="DISCUSSION">延伸思考</span></div>
+<h2 data-zh="十一、延伸思考與討論題" data-en="XI. Discussion & Reflection">十一、延伸思考</h2>
+<ol style="margin-left:20px;line-height:1.9;">
+<li data-lang="zh"><strong>上雲對生資的好處與痛點：</strong>列出三個你（或所屬實驗室）今天若搬上雲（如 Terra）的痛點：經費、學習曲線、合規、跨團隊協作？再列三個明顯好處。</li>
+<li data-lang="en"><strong>Cloud — bioinformatics' pros and cons:</strong> name three real pain points if your lab moved to the cloud today (budget, learning curve, compliance, collaboration?) and three clear wins.</li>
+
+<li data-lang="zh"><strong>邊緣 AI 與分散式醫療：</strong>MinION + adaptive sampling 已能在 6 小時識別新興病原。若每家小診所都有一台，全球疫情監測會發生什麼改變？反過來，無監管下普及又有什麼風險？</li>
+<li data-lang="en"><strong>Edge AI and decentralized diagnostics:</strong> MinION + adaptive sampling can identify emerging pathogens in 6 hours. If every clinic had one, how would global outbreak surveillance change? What are the risks of unregulated proliferation?</li>
+
+<li data-lang="zh"><strong>量子雲服務的現實：</strong>IBM Q、AWS Braket、Azure Quantum 都提供量子位元的雲端訪問，但今天的量子電腦多在 100–1000 qubit 等級。生資領域哪些問題真正需要量子（分子模擬、藥物設計、結構優化），哪些只是 hype？</li>
+<li data-lang="en"><strong>The reality of quantum cloud services:</strong> IBM Q, AWS Braket, Azure Quantum offer cloud qubit access, but today's machines sit at 100–1000 qubits. Which biology problems genuinely need quantum (molecular simulation, drug design, structure optimization) and which are just hype?</li>
+
+<li data-lang="zh"><strong>FinOps 練習：</strong>你最近用過/想用的 AWS / GCP 服務是什麼？查它的價目表，估算你「正確使用」與「不小心放著沒關」一個月的成本差距。會嚇到你嗎？</li>
+<li data-lang="en"><strong>FinOps exercise:</strong> pick a recent AWS/GCP service you've used or want to. Read its pricing page and estimate the monthly cost of "using it right" vs "accidentally left running". Does the gap shock you?</li>
+
+<li data-lang="zh"><strong>邊緣 AI vs 中央 AI 的醫療角色：</strong>如果你能在診所部署一個 8 GB GPU 跑本地基因組分析 + LLM 對話，是否比把所有資料送到中央雲更好？想想偏鄉部落、軍隊野戰、極地科考站的情境。</li>
+<li data-lang="en"><strong>Edge vs central AI in clinical settings:</strong> if you could deploy an 8 GB GPU at a rural clinic for local genomic analysis + LLM consultation, is that better than sending everything to a central cloud? Consider remote tribes, military forward bases, and polar research stations.</li>
+
+<li data-lang="zh"><strong>Local AI 會打敗 ChatGPT API 嗎？</strong>2025 開源模型（Llama 4、DeepSeek-V3、Qwen 3）大幅縮短與封閉模型的差距，可本地部署。對你的研究團隊，本地 vs API 哪個更合理？醫療隱私、預算、效能三軸如何權衡？</li>
+<li data-lang="en"><strong>Will local AI beat ChatGPT API?</strong> 2025's open models (Llama 4, DeepSeek-V3, Qwen 3) drastically narrowed the gap with closed models and can run locally. For your lab, local vs API — which? How do you trade off privacy, budget, and performance?</li>
+
+<li data-lang="zh"><strong>SLA 與生資 reproducibility：</strong>雲端商常承諾 99.9% uptime（每月可中斷 43 分鐘）。對於 6 個月的 pipeline 跑全 UK Biobank 100 萬人 WGS，這個中斷意味著什麼？怎樣的 checkpoint + retry 設計能讓你不在中斷後重來？</li>
+<li data-lang="en"><strong>SLA and bioinformatic reproducibility:</strong> Cloud providers advertise 99.9 % uptime (≈43 min/month outage). For a 6-month pipeline running the full UK Biobank 1 M WGS, what does that mean? What checkpoint + retry design lets you skip rerunning after an outage?</li>
+</ol>
+</section>
+
+<!-- ===== Page Nav ===== -->
 <nav class="page-nav">
-<a href="ai-ml.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 14: 人工智慧與機器學習" data-en="Ch 14: Artificial Intelligence &amp; Machine Learning">Ch 14: 人工智慧與機器學習</span></a>
-<a href="ethics-future.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 16: 資訊倫理與新興科技" data-en="Ch 16: Information Ethics &amp; Emerging Tech">Ch 16: 資訊倫理與新興科技</span></a>
+<a href="ai-ml.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 14: 人工智慧與機器學習" data-en="Ch 14: AI & Machine Learning">Ch 14: 人工智慧與機器學習</span></a>
+<a href="ethics-future.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 16: 資訊倫理與新興科技" data-en="Ch 16: Ethics & Emerging Tech">Ch 16: 資訊倫理與新興科技</span></a>
 </nav>
 </main>
 <footer class="site-footer">© Charlene — Introduction to Computer Science · Interactive Tutorial</footer>
@@ -254,14 +637,95 @@ ec2.<span class="func">create_instances</span>(ImageId=<span class="str">"ami-0c
 window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
 function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
 
-// Global IaaS+PaaS market share (Synergy Q1 2026 approx.)
-new Chart(document.getElementById('cloudChart'),{type:'bar',data:{
-  labels:['AWS','Microsoft Azure','Google Cloud','Alibaba Cloud','Oracle Cloud','Others'],
-  datasets:[{label:'Market share (%)',data:[30,24,13,4,3,26],
-    backgroundColor:['rgba(217,119,6,.85)','rgba(29,78,216,.85)','rgba(5,150,105,.85)','rgba(220,38,38,.75)','rgba(190,24,93,.75)','rgba(120,113,108,.65)']}]
-},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>c.label+': '+c.raw+'%'}}},scales:{x:{beginAtZero:true,max:35,title:{display:true,text:'Market share (%)'}}}}});
+// ---- Cloud Market Share Chart ----
+new Chart(document.getElementById('cloudShareChart'),{type:'bar',data:{labels:['AWS','Microsoft Azure','Google Cloud','Alibaba Cloud','Oracle Cloud'],datasets:[
+  {label:'Market Share % (Q1 2026)',data:[31,25,12,7,4],backgroundColor:'rgba(29,78,216,.75)',yAxisID:'y'},
+  {label:'Global Regions',data:[36,68,42,33,50],backgroundColor:'rgba(217,119,6,.75)',yAxisID:'y1'}
+]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{type:'linear',position:'left',title:{display:true,text:'Market share %'},max:40},y1:{type:'linear',position:'right',title:{display:true,text:'Region count'},grid:{drawOnChartArea:false},max:80}}}});
 
-const QF={zh:{q1_y:'IaaS 你管 OS 以上一切；PaaS 你只管 app；SaaS 你只用軟體。',q1_n:'答案 C。',q2_y:'Container 共享 host 核心，毫秒啟動、佔資源少；但隔離較 VM 弱。',q2_n:'答案 B。',q3_y:'MQTT 是 IoT 最常用的 Pub/Sub 協定，header 僅 2 byte，極省頻寬。',q3_n:'答案 A。'},en:{q1_y:'IaaS: you manage everything above OS. PaaS: just the app. SaaS: just use the software.',q1_n:'Answer: C.',q2_y:'Containers share the host kernel — ms startup, light footprint, but weaker isolation than VMs.',q2_n:'Answer: B.',q3_y:'MQTT is the most common IoT pub/sub protocol — only a 2-byte header, extremely bandwidth-efficient.',q3_n:'Answer: A.'}};
+// ---- K8s Pod Lifecycle Simulator ----
+const nodeCount = 3;
+let pods = [];   // each: {id, node, state}
+let nodeStatus = [true,true,true];   // true = healthy
+let nextId = 1;
+
+function renderCluster(){
+  const wrap = document.getElementById('k8sCluster');
+  wrap.innerHTML='';
+  for(let n=0;n<nodeCount;n++){
+    const node = document.createElement('div');
+    node.style.cssText='flex:1;min-width:180px;background:'+(nodeStatus[n]?'var(--c-surface)':'#cbd5e1')+';border:2px solid '+(nodeStatus[n]?'var(--c-accent)':'#94a3b8')+';border-radius:10px;padding:12px;opacity:'+(nodeStatus[n]?1:0.55);
+    const header = document.createElement('div');
+    header.style.cssText='font-weight:700;color:'+(nodeStatus[n]?'var(--c-accent-dark)':'#475569')+';font-family:var(--font-mono);font-size:.85rem;margin-bottom:8px;';
+    header.textContent='Node-'+(n+1)+(nodeStatus[n]?' ✅':' 💀');
+    node.appendChild(header);
+    const podsHere = pods.filter(p=>p.node===n);
+    if(podsHere.length===0){node.innerHTML+='<div style="font-size:.78rem;color:#94a3b8;text-align:center;padding:18px 0;">(empty)</div>';}
+    podsHere.forEach(p=>{
+      const pod = document.createElement('div');
+      const colors={Pending:'#fbbf24',ContainerCreating:'#3b82f6',Running:'#10b981',Failed:'#ef4444'};
+      pod.style.cssText='background:'+colors[p.state]+';color:#fff;border-radius:6px;padding:6px 10px;margin:4px 0;font-family:var(--font-mono);font-size:.78rem;font-weight:600;';
+      pod.textContent='pod-'+p.id+' · '+p.state;
+      node.appendChild(pod);
+    });
+    wrap.appendChild(node);
+  }
+}
+
+function progressPods(){
+  pods.forEach(p=>{
+    if(!nodeStatus[p.node]){p.state='Pending';
+      // reschedule to a healthy node
+      const healthy = nodeStatus.findIndex(s=>s);
+      if(healthy>=0) p.node = healthy;
+    }else if(p.state==='Pending'){p.state='ContainerCreating';}
+    else if(p.state==='ContainerCreating'){p.state='Running';}
+  });
+  renderCluster();
+}
+
+document.getElementById('scaleBtn').addEventListener('click',()=>{
+  // find least-loaded healthy node
+  const loads=[0,0,0]; pods.forEach(p=>loads[p.node]++);
+  let target=-1, min=999;
+  for(let i=0;i<nodeCount;i++){if(nodeStatus[i] && loads[i]<min){min=loads[i];target=i;}}
+  if(target<0)return;
+  pods.push({id:nextId++,node:target,state:'Pending'});
+  renderCluster();
+  setTimeout(progressPods,600);
+  setTimeout(progressPods,1300);
+});
+document.getElementById('scaleDownBtn').addEventListener('click',()=>{pods.pop();renderCluster();});
+document.getElementById('killNodeBtn').addEventListener('click',()=>{
+  // kill a random healthy node
+  const healthy=[];nodeStatus.forEach((s,i)=>{if(s)healthy.push(i);});
+  if(healthy.length<=1)return;  // keep at least one alive
+  const victim=healthy[Math.floor(Math.random()*healthy.length)];
+  nodeStatus[victim]=false;
+  renderCluster();
+  setTimeout(progressPods,800);
+  setTimeout(progressPods,1500);
+});
+document.getElementById('resetBtn').addEventListener('click',()=>{pods=[];nodeStatus=[true,true,true];nextId=1;renderCluster();});
+renderCluster();
+
+// ---- Quiz ----
+const QF={zh:{
+q1_y:'Shared Responsibility：雲商管底層基礎設施，客戶管自己的 OS、應用、設定與資料。',q1_n:'答案 C。',
+q2_y:'Lambda 是經典 FaaS / serverless：按毫秒計費、idle 不花錢、不用管伺服器。',q2_n:'答案 B。',
+q3_y:'nf-core/rnaseq + AWS Batch + spot 可省 70–90% 成本，又有版本可追溯。',q3_n:'答案 C。',
+q4_y:'HPA = Horizontal Pod Autoscaler，根據 CPU 或自訂 metric 自動加減 Pod。',q4_n:'答案 D。',
+q5_y:'dbGaP DUC 要求資料在 institutional firewall；個人帳號無 BAA；違規會導致永久禁用 + 機構黑名單 + HIPAA 罰款。',q5_n:'答案 B。',
+q6_y:'Service 是 K8s 內部的「穩定 DNS + 負載平衡」入口；Pod 是最小單位、Deployment 管副本、etcd 存狀態。',q6_n:'答案 C。',
+q7_y:'Egress 費（出雲流量）是雲端帳單最痛項，每 GB ~$0.09。最佳實踐是「計算去找資料」（compute next to data），而非反向。',q7_n:'答案 D。'},
+en:{
+q1_y:'Shared Responsibility: provider secures the cloud infrastructure; customer secures OS, app, config, and data.',q1_n:'Answer: C.',
+q2_y:'Lambda is the canonical FaaS / serverless service: pay-per-ms, idle is free, no servers to manage.',q2_n:'Answer: B.',
+q3_y:'nf-core/rnaseq + AWS Batch + spot saves 70–90 % while keeping pipelines version-traceable.',q3_n:'Answer: C.',
+q4_y:'HPA = Horizontal Pod Autoscaler — auto-scales Pods on CPU or custom metrics.',q4_n:'Answer: D.',
+q5_y:'dbGaP DUC requires data stay inside the institutional firewall; personal accounts usually lack a BAA; violations trigger permanent bans, institutional blacklists, and HIPAA fines.',q5_n:'Answer: B.',
+q6_y:'Service provides a stable in-cluster DNS + load balancer; Pod is the smallest unit, Deployment manages replicas, etcd stores state.',q6_n:'Answer: C.',
+q7_y:'Egress fees (~$0.09/GB out of cloud) are the most painful billing line. Best practice: "bring compute to data", not data to compute.',q7_n:'Answer: D.'}};
 document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
 </script>
 </body></html>

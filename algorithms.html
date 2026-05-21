@@ -11,200 +11,562 @@
 </div></nav>
 <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
 <header class="page-hero"><div class="step-badge">CHAPTER 10 / 16</div>
-<h1 data-zh="演算法與複雜度" data-en="Algorithms & Complexity">演算法與複雜度</h1>
-<p class="subtitle" data-lang="zh">演算法是「能解決問題的有限步驟」。寫得對只是起點，寫得快才是工程。本章帶你看懂 Big-O 與經典演算法。</p>
-<p class="subtitle" data-lang="en">An algorithm is a finite sequence of steps that solves a problem. Writing correct code is just the start — writing fast code is engineering. This chapter unpacks Big-O and the classics.</p>
+<h1 data-zh="演算法與複雜度" data-en="Algorithms &amp; Complexity">演算法與複雜度</h1>
+<p class="subtitle" data-lang="zh">1990 年 BLAST 把 DNA 比對從 6 小時降到 90 秒——這是演算法的力量。寫得對只是起點，寫得快才是工程。本章從 Big-O 走到生物資訊最核心的演算法。</p>
+<p class="subtitle" data-lang="en">In 1990, BLAST cut DNA alignment from 6 hours to 90 seconds — that's the power of algorithms. Writing correct code is just the start; writing fast code is engineering. This chapter goes from Big-O to the algorithms at bioinformatics' core.</p>
 </header>
 <main class="content-wrap">
 
 <section class="section">
-<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
-<h2 data-zh="為何複雜度比語言更重要？" data-en="Why complexity matters more than language">為何複雜度比語言更重要？</h2>
-<div data-lang="zh"><p>同一個問題，用 C 寫的 O(n²) 演算法在 100 萬筆資料上可能跑 30 分鐘；換成 Python 寫的 O(n log n) 演算法卻只要 3 秒。<strong>選對演算法的提速，遠大於選對語言或硬體升級。</strong></p>
-<p>Knuth 給出演算法的五項條件：① <strong>輸入</strong> (input)；② <strong>輸出</strong> (output)；③ <strong>有限性</strong> (finiteness：一定要停)；④ <strong>確定性</strong> (definiteness：每一步明確)；⑤ <strong>有效性</strong> (effectiveness：每步可在有限時間執行)。</p></div>
-<div data-lang="en"><p>For 1M records, an O(n²) algorithm in C may take 30 minutes — while an O(n log n) algorithm in Python finishes in 3 seconds. <strong>Picking the right algorithm beats picking the right language or upgrading hardware.</strong></p>
-<p>Knuth's five properties of an algorithm: (1) <strong>input</strong>, (2) <strong>output</strong>, (3) <strong>finiteness</strong> (must terminate), (4) <strong>definiteness</strong> (each step unambiguous), (5) <strong>effectiveness</strong> (each step executable in finite time).</p></div>
-<div class="callout tip"><span class="callout-icon">💡</span><div>
-<span data-lang="zh"><strong>核心觀念：</strong>Big-O 描述「輸入大小 n 趨於無窮時，執行時間的增長等級」。常數、低階項、係數通通忽略——只看「長相」。</span>
-<span data-lang="en"><strong>Core idea:</strong> Big-O describes the growth rate of running time as input size n approaches infinity. Constants, lower-order terms, and coefficients are dropped — only the dominant term matters.</span>
-</div></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="Big-O" data-en="BIG-O">Big-O 複雜度等級</div>
-<h2 data-zh="一、七種常見的 Big-O" data-en="I. Seven Common Big-O Classes">一、七種常見的 Big-O</h2>
-<table class="comp-table">
-<thead><tr><th data-zh="Big-O" data-en="Big-O">Big-O</th><th data-zh="名稱" data-en="Name">名稱</th><th data-zh="n=1000 大約迭代次數" data-en="Iters at n=1000">n=1000 大約迭代</th><th data-zh="典型例子" data-en="Example">典型例子</th></tr></thead>
-<tbody>
-<tr><td><code>O(1)</code></td><td data-lang="zh">常數時間</td><td data-lang="en">Constant</td><td>1</td><td data-lang="zh">陣列索引、Hash 查找</td><td data-lang="en">Array index, hash lookup</td></tr>
-<tr><td><code>O(log n)</code></td><td data-lang="zh">對數時間</td><td data-lang="en">Logarithmic</td><td>~10</td><td data-lang="zh">二分搜尋、平衡 BST</td><td data-lang="en">Binary search, balanced BST</td></tr>
-<tr><td><code>O(n)</code></td><td data-lang="zh">線性時間</td><td data-lang="en">Linear</td><td>1,000</td><td data-lang="zh">線性掃描、求最大值</td><td data-lang="en">Linear scan, find max</td></tr>
-<tr><td><code>O(n log n)</code></td><td data-lang="zh">線性對數</td><td data-lang="en">Linearithmic</td><td>~10,000</td><td data-lang="zh">Merge Sort、Quick Sort 平均</td><td data-lang="en">Merge sort, average quick sort</td></tr>
-<tr><td><code>O(n²)</code></td><td data-lang="zh">平方時間</td><td data-lang="en">Quadratic</td><td>1,000,000</td><td data-lang="zh">Bubble / Selection / Insertion Sort</td><td data-lang="en">Bubble / selection / insertion sort</td></tr>
-<tr><td><code>O(2ⁿ)</code></td><td data-lang="zh">指數時間</td><td data-lang="en">Exponential</td><td data-lang="zh">天文數字</td><td data-lang="en">Astronomical</td><td data-lang="en">Naïve Fibonacci, subset enumeration</td><td data-lang="zh">樸素費氏數、子集列舉</td></tr>
-<tr><td><code>O(n!)</code></td><td data-lang="zh">階乘時間</td><td data-lang="en">Factorial</td><td data-lang="zh">無解</td><td data-lang="en">Intractable</td><td>Brute-force TSP</td></tr>
-</tbody></table>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="互動圖" data-en="INTERACTIVE">成長曲線</div>
-<h2 data-zh="二、互動：四大複雜度成長曲線" data-en="II. Interactive: Growth Curves of Four Big-O Classes">二、Big-O 成長曲線</h2>
-<div data-lang="zh"><p>下圖以對數刻度比較 <code>O(n)</code>、<code>O(n log n)</code>、<code>O(n²)</code>、<code>O(2ⁿ)</code> 從 n=1 到 n=40 的成長速度。<strong>注意</strong>：在 n=40 時 2ⁿ 已超過 10¹²，<strong>n² 與 2ⁿ 的差距是宇宙級的</strong>。</p></div>
-<div data-lang="en"><p>Below: log-scale comparison of <code>O(n)</code>, <code>O(n log n)</code>, <code>O(n²)</code>, <code>O(2ⁿ)</code> for n=1…40. At n=40, 2ⁿ exceeds 10¹² — <strong>n² and 2ⁿ are cosmologically far apart</strong>.</p></div>
-<div class="interactive-panel">
-<div class="chart-container"><canvas id="bigoChart"></canvas></div>
-<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">y 軸為對數刻度，能容納指數差距</span><span data-lang="en">Y-axis is log scale to fit exponential gaps</span></p>
-</div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="排序" data-en="SORTING">排序演算法</div>
-<h2 data-zh="三、排序演算法總覽" data-en="III. Sorting Algorithms Overview">三、七大排序演算法</h2>
-<table class="comp-table">
-<thead><tr><th data-zh="演算法" data-en="Algorithm">演算法</th><th data-zh="最佳" data-en="Best">最佳</th><th data-zh="平均" data-en="Avg">平均</th><th data-zh="最差" data-en="Worst">最差</th><th data-zh="空間" data-en="Space">空間</th><th data-zh="穩定" data-en="Stable">穩定</th></tr></thead>
-<tbody>
-<tr><td>Bubble</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td data-lang="zh">是</td><td data-lang="en">Yes</td></tr>
-<tr><td>Selection</td><td>O(n²)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td data-lang="zh">否</td><td data-lang="en">No</td></tr>
-<tr><td>Insertion</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td data-lang="zh">是</td><td data-lang="en">Yes</td></tr>
-<tr><td>Merge</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td data-lang="zh">是</td><td data-lang="en">Yes</td></tr>
-<tr><td>Quick</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n²)</td><td>O(log n)</td><td data-lang="zh">否</td><td data-lang="en">No</td></tr>
-<tr><td>Heap</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(1)</td><td data-lang="zh">否</td><td data-lang="en">No</td></tr>
-<tr><td>Tim Sort ⭐</td><td>O(n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td data-lang="zh">是</td><td data-lang="en">Yes</td></tr>
-</tbody></table>
-<div class="callout warn"><span class="callout-icon">⚠️</span><div>
-<div data-lang="zh"><strong>Python 的祕密：</strong>內建 <code>list.sort()</code> 與 <code>sorted()</code> 用的是 <strong>Tim Sort</strong>（Java 也是），對「已部分排序」的資料只要 O(n)。</div>
-<div data-lang="en"><strong>Python's secret:</strong> Built-in <code>list.sort()</code> and <code>sorted()</code> use <strong>Tim Sort</strong> (so does Java). For partially-sorted data it can run in O(n).</div>
-</div></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="搜尋" data-en="SEARCH">搜尋演算法</div>
-<h2 data-zh="四、搜尋：線性 vs 二分 vs Hash" data-en="IV. Search: Linear vs Binary vs Hash">四、搜尋演算法</h2>
-<div class="card-grid cols-3">
-<div class="card"><h4>🔍 Linear Search — O(n)</h4><div data-lang="zh"><p>從頭找到尾。最簡單、適用於小資料或未排序資料。1000 筆資料平均要看 500 次。</p></div><div data-lang="en"><p>Scan from start to end. Simple; fine for small or unsorted data. On 1000 items, ~500 checks on average.</p></div></div>
-<div class="card"><h4>⚖️ Binary Search — O(log n)</h4><div data-lang="zh"><p>每次砍一半，但<strong>要求陣列已排序</strong>。100 萬筆只需 20 次比較。</p></div><div data-lang="en"><p>Halve the search space each step, but <strong>requires sorted input</strong>. ~20 comparisons for 1M items.</p></div></div>
-<div class="card"><h4>🪣 Hash Lookup — O(1)</h4><div data-lang="zh"><p>透過 hash function 直接定位。理想情況常數時間，但需要記憶體與良好的 hash 函式來避免碰撞。</p></div><div data-lang="en"><p>Hash function maps key directly to a bucket. Constant time on average, at the cost of memory and a good hash to avoid collisions.</p></div></div>
-</div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="設計典範" data-en="DESIGN PARADIGMS">設計典範</div>
-<h2 data-zh="五、五大演算法設計典範" data-en="V. Five Algorithm Design Paradigms">五、五大設計典範</h2>
-<div class="workflow">
-<div class="workflow-step" data-step="1"><h4>Brute Force</h4>
-<div data-lang="zh"><p>逐一列舉所有可能。簡單但常常爆炸性慢，適用於小規模或當作正確性基準。</p></div>
-<div data-lang="en"><p>Try every possibility. Simple but often explodes; useful for small inputs or as a correctness baseline.</p></div></div>
-<div class="workflow-step" data-step="2"><h4>Divide &amp; Conquer</h4>
-<div data-lang="zh"><p>把問題切成更小的子問題，遞迴解決後合併。Merge Sort、Quick Sort、FFT、Karatsuba 乘法都是經典。</p></div>
-<div data-lang="en"><p>Split into subproblems, recurse, combine. Classics: merge sort, quick sort, FFT, Karatsuba multiplication.</p></div></div>
-<div class="workflow-step" data-step="3"><h4>Greedy</h4>
-<div data-lang="zh"><p>每一步都做「當下最佳」的選擇。Dijkstra 最短路徑、Huffman 編碼、零錢找零（某些幣制）是典型成功例。</p></div>
-<div data-lang="en"><p>Make the locally best choice at each step. Dijkstra's shortest path, Huffman coding, certain coin-change problems are classic successes.</p></div></div>
-<div class="workflow-step" data-step="4"><h4>Dynamic Programming</h4>
-<div data-lang="zh"><p>把重複子問題的結果「記下來」(memoization)。Fibonacci、0/1 Knapsack、編輯距離、最長公共子序列都是 DP 經典。</p></div>
-<div data-lang="en"><p>Memoize results of overlapping subproblems. Fibonacci, 0/1 Knapsack, edit distance, LCS are classic DP problems.</p></div></div>
-<div class="workflow-step" data-step="5"><h4>Backtracking</h4>
-<div data-lang="zh"><p>嘗試 → 失敗 → 退一步再試。八皇后、數獨、迷宮、N-queens 都是經典案例。</p></div>
-<div data-lang="en"><p>Try, fail, back up, try again. N-queens, sudoku, mazes are classic backtracking problems.</p></div></div>
-</div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">選排序</div>
-<h2 data-zh="六、決策：該選哪種排序？" data-en="VI. Decision: Which sort to choose?">六、該選哪種排序？</h2>
-<div class="decision-tree">
-<h4>🌳 <span data-zh="排序選擇樹" data-en="Sort selector">排序選擇樹</span></h4>
+<div class="section-label" data-zh="開場" data-en="OPENING">90 秒奇蹟</div>
+<h2 data-zh="從 6 小時到 90 秒：BLAST 與演算法的力量" data-en="From 6 Hours to 90 Seconds: BLAST and the Power of Algorithms">從 6 小時到 90 秒：BLAST 與演算法的力量</h2>
 <div data-lang="zh">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>使用語言內建？<span class="dt-arrow">→ 是 →</span> 直接用 <code>sort()</code>（Python / Java 是 Tim Sort、C++ 是 Introsort），<strong>99% 的場景</strong>夠用。</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>資料量極小 (n ≤ 20)？<span class="dt-arrow">→ 是 →</span> <strong>Insertion Sort</strong>，常數小、實作簡單。</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>要求穩定排序（保留相等元素原順序）？<span class="dt-arrow">→ 是 →</span> <strong>Merge Sort</strong> 或 Tim Sort，避免 Quick Sort。</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>記憶體極吃緊？<span class="dt-arrow">→ 是 →</span> <strong>Heap Sort</strong>（原地 O(1) 空間且保證 O(n log n)）。</div></div>
-<div class="dt-node"><span class="dt-q">Q5:</span><div>資料是「整數且範圍有限」？<span class="dt-arrow">→ 是 →</span> 試 <strong>Counting / Radix Sort</strong>，可達 O(n)。</div></div>
+<p>1990 年以前，要在 GenBank 找出與你序列相似的 DNA，需要用 <strong>Smith-Waterman 動態規劃 (1981)</strong>——對 100 萬條序列要跑 <strong>6 小時</strong>。然後，1990 年 Stephen Altschul、David Lipman 等人發表了 <strong>BLAST</strong> 演算法，用 <strong>k-mer 種子 + 局部延伸 + 啟發式</strong> 把同樣的查詢壓到 <strong>90 秒</strong>。同一台電腦、同樣的資料——只是換了演算法。BLAST 論文 (Altschul et al. 1990, J Mol Biol) 至今被引超過 11 萬次，是史上最被引用的 bioinformatics 論文。</p>
+<p>這就是這一章要教你的核心信念：<strong>選對演算法的提速，遠大於選對語言、加更多 CPU、或升級硬體。</strong></p>
+<p>同一個問題，C 寫的 O(n²) 在 100 萬筆資料上跑 30 分鐘；Python 寫的 O(n log n) 只要 3 秒——這不是寫程式技巧的差別，是「複雜度等級」的差別。本章帶你看懂為什麼。</p>
 </div>
 <div data-lang="en">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>Use the language's built-in? <span class="dt-arrow">→ Yes →</span> Just call <code>sort()</code> (Python/Java use Tim Sort; C++ uses Introsort) — enough for <strong>99%</strong> of cases.</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>Very small (n ≤ 20)? <span class="dt-arrow">→ Yes →</span> <strong>Insertion Sort</strong>: tiny constants, easy to write.</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>Need stability? <span class="dt-arrow">→ Yes →</span> <strong>Merge Sort</strong> or Tim Sort. Avoid Quick Sort.</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>Extremely memory-tight? <span class="dt-arrow">→ Yes →</span> <strong>Heap Sort</strong>: in-place O(1) extra, guaranteed O(n log n).</div></div>
-<div class="dt-node"><span class="dt-q">Q5:</span><div>Bounded integers? <span class="dt-arrow">→ Yes →</span> <strong>Counting / Radix Sort</strong> can hit O(n).</div></div>
+<p>Before 1990, finding sequences in GenBank similar to yours required <strong>Smith-Waterman dynamic programming (1981)</strong> — about <strong>6 hours</strong> for 1M sequences. Then in 1990, Stephen Altschul, David Lipman and others published <strong>BLAST</strong> — using <strong>k-mer seeds + local extension + heuristics</strong>, the same query took <strong>90 seconds</strong>. Same computer, same data — just a different algorithm. Altschul et al. 1990 (J Mol Biol) has 110,000+ citations, the most-cited bioinformatics paper in history.</p>
+<p>That's the core belief of this chapter: <strong>Picking the right algorithm beats picking the right language, adding CPUs, or upgrading hardware.</strong></p>
+<p>For 1M records, an O(n²) algorithm in C may run 30 minutes — an O(n log n) algorithm in Python runs in 3 seconds. That's not a coding-style difference; it's a <em>complexity-class</em> difference. This chapter shows why.</p>
+</div>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<span data-lang="zh"><strong>Knuth 的演算法五特性：</strong>① 輸入 (input)、② 輸出 (output)、③ 有限性 (finiteness：一定要停)、④ 確定性 (definiteness：每一步明確)、⑤ 有效性 (effectiveness：每步可在有限時間執行)。少一條就不是演算法。</span>
+<span data-lang="en"><strong>Knuth's five properties:</strong> (1) input, (2) output, (3) finiteness (must terminate), (4) definiteness (each step unambiguous), (5) effectiveness (each step executable in finite time). Miss any one and it's not an algorithm.</span>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="核心概念" data-en="CORE CONCEPTS">核心：Big-O</div>
+<h2 data-zh="一、初學者必懂的 Big-O 漸近分析" data-en="I. Big-O Asymptotic Analysis for Beginners">一、初學者必懂：Big-O 漸近分析</h2>
+<div data-lang="zh"><p><strong>Big-O 描述「輸入大小 n 趨於無窮時，執行時間（或記憶體）的增長等級」。</strong>常數、低階項、係數通通忽略——只看「長相」。</p>
+<p>用一個比喻：<strong>「從台北到高雄」</strong>。走路 8 小時，騎車 4 小時，開車 3 小時。距離變兩倍（台北到墾丁），三者都變兩倍。Big-O 描述的就是「距離 vs 時間」的<strong>曲線形狀</strong>——是線性、對數、還是平方？</p></div>
+<div data-lang="en"><p><strong>Big-O describes the growth rate of running time (or memory) as input size n approaches infinity.</strong> Constants, lower-order terms, and coefficients are dropped — only the dominant term matters.</p>
+<p>An analogy: <strong>"Taipei to Kaohsiung."</strong> Walking 8h, biking 4h, driving 3h. Double the distance (Taipei to Kenting) and all three double. Big-O describes the <em>shape of the curve</em> — linear, log, or quadratic?</p></div>
+
+<table class="comp-table">
+<thead><tr><th>Big-O</th><th data-zh="名稱" data-en="Name">名稱</th><th>n=10</th><th>n=100</th><th>n=1000</th><th data-zh="範例" data-en="Example">範例</th></tr></thead>
+<tbody>
+<tr><td><code>O(1)</code></td><td data-zh="常數" data-en="Constant">常數</td><td>1</td><td>1</td><td>1</td><td data-zh="dict 查詢、陣列存取" data-en="dict lookup, array index">dict 查詢、陣列存取</td></tr>
+<tr><td><code>O(log n)</code></td><td data-zh="對數" data-en="Log">對數</td><td>3</td><td>7</td><td>10</td><td data-zh="二分搜尋、平衡 BST" data-en="binary search, balanced BST">二分搜尋、平衡 BST</td></tr>
+<tr><td><code>O(n)</code></td><td data-zh="線性" data-en="Linear">線性</td><td>10</td><td>100</td><td>1,000</td><td data-zh="掃一次陣列、Bloom Filter 查詢" data-en="single pass, Bloom Filter query">掃一次陣列</td></tr>
+<tr><td><code>O(n log n)</code></td><td data-zh="線對" data-en="Linearithmic">線對</td><td>33</td><td>664</td><td>9,966</td><td>MergeSort, QuickSort avg, FFT</td></tr>
+<tr><td><code>O(n²)</code></td><td data-zh="平方" data-en="Quadratic">平方</td><td>100</td><td>10,000</td><td>1,000,000</td><td>BubbleSort, Needleman-Wunsch DP</td></tr>
+<tr><td><code>O(n³)</code></td><td data-zh="立方" data-en="Cubic">立方</td><td>1,000</td><td>10⁶</td><td>10⁹</td><td data-zh="矩陣相乘 naïve" data-en="naïve matrix multiply">矩陣相乘 naïve</td></tr>
+<tr><td><code>O(2ⁿ)</code></td><td data-zh="指數" data-en="Exponential">指數</td><td>1,024</td><td>1.3×10³⁰</td><td>10³⁰¹</td><td data-zh="所有子集、暴力 SAT" data-en="all subsets, brute SAT">所有子集</td></tr>
+<tr><td><code>O(n!)</code></td><td data-zh="階乘" data-en="Factorial">階乘</td><td>3.6×10⁶</td><td>9×10¹⁵⁷</td><td>—</td><td data-zh="TSP 暴力解、所有排列" data-en="brute TSP, all permutations">TSP 暴力解</td></tr>
+</tbody></table>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>直觀數字：</strong>當 n=10⁶ 時，O(n) 約 1 ms，O(n log n) 約 20 ms，O(n²) 約 17 分鐘，O(2ⁿ) 永遠不會結束。<strong>多 1 個複雜度等級，差距以指數放大。</strong></div>
+<div data-lang="en"><strong>Concrete numbers:</strong> at n=10⁶, O(n) ≈ 1 ms, O(n log n) ≈ 20 ms, O(n²) ≈ 17 minutes, O(2ⁿ) never finishes. <strong>One step up in complexity widens the gap exponentially.</strong></div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動 #1" data-en="INTERACTIVE #1">複雜度成長曲線</div>
+<h2 data-zh="二、互動 #1：八種複雜度的成長曲線（log scale）" data-en="II. Interactive #1: Eight Complexities Growth (log scale)">二、互動 #1：複雜度成長曲線</h2>
+<div data-lang="zh"><p>下圖以對數 y 軸顯示八種複雜度從 n=1 到 n=100 的「步數成長」。注意：<strong>log scale 下，曲線變直線意味實際是指數增長</strong>。</p></div>
+<div data-lang="en"><p>Below: eight complexities on a log y-axis from n=1 to n=100. <strong>A straight line on log scale means exponential growth in reality.</strong></p></div>
+<div class="interactive-panel">
+<div class="chart-container" style="height:420px;"><canvas id="bigOChart"></canvas></div>
+<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">y 軸 = log10(操作步數)，n 軸 = 輸入大小</span><span data-lang="en">y-axis = log10(operations), x-axis = input size n</span></p>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="深入剖析" data-en="DEEP DIVE">排序演算法大比拼</div>
+<h2 data-zh="三、深入剖析：排序演算法大比拼" data-en="III. Deep Dive: Sorting Algorithm Showdown">三、深入剖析：排序大比拼</h2>
+<div data-lang="zh"><p>「排序」是演算法教學的試金石——它把複雜度、穩定性、原地、最壞 vs 平均的所有議題都涵蓋了。</p></div>
+<div data-lang="en"><p>Sorting is the touchstone of algorithm teaching — it covers complexity, stability, in-place, worst vs average, all in one.</p></div>
+
+<table class="comp-table">
+<thead><tr><th data-zh="演算法" data-en="Algorithm">演算法</th><th data-zh="平均" data-en="Average">平均</th><th data-zh="最壞" data-en="Worst">最壞</th><th data-zh="記憶體" data-en="Memory">記憶體</th><th data-zh="穩定" data-en="Stable">穩定</th><th data-zh="筆記" data-en="Notes">筆記</th></tr></thead>
+<tbody>
+<tr><td>Bubble Sort</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>✓</td><td data-zh="教學用，實務絕對別用" data-en="Teaching only, never in practice">教學用</td></tr>
+<tr><td>Selection Sort</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>✗</td><td data-zh="交換次數最少" data-en="Fewest swaps">交換少</td></tr>
+<tr><td>Insertion Sort</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>✓</td><td data-zh="小 n (n<16) 或近乎排序時極快" data-en="Excellent for tiny n or nearly-sorted">小 n 極快</td></tr>
+<tr><td>Merge Sort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td>✓</td><td data-zh="保證最壞 O(n log n)，需額外空間" data-en="Guaranteed O(n log n), needs extra space">保證最壞</td></tr>
+<tr><td>Quick Sort</td><td>O(n log n)</td><td>O(n²)</td><td>O(log n)</td><td>✗</td><td data-zh="平均最快，最壞 O(n²)" data-en="Fastest avg, O(n²) worst">平均最快</td></tr>
+<tr><td>Heap Sort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(1)</td><td>✗</td><td data-zh="原地 + 保證" data-en="In-place + guaranteed">原地保證</td></tr>
+<tr><td>TimSort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td>✓</td><td data-zh="Python sort()、Java Arrays.sort()，混合 Merge + Insertion" data-en="Python sort(), Java Arrays.sort(); hybrid Merge+Insertion">Python/Java 內建</td></tr>
+<tr><td>Radix Sort</td><td>O(nk)</td><td>O(nk)</td><td>O(n+k)</td><td>✓</td><td data-zh="非比較式，限定整數/字串" data-en="Non-comparison, integers/strings only">非比較式</td></tr>
+</tbody></table>
+
+<h3 data-zh="3.1 為何 Python/Java 都用 TimSort？" data-en="3.1 Why do Python and Java both use TimSort?">3.1 為何 Python/Java 都用 TimSort？</h3>
+<div data-lang="zh"><p>2002 年 <strong>Tim Peters</strong> 為 Python 設計了 TimSort：發現實務資料常有「已排序片段 (runs)」，於是混合 Merge + Insertion，並利用這些 runs 達到最壞 O(n log n)、近乎排序資料 O(n) 的成績。2003 進 Python，2009 進 Java——成為全球最常被執行的排序演算法之一。</p></div>
+<div data-lang="en"><p>In 2002, <strong>Tim Peters</strong> designed TimSort for Python: real-world data often has pre-sorted "runs," so he combined Merge + Insertion to exploit them — worst O(n log n), nearly-sorted O(n). Adopted by Python (2003) and Java (2009), it's now among the most-executed sorts on Earth.</p></div>
+
+<h3 data-zh="3.2 Master Theorem 主定理" data-en="3.2 Master Theorem">3.2 Master Theorem（主定理）</h3>
+<div data-lang="zh"><p>對 <strong>分治法 (Divide &amp; Conquer)</strong> 的遞迴 T(n) = a·T(n/b) + f(n)，主定理告訴你最終複雜度：</p>
+<ul style="margin-left:20px;"><li>若 f(n) = O(n<sup>logₐb − ε</sup>)：T(n) = Θ(n<sup>logₐb</sup>)</li><li>若 f(n) = Θ(n<sup>logₐb</sup>)：T(n) = Θ(n<sup>logₐb</sup> · log n)</li><li>若 f(n) = Ω(n<sup>logₐb + ε</sup>)：T(n) = Θ(f(n))</li></ul>
+<p>例：MergeSort T(n) = 2T(n/2) + O(n) → a=2, b=2, log₂2 = 1，f(n)=n → 第 2 種 → O(n log n)。</p></div>
+<div data-lang="en"><p>For <strong>divide &amp; conquer</strong> recurrence T(n) = a·T(n/b) + f(n), the Master Theorem gives the final complexity:</p>
+<ul style="margin-left:20px;"><li>If f(n) = O(n<sup>logₐb − ε</sup>): T(n) = Θ(n<sup>logₐb</sup>)</li><li>If f(n) = Θ(n<sup>logₐb</sup>): T(n) = Θ(n<sup>logₐb</sup> · log n)</li><li>If f(n) = Ω(n<sup>logₐb + ε</sup>): T(n) = Θ(f(n))</li></ul>
+<p>Example: MergeSort T(n) = 2T(n/2) + O(n) → a=2, b=2, log₂2 = 1, f(n)=n → case 2 → O(n log n).</p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="歷史故事" data-en="HISTORY">演算法傳奇</div>
+<h2 data-zh="四、五個改變學科的演算法傳奇" data-en="IV. Five Algorithm Legends That Changed the Field">四、五個演算法傳奇</h2>
+<div class="card-grid cols-2">
+<div class="card"><h4>① Knuth &amp; TAOCP (1962–)</h4>
+<div data-lang="zh"><p><strong>Donald Knuth</strong> 1962 年開始寫 <em>The Art of Computer Programming</em> (TAOCP)，原本估計 7 本書 5 年寫完。<strong>60 年後 (2026)</strong> 還沒寫完——目前只到 Volume 4A，4B 草稿進行中。Knuth 用 <strong>MIX</strong> 與 <strong>MMIX</strong> 假想機進行分析，提倡「先正確、再快速、最後優美」。1974 年圖靈獎得主。發明 <strong>LaTeX</strong>。</p></div>
+<div data-lang="en"><p><strong>Donald Knuth</strong> began <em>The Art of Computer Programming</em> (TAOCP) in 1962, planning 7 volumes in 5 years. <strong>60 years later (2026)</strong> it's still unfinished — currently at Volume 4A, with 4B in draft. Knuth analyzes via <strong>MIX</strong> &amp; <strong>MMIX</strong> hypothetical machines. His motto: "correct first, fast next, beautiful last." 1974 Turing Award. Also invented <strong>LaTeX</strong>.</p></div></div>
+
+<div class="card"><h4>② Dijkstra 的咖啡杯啟示 (1968)</h4>
+<div data-lang="zh"><p>1956 年 <strong>Edsger Dijkstra</strong> 在阿姆斯特丹咖啡廳，未婚妻喝咖啡時，他 <strong>20 分鐘</strong> 在腦中想出了「最短路徑演算法」。沒寫筆記，三年後才整理成論文 (1959)。他常說：「電腦科學跟天文學一樣，跟望遠鏡無關。」1972 年圖靈獎。Dijkstra 演算法仍是 GPS 導航、網路路由的底層。</p></div>
+<div data-lang="en"><p>1956, <strong>Edsger Dijkstra</strong> in an Amsterdam café — while his fiancée drank coffee, he mentally derived the shortest-path algorithm in <strong>20 minutes</strong>. No notes; he published it three years later (1959). Famous quote: "Computer science is no more about computers than astronomy is about telescopes." 1972 Turing Award. Dijkstra's algorithm still powers GPS routing and network routing.</p></div></div>
+
+<div class="card"><h4>③ Smith-Waterman &amp; Needleman-Wunsch</h4>
+<div data-lang="zh"><p>1970 年 <strong>Saul Needleman &amp; Christian Wunsch</strong> 提出全域比對 DP；1981 年 <strong>Temple Smith &amp; Michael Waterman</strong> 改成「局部比對」——只比對最相似的片段。這兩篇 DP 演算法奠定了現代生物序列比對的基礎，是 BLAST、BWA、minimap2 的數學根源。Waterman 也是「人類基因組計畫」的關鍵推手。</p></div>
+<div data-lang="en"><p>In 1970, <strong>Needleman &amp; Wunsch</strong> proposed global-alignment DP; in 1981 <strong>Smith &amp; Waterman</strong> adapted it for <em>local</em> alignment — matching the most-similar subregions. These two DP algorithms underpin all modern bio sequence alignment — the math behind BLAST, BWA, minimap2. Waterman was also key to the Human Genome Project.</p></div></div>
+
+<div class="card"><h4>④ Burrows-Wheeler Transform (1994)</h4>
+<div data-lang="zh"><p>1994 年 <strong>Michael Burrows &amp; David Wheeler</strong> 在 DEC SRC 報告中發表 <strong>BWT</strong>——一種可逆的字串重排，把相似字元聚集，極利壓縮。它先成為 <strong>bzip2</strong> 的核心；2009 年 Heng Li 用它做出 <strong>BWA</strong>——把人類基因組索引壓到記憶體可載入，每次查詢 O(m)。Wheeler 也是 1951 年寫出第一個 subroutine 的人。</p></div>
+<div data-lang="en"><p>In 1994 <strong>Burrows &amp; Wheeler</strong> at DEC SRC published <strong>BWT</strong> — a reversible permutation that clusters similar characters, enabling great compression. First powered <strong>bzip2</strong>; in 2009 Heng Li used it to build <strong>BWA</strong> — indexing the human genome into RAM with O(m) per query. Wheeler also wrote the first subroutine in 1951.</p></div></div>
+
+<div class="card"><h4>⑤ Hopcroft-Karp &amp; Ford-Fulkerson</h4>
+<div data-lang="zh"><p>1956 年 <strong>Ford &amp; Fulkerson</strong> 發表「最大流量」演算法，1973 <strong>Hopcroft &amp; Karp</strong> 改進二部圖匹配到 O(√V·E)。這些演算法看似抽象，卻在現代<strong>單細胞配對</strong> (CellPhoneDB)、<strong>RNA-seq read assignment</strong>、<strong>蛋白質-蛋白質交互作用網絡</strong>都有重要應用。</p></div>
+<div data-lang="en"><p>In 1956 <strong>Ford &amp; Fulkerson</strong> introduced max-flow; in 1973 <strong>Hopcroft &amp; Karp</strong> improved bipartite matching to O(√V·E). These abstract algorithms power modern <strong>single-cell matching</strong> (CellPhoneDB), <strong>RNA-seq read assignment</strong>, and <strong>protein-protein interaction networks</strong>.</p></div></div>
+
+<div class="card"><h4>⑥ Tim Roughgarden's Selfish Routing (2005)</h4>
+<div data-lang="zh"><p>2005 年 Stanford <strong>Tim Roughgarden</strong> 用博弈論解析「自私路由」——當每個用戶都選最快路徑，總體流量會比中央調度多 33%（Braess 悖論）。獲 Gödel 獎。同樣的數學被用在 internet BGP、城市交通、藥物分子網路。</p></div>
+<div data-lang="en"><p>In 2005, Stanford's <strong>Tim Roughgarden</strong> used game theory on "selfish routing" — when each user picks their fastest path, total flow is 33% worse than central scheduling (Braess's paradox). Gödel Prize. Same math applies to internet BGP, city traffic, and drug-molecule networks.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動 #2" data-en="INTERACTIVE #2">排序視覺化</div>
+<h2 data-zh="五、互動 #2：排序視覺化（純 JS 動畫）" data-en="V. Interactive #2: Sort Visualization (pure JS)">五、互動 #2：排序視覺化</h2>
+<div data-lang="zh"><p>點選下方按鈕，看 Bubble / Insertion / Quick / Merge Sort 如何對 16 個隨機數字進行排序。<strong>注意觀察「比較次數」</strong>——這直接反映複雜度。</p></div>
+<div data-lang="en"><p>Click below to watch Bubble / Insertion / Quick / Merge sort 16 random numbers. <strong>Watch the comparison count</strong> — it directly reflects complexity.</p></div>
+<div class="interactive-panel">
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+<button class="sort-btn" data-algo="bubble" style="padding:8px 16px;background:var(--c-accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Bubble</button>
+<button class="sort-btn" data-algo="insertion" style="padding:8px 16px;background:var(--c-accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Insertion</button>
+<button class="sort-btn" data-algo="quick" style="padding:8px 16px;background:var(--c-accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Quick</button>
+<button class="sort-btn" data-algo="merge" style="padding:8px 16px;background:var(--c-accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Merge</button>
+<button id="resetBtn" style="padding:8px 16px;background:var(--c-highlight);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">🔄 Shuffle</button>
+</div>
+<svg id="sortSvg" width="100%" height="220" style="background:var(--c-surface-alt);border-radius:8px;"></svg>
+<div style="display:flex;gap:16px;margin-top:10px;flex-wrap:wrap;">
+<div class="sim-stat pass"><span data-zh="比較次數" data-en="Comparisons">比較</span>: <span id="cmpCount">0</span></div>
+<div class="sim-stat pass"><span data-zh="交換次數" data-en="Swaps">交換</span>: <span id="swapCount">0</span></div>
+<div class="sim-stat pass"><span data-zh="演算法" data-en="Algorithm">演算法</span>: <span id="algoName">—</span></div>
+</div>
+</div>
+</section>
+
+<section class="section" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-radius:14px;padding:32px;">
+<div class="section-label" style="color:#16a34a;">🧬 <span data-zh="生物資訊連結" data-en="BIOINFORMATICS LINK">給生物資訊學家</span></div>
+<h2 data-zh="六、🧬 生物資訊連結：序列比對演算法全景" data-en="VI. 🧬 Bio Link: A Tour of Sequence-Alignment Algorithms">六、🧬 生資連結：序列比對演算法全景</h2>
+
+<div data-lang="zh">
+<p><strong>這一節是整本書的核心之一。</strong>幾乎所有 NGS 工具的速度突破，都源自巧妙的演算法選擇。</p>
+
+<h3>1. 動態規劃 (DP) — 序列比對的數學原點</h3>
+<p><strong>Needleman-Wunsch (1970, global)</strong> 與 <strong>Smith-Waterman (1981, local)</strong> 都是 O(m·n) 的二維 DP，建構 m×n 矩陣，每格填入「最佳子問題解」。優點：保證找到最佳。缺點：對 30 億 bp 人類基因組，DP 需 9×10¹⁸ 格——根本算不完。所以實務工具用 <strong>啟發式 (heuristic)</strong> 加速。</p>
+
+<h3>2. BLAST (1990) — 啟發式 + k-mer 種子</h3>
+<p>BLAST 算法核心：① 把 query 切成 k-mer (k=11 for nucleotide)；② 在 DB 中找完全匹配 (種子)；③ 對種子做局部 DP 延伸。比 Smith-Waterman 快 50× 但只「近似最佳」。BLAST、PSI-BLAST、DELTA-BLAST 仍是 GenBank 標準。</p>
+
+<h3>3. BWA (2009) — Burrows-Wheeler Transform + FM-Index</h3>
+<p>BWT 把 reference 重排成可壓縮形式，搭配 FM-Index 達到「O(m) 查 read」。記憶體需求從 30+ GB 降到 3 GB。BWA-MEM (2013, Li) 是目前短 read 比對的事實標準。</p>
+
+<h3>4. STAR (2013) — Suffix Array + Maximal Mappable Prefix</h3>
+<p>RNA-seq 有 splice junction 跨越外顯子的問題。STAR 用 <strong>Suffix Array</strong> 索引 + <strong>MMP</strong> (Maximal Mappable Prefix) 演算法找最長匹配後跳到下個外顯子。Dobin et al. 2013 Bioinformatics。</p>
+
+<h3>5. minimap2 (2018) — Sketch + Chain + Base-level alignment</h3>
+<p>Heng Li 的 minimap2 對長 read (PacBio/Nanopore) 用 minimizer sketch + chaining + 局部 DP。比 BWA 快 30×，是長 read 比對的金標準。</p>
+
+<h3>6. Greedy 演算法 — OTU clustering</h3>
+<p><strong>CD-HIT</strong> (Li &amp; Godzik 2006) 與 <strong>UCLUST</strong> (Edgar 2010) 是貪婪式 clustering：拿一條 sequence 當「代表」，若新 sequence 與它相似度 >97% 就歸這群。簡單但實用，OTU 微生物分類常用。</p>
+
+<h3>7. Felsenstein Pruning — 系統發生樹的 DP</h3>
+<p>1981 年 Joseph Felsenstein 提出「pruning algorithm」算 likelihood：對樹從葉子往根遞迴，每節點存子樹條件機率。複雜度 O(n) 而非 O(2ⁿ)。是 RAxML、IQ-TREE、MrBayes 的底層。</p>
+
+<h3>8. HMM Viterbi — 基因預測與蛋白質結構域</h3>
+<p>Hidden Markov Model 的 <strong>Viterbi 演算法</strong> (1967, Andrew Viterbi) 也是 DP，找出最可能的 state 路徑。GENSCAN (Burge 1997) 用 HMM 預測基因；<strong>HMMER3</strong> (Eddy 2011) 用 profile HMM 在蛋白質找 domain (Pfam)。</p>
+</div>
+
+<div data-lang="en">
+<p><strong>This section is one of the book's cornerstones.</strong> Nearly every NGS speed breakthrough comes from a clever algorithm choice.</p>
+
+<h3>1. Dynamic Programming (DP) — the math origin</h3>
+<p><strong>Needleman-Wunsch (1970, global)</strong> and <strong>Smith-Waterman (1981, local)</strong> are both O(m·n) 2D DP, building an m×n matrix where each cell holds the "best sub-problem solution." Pro: guaranteed optimal. Con: for the 3 Gbp human genome, DP needs 9×10¹⁸ cells — uncomputable. Hence the move to <strong>heuristics</strong>.</p>
+
+<h3>2. BLAST (1990) — heuristic + k-mer seeds</h3>
+<p>Core idea: (1) chop query into k-mers (k=11 for nucleotides); (2) find exact matches in DB (seeds); (3) extend with local DP. 50× faster than Smith-Waterman but "approximately optimal." BLAST, PSI-BLAST, DELTA-BLAST remain the GenBank standard.</p>
+
+<h3>3. BWA (2009) — Burrows-Wheeler Transform + FM-Index</h3>
+<p>BWT reorders the reference into a compressible form; with FM-Index, reads are queried in O(m). Memory drops from 30+ GB to ~3 GB. BWA-MEM (2013, Li) is the de facto short-read aligner.</p>
+
+<h3>4. STAR (2013) — Suffix Array + Maximal Mappable Prefix</h3>
+<p>RNA-seq has splice junctions across exons. STAR indexes with a <strong>Suffix Array</strong> and uses <strong>MMP</strong> (Maximal Mappable Prefix) to find the longest hit, then jumps to the next exon. Dobin et al. 2013 Bioinformatics.</p>
+
+<h3>5. minimap2 (2018) — sketch + chain + base-level align</h3>
+<p>Heng Li's minimap2 handles long reads (PacBio/Nanopore) via minimizer sketches + chaining + local DP. 30× faster than BWA — the long-read gold standard.</p>
+
+<h3>6. Greedy — OTU clustering</h3>
+<p><strong>CD-HIT</strong> (Li &amp; Godzik 2006) and <strong>UCLUST</strong> (Edgar 2010) use greedy clustering: pick a representative; if a new sequence is &gt;97% similar, add to the group. Simple but effective, standard for OTU classification.</p>
+
+<h3>7. Felsenstein Pruning — phylogenetic-tree DP</h3>
+<p>In 1981 Joseph Felsenstein proposed the "pruning algorithm" for likelihood: recursively from leaves to root, each node stores subtree conditional probabilities. O(n), not O(2ⁿ). Powers RAxML, IQ-TREE, MrBayes.</p>
+
+<h3>8. HMM Viterbi — gene prediction &amp; protein domains</h3>
+<p>The Hidden Markov Model's <strong>Viterbi algorithm</strong> (1967, Andrew Viterbi) is also DP, finding the most-likely state path. GENSCAN (Burge 1997) uses HMM for gene prediction; <strong>HMMER3</strong> (Eddy 2011) uses profile HMM for protein domains (Pfam).</p>
+</div>
+
+<div class="callout" style="background:#fff;border-left:4px solid #16a34a;margin-top:18px;">
+<span class="callout-icon">🎯</span><div>
+<div data-lang="zh"><strong>記住這條原則：</strong>從 DP (精確但慢) → 種子+延伸 (BLAST) → BWT/FM-Index (索引壓縮) → minimizer (sketch) — 生資演算法 35 年來都在用 <strong>「索引 + 啟發式」</strong> 來壓垮原本不可能的計算量。</div>
+<div data-lang="en"><strong>The 35-year trajectory of bio algorithms:</strong> DP (exact but slow) → seed+extend (BLAST) → BWT/FM-Index (index compression) → minimizers (sketches) — always <strong>"index + heuristic"</strong> to tame impossible problems.</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="決策樹" data-en="DECISION TREE">該選哪個演算法？</div>
+<h2 data-zh="七、🌳 決策樹：我該選哪個演算法？" data-en="VII. 🌳 Which Algorithm Should I Use?">七、🌳 該選哪個演算法？</h2>
+<div class="decision-tree">
+<h4>🌳 <span data-zh="演算法選擇樹" data-en="Algorithm Picker">演算法選擇樹</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>需要排序？<span class="dt-arrow">→</span> 用語言內建 (<code>sorted()</code> / <code>sort()</code>)——已經是 TimSort 或最佳實作。<strong>千萬別自己寫 BubbleSort 用在 production</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>圖最短路徑？<span class="dt-arrow">→</span> 邊有權重 → <strong>Dijkstra</strong> (O((V+E) log V))；負權 → <strong>Bellman-Ford</strong>；所有對 → <strong>Floyd-Warshall</strong> (O(V³))；無權重 → <strong>BFS</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>序列比對？<span class="dt-arrow">→</span> 短 read → <strong>BWA-MEM / Bowtie2</strong>；長 read → <strong>minimap2</strong>；RNA-seq → <strong>STAR / HISAT2 / salmon</strong>；蛋白質 → <strong>DIAMOND</strong> 或 BLAST。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>需要分群 (clustering)？<span class="dt-arrow">→</span> 已知 k → <strong>k-means</strong> (O(nki))；不知 k → <strong>DBSCAN / HDBSCAN</strong>；單細胞 → <strong>Leiden</strong> (Traag 2019)。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>找最佳路徑遊戲 AI？<span class="dt-arrow">→</span> 啟發式好 → <strong>A*</strong>；雙人零和 → <strong>Minimax + alpha-beta</strong>；複雜 → MCTS。</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>最佳子結構問題（背包、編輯距離）？<span class="dt-arrow">→</span> <strong>動態規劃 (DP)</strong>。先寫遞迴 + memoization，再改 tabulation。</div></div>
+<div class="dt-node"><span class="dt-q">Q7:</span><div>n &gt; 10⁸ 不確定能否跑完？<span class="dt-arrow">→</span> 先算複雜度。O(n²) 已不行；考慮 <strong>近似演算法 (approximation)</strong> 或 <strong>隨機演算法 (randomized)</strong>。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Need to sort? <span class="dt-arrow">→</span> Use the language's built-in — it's TimSort or equally optimal. <strong>Never roll your own BubbleSort in production.</strong></div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Shortest path in a graph? <span class="dt-arrow">→</span> Weighted edges → <strong>Dijkstra</strong>; negative weights → <strong>Bellman-Ford</strong>; all pairs → <strong>Floyd-Warshall</strong>; unweighted → <strong>BFS</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Sequence alignment? <span class="dt-arrow">→</span> Short reads → <strong>BWA-MEM / Bowtie2</strong>; long reads → <strong>minimap2</strong>; RNA-seq → <strong>STAR / HISAT2 / salmon</strong>; protein → <strong>DIAMOND</strong> or BLAST.</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Clustering? <span class="dt-arrow">→</span> Known k → <strong>k-means</strong>; unknown k → <strong>DBSCAN / HDBSCAN</strong>; single-cell → <strong>Leiden</strong> (Traag 2019).</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>Game-AI pathing? <span class="dt-arrow">→</span> Good heuristic → <strong>A*</strong>; two-player zero-sum → <strong>Minimax + alpha-beta</strong>; complex → MCTS.</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>Optimal-substructure problem (knapsack, edit distance)? <span class="dt-arrow">→</span> <strong>Dynamic programming</strong>. Start with recursion + memoization, then move to tabulation.</div></div>
+<div class="dt-node"><span class="dt-q">Q7:</span><div>n &gt; 10⁸ and unsure it'll finish? <span class="dt-arrow">→</span> Check complexity first. O(n²) won't fly; consider <strong>approximation</strong> or <strong>randomized</strong> algorithms.</div></div>
 </div>
 </div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
-<h2 data-zh="七、實作：Merge Sort (Python) / Quick Sort (偽碼)" data-en="VII. Implement: Merge Sort (Python) / Quick Sort (Pseudocode)">七、Merge / Quick Sort 實作</h2>
-<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python (Merge)</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode (Quick)</button></div>
-<div class="code-tab-content active" id="py1"><pre><span class="comment"># Merge Sort：分而治之，O(n log n)、stable / Divide-and-conquer, O(n log n), stable</span>
-<span class="kw">def</span> <span class="func">merge_sort</span>(arr: <span class="kw">list</span>) -> <span class="kw">list</span>:
-    <span class="kw">if</span> <span class="func">len</span>(arr) <= <span class="num">1</span>:
-        <span class="kw">return</span> arr
-    mid = <span class="func">len</span>(arr) // <span class="num">2</span>
-    left  = <span class="func">merge_sort</span>(arr[:mid])      <span class="comment"># 遞迴排左半</span>
-    right = <span class="func">merge_sort</span>(arr[mid:])      <span class="comment"># 遞迴排右半</span>
-    <span class="kw">return</span> <span class="func">merge</span>(left, right)             <span class="comment"># 合併兩個有序串列</span>
+<div class="section-label" data-zh="程式碼" data-en="CODE">Python · R · Pseudocode</div>
+<h2 data-zh="八、動手寫：Merge Sort（三語並列）" data-en="VIII. Hands-on: Merge Sort (3 languages)">八、動手寫：Merge Sort 三語</h2>
+<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'r1')">R</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
 
-<span class="kw">def</span> <span class="func">merge</span>(a, b):
-    result, i, j = [], <span class="num">0</span>, <span class="num">0</span>
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># Merge Sort: O(n log n) 保證最壞 / guaranteed worst-case</span>
+<span class="kw">def</span> <span class="func">merge_sort</span>(arr: <span class="kw">list</span>) -> <span class="kw">list</span>:
+    <span class="kw">if</span> <span class="func">len</span>(arr) <= <span class="num">1</span>: <span class="kw">return</span> arr
+    mid = <span class="func">len</span>(arr) // <span class="num">2</span>
+    left  = <span class="func">merge_sort</span>(arr[:mid])     <span class="comment"># T(n/2)</span>
+    right = <span class="func">merge_sort</span>(arr[mid:])     <span class="comment"># T(n/2)</span>
+    <span class="kw">return</span> <span class="func">_merge</span>(left, right)         <span class="comment"># O(n)</span>
+
+<span class="kw">def</span> <span class="func">_merge</span>(a, b):
+    out, i, j = [], <span class="num">0</span>, <span class="num">0</span>
     <span class="kw">while</span> i < <span class="func">len</span>(a) <span class="kw">and</span> j < <span class="func">len</span>(b):
         <span class="kw">if</span> a[i] <= b[j]:
-            result.<span class="func">append</span>(a[i]); i += <span class="num">1</span>
+            out.<span class="func">append</span>(a[i]); i += <span class="num">1</span>
         <span class="kw">else</span>:
-            result.<span class="func">append</span>(b[j]); j += <span class="num">1</span>
-    result.<span class="func">extend</span>(a[i:]); result.<span class="func">extend</span>(b[j:])
-    <span class="kw">return</span> result
+            out.<span class="func">append</span>(b[j]); j += <span class="num">1</span>
+    out.<span class="func">extend</span>(a[i:]); out.<span class="func">extend</span>(b[j:])
+    <span class="kw">return</span> out
 
-<span class="func">print</span>(<span class="func">merge_sort</span>([<span class="num">5</span>,<span class="num">2</span>,<span class="num">8</span>,<span class="num">1</span>,<span class="num">9</span>,<span class="num">3</span>]))   <span class="comment"># [1, 2, 3, 5, 8, 9]</span></pre></div>
-<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// Quick Sort：分而治之，平均 O(n log n)，最差 O(n²)</span>
+<span class="comment"># 實務：用內建 sorted() / sort() (TimSort)</span>
+<span class="func">sorted</span>([<span class="num">3</span>,<span class="num">1</span>,<span class="num">4</span>,<span class="num">1</span>,<span class="num">5</span>,<span class="num">9</span>,<span class="num">2</span>,<span class="num">6</span>])  <span class="comment"># [1, 1, 2, 3, 4, 5, 6, 9]</span></pre></div>
+
+<div class="code-tab-content" id="r1"><pre><span class="comment"># Merge Sort in R</span>
+merge_sort <- function(arr) {
+  <span class="kw">if</span> (<span class="func">length</span>(arr) <= 1) <span class="kw">return</span>(arr)
+  mid <- <span class="func">length</span>(arr) %/% 2
+  left  <- <span class="func">merge_sort</span>(arr[1:mid])
+  right <- <span class="func">merge_sort</span>(arr[(mid+1):<span class="func">length</span>(arr)])
+  <span class="func">.merge</span>(left, right)
+}
+
+.merge <- function(a, b) {
+  out <- <span class="func">integer</span>(<span class="func">length</span>(a) + <span class="func">length</span>(b))
+  i <- 1; j <- 1; k <- 1
+  <span class="kw">while</span> (i <= <span class="func">length</span>(a) && j <= <span class="func">length</span>(b)) {
+    <span class="kw">if</span> (a[i] <= b[j]) { out[k] <- a[i]; i <- i+1 }
+    <span class="kw">else</span>            { out[k] <- b[j]; j <- j+1 }
+    k <- k+1
+  }
+  <span class="kw">if</span> (i <= <span class="func">length</span>(a)) out[k:(k+<span class="func">length</span>(a)-i)] <- a[i:<span class="func">length</span>(a)]
+  <span class="kw">if</span> (j <= <span class="func">length</span>(b)) out[k:(k+<span class="func">length</span>(b)-j)] <- b[j:<span class="func">length</span>(b)]
+  out
+}
+
+<span class="comment"># 實務：內建 sort() / order()</span>
+<span class="func">sort</span>(<span class="func">c</span>(3,1,4,1,5,9,2,6))    <span class="comment"># 1 1 2 3 4 5 6 9</span>
+<span class="func">order</span>(<span class="func">c</span>(3,1,4,1,5,9,2,6))   <span class="comment"># 索引版</span></pre></div>
+
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// Quick Sort: O(n log n) avg, O(n²) worst</span>
 <span class="kw">function</span> <span class="func">QuickSort</span>(arr, lo, hi):
     <span class="kw">if</span> lo < hi:
-        <span class="kw">let</span> p = <span class="func">Partition</span>(arr, lo, hi)
+        p = <span class="func">Partition</span>(arr, lo, hi)
         <span class="func">QuickSort</span>(arr, lo, p − <span class="num">1</span>)
         <span class="func">QuickSort</span>(arr, p + <span class="num">1</span>, hi)
 
 <span class="kw">function</span> <span class="func">Partition</span>(arr, lo, hi):
-    <span class="kw">let</span> pivot = arr[hi]
-    <span class="kw">let</span> i = lo − <span class="num">1</span>
+    pivot = arr[hi]                <span class="comment">// 取最後一個為 pivot</span>
+    i = lo − <span class="num">1</span>
     <span class="kw">for</span> j <span class="kw">from</span> lo <span class="kw">to</span> hi − <span class="num">1</span>:
         <span class="kw">if</span> arr[j] <= pivot:
             i = i + <span class="num">1</span>
-            <span class="func">SWAP</span>(arr[i], arr[j])
-    <span class="func">SWAP</span>(arr[i + <span class="num">1</span>], arr[hi])
+            <span class="func">swap</span>(arr[i], arr[j])
+    <span class="func">swap</span>(arr[i+<span class="num">1</span>], arr[hi])
     <span class="kw">return</span> i + <span class="num">1</span></pre></div>
 </div>
 </section>
 
+<section class="section">
+<div class="section-label" data-zh="案例研究" data-en="CASE STUDY">minimap2 的演算法堆疊</div>
+<h2 data-zh="八-B、案例：minimap2 的演算法堆疊（為何長 read 比對能快 30×）" data-en="VIII-B. Case Study: minimap2's Algorithm Stack (Why Long-Read Alignment Is 30× Faster)">八-B、minimap2 演算法堆疊案例</h2>
+<div data-lang="zh"><p>Heng Li 2018 年 Bioinformatics 發表的 <strong>minimap2</strong> 是長 read 比對的事實標準。看看它如何巧妙地<strong>疊加四種演算法</strong>達到 BWA-MEM 30× 的速度：</p>
+<ol style="margin-left:20px;line-height:1.85;">
+<li><strong>第一層：Minimizer Sketch (Roberts 2004)</strong>。把 read 切成 k-mer (k=15)，每個 window (w=10) 內挑出字典序最小的——只存「sketch」而非所有 k-mer。<strong>記憶體降為 1/w</strong>，且兩個 read overlap 時 minimizer 大致對齊。</li>
+<li><strong>第二層：Hash Table Lookup</strong>。Reference 的所有 minimizer 預先索引到 hash table。對每個 query minimizer，O(1) 找到候選位置。<strong>遠勝 Suffix Array 的 cache-miss 問題</strong>。</li>
+<li><strong>第三層：Chaining (Dynamic Programming)</strong>。把多個 minimizer hit 用 DP 串成 chain，找出最佳 chain（共線性 + 不重疊）。<strong>這是 minimap2 的核心創新</strong>——傳統 BLAST 只看單一 seed，minimap2 看全域結構。</li>
+<li><strong>第四層：Base-level Alignment (Affine-Gap DP)</strong>。只在 chain 兩端做精確比對（避免對整條 read 跑 DP）。用 <strong>SIMD-加速的 Smith-Waterman</strong>（KSW2 演算法）。</li>
+</ol>
+<p><strong>速度來源分析</strong>：sketch 減 90% 計算 + hash 加速查找 + chain 避免重複 DP + SIMD 加速最後比對 → <strong>4 個 10-30% 改進相乘 = 整體 30× 加速</strong>。這就是「<strong>演算法分層設計</strong>」的力量。</p>
+<p><strong>啟示</strong>：<strong>單一演算法很少能解決真實問題</strong>——必須堆疊 4-6 種演算法+資料結構，每層處理一個瓶頸。BWA、STAR、salmon、Cellranger 都是類似多層架構。學會「拆解工具用了哪些演算法」是進階生資人的必備技能。</p></div>
+<div data-lang="en"><p>Heng Li's <strong>minimap2</strong> (Bioinformatics 2018) is the long-read alignment standard. Watch how it <strong>cleverly stacks four algorithms</strong> to achieve 30× BWA-MEM speed:</p>
+<ol style="margin-left:20px;line-height:1.85;">
+<li><strong>Layer 1: Minimizer Sketch (Roberts 2004).</strong> Slice the read into k-mers (k=15); within each window (w=10) keep only the lexicographically smallest — storing a "sketch" instead of all k-mers. <strong>Memory drops to 1/w</strong>; minimizers from overlapping reads roughly align.</li>
+<li><strong>Layer 2: Hash Table Lookup.</strong> Pre-index all reference minimizers into a hash table; each query minimizer finds candidates in O(1). <strong>Beats Suffix Array's cache-miss problem.</strong></li>
+<li><strong>Layer 3: Chaining (Dynamic Programming).</strong> DP-link multiple minimizer hits into chains, picking the best (collinear + non-overlapping). <strong>minimap2's core innovation</strong> — classical BLAST sees only single seeds; minimap2 sees global structure.</li>
+<li><strong>Layer 4: Base-level Alignment (Affine-Gap DP).</strong> Run exact alignment only at chain endpoints (skipping DP over the whole read), using <strong>SIMD-accelerated Smith-Waterman</strong> (the KSW2 algorithm).</li>
+</ol>
+<p><strong>Where the speed comes from:</strong> sketch cuts 90% of work + hash speeds lookup + chain avoids redundant DP + SIMD speeds final alignment → <strong>four 10-30% wins compound to 30× overall</strong>. That's the power of "<strong>layered algorithmic design</strong>."</p>
+<p><strong>Takeaway:</strong> <strong>One algorithm rarely solves a real problem</strong> — stack 4-6 of them, each handling one bottleneck. BWA, STAR, salmon, Cellranger follow the same multi-layer pattern. Learning to <em>decompose a tool's algorithmic stack</em> is an essential intermediate-bioinformatics skill.</p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="常見誤解" data-en="MISCONCEPTIONS">常見誤解</div>
+<h2 data-zh="九、常見誤解與陷阱" data-en="IX. Common Misconceptions">九、常見誤解</h2>
+<div class="card-grid cols-2">
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ 「O(n²) 永遠慢於 O(n log n)」</h4>
+<div data-lang="zh"><p>常數和小 n 都有差。對 n=20，<strong>Insertion Sort (O(n²))</strong> 經常比 Merge Sort 快 2–5×，因為常數小、cache friendly。所以 TimSort 對小子陣列直接切換 Insertion。<strong>Big-O 是 n→∞ 的漸近行為，不是「永遠」。</strong></p></div>
+<div data-lang="en"><p>Constants and small n matter. For n=20, <strong>Insertion Sort (O(n²))</strong> often beats Merge Sort 2–5× — small constants, cache-friendly. That's why TimSort switches to Insertion for small subarrays. <strong>Big-O is the asymptote for n→∞, not "always."</strong></p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ 「演算法重要 > 資料結構」</h4>
+<div data-lang="zh"><p>它們是一體的。Dijkstra 用 array 是 O(V²)，用 binary heap 是 O((V+E) log V)，用 Fibonacci heap 是 O(E + V log V)。<strong>同一個演算法，搭不同資料結構，複雜度完全不同。</strong></p></div>
+<div data-lang="en"><p>They're two sides of one coin. Dijkstra with an array is O(V²); with a binary heap O((V+E) log V); with a Fibonacci heap O(E + V log V). <strong>Same algorithm, different data structure, completely different complexity.</strong></p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ 「BLAST 找到的是最佳比對」</h4>
+<div data-lang="zh"><p>BLAST 是 <strong>啟發式 (heuristic)</strong>，不保證最佳——可能漏掉真正最相似的 hit (false negative)。要保證最佳必須用 Smith-Waterman，但慢 50×。BLAST e-value &lt; 1e-5 通常足夠，但發表前要驗證關鍵 hit。</p></div>
+<div data-lang="en"><p>BLAST is <strong>heuristic</strong>, not guaranteed optimal — it can miss the truly best hit (false negative). Guaranteed optimal requires Smith-Waterman, which is 50× slower. BLAST e-value &lt; 1e-5 usually suffices, but verify key hits before publishing.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ 「複雜度等於跑得多快」</h4>
+<div data-lang="zh"><p>Big-O <strong>不</strong>考慮：常數、cache、SIMD、平行化、IO。Numpy 的 O(n²) 矩陣相乘比純 Python 的 O(n²·⁸¹) Strassen 還快——因為 BLAS 用 SIMD + cache 把常數壓到極致。<strong>實務效能 = 複雜度 × 常數 × cache × 平行。</strong></p></div>
+<div data-lang="en"><p>Big-O ignores: constants, cache, SIMD, parallelism, IO. NumPy's O(n²) matmul beats pure-Python O(n²·⁸¹) Strassen because BLAS crushes constants with SIMD + cache. <strong>Real perf = complexity × constants × cache × parallelism.</strong></p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="進階主題 A" data-en="ADVANCED A">Amortized Analysis</div>
+<h2 data-zh="九-A、進階：均攤分析 (Amortized Analysis)" data-en="IX-A. Advanced: Amortized Analysis">九-A、均攤分析</h2>
+<div data-lang="zh"><p>「每次操作 O(1)」與「<strong>均攤 (amortized)</strong> O(1)」常被搞混。均攤的意思：<strong>單次操作可能慢，但對 n 次操作取平均後仍是 O(1)。</strong></p>
+<p><strong>經典例子：Python list 的 append。</strong>list 內部是動態陣列，預留空間滿時會 <strong>重新配置成兩倍大</strong>（O(n) 操作）。但這個「擴容」發生的頻率是 log n 次，總工作量約 1 + 2 + 4 + ... + n/2 + n = 2n，所以 n 次 append 總共做 2n 的工作 → <strong>均攤 O(1)</strong>。</p>
+<p><strong>三種分析方法：</strong>① <strong>Aggregate analysis</strong>（總和除以 n）、② <strong>Accounting method</strong>（為便宜操作「預付」）、③ <strong>Potential method</strong>（定義勢能函數 Φ）。Sleator &amp; Tarjan 1985 的 splay tree 證明就用 potential method。</p>
+<p><strong>生資對應：</strong>① Bloom filter 在 n 次 insert 後可能需要 resize（少見但可能）；② Python list 收基因組座標時動態擴容；③ <code>collections.deque</code> 兩端 O(1) 也是均攤；④ hash table 的 load factor &gt; 0.75 時 rehash 整個表是 amortized O(1) per insert。</p></div>
+<div data-lang="en"><p>"O(1) per op" and "<strong>amortized O(1)</strong>" are easy to confuse. Amortized means: <strong>any single op may be slow, but averaged over n ops it's still O(1).</strong></p>
+<p><strong>Classic example: Python list append.</strong> Internally a dynamic array; when capacity is full, it <strong>reallocates to 2× size</strong> (an O(n) op). But this growth happens log n times, total work is 1 + 2 + 4 + ... + n = 2n. So n appends cost 2n total → <strong>amortized O(1).</strong></p>
+<p><strong>Three analysis techniques:</strong> (1) <strong>Aggregate</strong> (sum / n), (2) <strong>Accounting</strong> (prepay cheap ops), (3) <strong>Potential method</strong> (define a potential function Φ). Sleator &amp; Tarjan 1985 used the potential method to prove splay trees' bounds.</p>
+<p><strong>Bioinformatics mapping:</strong> (1) Bloom filters may resize after n inserts (rare); (2) Python list collecting genomic coordinates grows amortized; (3) <code>collections.deque</code> is amortized at both ends; (4) hash-table rehash when load factor &gt; 0.75 is amortized O(1) per insert.</p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="進階主題 B" data-en="ADVANCED B">隨機演算法</div>
+<h2 data-zh="九-B、進階：隨機演算法 (Randomized Algorithms)" data-en="IX-B. Advanced: Randomized Algorithms">九-B、隨機演算法</h2>
+<div data-lang="zh"><p>有時隨機性比確定性更強——這是 1970s 以後最重要的演算法觀念之一。<strong>兩大派系</strong>：</p>
+<ul style="margin-left:20px;line-height:1.9;">
+<li><strong>Las Vegas 演算法</strong>：答案永遠正確，但執行時間是隨機變數。例：<strong>隨機化 Quicksort</strong>——選 pivot 時隨機抽，最壞 O(n²) 但機率極低，平均 O(n log n) 「幾乎確定」達成。</li>
+<li><strong>Monte Carlo 演算法</strong>：執行時間有界，但答案有小機率錯。例：<strong>Miller-Rabin 質數測試</strong>——多次測試後錯誤率 (1/4)ᵏ → 跑 30 次幾乎不可能誤判。</li>
+</ul>
+<p><strong>2026 年實務的隨機演算法應用：</strong></p>
+<ul style="margin-left:20px;line-height:1.9;">
+<li><strong>Reservoir Sampling</strong> (Vitter 1985)：從未知大小的串流均勻抽 k 個樣本，記憶體 O(k)。FASTQ 抽樣、Twitter 即時流分析必備。</li>
+<li><strong>MinHash + LSH</strong> (Broder 1997)：估計兩集合 Jaccard 相似度。<strong>mash</strong> (Ondov 2016) 用此演算法做基因組距離計算，比 ANI 快 1000×。</li>
+<li><strong>Skip List</strong> (Pugh 1989)：機率資料結構，期望 O(log n) 但實作比 RB Tree 簡單一半。Redis sorted set 用此。</li>
+<li><strong>HyperLogLog</strong> (Flajolet 2007)：用 12 KB 記憶體估計 10⁹ 個不同元素的數量，誤差 &lt; 2%。Google Bigtable、Redis、生資的 k-mer 計數都用。</li>
+<li><strong>Bloom filter</strong> 本身就是 Monte Carlo（有 false positive 但不會 false negative）。</li>
+</ul>
+<p><strong>哲學啟示</strong>：「Trade probability for performance」是 21 世紀演算法的核心觀念之一。完美正確不一定是必要——可控的小錯誤率換來巨大速度提升，往往更實用。</p></div>
+<div data-lang="en"><p>Sometimes randomness beats determinism — one of the most important algorithmic ideas post-1970s. <strong>Two families:</strong></p>
+<ul style="margin-left:20px;line-height:1.9;">
+<li><strong>Las Vegas</strong>: always correct, but runtime is a random variable. Example: <strong>randomized Quicksort</strong> — random pivot makes worst-case O(n²) vanishingly rare; expected O(n log n) "almost surely."</li>
+<li><strong>Monte Carlo</strong>: bounded runtime, small chance of wrong answer. Example: <strong>Miller-Rabin primality</strong> — error rate (1/4)ᵏ after k trials; 30 trials makes mistakes essentially impossible.</li>
+</ul>
+<p><strong>2026 practical applications:</strong></p>
+<ul style="margin-left:20px;line-height:1.9;">
+<li><strong>Reservoir Sampling</strong> (Vitter 1985): uniformly sample k items from an unknown-length stream in O(k) memory. Essential for FASTQ sub-sampling and live Twitter analytics.</li>
+<li><strong>MinHash + LSH</strong> (Broder 1997): estimate Jaccard similarity between sets. <strong>mash</strong> (Ondov 2016) uses this for genome distances, 1000× faster than ANI.</li>
+<li><strong>Skip List</strong> (Pugh 1989): probabilistic, expected O(log n), half the code of an RB Tree. Redis sorted sets use it.</li>
+<li><strong>HyperLogLog</strong> (Flajolet 2007): estimate 10⁹ distinct elements in 12 KB, &lt;2% error. Google Bigtable, Redis, and bio k-mer counters all use it.</li>
+<li><strong>Bloom filters</strong> are themselves Monte Carlo (false positives possible, never false negatives).</li>
+</ul>
+<p><strong>Philosophical takeaway:</strong> "Trade probability for performance" is a 21st-century algorithmic core idea. Perfect correctness isn't always required — a controllable small error rate for massive speed is often more useful.</p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="進階主題 C" data-en="ADVANCED C">近似演算法 vs NP-hard</div>
+<h2 data-zh="九-C、進階：近似演算法 (Approximation) 與 NP-hard 問題" data-en="IX-C. Advanced: Approximation Algorithms &amp; NP-hard">九-C、近似演算法</h2>
+<div data-lang="zh"><p>許多生資問題是 <strong>NP-hard</strong>（最佳解需指數時間），例：</p>
+<ul style="margin-left:20px;line-height:1.9;">
+<li><strong>Multiple Sequence Alignment (MSA)</strong>：精確解是 NP-hard。<strong>Clustal Omega</strong>、<strong>MAFFT</strong>、<strong>T-Coffee</strong> 都是啟發式近似。</li>
+<li><strong>Phylogenetic tree (Maximum Parsimony / ML)</strong>：搜尋空間 (2n−5)!! 超指數。RAxML、IQ-TREE 用啟發式搜尋。</li>
+<li><strong>Genome assembly</strong>：完整 Hamiltonian path 是 NP-complete。SPAdes / Canu 都是近似。</li>
+<li><strong>Protein folding</strong>：Levinthal's paradox。AlphaFold 用深度學習近似。</li>
+</ul>
+<p><strong>近似演算法的「近似比」</strong>：算法產出 A，最佳解 OPT。比例 ρ = A/OPT。設計目標是 <strong>有理論保證</strong> 的 ρ。例：</p>
+<ul style="margin-left:20px;line-height:1.9;">
+<li><strong>Vertex Cover 2-approx</strong>：簡單貪婪可保證 ρ ≤ 2。</li>
+<li><strong>TSP (歐式) Christofides 1.5-approx</strong>：1976 至今最佳，2020 才有人改進到 1.5−ε。</li>
+<li><strong>k-means</strong>：實際上是 NP-hard，Lloyd's algorithm 是局部最佳近似。</li>
+</ul>
+<p><strong>PTAS / FPTAS</strong>：Polynomial Time Approximation Scheme，可參數化讓 ρ → 1，代價是執行時間隨 ε⁻¹ 增加。Knapsack 有 FPTAS，TSP 沒有（除非 P=NP）。</p></div>
+<div data-lang="en"><p>Many bioinformatics problems are <strong>NP-hard</strong> (exact solution needs exponential time):</p>
+<ul style="margin-left:20px;line-height:1.9;">
+<li><strong>Multiple Sequence Alignment (MSA)</strong>: exact is NP-hard. <strong>Clustal Omega</strong>, <strong>MAFFT</strong>, <strong>T-Coffee</strong> are heuristic approximations.</li>
+<li><strong>Phylogenetic tree (MP / ML)</strong>: search space is (2n−5)!! super-exponential. RAxML / IQ-TREE use heuristic search.</li>
+<li><strong>Genome assembly</strong>: Hamiltonian path is NP-complete. SPAdes / Canu approximate it.</li>
+<li><strong>Protein folding</strong>: Levinthal's paradox. AlphaFold approximates via deep learning.</li>
+</ul>
+<p><strong>Approximation ratios</strong>: algorithm outputs A, optimum is OPT. Ratio ρ = A/OPT. Goal: provable ρ bound. Examples:</p>
+<ul style="margin-left:20px;line-height:1.9;">
+<li><strong>Vertex Cover 2-approx</strong>: simple greedy gives ρ ≤ 2.</li>
+<li><strong>TSP (Euclidean) Christofides 1.5-approx</strong>: standard since 1976, only improved to 1.5−ε in 2020.</li>
+<li><strong>k-means</strong>: NP-hard; Lloyd's algorithm is a local-optimum approximation.</li>
+</ul>
+<p><strong>PTAS / FPTAS</strong>: Polynomial Time Approximation Scheme — ρ → 1 as runtime grows with ε⁻¹. Knapsack has an FPTAS, TSP does not (unless P=NP).</p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="進階主題 D" data-en="ADVANCED D">線上演算法與串流</div>
+<h2 data-zh="九-D、進階：線上演算法 (Online) 與串流 (Streaming)" data-en="IX-D. Advanced: Online &amp; Streaming Algorithms">九-D、線上 & 串流演算法</h2>
+<div data-lang="zh"><p><strong>離線演算法</strong>：先看完全部資料再決定。<strong>線上演算法</strong>：每讀一筆就要決策，沒有重來機會（如電梯排程、cache 替換、廣告競價）。</p>
+<p><strong>競爭比 (Competitive ratio)</strong>：線上演算法 / 離線最佳值。經典結果：<strong>LRU cache 是 k-competitive</strong>（k = cache size）。<strong>Move-to-Front linked list</strong> 是 2-competitive。</p>
+<p><strong>串流模型 (Streaming)</strong>：資料是一條 stream（如 ONT nanopore 即時 read、Twitter firehose），總量大到記憶體放不下，<strong>單次掃過、用次線性記憶體</strong>。</p>
+<p><strong>2026 生資的串流演算法應用</strong>：</p>
+<ul style="margin-left:20px;line-height:1.9;">
+<li><strong>Nanopore real-time base-calling</strong>：Dorado / Bonito 邊讀邊呼，<strong>不能等讀完整個 read</strong>。</li>
+<li><strong>Adaptive sampling</strong>：ONT「Read Until」決定當下要不要繼續測這條 read，10 秒內決策。</li>
+<li><strong>Streaming variant calling</strong>：Clair3 / DeepVariant 的串流版本邊讀 BAM 邊 call。</li>
+<li><strong>Online k-mer counting (KMC3, Jellyfish)</strong>：用 disk-backed hash 處理超大 FASTQ。</li>
+<li><strong>Misra-Gries / Count-Min Sketch</strong>：找 frequent k-mer 而不存所有 k-mer。</li>
+</ul></div>
+<div data-lang="en"><p><strong>Offline algorithms</strong>: see all data before deciding. <strong>Online algorithms</strong>: each item arrives and must be acted on immediately, no re-do (elevator scheduling, cache replacement, ad bidding).</p>
+<p><strong>Competitive ratio</strong>: online / offline-optimum. Classic: <strong>LRU cache is k-competitive</strong> (k = cache size); <strong>Move-to-Front list</strong> is 2-competitive.</p>
+<p><strong>Streaming model</strong>: data flows past as a stream (ONT nanopore reads, Twitter firehose), too big for RAM — <strong>one pass, sublinear memory.</strong></p>
+<p><strong>2026 bioinformatics streaming applications:</strong></p>
+<ul style="margin-left:20px;line-height:1.9;">
+<li><strong>Nanopore real-time basecalling</strong>: Dorado / Bonito call bases as the read arrives — <strong>cannot wait for the full read</strong>.</li>
+<li><strong>Adaptive sampling</strong>: ONT "Read Until" decides whether to keep reading within 10 seconds.</li>
+<li><strong>Streaming variant calling</strong>: streaming Clair3 / DeepVariant call variants as BAM is read.</li>
+<li><strong>Online k-mer counting</strong> (KMC3, Jellyfish): disk-backed hash handles massive FASTQ.</li>
+<li><strong>Misra-Gries / Count-Min Sketch</strong>: find frequent k-mers without storing all of them.</li>
+</ul></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="進階主題 E" data-en="ADVANCED E">並行演算法與 GPU</div>
+<h2 data-zh="九-E、進階：並行演算法 + GPU 加速" data-en="IX-E. Advanced: Parallel Algorithms &amp; GPU">九-E、並行演算法 + GPU</h2>
+<div data-lang="zh"><p><strong>Amdahl's Law (1967)</strong>：speedup = 1 / (s + p/N)，s 是 serial 部分。即使 N→∞，speedup 不會超過 1/s。<strong>啟示：若 10% 程式碼是 serial，無論用 1000 個核心都最多加速 10×</strong>。</p>
+<p><strong>Gustafson's Law (1988)</strong>：當問題規模隨核心數成長時，可達近線性 speedup。對「大資料」（單細胞 100 萬細胞、basecalling）此規律才適用。</p>
+<p><strong>2026 GPU 在生資的應用</strong>：</p>
+<ul style="margin-left:20px;line-height:1.9;">
+<li><strong>DeepVariant / Clair3</strong>：variant calling 用 CNN，GPU 比 CPU 快 10-50×。</li>
+<li><strong>AlphaFold 3 (2024)</strong>：蛋白質結構預測，必須 GPU。</li>
+<li><strong>Dorado (ONT basecalling)</strong>：CPU 5 days vs GPU 5 hours。</li>
+<li><strong>NVIDIA Parabricks</strong>：BWA + GATK 整套 NGS pipeline GPU 版，全流程從 30 小時降到 30 分鐘。</li>
+<li><strong>RAPIDS cuML / scanpy-GPU (rapids-singlecell)</strong>：單細胞分析 GPU 化，10-100× 加速。</li>
+<li><strong>scGPT / Geneformer / scFoundation</strong>：細胞基礎模型訓練需 H100 GPU cluster。</li>
+</ul>
+<p><strong>注意</strong>：GPU 不是萬靈丹——<strong>data transfer (CPU↔GPU) 常常成為瓶頸</strong>，且 GPU 對 branch-heavy 演算法（如 BWA-MEM）表現不佳。是否該用 GPU？問題要「<strong>data parallel + 大矩陣運算 + 同 kernel 重複執行</strong>」三要素到齊。</p></div>
+<div data-lang="en"><p><strong>Amdahl's Law (1967)</strong>: speedup = 1 / (s + p/N); s is the serial fraction. Even with N→∞, speedup is capped at 1/s. <strong>Takeaway: if 10% of your code is serial, 1000 cores still cap speedup at 10×.</strong></p>
+<p><strong>Gustafson's Law (1988)</strong>: when problem size grows with cores, near-linear speedup is achievable. Applies to "big data" (1M single cells, basecalling).</p>
+<p><strong>2026 GPU in bioinformatics:</strong></p>
+<ul style="margin-left:20px;line-height:1.9;">
+<li><strong>DeepVariant / Clair3</strong>: CNN variant calling, GPU is 10-50× faster than CPU.</li>
+<li><strong>AlphaFold 3 (2024)</strong>: protein structure prediction, GPU required.</li>
+<li><strong>Dorado (ONT basecalling)</strong>: CPU 5 days vs GPU 5 hours.</li>
+<li><strong>NVIDIA Parabricks</strong>: GPU-accelerated BWA + GATK pipeline, 30 hours → 30 minutes end-to-end.</li>
+<li><strong>RAPIDS cuML / scanpy-GPU (rapids-singlecell)</strong>: GPU single-cell analysis, 10-100× speedup.</li>
+<li><strong>scGPT / Geneformer / scFoundation</strong>: cell foundation models need H100 GPU clusters.</li>
+</ul>
+<p><strong>Caveat</strong>: GPU isn't magic — <strong>CPU↔GPU data transfer often becomes the bottleneck</strong>, and GPUs fare poorly on branch-heavy algorithms like BWA-MEM. When to GPU? Need all three: <strong>data-parallel + large matrix ops + same-kernel repetition</strong>.</p></div>
+</section>
+
 <section class="quiz-section">
-<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<h3>📝 <span data-zh="自我檢測（5 題）" data-en="Self-Check (5 questions)">自我檢測</span></h3>
+
 <div class="quiz-q" data-answer="2">
-<p data-lang="zh">1. 一個演算法執行時間為 T(n) = 3n² + 5n + 100，它的 Big-O 是？</p>
-<p data-lang="en">1. An algorithm runs in T(n) = 3n² + 5n + 100. What is its Big-O?</p>
+<p data-lang="zh">1. 下列哪個複雜度成長最快？</p>
+<p data-lang="en">1. Which complexity grows fastest?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. O(100)</span><span data-lang="en">A. O(100)</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. O(n)</span><span data-lang="en">B. O(n)</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. O(n²)</span><span data-lang="en">C. O(n²)</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. O(3n²)</span><span data-lang="en">D. O(3n²)</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. O(n²)</span><span data-lang="en">A. O(n²)</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. O(n³)</span><span data-lang="en">B. O(n³)</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. O(2ⁿ)</span><span data-lang="en">C. O(2ⁿ)</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. O(n log n)</span><span data-lang="en">D. O(n log n)</span></div>
 </div><div class="quiz-feedback" id="fb1"></div></div>
 
 <div class="quiz-q" data-answer="1">
-<p data-lang="zh">2. 在已排序的 100 萬筆資料中使用二分搜尋，最多需要幾次比較？</p>
-<p data-lang="en">2. Binary search on 1,000,000 sorted items needs at most how many comparisons?</p>
+<p data-lang="zh">2. Quick Sort 的平均與最壞複雜度分別是？</p>
+<p data-lang="en">2. Quick Sort's average and worst-case complexity are?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 約 1,000,000</span><span data-lang="en">A. ~1,000,000</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 約 20 (log₂ 10⁶ ≈ 20)</span><span data-lang="en">B. ~20 (log₂ 10⁶ ≈ 20)</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 約 1000</span><span data-lang="en">C. ~1000</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 約 500,000</span><span data-lang="en">D. ~500,000</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. O(n) / O(n log n)</span><span data-lang="en">A. O(n) / O(n log n)</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. O(n log n) / O(n²)</span><span data-lang="en">B. O(n log n) / O(n²)</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. O(n²) / O(n²)</span><span data-lang="en">C. O(n²) / O(n²)</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. O(log n) / O(n)</span><span data-lang="en">D. O(log n) / O(n)</span></div>
 </div><div class="quiz-feedback" id="fb2"></div></div>
 
-<div class="quiz-q" data-answer="0">
-<p data-lang="zh">3. 關於 Dynamic Programming (DP) 與 Greedy，下列何者正確？</p>
-<p data-lang="en">3. Which statement about Dynamic Programming (DP) vs Greedy is correct?</p>
+<div class="quiz-q" data-answer="3">
+<p data-lang="zh">3. BLAST 比 Smith-Waterman 快的原因是？</p>
+<p data-lang="en">3. Why is BLAST faster than Smith-Waterman?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. DP 透過記憶子問題結果保證全域最優；Greedy 每步取局部最佳，可能錯失全域最優</span><span data-lang="en">A. DP memoizes subproblems for the global optimum; Greedy takes local best and may miss the global optimum</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Greedy 一定比 DP 慢</span><span data-lang="en">B. Greedy is always slower than DP</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. DP 只能解圖論問題</span><span data-lang="en">C. DP only solves graph problems</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Greedy 可以解所有 NP-Hard 問題</span><span data-lang="en">D. Greedy can solve any NP-Hard problem</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. BLAST 用 GPU</span><span data-lang="en">A. BLAST runs on GPU</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. BLAST 用 Smith-Waterman 演算法但更聰明</span><span data-lang="en">B. BLAST uses Smith-Waterman but smarter</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. BLAST 跳過了 DNA 序列</span><span data-lang="en">C. BLAST skips DNA sequences</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. BLAST 用 k-mer 種子 + 啟發式延伸，犧牲完美最佳保證換取速度</span><span data-lang="en">D. BLAST uses k-mer seeds + heuristic extension, trading guaranteed optimality for speed</span></div>
 </div><div class="quiz-feedback" id="fb3"></div></div>
+
+<div class="quiz-q" data-answer="0">
+<p data-lang="zh">4. BWA 比對工具的核心演算法是？</p>
+<p data-lang="en">4. The core algorithm behind BWA aligner is?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Burrows-Wheeler Transform + FM-Index</span><span data-lang="en">A. Burrows-Wheeler Transform + FM-Index</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Quick Sort</span><span data-lang="en">B. Quick Sort</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. k-means</span><span data-lang="en">C. k-means</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Dijkstra</span><span data-lang="en">D. Dijkstra</span></div>
+</div><div class="quiz-feedback" id="fb4"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">5. 為什麼 NumPy 的 O(n²) 矩陣相乘常常比純 Python 的「更低複雜度」Strassen 演算法快？</p>
+<p data-lang="en">5. Why does NumPy's O(n²) matrix multiply often beat pure-Python "lower complexity" Strassen?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. NumPy 用 GPU</span><span data-lang="en">A. NumPy uses GPU</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. NumPy 沒有 bug</span><span data-lang="en">B. NumPy has no bugs</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 實際效能 = 複雜度 × 常數 × cache × SIMD × 平行；BLAS 在常數面壓到極致</span><span data-lang="en">C. Real perf = complexity × constants × cache × SIMD × parallelism; BLAS crushes constants</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Big-O 已過時</span><span data-lang="en">D. Big-O is obsolete</span></div>
+</div><div class="quiz-feedback" id="fb5"></div></div>
+</section>
+
+<section class="section" style="background:#fef3c7;border-radius:14px;padding:32px;">
+<div class="section-label" style="color:#b45309;">💭 <span data-zh="延伸思考" data-en="DISCUSSION">延伸思考</span></div>
+<h2 data-zh="十、延伸思考與討論" data-en="X. Discussion &amp; Reflection">十、延伸思考</h2>
+<ol style="margin-left:20px;line-height:1.9;color:var(--c-ink);">
+<li data-lang="zh"><strong>P = NP 問題若被解開，會發生什麼？</strong>所有 NP 問題（蛋白質摺疊、藥物分子最佳化、旅行推銷員、整數因數分解）都會變多項式時間可解。<strong>RSA 加密當天崩潰，所有比特幣錢包可被破解，但同時所有疾病的最佳治療方案、最佳蛋白質結構都能算出來。</strong>Clay 數學機構懸賞 100 萬美金未解。</li>
+<li data-lang="en"><strong>What if P = NP gets resolved?</strong> All NP problems (protein folding, drug optimization, TSP, integer factorization) become polynomial-time. <strong>RSA collapses on day one, all Bitcoin wallets crackable — but also: optimal disease treatments, optimal protein structures all computable.</strong> Clay Math Institute's $1M prize remains open.</li>
+<li data-lang="zh"><strong>量子演算法對生物資訊有何衝擊？</strong>Shor (1994) 可在多項式時間做整數因數分解；Grover (1996) 可把資料庫搜尋從 O(n) 降到 O(√n)。對 BLAST 這種「找最相似序列」，Grover 加速可能是 1,000× 級別。但目前量子位元數仍遠不足以執行——2026 IBM 1,121 qubits 還在實驗階段。</li>
+<li data-lang="en"><strong>Will quantum algorithms reshape bioinformatics?</strong> Shor (1994) factors integers in polynomial time; Grover (1996) cuts DB search from O(n) to O(√n). For BLAST-style "find most similar," Grover could yield 1000× speedups. But current qubit counts are far too small — IBM's 1,121-qubit machine (2026) is still experimental.</li>
+<li data-lang="zh"><strong>LLM 寫的演算法是否真的「新」？</strong>2023 DeepMind 的 AlphaTensor 找出比 Strassen 還快的 4×4 矩陣相乘演算法；2024 FunSearch 找到新的 cap set 上界。<strong>AI 已能發現新演算法</strong>——但驗證、解釋、推廣仍需要人類數學家。</li>
+<li data-lang="en"><strong>Are LLM-generated algorithms really "new"?</strong> In 2023 DeepMind's AlphaTensor found a faster-than-Strassen 4×4 matmul; in 2024 FunSearch found new cap-set bounds. <strong>AI can now discover new algorithms</strong> — but verification, explanation, and generalization still need human mathematicians.</li>
+</ol>
 </section>
 
 <nav class="page-nav">
@@ -218,21 +580,51 @@
 window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
 function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
 
-// Big-O growth chart, log scale
-const ns=[];for(let i=1;i<=40;i++)ns.push(i);
-const lin=ns.map(n=>n);
-const nlogn=ns.map(n=>n*Math.log2(Math.max(n,2)));
-const sq=ns.map(n=>n*n);
-const exp=ns.map(n=>Math.pow(2,n));
-new Chart(document.getElementById('bigoChart'),{type:'line',data:{labels:ns,datasets:[
-  {label:'O(n)',data:lin,borderColor:'rgba(34,197,94,1)',backgroundColor:'rgba(34,197,94,.1)',tension:.2,pointRadius:0},
-  {label:'O(n log n)',data:nlogn,borderColor:'rgba(29,78,216,1)',backgroundColor:'rgba(29,78,216,.1)',tension:.2,pointRadius:0},
-  {label:'O(n²)',data:sq,borderColor:'rgba(217,119,6,1)',backgroundColor:'rgba(217,119,6,.1)',tension:.2,pointRadius:0},
-  {label:'O(2ⁿ)',data:exp,borderColor:'rgba(220,38,38,1)',backgroundColor:'rgba(220,38,38,.1)',tension:.2,pointRadius:0}
-]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{x:{title:{display:true,text:'n'}},y:{type:'logarithmic',title:{display:true,text:'operations (log scale)'},min:1,max:1e13}}}});
+// Big-O complexity chart
+const ns=[];for(let i=1;i<=100;i++)ns.push(i);
+function safeLog(v){return Math.log10(Math.max(v,1e-6));}
+const dataSets=[
+ {label:'O(1)',data:ns.map(()=>safeLog(1)),borderColor:'#94a3b8',backgroundColor:'transparent',tension:.2},
+ {label:'O(log n)',data:ns.map(n=>safeLog(Math.log2(n))),borderColor:'#10b981',backgroundColor:'transparent',tension:.2},
+ {label:'O(n)',data:ns.map(n=>safeLog(n)),borderColor:'#3b82f6',backgroundColor:'transparent',tension:.2},
+ {label:'O(n log n)',data:ns.map(n=>safeLog(n*Math.log2(n))),borderColor:'#6366f1',backgroundColor:'transparent',tension:.2},
+ {label:'O(n²)',data:ns.map(n=>safeLog(n*n)),borderColor:'#f59e0b',backgroundColor:'transparent',tension:.2},
+ {label:'O(n³)',data:ns.map(n=>safeLog(n*n*n)),borderColor:'#f97316',backgroundColor:'transparent',tension:.2},
+ {label:'O(2ⁿ)',data:ns.map(n=>safeLog(Math.pow(2,Math.min(n,60)))),borderColor:'#dc2626',backgroundColor:'transparent',tension:.2},
+ {label:'O(n!)',data:ns.map(n=>{let f=1;for(let k=2;k<=Math.min(n,20);k++)f*=k;return safeLog(f);}),borderColor:'#7c2d12',backgroundColor:'transparent',tension:.2}
+];
+new Chart(document.getElementById('bigOChart'),{type:'line',data:{labels:ns,datasets:dataSets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right'},title:{display:true,text:'Growth Rate (log scale)'}},scales:{x:{title:{display:true,text:'n'}},y:{title:{display:true,text:'log10(steps)'}}},elements:{point:{radius:0}}}});
+
+// Sort visualization
+const SVG=document.getElementById('sortSvg'),W=()=>SVG.clientWidth||640,H=220;
+let arr=[],cmp=0,swp=0,timer=null;
+function shuffle(){arr=Array.from({length:16},()=>Math.floor(Math.random()*180)+20);cmp=0;swp=0;document.getElementById('cmpCount').textContent=0;document.getElementById('swapCount').textContent=0;document.getElementById('algoName').textContent='—';draw([]);}
+function draw(highlights){const w=W();const bw=w/arr.length-2;SVG.innerHTML='';arr.forEach((v,i)=>{const r=document.createElementNS('http://www.w3.org/2000/svg','rect');r.setAttribute('x',i*(bw+2));r.setAttribute('y',H-v);r.setAttribute('width',bw);r.setAttribute('height',v);r.setAttribute('rx',2);let col='#3b82f6';if(highlights.includes(i))col='#dc2626';r.setAttribute('fill',col);SVG.appendChild(r);});}
+async function delay(ms){return new Promise(r=>setTimeout(r,ms));}
+async function bubble(){document.getElementById('algoName').textContent='Bubble (O(n²))';for(let i=0;i<arr.length-1;i++)for(let j=0;j<arr.length-i-1;j++){cmp++;document.getElementById('cmpCount').textContent=cmp;draw([j,j+1]);await delay(20);if(arr[j]>arr[j+1]){[arr[j],arr[j+1]]=[arr[j+1],arr[j]];swp++;document.getElementById('swapCount').textContent=swp;}}draw([]);}
+async function insertion(){document.getElementById('algoName').textContent='Insertion (O(n²))';for(let i=1;i<arr.length;i++){let j=i;while(j>0){cmp++;document.getElementById('cmpCount').textContent=cmp;draw([j,j-1]);await delay(25);if(arr[j-1]>arr[j]){[arr[j-1],arr[j]]=[arr[j],arr[j-1]];swp++;document.getElementById('swapCount').textContent=swp;j--;}else break;}}draw([]);}
+async function quickHelper(lo,hi){if(lo>=hi)return;const pivot=arr[hi];let i=lo-1;for(let j=lo;j<hi;j++){cmp++;document.getElementById('cmpCount').textContent=cmp;draw([j,hi]);await delay(35);if(arr[j]<=pivot){i++;[arr[i],arr[j]]=[arr[j],arr[i]];swp++;document.getElementById('swapCount').textContent=swp;}}[arr[i+1],arr[hi]]=[arr[hi],arr[i+1]];swp++;document.getElementById('swapCount').textContent=swp;await quickHelper(lo,i);await quickHelper(i+2,hi);}
+async function quick(){document.getElementById('algoName').textContent='Quick (avg O(n log n))';await quickHelper(0,arr.length-1);draw([]);}
+async function mergeHelper(lo,hi){if(lo>=hi)return;const mid=Math.floor((lo+hi)/2);await mergeHelper(lo,mid);await mergeHelper(mid+1,hi);const tmp=[];let i=lo,j=mid+1;while(i<=mid&&j<=hi){cmp++;document.getElementById('cmpCount').textContent=cmp;draw([i,j]);await delay(30);if(arr[i]<=arr[j])tmp.push(arr[i++]);else tmp.push(arr[j++]);}while(i<=mid)tmp.push(arr[i++]);while(j<=hi)tmp.push(arr[j++]);for(let k=0;k<tmp.length;k++){arr[lo+k]=tmp[k];swp++;}document.getElementById('swapCount').textContent=swp;}
+async function mergeS(){document.getElementById('algoName').textContent='Merge (O(n log n))';await mergeHelper(0,arr.length-1);draw([]);}
+document.querySelectorAll('.sort-btn').forEach(b=>b.addEventListener('click',async()=>{const a=b.dataset.algo;shuffle();draw([]);if(a==='bubble')await bubble();else if(a==='insertion')await insertion();else if(a==='quick')await quick();else await mergeS();}));
+document.getElementById('resetBtn').addEventListener('click',()=>{shuffle();});
+shuffle();
 
 // Quiz feedback
-const QF={zh:{q1_y:'Big-O 只保留「最高階項」，常數與低階項都丟掉，所以 O(n²)。',q1_n:'答案 C。',q2_y:'二分搜尋每次砍一半，log₂(10⁶) ≈ 19.93，所以約 20 次。',q2_n:'答案 B。',q3_y:'DP 透過記憶化處理重疊子問題，能找全域最優；Greedy 速度快但不保證最優。',q3_n:'答案 A。'},en:{q1_y:'Big-O keeps only the dominant term, drops constants → O(n²).',q1_n:'Answer: C.',q2_y:'Each step halves the search space; log₂(10⁶) ≈ 19.93 ≈ 20.',q2_n:'Answer: B.',q3_y:'DP memoizes overlapping subproblems for global optimum; Greedy is fast but not always optimal.',q3_n:'Answer: A.'}};
+const QF={zh:{
+q1_y:'O(2ⁿ) 是指數成長，遠快於多項式 O(n²)/O(n³)。',q1_n:'答案 C。',
+q2_y:'Quick Sort 平均 O(n log n)；若 pivot 選不好（如已排序資料用最後元素）會退化到 O(n²)。',q2_n:'答案 B。',
+q3_y:'BLAST 是啟發式：k-mer 種子加速找候選位置，再做局部 DP 延伸。',q3_n:'答案 D。',
+q4_y:'BWT 把 reference 重排為可壓縮形式，FM-Index 加速查詢——BWA 的核心。',q4_n:'答案 A。',
+q5_y:'Big-O 忽略常數。NumPy 用 SIMD、cache locality、BLAS 高度優化，常數比純 Python 小 1,000+ 倍。',q5_n:'答案 C。'
+},en:{
+q1_y:'O(2ⁿ) is exponential, far faster than polynomial O(n²)/O(n³).',q1_n:'Answer: C.',
+q2_y:'Quick Sort averages O(n log n); poor pivot choice (e.g., last element on sorted data) degrades to O(n²).',q2_n:'Answer: B.',
+q3_y:'BLAST is heuristic: k-mer seeds find candidate positions, then local DP extends.',q3_n:'Answer: D.',
+q4_y:'BWT reorders the reference for compression; FM-Index speeds queries — the core of BWA.',q4_n:'Answer: A.',
+q5_y:'Big-O ignores constants. NumPy uses SIMD, cache locality, and heavily-tuned BLAS — constants 1,000+× smaller than pure Python.',q5_n:'Answer: C.'
+}};
 document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
 </script>
 </body></html>

@@ -1,0 +1,518 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ch 5: 記憶體階層與儲存 — Intro CS</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head><body>
+<nav class="top-nav"><div class="top-nav-inner">
+  <a href="index.html" class="top-nav-brand"><span>💻</span> <span data-zh="計算機概論" data-en="Intro CS">計算機概論</span></a>
+  <ul class="top-nav-links"><li><a href="history.html">History</a></li><li><a href="data-rep.html">Data</a></li><li><a href="logic-gates.html">Logic</a></li><li><a href="cpu-arch.html">CPU</a></li><li><a href="memory.html" class="active">Memory</a></li><li><a href="os.html">OS</a></li><li><a href="networking.html">Net</a></li><li><a href="database.html">DB</a></li><li><a href="programming.html">Prog</a></li><li><a href="algorithms.html">Algo</a></li><li><a href="data-structures.html">DS</a></li><li><a href="software-eng.html">SWE</a></li><li><a href="security.html">Sec</a></li><li><a href="ai-ml.html">AI/ML</a></li><li><a href="cloud-iot.html">Cloud</a></li><li><a href="ethics-future.html">Ethics</a></li>
+    <li><a href="references/index.html" data-zh="📚 參考資料" data-en="📚 References">📚 參考資料</a></li>
+  </ul>
+</div></nav>
+<div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
+<header class="page-hero"><div class="step-badge">CHAPTER 5 / 16</div>
+<h1 data-zh="記憶體階層與儲存" data-en="Memory Hierarchy & Storage">記憶體階層與儲存</h1>
+<p class="subtitle" data-lang="zh">為什麼一台電腦需要 8 種不同的儲存？因為「快、大、便宜」三者不可兼得。本章揭開金字塔結構、快取局部性、虛擬記憶體的設計巧思——並告訴你為何 STAR 對齊一個 RNA-seq 樣本仍需要 30 GB RAM。</p>
+<p class="subtitle" data-lang="en">Why does one computer have eight kinds of storage? Because "fast, big, cheap" cannot all coexist. This chapter unpacks the memory pyramid, cache locality, virtual memory — and why STAR still demands 30 GB RAM to align a single RNA-seq sample.</p>
+</header>
+<main class="content-wrap">
+
+<section class="section">
+<div class="section-label" data-zh="開場故事" data-en="OPENING STORY">一個 1 MB 的奇蹟</div>
+<h2 data-zh="從 25 萬美元到不到 1 美分：DRAM 的 50 年神話" data-en="From $250,000 to under a Cent: DRAM's 50-Year Miracle">從 25 萬美元到不到 1 美分</h2>
+<div data-lang="zh"><p>1976 年，1 MB 的 DRAM 售價約 <strong>美金 25 萬元</strong>——足以買下兩棟矽谷透天厝。50 年後的 2026 年，同樣 1 MB 的 DRAM 不到 <strong>美金 0.001 元</strong>，<strong>降幅 2.5 億倍</strong>。這是人類製造業史上最戲劇性的成本曲線之一，遠超過摩爾定律對「電晶體密度每 2 年翻倍」的本意。</p>
+<p>可是——這怎麼解釋我們今天還在抱怨「RAM 不夠用」呢？開啟一個有 5 萬個瀏覽器頁籤的 Chrome（誇飾）固然會吃光記憶體，但<strong>單細胞 RNA-seq 分析、AlphaFold 蛋白質結構預測、用 STAR 對齊人類 RNA-seq</strong>——這些工作都還是常常 OOM (Out Of Memory)。原因就是：<strong>資料規模成長得比 RAM 成長更快</strong>。1990 年的整個人類基因組約 3 GB，2026 年單一冷凍電鏡實驗一晚就產生 50 TB。</p>
+<p>本章要教你三件事：① 為什麼電腦需要 8 層「記憶體金字塔」？② <strong>cache locality</strong>（快取局部性）這個看不見的優化為何能讓你的程式快 10 倍？③ 生物資訊裡那些「為什麼這台機器要 1 TB RAM」的問題，怎麼用記憶體階層的觀點看穿。</p></div>
+<div data-lang="en"><p>In 1976, 1 MB of DRAM cost about <strong>USD 250,000</strong> — enough to buy two Silicon Valley houses. Fifty years later, in 2026, the same 1 MB costs under <strong>USD 0.001</strong>: a <strong>250-million-fold</strong> drop. That's one of the steepest cost curves in human manufacturing history, far steeper than Moore's law's original "transistor density doubles every 2 years."</p>
+<p>So why do we still complain about running out of RAM? Because <strong>data has grown even faster than memory</strong>. The human genome in 1990 was ~3 GB; one overnight cryo-EM session in 2026 produces 50 TB. Single-cell RNA-seq, AlphaFold inference, STAR alignment — these all routinely OOM on undersized boxes.</p>
+<p>This chapter teaches three things: (1) why we need eight tiers of storage, (2) why <strong>cache locality</strong> — an invisible optimization — can speed your code 10×, and (3) how to use a hierarchy mindset to decode "why does this bioinformatics box need 1 TB of RAM?"</p></div>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<span data-lang="zh"><strong>核心觀念：</strong>整個 OS 與 CPU 的「記憶體管理」其實是在玩「猜熱資料」的遊戲——猜對則快，猜錯則慢千百倍。</span>
+<span data-lang="en"><strong>Core idea:</strong> OS and CPU memory management is essentially a game of "guess the hot data." A right guess is fast; a miss can be 100×–1000× slower.</span>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="核心概念" data-en="CORE CONCEPTS">不可能三角</div>
+<h2 data-zh="一、核心概念：為何不可能只用一種記憶體" data-en="I. Core Concepts: Why One Memory Type Isn't Enough">一、核心概念：為何不可能只用一種記憶體</h2>
+<div data-lang="zh"><p>設計儲存系統有「<strong>不可能三角</strong>」：<strong>快</strong>、<strong>大</strong>、<strong>便宜</strong>三者頂多只能取兩個。SRAM 快但貴又小；磁帶大又便宜但慢得像蝸牛。工程師的解法是「<strong>分層</strong>」：把最常用的少量資料放在快速但小的層，整體資料放在慢但大的層。透過<strong>局部性原理</strong>，大多數存取都能命中最快的層。</p>
+<p>2026 年一台典型電腦的速度差距：CPU 暫存器存取 &lt; 1 ns，但讀 1 PB 磁帶可能要幾分鐘——<strong>9 個數量級</strong>的差異！</p></div>
+<div data-lang="en"><p>Storage systems have an "<strong>impossible triangle</strong>": you can pick at most two of <strong>fast / large / cheap</strong>. SRAM is fast but pricey and tiny; tape is huge and cheap but glacially slow. The engineering answer is the <strong>hierarchy</strong>: hot data in small fast layers, cold data in big slow layers. Thanks to <strong>locality of reference</strong>, most accesses hit the top.</p>
+<p>The 2026 speed spread: a CPU register access takes &lt; 1 ns, while reading 1 PB from tape can take minutes — <strong>9 orders of magnitude</strong>.</p></div>
+
+<div class="card-grid cols-3">
+<div class="card"><div class="card-icon">⚡</div><h4 data-zh="快 (Fast)" data-en="Fast">快 (Fast)</h4>
+<div data-lang="zh"><p>SRAM 用 6 顆電晶體鎖住 1 bit，0.3–1 ns 即可讀取，但體積大、漏電、貴。CPU 暫存器與 L1/L2/L3 cache 屬此類。</p></div>
+<div data-lang="en"><p>SRAM holds 1 bit in 6 transistors; reads in 0.3–1 ns. But bulky, leaky, expensive. Registers and L1/L2/L3 caches live here.</p></div></div>
+<div class="card"><div class="card-icon">🏗️</div><h4 data-zh="大 (Large)" data-en="Large">大 (Large)</h4>
+<div data-lang="zh"><p>HDD 用磁性塗層每平方公分塞 TB 級資料，1 TB 不到 15 美元。但機械臂尋軌平均 5 ms，幾乎沒進步。</p></div>
+<div data-lang="en"><p>HDDs pack TB per square cm on magnetic platters; 1 TB costs under USD 15. But mechanical seek averages 5 ms — barely improved.</p></div></div>
+<div class="card"><div class="card-icon">💰</div><h4 data-zh="便宜 (Cheap)" data-en="Cheap">便宜 (Cheap)</h4>
+<div data-lang="zh"><p>LTO-10 磁帶 1 TB &lt; 5 美元，且常溫保存 30 年。但要先「機械手臂」從架上抓帶子、裝上磁鼓，延遲以「分鐘」起跳。</p></div>
+<div data-lang="en"><p>LTO-10 tape: 1 TB under USD 5, retains data 30 years at room temp. But a robot arm must fetch the cartridge and mount the drive — latency in <em>minutes</em>.</p></div></div>
+</div>
+
+<h3 data-zh="八層記憶體金字塔" data-en="The 8-Tier Memory Pyramid">八層記憶體金字塔</h3>
+<table class="comp-table">
+<thead><tr><th data-zh="層" data-en="Layer">層</th><th data-zh="技術" data-en="Tech">技術</th><th data-zh="存取延遲" data-en="Latency">延遲</th><th data-zh="典型容量" data-en="Capacity">容量</th><th data-zh="每 GB 成本" data-en="$/GB (2026)">每 GB 成本</th></tr></thead>
+<tbody>
+<tr><td>① Registers</td><td>SRAM (CPU 內)</td><td>~0.3 ns</td><td>1 KB</td><td>—</td></tr>
+<tr><td>② L1 Cache</td><td>SRAM</td><td>~1 ns</td><td>64 KB / 核心</td><td>~$1000</td></tr>
+<tr><td>③ L2 Cache</td><td>SRAM</td><td>~3 ns</td><td>1 MB / 核心</td><td>~$200</td></tr>
+<tr><td>④ L3 Cache</td><td>SRAM</td><td>~10 ns</td><td>32–128 MB</td><td>~$50</td></tr>
+<tr><td>⑤ HBM3e</td><td>3D stacked DRAM</td><td>~20 ns</td><td>80–192 GB</td><td>~$10</td></tr>
+<tr><td>⑥ Main Memory</td><td>DDR5 DRAM</td><td>~80 ns</td><td>16 GB–1 TB</td><td>~$2</td></tr>
+<tr><td>⑦ NVMe SSD</td><td>3D NAND Flash</td><td>~50 µs</td><td>1–8 TB</td><td>~$0.05</td></tr>
+<tr><td>⑧ HDD</td><td data-lang="zh">機械硬碟</td><td data-lang="en">Mechanical disk</td><td>~5 ms</td><td>4–24 TB</td><td>~$0.015</td></tr>
+<tr><td>⑨ Tape (LTO-10)</td><td data-lang="zh">磁帶（離線）</td><td data-lang="en">Tape (offline)</td><td data-lang="zh">~分鐘（裝載）</td><td>30 TB / 卷</td><td>~$0.005</td></tr>
+</tbody></table>
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>類比想像：</strong>若 L1 cache 像「伸手拿桌上的杯子」(1 秒)，那 DRAM 就像「下樓買咖啡」(80 秒)、SSD 像「搭飛機去鄰國取貨」(2 週)、磁帶就像「等船從遠洋運回」(數十年)。<strong>I/O 速度差異徹底主宰了系統設計</strong>。</div>
+<div data-lang="en"><strong>Analogy:</strong> If an L1 hit feels like "grabbing a cup on your desk" (1 sec), then DRAM is "walking downstairs for coffee" (80 sec), SSD is "flying abroad for a parcel" (2 weeks), and tape is "waiting for a transoceanic shipment" (decades). <strong>I/O gaps dictate system design.</strong></div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動 #1" data-en="INTERACTIVE #1">延遲對數圖</div>
+<h2 data-zh="二、互動：各層延遲對比（對數刻度）" data-en="II. Interactive: Latency by Layer (Log Scale)">二、互動：延遲對數圖</h2>
+<div data-lang="zh"><p>下圖用對數刻度顯示從 CPU 暫存器到磁帶的存取延遲，跨越 <strong>10¹¹ 倍</strong>。可以理解為何 cache miss 對程式效能殺傷力如此巨大——一次「L1 → DRAM」的跌落，等於一秒對八十秒的差距。游標移到色塊看單位自動切換。</p></div>
+<div data-lang="en"><p>The chart plots access latency from registers to tape on a log scale — spanning <strong>10¹¹×</strong>. A miss from L1 to DRAM alone equals a 1-second-vs-80-second gap. Hover the bars for human-readable units.</p></div>
+<div class="interactive-panel">
+<div class="chart-container"><canvas id="latencyChart"></canvas></div>
+<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">數據近似值（2026 旗艦消費級平台）。HBM3e 用於 H100/B200 GPU 與部分 CPU。</span><span data-lang="en">Approximate values (2026 flagship consumer platform). HBM3e is used in H100/B200 GPUs and select CPUs.</span></p>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="深入剖析" data-en="DEEP DIVE">SRAM vs DRAM</div>
+<h2 data-zh="三、深入剖析：SRAM vs DRAM、Cache 與虛擬記憶體" data-en="III. Deep Dive: SRAM vs DRAM, Cache, and Virtual Memory">三、深入剖析</h2>
+
+<h3 data-zh="3.1 SRAM vs DRAM：6T 與 1T1C 的差距" data-en="3.1 SRAM vs DRAM: 6T vs 1T1C">3.1 SRAM vs DRAM</h3>
+<div data-lang="zh"><p>SRAM 每個 bit 用 <strong>6 顆電晶體</strong>形成正反饋鎖存器，只要供電就永遠記住資料、讀寫都快（~1 ns）。但 6 顆電晶體佔很大面積——同樣晶圓只能做出較少容量，貴。</p>
+<p>DRAM 每個 bit 用 <strong>1 顆電晶體 + 1 顆電容</strong>（1T1C），密度高 10 倍以上、便宜。代價是電容會漏電，OS 必須每 64 ms 「refresh」一次所有 row（把電充滿）；讀取會破壞資料、需要寫回。這些都讓 DRAM 慢得多（~80 ns）。</p>
+<p>這就是為何 cache 必須用 SRAM（速度優先）、主記憶體必須用 DRAM（容量與成本優先）——並非工程師偷懶，而是物理使然。</p></div>
+<div data-lang="en"><p>SRAM stores 1 bit in <strong>6 transistors</strong> forming a feedback latch — remembers as long as powered, fast (~1 ns) both ways. But 6 transistors take real area: same wafer yields less capacity, costing more.</p>
+<p>DRAM uses <strong>1 transistor + 1 capacitor</strong> (1T1C) — 10× denser, cheaper. The price: the capacitor leaks. The OS must "refresh" every row every 64 ms (recharge). Reads are destructive — must write back. All this makes DRAM much slower (~80 ns).</p>
+<p>That's why caches must use SRAM (speed first) and main memory must use DRAM (capacity and cost first). Physics, not laziness.</p></div>
+
+<h3 data-zh="3.2 局部性：時間 vs 空間" data-en="3.2 Locality: Temporal vs Spatial">3.2 局部性</h3>
+<div data-lang="zh"><p>Cache 之所以有效，靠的是「<strong>程式的存取模式並不隨機</strong>」這個經驗事實：</p>
+<ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
+<li><strong>時間局部性 (Temporal locality)</strong>：剛存取過的位址，很快又會被存取（如迴圈變數、loop counter）。</li>
+<li><strong>空間局部性 (Spatial locality)</strong>：剛存取的位址附近，很快也會被存取（如陣列走訪、矩陣按列掃描）。</li>
+</ul>
+<p>因此 cache 一次搬「<strong>一條 cache line</strong>」(64 B)，不只搬目標位元組。<strong>關聯性 (associativity)</strong> 決定每條 line 能放哪幾個位置：direct-mapped 最快但衝突高、fully-associative 最靈活但硬體貴；現代 CPU 多用 <strong>4–16 way set-associative</strong> 折衷。</p></div>
+<div data-lang="en"><p>Caches work because <strong>access patterns are not random</strong>:</p>
+<ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
+<li><strong>Temporal locality</strong>: addresses just accessed are likely accessed again soon (e.g., loop counter).</li>
+<li><strong>Spatial locality</strong>: addresses near a recent access are likely next (e.g., array traversal).</li>
+</ul>
+<p>So caches move <strong>a whole cache line</strong> (64 B), not just the target byte. <strong>Associativity</strong> decides which slots a line can occupy: direct-mapped is fastest but conflict-prone, fully-associative is flexible but expensive — modern CPUs use <strong>4–16-way set-associative</strong>.</p></div>
+
+<h3 data-zh="3.3 三種 Cache Miss (3C)" data-en="3.3 The Three Cache Misses (3 Cs)">3.3 3C miss</h3>
+<table class="comp-table">
+<thead><tr><th>Miss</th><th data-zh="名稱" data-en="Name">名稱</th><th data-zh="原因" data-en="Cause">原因</th><th data-zh="緩解" data-en="Mitigation">緩解</th></tr></thead>
+<tbody>
+<tr><td><strong>Compulsory</strong></td><td data-lang="zh">強制 / 首次未命中</td><td data-lang="en">First-time / cold</td><td data-lang="zh">第一次存取必發生</td><td data-lang="zh">prefetch、加大 cache line</td></tr>
+<tr><td><strong>Capacity</strong></td><td data-lang="zh">容量未命中</td><td data-lang="en">Working set &gt; cache</td><td data-lang="zh">工作集 &gt; cache 大小</td><td data-lang="zh">加大 cache、改演算法 (blocking)</td></tr>
+<tr><td><strong>Conflict</strong></td><td data-lang="zh">衝突未命中</td><td data-lang="en">Many addrs map same set</td><td data-lang="zh">多個位址映射到同一 set</td><td data-lang="zh">提高 associativity、改記憶體佈局</td></tr>
+</tbody></table>
+
+<h3 data-zh="3.4 虛擬記憶體：Page、Page Table、TLB、MMU" data-en="3.4 Virtual Memory: Pages, Page Table, TLB, MMU">3.4 虛擬記憶體</h3>
+<div data-lang="zh"><p>虛擬記憶體讓每個程式以為自己「獨占」整個 64-bit 位址空間，實際上：</p>
+<ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
+<li>記憶體切成固定大小的 <strong>page</strong>（通常 4 KB；大頁 2 MB / 1 GB）。</li>
+<li><strong>Page Table</strong> 記錄「虛擬位址 → 物理位址」的對應，由 OS 維護，存在 DRAM 中。</li>
+<li><strong>MMU (Memory Management Unit)</strong> 是 CPU 內的硬體，每次存取自動查表轉址。</li>
+<li><strong>TLB (Translation Lookaside Buffer)</strong> 是 page table 的小型 cache（~64–4096 條），讓常見轉址 &lt; 1 ns。TLB miss 要走 4 層 page-table walk（x86-64），代價 ~100 ns。</li>
+<li>若 page 在 DRAM 中找不到 → <strong>Page Fault</strong>，OS 從 SSD 載入該 page（典型延遲：~100 µs，比 DRAM 慢 1000 倍）。</li>
+</ul>
+<p><strong>三大好處：</strong>① 程式隔離（A 程式無法看到 B 程式的記憶體）；② 可用空間 &gt; 物理 RAM（用 SSD 作 swap）；③ 同一份程式碼可被多個程序共享（write-on-copy）。</p></div>
+<div data-lang="en"><p>Virtual memory makes every program believe it owns the entire 64-bit address space. In reality:</p>
+<ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
+<li>Memory is sliced into fixed-size <strong>pages</strong> (usually 4 KB; huge pages 2 MB / 1 GB).</li>
+<li>The <strong>page table</strong> maps virtual → physical addresses, lives in DRAM, maintained by the OS.</li>
+<li>The <strong>MMU</strong> is in-CPU hardware that does the translation on every access.</li>
+<li>The <strong>TLB</strong> caches page-table entries (~64–4096 entries), keeping lookups &lt; 1 ns. A TLB miss triggers a 4-level page-table walk (x86-64), costing ~100 ns.</li>
+<li>If a page isn't in DRAM → <strong>page fault</strong>, OS loads it from SSD (~100 µs — 1000× slower than DRAM).</li>
+</ul>
+<p><strong>Three benefits:</strong> (1) process isolation (program A can't see program B's memory); (2) addressable space &gt; physical RAM (SSD swap); (3) shared code pages with copy-on-write.</p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="歷史故事" data-en="HISTORY">經典時刻</div>
+<h2 data-zh="四、四個經典故事：RAMAC、640 KB、iPhone、M3 Max" data-en="IV. Four Classic Stories">四、四個經典故事</h2>
+<div class="workflow">
+<div class="workflow-step" data-step="1"><h4 data-zh="1956：IBM RAMAC 305 — 史上第一台硬碟" data-en="1956: IBM RAMAC 305 — The First Hard Drive">1956：IBM RAMAC 305</h4>
+<div data-lang="zh"><p>IBM 工程師 Reynold Johnson 設計，由 50 片直徑 24 吋的鋁鎂合金磁盤組成，總容量 <strong>5 MB</strong>（剛好夠存一張今天的 JPEG）。重 <strong>1 噸</strong>、要用堆高機搬運，月租 <strong>3200 美元</strong>。為了容易記憶，IBM 廣告說它能存「<strong>5 百萬個字元</strong>」。當時最大的問題不是技術而是運輸——飛機載運要特別加固機艙地板。</p></div>
+<div data-lang="en"><p>Designed by IBM engineer Reynold Johnson — 50 platters of 24-inch aluminum-magnesium alloy, total <strong>5 MB</strong> (enough for one JPEG today). It weighed <strong>1 ton</strong>, required a forklift, and rented for <strong>USD 3,200/month</strong>. IBM marketed it as holding "<strong>5 million characters</strong>." The toughest problem wasn't engineering — it was logistics: aircraft floors had to be reinforced.</p></div></div>
+<div class="workflow-step" data-step="2"><h4 data-zh="1981：「640 KB 對誰都夠用了」——一個都市傳說？" data-en="1981: 'Nobody Will Ever Need More Than 640 KB' — Urban Legend?">1981：640 KB 對誰都夠用</h4>
+<div data-lang="zh"><p>這句話通常被歸給 Bill Gates，但他多次否認。真相是：IBM PC 的 8086 CPU 只能定址 1 MB，其中 640 KB 留給應用程式、其餘 384 KB 是 BIOS/VRAM/ROM——這是<strong>硬體限制</strong>，不是預測。但這句話成為「短視預測」的代名詞，提醒我們：「<strong>當前夠用</strong>」永遠是個移動的標的。10 年後 Windows 3.0 已要 4 MB；30 年後 Chrome 開 10 個分頁就要 4 GB。</p></div>
+<div data-lang="en"><p>Often attributed to Bill Gates — who has denied it many times. The truth: the IBM PC's 8086 could only address 1 MB; 640 KB was reserved for apps, 384 KB for BIOS/VRAM/ROM. It was a <strong>hardware limit, not a prediction</strong>. But the quote became a byword for shortsighted forecasting. "Enough for now" is always a moving target — 10 years later Windows 3.0 needed 4 MB; 30 years later Chrome with 10 tabs eats 4 GB.</p></div></div>
+<div class="workflow-step" data-step="3"><h4 data-zh="2007：iPhone — NAND Flash 翻盤的一刻" data-en="2007: iPhone — The Moment NAND Flash Won">2007：iPhone 與 NAND Flash</h4>
+<div data-lang="zh"><p>2007 年之前，幾乎所有可攜式音樂播放器（iPod、MP3 player）都用 HDD——便宜、大容量。Apple 在第一代 iPhone 用 <strong>4–16 GB NAND Flash</strong>，不再有機械碰撞、開機 &lt; 1 秒、震動不會壞檔。這個決定讓 Samsung、Toshiba 的 NAND 產能爆炸成長，HDD 從此退出消費電子主舞台，被擠到「資料中心冷儲存」。一個產業的死亡與另一個產業的興起。</p></div>
+<div data-lang="en"><p>Before 2007, almost every portable music player (iPod, MP3) used HDDs — cheap, capacious. Apple's first iPhone shipped with <strong>4–16 GB NAND Flash</strong> — no mechanical shock, sub-second boot, vibration-proof. The decision sent Samsung and Toshiba NAND output through the roof; HDDs got pushed out of consumer electronics into data-center cold storage. One industry's death birthed another.</p></div></div>
+<div class="workflow-step" data-step="4"><h4 data-zh="2024：Apple M3 Max — 128 GB 統一記憶體" data-en="2024: Apple M3 Max — 128 GB Unified Memory">2024：Apple M3 Max 統一記憶體</h4>
+<div data-lang="zh"><p>傳統電腦 CPU RAM 和 GPU VRAM 是分開的，要透過 PCIe 來回搬資料（慢且耗電）。Apple Silicon 把 CPU、GPU、Neural Engine 與 DRAM 全部放在同一片 SoC，最高 <strong>128 GB「統一記憶體」</strong>——所有處理器零拷貝共享同一份資料。對 LLM 推論幫助巨大：一台 MacBook Pro 就能跑 70B 參數模型（量化後）。代價是無法升級 RAM，買就買到頂規。</p></div>
+<div data-lang="en"><p>Traditional PCs split CPU RAM from GPU VRAM, shuffling data over PCIe (slow, power-hungry). Apple Silicon puts CPU, GPU, Neural Engine, and DRAM on one SoC — up to <strong>128 GB "unified memory"</strong> with zero-copy sharing across processors. Huge for LLM inference: a single MacBook Pro can run a quantized 70B-parameter model. The catch: RAM is not upgradeable — buy the top SKU once.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動 #2" data-en="INTERACTIVE #2">Cache Locality 模擬器</div>
+<h2 data-zh="五、互動：Row-major vs Column-major Cache Miss" data-en="V. Interactive: Row-major vs Column-major Cache Miss">五、互動：Cache Locality 模擬器</h2>
+<div data-lang="zh"><p>下方是一個 8×8 的記憶體網格（每格代表一個 cache line，64 B）。按「row-major 走訪」會橫向掃描——同一條 cache line 被連續存取 8 次，極少 miss；按「column-major 走訪」則每存取一格都跳到不同 line，幾乎每次都是 miss。看色塊變化和右邊的 miss 計數，體會「物理布局決定速度」這件事。</p></div>
+<div data-lang="en"><p>Below is an 8×8 memory grid (each cell = one cache line, 64 B). <strong>Row-major</strong> walks horizontally — consecutive cells share a line, almost no misses. <strong>Column-major</strong> jumps to a new line every access — nearly every cell is a miss. Watch the color changes and the counter — feel how physical layout decides speed.</p></div>
+<div class="interactive-panel">
+<div class="toggle-row"><button class="toggle-btn active" id="modeRow" data-zh="Row-major 走訪" data-en="Row-major">Row-major 走訪</button><button class="toggle-btn" id="modeCol" data-zh="Column-major 走訪" data-en="Column-major">Column-major 走訪</button><button class="toggle-btn toggle-btn-sm" id="resetSim" data-zh="重置" data-en="Reset">重置</button></div>
+<div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;">
+<div id="cacheGrid" style="display:grid;grid-template-columns:repeat(8,32px);gap:3px;"></div>
+<div style="flex:1;min-width:200px;">
+<div class="sim-stats">
+<div class="sim-stat pass"><span data-lang="zh">命中</span><span data-lang="en">Hits</span>: <span id="hitCount">0</span></div>
+<div class="sim-stat fail"><span data-lang="zh">未命中</span><span data-lang="en">Misses</span>: <span id="missCount">0</span></div>
+</div>
+<div style="font-size:.88rem;color:var(--c-ink-light);margin-top:8px;">
+<div data-lang="zh"><strong>Hit Rate:</strong> <span id="hitRate">0%</span></div>
+<div data-lang="en"><strong>Hit Rate:</strong> <span id="hitRateEn">0%</span></div>
+</div>
+<button id="stepBtn" class="lang-toggle" style="margin-top:12px;width:100%;" data-zh="▶ 走一步" data-en="▶ Step">▶ 走一步</button>
+<button id="autoBtn" class="toggle-btn" style="margin-top:8px;width:100%;" data-zh="⏩ 自動走完" data-en="⏩ Auto-finish">⏩ 自動走完</button>
+</div>
+</div>
+<p style="font-size:.82rem;color:var(--c-ink-muted);margin-top:14px;"><span data-lang="zh">假設每條 cache line 容納 1 列（row）的 8 個元素。Row-major 期望 hit rate ≈ 87.5%；Column-major ≈ 0%。</span><span data-lang="en">Assume each cache line holds one row of 8 elements. Row-major hit rate ≈ 87.5%; column-major ≈ 0%.</span></p>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="🧬 生資連結" data-en="BIOINFO LINKS">生物資訊應用</div>
+<h2 data-zh="六、🧬 給生物資訊學家的記憶體手冊" data-en="VI. The Memory Handbook for Bioinformaticians">六、🧬 給生物資訊學家</h2>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;">
+<span class="callout-icon">🧬</span>
+<div>
+<strong data-zh="① STAR 為何要 30 GB RAM？" data-en="① Why does STAR need 30 GB RAM?">① STAR 為何要 30 GB RAM？</strong>
+<p data-lang="zh">STAR (Dobin 2013) 把整個人類基因組 + suffix array + junction database 載入 DRAM——這個「索引」約 <strong>25–28 GB</strong>，再加上 read buffer、輸出 BAM 緩衝就到 30 GB。為什麼這麼大？因為演算法需要 <strong>O(1) 隨機存取</strong> 來搜尋短 read 的所有可能位置；如果放在 SSD（50 µs/access），對齊一個樣本要 1 週。HISAT2 用 graph-FM 索引壓縮到 8 GB，犧牲一點靈敏度換記憶體。Salmon/Kallisto 用 k-mer 雜湊表只要 4 GB 但只能做轉錄本層級定量。</p>
+<p data-lang="en">STAR (Dobin 2013) loads the whole human genome + suffix array + junction database into DRAM — the index is <strong>25–28 GB</strong>; add read and BAM buffers and you hit 30 GB. Why so big? The algorithm needs <strong>O(1) random access</strong> to all candidate positions of a short read; on SSD (50 µs/access), one sample would take a week. HISAT2 compresses to 8 GB with a graph-FM index, trading some sensitivity for RAM. Salmon/Kallisto use k-mer hashes — only 4 GB, but only transcript-level quantification.</p>
+</div></div>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;">
+<span class="callout-icon">🧬</span>
+<div>
+<strong data-zh="② HDF5 / Zarr：串流讀取 100 GB 單細胞資料" data-en="② HDF5 / Zarr: Streaming 100 GB scRNA-seq Data">② HDF5 / Zarr：串流讀單細胞</strong>
+<p data-lang="zh">一個 1 M 細胞的 10X scRNA-seq matrix 約 100 GB（sparse 後 10 GB）。AnnData 把它存成 <strong>HDF5</strong> 或 <strong>Zarr</strong>（雲端友善的 chunked array 格式），只在需要時把對應 chunk 載入記憶體。Scanpy 的 <code>sc.read_h5ad(..., backed='r')</code> 模式甚至不把 X matrix 全部讀進 RAM，而是 memory-map（記憶體映射檔案）按需取用——這正是「<strong>用 SSD 的容量 + DRAM 的速度局部性</strong>」的經典應用，否則 32 GB 工作站根本跑不動百萬細胞分析。</p>
+<p data-lang="en">A 1 M-cell 10X matrix is ~100 GB (~10 GB sparse). AnnData stores it as <strong>HDF5</strong> or <strong>Zarr</strong> (cloud-friendly chunked arrays), loading only the chunks needed. Scanpy's <code>sc.read_h5ad(..., backed='r')</code> doesn't even read X into RAM — it memory-maps the file. Classic "SSD capacity + DRAM locality" trick; otherwise 32 GB workstations couldn't touch million-cell analyses.</p>
+</div></div>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;">
+<span class="callout-icon">🧬</span>
+<div>
+<strong data-zh="③ DuckDB / Arrow：mmap 大型 TSV 比 pandas 快 10×" data-en="③ DuckDB / Arrow: mmap-ing Big TSVs Beats pandas 10×">③ DuckDB / Arrow vs pandas</strong>
+<p data-lang="zh">處理 50 GB 的 GTEx expression matrix 或 GWAS 變異 TSV 時，<code>pandas.read_csv()</code> 會把整個檔案解析成 Python 物件——通常 RAM 用量是檔案大小的 3–5 倍，OOM 很常見。<strong>DuckDB</strong>（embedded OLAP DB）或 <strong>PyArrow</strong> 用記憶體映射 + 欄式儲存 + SIMD，只讀你查詢的欄位、按 chunk 處理，常常 8 GB RAM 就能跑完 50 GB 檔案的 group-by。對 bioinformatician：把 TSV 轉成 Parquet 一次，之後查詢快 10–100 倍。</p>
+<p data-lang="en">For a 50 GB GTEx expression matrix or GWAS TSV, <code>pandas.read_csv()</code> parses everything to Python objects — RAM is 3–5× file size, OOM is routine. <strong>DuckDB</strong> (embedded OLAP) and <strong>PyArrow</strong> use mmap + columnar storage + SIMD — read only queried columns in chunks. 8 GB RAM often handles a 50 GB group-by. Tip: convert TSV → Parquet once; queries get 10–100× faster.</p>
+</div></div>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;">
+<span class="callout-icon">🧬</span>
+<div>
+<strong data-zh="④ AlphaFold / ESM-2 需要的 HBM：A100 vs H100" data-en="④ HBM for AlphaFold / ESM-2: A100 vs H100">④ AlphaFold 的 HBM 戰爭</strong>
+<p data-lang="zh">AlphaFold 2 的 Evoformer 對一個 1500 殘基的蛋白質會建構 <strong>30+ GB 的中間張量</strong>；ESM-2 15B 模型本身 30 GB、推論時 activation 又翻倍。<strong>A100 80GB</strong> 的 HBM2e 頻寬 2 TB/s；<strong>H100 80GB</strong> HBM3 達 3.35 TB/s——同樣 80 GB，H100 比 A100 推論快 1.5–2 倍，原因不是算力而是「<strong>記憶體頻寬</strong>」。大型蛋白質結構預測常常 GPU 算力閒置但 HBM 卡死，這就是「memory-bound」的典型場景。</p>
+<p data-lang="en">AlphaFold 2's Evoformer constructs <strong>30+ GB of intermediate tensors</strong> for a 1500-residue protein; ESM-2 15B is 30 GB itself, doubled by inference activations. <strong>A100 80GB</strong> HBM2e: 2 TB/s; <strong>H100 80GB</strong> HBM3: 3.35 TB/s. Same capacity — H100 is 1.5–2× faster on inference not because of compute but <strong>memory bandwidth</strong>. Structure prediction is the classic "memory-bound" workload: GPU cores idle, HBM saturated.</p>
+</div></div>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;">
+<span class="callout-icon">🧬</span>
+<div>
+<strong data-zh="⑤ NCBI SRA 為何仍把 FASTQ 放在磁帶？" data-en="⑤ Why NCBI SRA Still Archives FASTQ on Tape">⑤ NCBI SRA 與磁帶</strong>
+<p data-lang="zh">截至 2026 年，NCBI SRA 已突破 <strong>50 PB</strong> 原始定序資料。其中近年發表的「熱」資料放在 S3/Glacier instant，但「冷」資料（5+ 年前、少被下載）仍存在 <strong>LTO 磁帶庫</strong>。為何？同樣 1 PB：HDD 約需 \$15,000、SSD 約 \$50,000、磁帶 \$5,000——而且磁帶不通電不耗電。代價：你 `prefetch SRR123` 一個冷樣本可能要等 30 分鐘讓機械手臂去抓帶子掛上磁鼓。這也是為何 SRA 提供「<strong>warm</strong>」（從磁帶到 SSD）的 staging 服務。</p>
+<p data-lang="en">As of 2026, NCBI SRA exceeds <strong>50 PB</strong> of raw sequencing data. Recent "hot" datasets live on S3/Glacier Instant; "cold" data (5+ years old, rarely downloaded) lives on <strong>LTO tape libraries</strong>. Why? 1 PB on HDD: ~\$15,000; SSD: ~\$50,000; tape: \$5,000 — and tape draws zero power offline. The trade: `prefetch SRR123` on a cold sample may wait 30 min for a robot to grab the cartridge and mount it. SRA offers a "warm" (tape→SSD) staging service for this reason.</p>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="決策樹" data-en="DECISION TREE">何時擴什麼？</div>
+<h2 data-zh="七、🌳 決策樹：何時加 cache？擴 RAM？換 SSD？用 GPU HBM？" data-en="VII. 🌳 Decision Tree: Add Cache, RAM, SSD, or HBM?">七、🌳 效能瓶頸決策樹</h2>
+<div class="decision-tree">
+<h4>🌳 <span data-zh="記憶體 / 儲存升級決策樹" data-en="Memory & Storage Upgrade Decision Tree">記憶體 / 儲存升級決策樹</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>程式「重複存取小資料集」(&lt; 32 MB)？<span class="dt-arrow">→ 是 →</span> 改善 <strong>cache 局部性</strong>（blocking、loop tiling、SoA ↔ AoS、用 NumPy/BLAS 取代純 Python）。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>系統頻繁「swap to disk」(<code>vmstat</code> 看到 si/so &gt; 0)？<span class="dt-arrow">→ 是 →</span> <strong>加 RAM</strong>；32 GB → 64 GB 通常見效。確認可用 ECC RAM 對長時間 HPC 很重要。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>磁碟 I/O wait &gt; 30%（<code>iostat -x 1</code>）？<span class="dt-arrow">→ 是 →</span> 換成 <strong>NVMe SSD</strong>（PCIe 5.0），效能可飆 50–100 倍。HDD 適合冷備份。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>GPU 算力閒置但 HBM 滿載（<code>nvidia-smi</code> 看 MEM 90%+、SM &lt; 50%）？<span class="dt-arrow">→ 是 →</span> 升級到 <strong>HBM3 / HBM3e</strong>（H100/B200），或啟用 gradient checkpointing 減少 activation。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>單機 RAM 已達上限但仍不夠（LLM 訓練 / 千萬細胞 atlas）？<span class="dt-arrow">→ 是 →</span> 用 <strong>CXL 3.0 memory pool</strong>、Dask 分散式記憶體、或 <strong>backed-mode HDF5/Zarr</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>冷資料佔大量空間（&gt; 1 PB 歸檔）？<span class="dt-arrow">→ 是 →</span> 用 <strong>磁帶 / 物件儲存冷層</strong>（AWS Glacier Deep Archive \$1/TB/月）。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Program repeatedly hits a small working set (&lt; 32 MB)? <span class="dt-arrow">→ Yes →</span> Improve <strong>cache locality</strong> (blocking, tiling, SoA ↔ AoS; replace pure Python loops with NumPy/BLAS).</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>System swapping to disk (<code>vmstat</code> shows si/so &gt; 0)? <span class="dt-arrow">→ Yes →</span> <strong>Add RAM</strong>; 32 → 64 GB usually unblocks. ECC matters for long HPC jobs.</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Disk I/O wait &gt; 30% (<code>iostat -x 1</code>)? <span class="dt-arrow">→ Yes →</span> Move to <strong>NVMe SSD</strong> (PCIe 5.0) — 50–100× faster. Keep HDDs for cold backup.</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>GPU compute idle but HBM saturated (<code>nvidia-smi</code> MEM 90%+, SM &lt; 50%)? <span class="dt-arrow">→ Yes →</span> Upgrade to <strong>HBM3 / HBM3e</strong> (H100/B200), or enable gradient checkpointing.</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>Single-node RAM maxed but still short (LLM training / 10 M-cell atlas)? <span class="dt-arrow">→ Yes →</span> Use <strong>CXL 3.0 memory pool</strong>, Dask distributed memory, or <strong>backed-mode HDF5/Zarr</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>Huge cold-data archive (&gt; 1 PB)? <span class="dt-arrow">→ Yes →</span> <strong>Tape / cold object storage</strong> (AWS Glacier Deep Archive ~\$1/TB/mo).</div></div>
+</div>
+</div>
+
+<div class="callout danger"><span class="callout-icon">🚨</span><div>
+<div data-lang="zh"><strong>2026 趨勢：</strong>① <strong>HBM3e</strong>（堆疊式 DRAM）+ AI 加速器，頻寬達 8 TB/s；② <strong>CXL 3.0</strong> 讓記憶體可跨機架共享；③ <strong>Storage-Class Memory</strong>（Intel Optane 雖已停產，但 MRAM、ReRAM 取而代之）；④ <strong>Computational Storage</strong>（SSD 內建 CPU，就地處理資料，省 PCIe 頻寬）；⑤ <strong>Compute-in-memory (CIM)</strong>：在 DRAM 內就地做矩陣乘法，省下大半搬運能耗（適合 LLM 推論）。</div>
+<div data-lang="en"><strong>2026 trends:</strong> (1) <strong>HBM3e</strong> stacked DRAM + AI accelerators hits 8 TB/s bandwidth; (2) <strong>CXL 3.0</strong> enables rack-scale memory pooling; (3) <strong>Storage-Class Memory</strong> (Optane sunset; MRAM/ReRAM rising); (4) <strong>Computational Storage</strong> — SSDs with onboard CPUs that process data in place; (5) <strong>Compute-in-memory (CIM)</strong> — matrix mul inside DRAM, slashing data-movement energy (ideal for LLM inference).</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="程式碼" data-en="CODE">Code Tabs</div>
+<h2 data-zh="八、Code-tabs：Python + R + Pseudocode" data-en="VIII. Code Tabs: Python + R + Pseudocode">八、Code-tabs</h2>
+<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'r1')">R</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># NumPy 預設 row-major (C-order)：橫向掃描遠快於直向掃描</span>
+<span class="comment"># NumPy default is row-major (C-order): scanning rows >> scanning columns</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np, time
+N = <span class="num">5000</span>
+a = np.<span class="func">ones</span>((N, N), dtype=<span class="str">'float32'</span>)   <span class="comment"># 100 MB array</span>
+
+<span class="comment"># Row-major：連續位址 → cache 命中率高</span>
+t = time.<span class="func">perf_counter</span>(); s = <span class="num">0.0</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="func">range</span>(N):
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="func">range</span>(N): s += a[i, j]
+<span class="func">print</span>(<span class="str">f"Row-major:    {time.perf_counter()-t:.2f}s"</span>)
+
+<span class="comment"># Column-major：每次跳 N*4 byte → 大量 cache miss</span>
+t = time.<span class="func">perf_counter</span>(); s = <span class="num">0.0</span>
+<span class="kw">for</span> j <span class="kw">in</span> <span class="func">range</span>(N):
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="func">range</span>(N): s += a[i, j]
+<span class="func">print</span>(<span class="str">f"Column-major: {time.perf_counter()-t:.2f}s"</span>)
+
+<span class="comment"># 向量化（SIMD）→ 最快 100×</span>
+t = time.<span class="func">perf_counter</span>(); s = a.<span class="func">sum</span>()
+<span class="func">print</span>(<span class="str">f"Vectorized:   {time.perf_counter()-t:.3f}s"</span>)
+
+<span class="comment"># Bioinformatics: memory-mapped 讀大型 FASTQ index</span>
+<span class="kw">import</span> mmap
+<span class="kw">with</span> <span class="func">open</span>(<span class="str">'hg38.fa.fai'</span>, <span class="str">'rb'</span>) <span class="kw">as</span> f:
+    mm = mmap.<span class="func">mmap</span>(f.<span class="func">fileno</span>(), <span class="num">0</span>, access=mmap.ACCESS_READ)
+    <span class="func">print</span>(mm[:<span class="num">256</span>])  <span class="comment"># 不把整個檔案讀進 RAM</span></pre></div>
+<div class="code-tab-content" id="r1"><pre><span class="comment"># R: microbenchmark 量測 row vs column 走訪</span>
+<span class="kw">library</span>(microbenchmark)
+N <- <span class="num">5000L</span>
+A <- <span class="func">matrix</span>(<span class="num">1</span>, N, N)              <span class="comment"># R 預設 column-major！與 NumPy 相反</span>
+
+row_walk <- <span class="kw">function</span>() { s <- <span class="num">0</span>; <span class="kw">for</span> (i <span class="kw">in</span> <span class="num">1</span>:N) <span class="kw">for</span> (j <span class="kw">in</span> <span class="num">1</span>:N) s <- s + A[i,j]; s }
+col_walk <- <span class="kw">function</span>() { s <- <span class="num">0</span>; <span class="kw">for</span> (j <span class="kw">in</span> <span class="num">1</span>:N) <span class="kw">for</span> (i <span class="kw">in</span> <span class="num">1</span>:N) s <- s + A[i,j]; s }
+<span class="comment"># 在 R 裡 col_walk 比 row_walk 快！因 R 是 column-major</span>
+<span class="func">microbenchmark</span>(row_walk(), col_walk(), times=<span class="num">3L</span>)
+
+<span class="comment"># 用 data.table 的 fread 處理大型 TSV (mmap-friendly)</span>
+<span class="kw">library</span>(data.table)
+dt <- <span class="func">fread</span>(<span class="str">"gtex_expression.tsv.gz"</span>, nThread=<span class="num">8</span>)  <span class="comment"># 比 read.table 快 10×</span>
+
+<span class="comment"># Bioconductor: DelayedArray 串流大型矩陣（不全部讀進 RAM）</span>
+<span class="kw">library</span>(HDF5Array)
+mat <- <span class="func">HDF5Array</span>(<span class="str">"sc_atlas.h5"</span>, name=<span class="str">"counts"</span>)
+<span class="func">dim</span>(mat)                 <span class="comment"># [1] 30000 1500000  — 但只用 200 MB RAM</span>
+<span class="func">colSums</span>(mat[, <span class="num">1</span>:<span class="num">1000</span>])     <span class="comment"># 只讀需要的 1000 個細胞</span></pre></div>
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// Cache-blocking 矩陣乘法 / Cache-blocked matrix multiplication</span>
+<span class="kw">function</span> <span class="func">MatMulBlocked</span>(A, B, C, N, BLOCK):
+    <span class="kw">for</span> ii <span class="kw">from</span> <span class="num">0</span> <span class="kw">to</span> N <span class="kw">step</span> BLOCK:
+        <span class="kw">for</span> jj <span class="kw">from</span> <span class="num">0</span> <span class="kw">to</span> N <span class="kw">step</span> BLOCK:
+            <span class="kw">for</span> kk <span class="kw">from</span> <span class="num">0</span> <span class="kw">to</span> N <span class="kw">step</span> BLOCK:
+                <span class="comment">// 在 BLOCK×BLOCK 子矩陣內完成全部乘加，</span>
+                <span class="comment">// 讓子矩陣完全裝進 L1 / L2 cache</span>
+                <span class="kw">for</span> i <span class="kw">from</span> ii <span class="kw">to</span> min(ii+BLOCK, N):
+                    <span class="kw">for</span> j <span class="kw">from</span> jj <span class="kw">to</span> min(jj+BLOCK, N):
+                        <span class="kw">for</span> k <span class="kw">from</span> kk <span class="kw">to</span> min(kk+BLOCK, N):
+                            C[i][j] += A[i][k] × B[k][j]
+    <span class="kw">return</span> C
+
+<span class="comment">// TLB-friendly 大頁配置（Linux Transparent Huge Pages）</span>
+<span class="kw">function</span> <span class="func">AllocateHugePages</span>(size):
+    <span class="comment">// 用 2 MB 頁 (而非 4 KB) 減少 TLB miss</span>
+    ptr = mmap(NULL, size, PROT_RW, MAP_HUGETLB | MAP_PRIVATE, -1, 0)
+    <span class="kw">return</span> ptr
+    <span class="comment">// 對 100 GB 工作集，TLB miss 從 25 M 降至 50 K → 提速 30%</span></pre></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="常見誤解" data-en="MISCONCEPTIONS">常見陷阱</div>
+<h2 data-zh="九、常見誤解與陷阱" data-en="IX. Common Misconceptions & Pitfalls">九、常見誤解與陷阱</h2>
+<div class="card-grid cols-2">
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4 data-zh="❌ 誤解 1：SSD 沒有讀寫上限" data-en="❌ Myth 1: SSDs have no write limit">❌ SSD 沒有讀寫上限</h4>
+<div data-lang="zh"><p><strong>真相：</strong>NAND Flash 每個 cell 有「<strong>P/E cycles (program/erase)</strong>」壽命：SLC ~100,000 次、MLC ~10,000、TLC ~3,000、QLC ~1,000。消費級 1 TB SSD 的 TBW (Total Bytes Written) 通常 600 TB——若每天寫 100 GB（HPC 暫存場景），不到 20 年壞光。bioinformatics 工作站常因為頻繁 fastp/BWA 中間檔讀寫而早夭。建議：用 <strong>tmpfs (RAM disk)</strong> 跑中間檔、把 SSD 留給結果。</p></div>
+<div data-lang="en"><p><strong>Truth:</strong> Each NAND cell has a <strong>P/E cycle</strong> budget: SLC ~100k, MLC ~10k, TLC ~3k, QLC ~1k. A consumer 1 TB SSD's TBW is ~600 TB — at 100 GB/day (HPC scratch), it dies in under 20 years. Bioinformatics workstations often die early from fastp/BWA scratch writes. Tip: use <strong>tmpfs (RAM disk)</strong> for scratch; reserve SSD for results.</p></div></div>
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4 data-zh="❌ 誤解 2：RAM 越大越好" data-en="❌ Myth 2: More RAM is always better">❌ RAM 越大越好</h4>
+<div data-lang="zh"><p><strong>真相：</strong>RAM 容量大不代表「<strong>頻寬</strong>」大。一台插了 1 TB DDR4-2666 的伺服器，頻寬可能還不如 64 GB DDR5-6400 的工作站。對 STAR、AlphaFold、GWAS 這類記憶體頻寬主導的工作，<strong>DRAM 頻寬比容量更重要</strong>。先看 <code>mbw</code> 或 <code>stream</code> benchmark 結果再決定買哪台。</p></div>
+<div data-lang="en"><p><strong>Truth:</strong> Capacity ≠ bandwidth. A box with 1 TB DDR4-2666 may have lower bandwidth than a 64 GB DDR5-6400 workstation. For STAR, AlphaFold, GWAS — all bandwidth-bound — <strong>DRAM bandwidth matters more than capacity</strong>. Check <code>mbw</code> / <code>stream</code> benchmarks before buying.</p></div></div>
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4 data-zh="❌ 誤解 3：Virtual memory 是「免費」的記憶體" data-en="❌ Myth 3: Virtual memory is 'free' extra RAM">❌ Virtual memory 是免費的</h4>
+<div data-lang="zh"><p><strong>真相：</strong>swap 一啟用，page fault 從 100 ns 變 100 µs（SSD）或 10 ms（HDD），效能斷崖。HPC 跑 BWA 看到 swap 滿載要立刻 kill—— OS 並不會「智慧地避免崩潰」，而是讓你的程式跑慢 1000 倍。最佳實踐：在 HPC 上禁用 swap（<code>swapoff -a</code>），讓 OOM Killer 乾脆殺掉超量任務，比拖死整台機器好。</p></div>
+<div data-lang="en"><p><strong>Truth:</strong> Swap turns 100 ns page faults into 100 µs (SSD) or 10 ms (HDD) — a performance cliff. If BWA on HPC starts swapping, kill it immediately. The OS doesn't "gracefully degrade" — it lets your job crawl 1000× slower. Best practice: disable swap on HPC (<code>swapoff -a</code>); let the OOM Killer clean up over-runs.</p></div></div>
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4 data-zh="❌ 誤解 4：cache 由 OS 管理" data-en="❌ Myth 4: Cache is managed by the OS">❌ Cache 由 OS 管理</h4>
+<div data-lang="zh"><p><strong>真相：</strong>CPU cache（L1/L2/L3）<strong>完全由硬體自動管理</strong>，OS 看不到也碰不到。OS 管的是 page cache（DRAM 中的檔案 cache）和 swap。Cache locality 優化是「<strong>程式設計師的責任</strong>」——選對 row-major / column-major、用 blocking、選好 data layout——OS 救不了你。</p></div>
+<div data-lang="en"><p><strong>Truth:</strong> CPU caches (L1/L2/L3) are <strong>fully managed by hardware</strong> — the OS can't see or touch them. The OS manages the page cache (file cache in DRAM) and swap. Cache locality is the <strong>programmer's job</strong> — pick row/column-major, use blocking, design data layout. The OS can't save you.</p></div></div>
+</div>
+</section>
+
+<section class="quiz-section">
+<h3>📝 <span data-zh="自我檢測（5 題）" data-en="Self-Check (5 Qs)">自我檢測</span></h3>
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">1. 一次 cache line 通常是多少 byte？</p>
+<p data-lang="en">1. How many bytes are in a typical cache line?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 8 byte</span><span data-lang="en">A. 8 bytes</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 64 byte</span><span data-lang="en">B. 64 bytes</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 4096 byte</span><span data-lang="en">C. 4096 bytes</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 1 MB</span><span data-lang="en">D. 1 MB</span></div>
+</div><div class="quiz-feedback" id="fb1"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">2. TLB 主要的功能是什麼？</p>
+<p data-lang="en">2. What is the main purpose of the TLB?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 快取最近執行的指令</span><span data-lang="en">A. Cache recently executed instructions</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 預測分支跳轉方向</span><span data-lang="en">B. Predict branch directions</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 快取 page table 的轉址結果，加速虛擬位址轉換</span><span data-lang="en">C. Cache page-table translations to accelerate virtual-address lookup</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 緩衝 I/O 資料</span><span data-lang="en">D. Buffer I/O data</span></div>
+</div><div class="quiz-feedback" id="fb2"></div></div>
+
+<div class="quiz-q" data-answer="3">
+<p data-lang="zh">3. 用 Python NumPy 的 2D 陣列，「按欄走訪」比「按列走訪」慢得多，主要原因是？</p>
+<p data-lang="en">3. With Python NumPy 2D arrays, column-wise traversal is much slower than row-wise. Why?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. NumPy 對欄存取有 bug</span><span data-lang="en">A. NumPy has a bug for column access</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. CPU 不支援 column-major</span><span data-lang="en">B. CPUs do not support column-major</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Python 直譯器在 column 模式慢</span><span data-lang="en">C. The Python interpreter is slower in column mode</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. NumPy 預設 row-major，按欄走訪破壞空間局部性，cache miss 大增</span><span data-lang="en">D. NumPy is row-major; column traversal breaks spatial locality, exploding cache misses</span></div>
+</div><div class="quiz-feedback" id="fb3"></div></div>
+
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">4. 為什麼 STAR aligner 對齊人類 RNA-seq 通常需要 ~30 GB RAM？</p>
+<p data-lang="en">4. Why does STAR typically need ~30 GB RAM to align human RNA-seq?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. RNA-seq 原始 FASTQ 檔案本身就有 30 GB</span><span data-lang="en">A. The FASTQ file is itself 30 GB</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. STAR 需要把整個基因組索引（含 suffix array）載入 DRAM 才能 O(1) 隨機存取</span><span data-lang="en">B. STAR loads the entire genome index (with suffix array) into DRAM for O(1) random access</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Python 的 GIL 強制使用 30 GB</span><span data-lang="en">C. Python's GIL forces 30 GB</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. STAR 的 bug</span><span data-lang="en">D. A STAR bug</span></div>
+</div><div class="quiz-feedback" id="fb4"></div></div>
+
+<div class="quiz-q" data-answer="0">
+<p data-lang="zh">5. 在一個記憶體頻寬主導的 GPU 推論工作（如 ESM-2 15B），H100 80GB 比 A100 80GB 快 1.5–2 倍，主要原因是？</p>
+<p data-lang="en">5. On a memory-bandwidth-bound GPU inference task (e.g. ESM-2 15B), H100 80GB beats A100 80GB by 1.5–2×. Why?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. HBM3 (H100) 頻寬 3.35 TB/s &gt; HBM2e (A100) 2 TB/s</span><span data-lang="en">A. HBM3 (H100) 3.35 TB/s &gt; HBM2e (A100) 2 TB/s</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. H100 容量更大</span><span data-lang="en">B. H100 has more capacity</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. H100 用 GDDR6X</span><span data-lang="en">C. H100 uses GDDR6X</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. H100 算力（TFLOPS）總是用滿</span><span data-lang="en">D. H100 always saturates compute</span></div>
+</div><div class="quiz-feedback" id="fb5"></div></div>
+</section>
+
+<section class="section" style="background:#fef3c7;border-radius:14px;padding:32px;">
+<div class="section-label">💭 <span data-zh="延伸思考" data-en="DISCUSSION">延伸思考</span></div>
+<h2 data-zh="十、延伸思考與討論題" data-en="X. Discussion & Reflection">十、延伸思考</h2>
+<ol style="margin-left:20px;line-height:1.9;color:var(--c-ink);">
+<li><strong data-zh="CXL 3.0 memory pooling 會改變 HPC 嗎？" data-en="Will CXL 3.0 memory pooling reshape HPC?">CXL 3.0 memory pooling 會改變 HPC 嗎？</strong><br>
+<span data-lang="zh">想像未來 HPC 機架上，CPU 與 1 TB 池化 DRAM 透過 CXL 連接——任何節點都能存取任何記憶體。這會讓「單機 RAM 上限」變成歷史名詞嗎？對 LLM 訓練（需要 TB 級 KV-cache）、大規模 scRNA-seq atlas（10 M+ 細胞）這類工作，是不是終於不必再用 Dask/Spark 分散式記憶體？延遲懲罰（CXL ~200 ns vs 本地 DRAM ~80 ns）是否能被 NUMA-aware 排程吸收？</span>
+<span data-lang="en">Imagine an HPC rack where CPUs share a 1 TB pooled DRAM over CXL — any node accesses any memory. Does "single-node RAM limit" become obsolete? For LLM training (TB-scale KV-cache) or 10 M-cell scRNA-seq atlases, can we finally drop Dask/Spark? Can NUMA-aware scheduling hide the latency penalty (~200 ns CXL vs ~80 ns local DRAM)?</span></li>
+<li><strong data-zh="Compute-in-Memory 會是下一步嗎？" data-en="Is Compute-in-Memory the next step?">Compute-in-Memory 是下一步嗎？</strong><br>
+<span data-lang="zh">傳統電腦 95% 的能量花在「搬運資料」（DRAM ↔ CPU），只有 5% 用於真正運算。Samsung、SK Hynix、Mythic AI 正在做「<strong>處理器嵌進 DRAM</strong>」——在每個 DRAM bank 旁邊放小型矩陣乘法單元，資料不必離開 DRAM 就能算。對 LLM 推論可降低 10× 能耗、3× 延遲。但程式設計模型完全不同（不再是 CPU/GPU/RAM 的明確劃分），對 PyTorch/JAX 編譯器是巨大挑戰。bioinformatics 會優先採用嗎（如 BLAST k-mer 比對）？</span>
+<span data-lang="en">In classical computers, 95% of energy goes to moving data (DRAM ↔ CPU), only 5% to actual compute. Samsung, SK Hynix, Mythic AI are embedding small matrix multipliers next to each DRAM bank — data never leaves DRAM. LLM inference: 10× lower energy, 3× lower latency. But the programming model is unfamiliar (no clear CPU/GPU/RAM split), a huge challenge for PyTorch/JAX compilers. Will bioinformatics (e.g., BLAST k-mer matching) be an early adopter?</span></li>
+</ol>
+</section>
+
+<nav class="page-nav">
+<a href="cpu-arch.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 4: CPU 與計算機組織" data-en="Ch 4: CPU &amp; Computer Organization">Ch 4: CPU 與計算機組織</span></a>
+<a href="os.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 6: 作業系統" data-en="Ch 6: Operating Systems">Ch 6: 作業系統</span></a>
+</nav>
+</main>
+<footer class="site-footer">© Charlene — Introduction to Computer Science · Interactive Tutorial</footer>
+<script src="i18n.js"></script>
+<script>
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
+function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
+
+// Latency chart (log scale, nanoseconds)
+const latencyLabels = ['Register','L1','L2','L3','HBM3e','DRAM','NVMe SSD','SATA SSD','HDD','Tape (load)'];
+const latencyNs     = [0.3, 1, 3, 10, 20, 80, 50_000, 200_000, 5_000_000, 60_000_000_000];
+new Chart(document.getElementById('latencyChart'),{
+  type:'bar',
+  data:{labels:latencyLabels,datasets:[{label:'Access latency (ns, log scale)',data:latencyNs,
+    backgroundColor:latencyNs.map(v=>v<100?'rgba(22,163,74,.8)':v<1e5?'rgba(218,165,32,.85)':'rgba(220,38,38,.8)'),
+    borderColor:'rgba(15,23,42,.4)',borderWidth:1}]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>{
+      const v=c.parsed.y;
+      if(v<1000) return v+' ns';
+      if(v<1e6)  return (v/1000).toFixed(1)+' µs';
+      if(v<1e9)  return (v/1e6).toFixed(1)+' ms';
+      return (v/1e9).toFixed(1)+' s';
+    }}}},
+    scales:{y:{type:'logarithmic',title:{display:true,text:'Latency (nanoseconds, log)'},min:0.1,max:1e11}}}
+});
+
+// Cache locality simulator
+const grid = document.getElementById('cacheGrid');
+const GRID_N = 8;
+let mode = 'row';
+let cells = [];
+let cachedLine = -1;  // which row currently in cache (1 line cache for demo)
+let hits = 0, misses = 0;
+let cursor = 0;  // index 0..63
+
+function buildGrid(){
+  grid.innerHTML='';
+  cells=[];
+  for(let r=0;r<GRID_N;r++){
+    for(let c=0;c<GRID_N;c++){
+      const d=document.createElement('div');
+      d.style.cssText='width:32px;height:32px;border:1px solid #cbd5e1;border-radius:4px;background:#fff;font-size:.7rem;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-family:monospace;transition:all .25s';
+      d.textContent=r*GRID_N+c;
+      cells.push(d);
+      grid.appendChild(d);
+    }
+  }
+}
+function resetSim(){cachedLine=-1;hits=0;misses=0;cursor=0;updateStats();buildGrid();}
+function updateStats(){
+  document.getElementById('hitCount').textContent=hits;
+  document.getElementById('missCount').textContent=misses;
+  const total=hits+misses;
+  const rate=total===0?0:Math.round(hits/total*100);
+  document.getElementById('hitRate').textContent=rate+'%';
+  document.getElementById('hitRateEn').textContent=rate+'%';
+}
+function step(){
+  if(cursor>=GRID_N*GRID_N) return;
+  let r,c;
+  if(mode==='row'){ r=Math.floor(cursor/GRID_N); c=cursor%GRID_N; }
+  else            { c=Math.floor(cursor/GRID_N); r=cursor%GRID_N; }
+  const idx=r*GRID_N+c;
+  const isHit = (cachedLine===r);
+  if(isHit){ hits++; cells[idx].style.background='#bbf7d0'; cells[idx].style.color='#166534'; }
+  else     { misses++; cells[idx].style.background='#fecaca'; cells[idx].style.color='#991b1b'; cachedLine=r;
+             // highlight new cache line
+             for(let cc=0;cc<GRID_N;cc++){ if(cc!==c){ cells[r*GRID_N+cc].style.background='#fef9c3'; } }
+           }
+  cells[idx].style.fontWeight='700';
+  cursor++;
+  updateStats();
+}
+document.getElementById('modeRow').onclick=()=>{mode='row';document.getElementById('modeRow').classList.add('active');document.getElementById('modeCol').classList.remove('active');resetSim();};
+document.getElementById('modeCol').onclick=()=>{mode='col';document.getElementById('modeCol').classList.add('active');document.getElementById('modeRow').classList.remove('active');resetSim();};
+document.getElementById('resetSim').onclick=resetSim;
+document.getElementById('stepBtn').onclick=step;
+document.getElementById('autoBtn').onclick=()=>{const t=setInterval(()=>{if(cursor>=GRID_N*GRID_N){clearInterval(t);return;}step();},80);};
+buildGrid();
+
+// Quiz
+const QF={zh:{
+q1_y:'絕大多數 x86/ARM CPU 的 cache line 都是 64 byte。',q1_n:'答案 B (64 B)。',
+q2_y:'TLB 是 page table 的 cache，沒有它每次存取都要走慢速 page-table walk。',q2_n:'答案 C。',
+q3_y:'row-major 表示同一列元素在記憶體中連續，按欄走會每次跨 N×4 byte → 不命中 cache。',q3_n:'答案 D。',
+q4_y:'人類基因組 suffix array + junction database ~25 GB；演算法需 O(1) 隨機存取，必須全載入 DRAM。',q4_n:'答案 B。',
+q5_y:'HBM3 (3.35 TB/s) 比 HBM2e (2 TB/s) 頻寬高，memory-bound 工作直接受益。',q5_n:'答案 A。'
+},en:{
+q1_y:'64 bytes is standard for nearly all x86/ARM CPUs.',q1_n:'Answer: B.',
+q2_y:'TLB caches page-table entries — without it, every access would do a slow page-table walk.',q2_n:'Answer: C.',
+q3_y:'Row-major means row elements are contiguous; column traversal strides N×4 bytes, missing the cache.',q3_n:'Answer: D.',
+q4_y:'Suffix array + junction DB ≈ 25 GB; algorithm needs O(1) random access, so it must live in DRAM.',q4_n:'Answer: B.',
+q5_y:'HBM3 (3.35 TB/s) has higher bandwidth than HBM2e (2 TB/s); bandwidth-bound jobs benefit directly.',q5_n:'Answer: A.'
+}};
+document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
+</script>
+</body></html>

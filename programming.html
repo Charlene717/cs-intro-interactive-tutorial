@@ -12,200 +12,568 @@
 <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
 <header class="page-hero"><div class="step-badge">CHAPTER 9 / 16</div>
 <h1 data-zh="程式設計入門" data-en="Introduction to Programming">程式設計入門</h1>
-<p class="subtitle" data-lang="zh">程式語言是「人類意圖」與「機器指令」之間的橋樑——從 C 的低階控制、Python 的可讀性、到 Rust 的安全保證，每種語言都是一套取捨。</p>
-<p class="subtitle" data-lang="en">A programming language is the bridge between human intent and machine instructions — C for low-level control, Python for readability, Rust for safety. Every language is a set of trade-offs.</p>
+<p class="subtitle" data-lang="zh">從 1957 年 Fortran 把人類從機器碼解放，到 2026 年用自然語言就能 vibe coding——程式語言是人類意圖與機器指令之間最重要的橋樑。本章從零帶你看懂程式語言的世界。</p>
+<p class="subtitle" data-lang="en">From Fortran liberating humans from machine code in 1957 to vibe-coding in natural language in 2026 — programming languages are the most important bridge between human intent and machine instructions. This chapter walks you through it from zero.</p>
 </header>
 <main class="content-wrap">
 
 <section class="section">
-<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
-<h2 data-zh="什麼是程式語言？" data-en="What is a programming language?">什麼是程式語言？</h2>
-<div data-lang="zh"><p>CPU 只看得懂 0 與 1 組成的「機器碼」，但人類大腦無法直接寫機器碼。<strong>程式語言</strong>提供一套有結構、可閱讀的語法，讓人寫出意圖，再由<strong>編譯器 (compiler)</strong> 或<strong>直譯器 (interpreter)</strong> 翻譯成 CPU 能執行的指令。</p>
-<p>2026 年全世界有超過 700 種正在使用的程式語言，但「主流」大約 20 種。選對語言可以決定一個專案的成敗。</p></div>
-<div data-lang="en"><p>A CPU only understands binary <strong>machine code</strong>, but humans cannot write that directly. A <strong>programming language</strong> gives us readable syntax to express intent, which a <strong>compiler</strong> or <strong>interpreter</strong> translates into machine instructions.</p>
-<p>As of 2026, 700+ programming languages are in active use, with ~20 mainstream ones. Choosing the right one can make or break a project.</p></div>
-<div class="callout tip"><span class="callout-icon">💡</span><div>
-<span data-lang="zh"><strong>核心觀念：</strong>不存在「最好」的語言，只有「最合適」的語言。Web 前端用 JavaScript / TypeScript、AI 用 Python、系統程式用 Rust / C++、行動 App 用 Swift / Kotlin——每種語言都針對某個領域最佳化。</span>
-<span data-lang="en"><strong>Core idea:</strong> There is no "best" language, only the "right" one. JS/TS for web front-end, Python for AI, Rust/C++ for systems, Swift/Kotlin for mobile — each is optimized for a domain.</span>
-</div></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="翻譯方式" data-en="TRANSLATION">編譯 vs 直譯 vs JIT</div>
-<h2 data-zh="一、編譯式、直譯式與 JIT" data-en="I. Compiled, Interpreted, and JIT">一、編譯式、直譯式與 JIT</h2>
-<table class="comp-table">
-<thead><tr><th data-zh="類型" data-en="Type">類型</th><th data-zh="翻譯時機" data-en="Translation timing">翻譯時機</th><th data-zh="速度 / 啟動" data-en="Speed / Startup">速度 / 啟動</th><th data-zh="代表語言" data-en="Examples">代表語言</th></tr></thead>
-<tbody>
-<tr><td data-lang="zh"><strong>編譯式</strong></td><td data-lang="en"><strong>Compiled</strong></td><td data-lang="zh">執行前一次轉成機器碼</td><td data-lang="en">All to machine code before run</td><td data-lang="zh">執行最快 / 編譯需時</td><td data-lang="en">Fastest exec / slow build</td><td>C, C++, Rust, Go</td></tr>
-<tr><td data-lang="zh"><strong>直譯式</strong></td><td data-lang="en"><strong>Interpreted</strong></td><td data-lang="zh">執行時逐行翻譯</td><td data-lang="en">Line by line at runtime</td><td data-lang="zh">較慢 / 啟動快</td><td data-lang="en">Slower / fast startup</td><td>Python, Ruby, Bash</td></tr>
-<tr><td data-lang="zh"><strong>位元碼 + JIT</strong></td><td data-lang="en"><strong>Bytecode + JIT</strong></td><td data-lang="zh">先編成位元碼，執行時 JIT 編譯熱點</td><td data-lang="en">Compile to bytecode; JIT hot paths at runtime</td><td data-lang="zh">中等 / 啟動稍慢</td><td data-lang="en">Mid / mid startup</td><td>Java, JavaScript (V8), C#, PyPy</td></tr>
-</tbody></table>
-<div class="callout warn"><span class="callout-icon">⚠️</span><div>
-<div data-lang="zh"><strong>2026 趨勢：</strong>邊界正在模糊。Python 3.13+ 引入實驗性 JIT；CPython 也持續嵌入更多 C 加速器。Mojo 直接編譯 Python 子集成原生碼，速度可達 35,000×。</div>
-<div data-lang="en"><strong>2026 trend:</strong> The line is blurring. Python 3.13+ ships an experimental JIT; CPython embeds more C accelerators. Mojo compiles a Python superset to native code with up to 35,000× speedups.</div>
-</div></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="語言世代" data-en="GENERATIONS">語言世代</div>
-<h2 data-zh="二、程式語言的五個世代" data-en="II. Five Generations of Programming Languages">二、五代程式語言</h2>
-<div class="workflow">
-<div class="workflow-step" data-step="1G"><h4>1GL — Machine Code</h4>
-<div data-lang="zh"><p>純 0/1 二進位指令，直接餵給 CPU。1940 年代靠打孔卡輸入，極端難寫、難 debug。</p></div>
-<div data-lang="en"><p>Raw 0/1 binary fed directly to the CPU. In the 1940s entered via punched cards — nearly impossible to write or debug.</p></div></div>
-<div class="workflow-step" data-step="2G"><h4>2GL — Assembly</h4>
-<div data-lang="zh"><p>以助憶符號代替二進位（MOV, ADD, JMP）。1 對 1 對應到機器碼，但仍極度依賴 CPU 架構。</p></div>
-<div data-lang="en"><p>Mnemonics replace binary (MOV, ADD, JMP). One-to-one with machine code, still very CPU-specific.</p></div></div>
-<div class="workflow-step" data-step="3G"><h4>3GL — High-Level</h4>
-<div data-lang="zh"><p>Fortran (1957)、COBOL、C、Java、Python——一行可以對應數十個機器指令，可在不同 CPU 上 portable。</p></div>
-<div data-lang="en"><p>Fortran (1957), COBOL, C, Java, Python — one line maps to dozens of machine instructions and is portable across CPUs.</p></div></div>
-<div class="workflow-step" data-step="4G"><h4>4GL — Declarative</h4>
-<div data-lang="zh"><p>SQL、MATLAB、R——「描述想要什麼」而非「怎麼做」。針對特定領域 (database、數值計算) 最佳化。</p></div>
-<div data-lang="en"><p>SQL, MATLAB, R — describe <em>what</em> you want, not <em>how</em>. Optimized for specific domains (DB, numerical computing).</p></div></div>
-<div class="workflow-step" data-step="5G"><h4>5GL — Logic / AI</h4>
-<div data-lang="zh"><p>Prolog、Mercury，以邏輯規則推導。2026 「prompt engineering」與 LLM-driven coding 也常被視為新一代 5GL。</p></div>
-<div data-lang="en"><p>Prolog, Mercury — solve via logical rules. In 2026, prompt engineering and LLM-driven coding are often viewed as a new 5GL.</p></div></div>
-</div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="程式典範" data-en="PARADIGMS">程式典範</div>
-<h2 data-zh="三、五大程式設計典範" data-en="III. Five Programming Paradigms">三、五大程式設計典範</h2>
-<div class="card-grid cols-3">
-<div class="card"><h4>📜 Imperative / Procedural</h4><div data-lang="zh"><p>「一步一步告訴電腦怎麼做」。以變數、指派、迴圈為核心。C、Pascal、Go 偏向此典範。</p></div><div data-lang="en"><p>Tell the computer step-by-step what to do. Centers on variables, assignment, loops. C, Pascal, Go lean here.</p></div></div>
-<div class="card"><h4>🧱 Object-Oriented (OOP)</h4><div data-lang="zh"><p>把資料 (state) 和行為 (method) 包成「物件」。四大支柱：封裝、繼承、多型、抽象。Java、C++、Python、C# 都支援。</p></div><div data-lang="en"><p>Bundle data (state) and behavior (methods) into objects. Four pillars: encapsulation, inheritance, polymorphism, abstraction. Java, C++, Python, C# support OOP.</p></div></div>
-<div class="card"><h4>λ Functional</h4><div data-lang="zh"><p>把計算當作「數學函式」的求值，避免共享狀態與副作用。Haskell、Lisp、Erlang；Python/JS 也吸收許多 FP 特性 (map, filter, reduce)。</p></div><div data-lang="en"><p>Treat computation as evaluation of mathematical functions, avoiding shared state and side effects. Haskell, Lisp, Erlang; Python/JS absorbed many FP features (map, filter, reduce).</p></div></div>
-<div class="card"><h4>🧠 Logic</h4><div data-lang="zh"><p>以「事實」與「規則」描述問題，由系統推導答案。Prolog 是最典型。AI 推理引擎與 Datalog 是現代後繼者。</p></div><div data-lang="en"><p>State facts and rules; the system infers answers. Prolog is the classic. Modern descendants: AI reasoning engines and Datalog.</p></div></div>
-<div class="card"><h4>📋 Declarative</h4><div data-lang="zh"><p>「描述目標」而非「步驟」。SQL (查詢)、HTML/CSS (UI)、Terraform (基礎建設) 都是 declarative。</p></div><div data-lang="en"><p>Describe goals, not steps. SQL (queries), HTML/CSS (UI), Terraform (infrastructure) are all declarative.</p></div></div>
-<div class="card"><h4>🧬 OOP 四大支柱</h4><div data-lang="zh"><p><strong>封裝</strong>：state 隱藏在物件內；<strong>繼承</strong>：子類繼承父類；<strong>多型</strong>：同名方法在不同類別有不同實作；<strong>抽象</strong>：用介面隱藏細節。</p></div><div data-lang="en"><p><strong>Encapsulation</strong>: state hidden inside objects; <strong>Inheritance</strong>: subclass extends parent; <strong>Polymorphism</strong>: same method, different implementations; <strong>Abstraction</strong>: interfaces hide details.</p></div></div>
-</div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="2026 排行" data-en="2026 RANKING">2026 語言熱度</div>
-<h2 data-zh="四、互動：2026 主流程式語言熱度" data-en="IV. Interactive: 2026 Language Popularity">四、2026 程式語言熱度</h2>
-<div data-lang="zh"><p>下圖綜合 TIOBE / PYPL / GitHub 2026 Q1 數據，顯示十大主流語言的相對熱度。<strong>Python</strong> 因 AI 浪潮持續居冠；<strong>Rust</strong> 是成長最快的系統語言；<strong>TypeScript</strong> 在前端已超越 JavaScript 成為新預設。</p></div>
-<div data-lang="en"><p>Below: 2026 Q1 popularity of the top 10 languages (composite of TIOBE / PYPL / GitHub). <strong>Python</strong> stays #1 thanks to AI; <strong>Rust</strong> is the fastest-growing systems language; <strong>TypeScript</strong> has overtaken JavaScript as the front-end default.</p></div>
-<div class="interactive-panel">
-<div class="chart-container"><canvas id="langChart"></canvas></div>
-<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">資料來源：TIOBE Index + PYPL + GitHub Octoverse, 2026 Q1（合成估計）</span><span data-lang="en">Source: TIOBE Index + PYPL + GitHub Octoverse, 2026 Q1 (composite estimate)</span></p>
-</div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">學什麼？</div>
-<h2 data-zh="五、決策：我該學哪個語言？" data-en="V. Decision: Which language should I learn?">五、我該學什麼語言？</h2>
-<div class="decision-tree">
-<h4>🌳 <span data-zh="新手語言選擇樹" data-en="Beginner language picker">新手語言選擇樹</span></h4>
+<div class="section-label" data-zh="開場" data-en="OPENING">兩次語言革命</div>
+<h2 data-zh="從打孔卡到自然語言：兩次「程式革命」" data-en="From Punched Cards to Natural Language: Two Programming Revolutions">從打孔卡到自然語言：兩次「程式革命」</h2>
 <div data-lang="zh">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>第一次學程式？<span class="dt-arrow">→ 是 →</span> <strong>Python</strong>：語法接近英文、社群龐大、應用最廣。</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>想做 Web 前端 / 互動網頁？<span class="dt-arrow">→</span> <strong>TypeScript</strong>（JavaScript 加型別），搭配 React / Vue / Svelte。</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>系統程式、嵌入式、高效能？<span class="dt-arrow">→</span> <strong>Rust</strong>（記憶體安全 + 零成本抽象）；舊系統仍是 C / C++。</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>雲端後端、微服務？<span class="dt-arrow">→</span> <strong>Go</strong>（簡潔、原生並行、編譯為單一執行檔）。</div></div>
-<div class="dt-node"><span class="dt-q">Q5:</span><div>行動 App？<span class="dt-arrow">→</span> iOS → <strong>Swift</strong>；Android → <strong>Kotlin</strong>；跨平台 → <strong>Flutter (Dart)</strong> 或 React Native。</div></div>
-<div class="dt-node"><span class="dt-q">Q6:</span><div>AI / 機器學習？<span class="dt-arrow">→</span> <strong>Python + PyTorch</strong>；高效能推論可加 <strong>Mojo</strong> 或 C++/CUDA。</div></div>
+<p>1957 年的某個午後，IBM 的 John Backus 領導的小組終於讓 <strong>Fortran 編譯器</strong> 在 IBM 704 上跑通。在此之前，所有人都得寫機器碼或組合語言——一行錯就要花一週 debug。Fortran 出現後，一個科學家寫一個工程公式，只要按一個鍵，編譯器自動生成上百行機器碼。<strong>從此「寫程式」不再只是電機博士的工作，而是普通職業</strong>。</p>
+<p>2022 年 11 月 30 日，OpenAI 發布 ChatGPT。3 年後 (2026 年)，Claude Code、Cursor、Copilot 已能根據一句「幫我寫一個 FASTQ 品質過濾腳本」直接產出可執行的 Python。<strong>第二次革命：自然語言本身成為新的「程式語言」</strong>。但這也意味著——真正讀懂程式碼、能 debug、能審查 AI 產出的人，價值反而更高。</p>
+<p>這一章不只教你「Python 怎麼寫迴圈」。它要回答：為什麼 2026 年的生物資訊學家仍要同時學 Python 和 R？什麼時候該用 Rust？LLM 寫的程式碼真的能信嗎？</p>
 </div>
 <div data-lang="en">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>First time programming? <span class="dt-arrow">→ Yes →</span> <strong>Python</strong>: English-like syntax, huge community, broadest use.</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>Web front-end / interactive sites? <span class="dt-arrow">→</span> <strong>TypeScript</strong> + React / Vue / Svelte.</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>Systems, embedded, performance? <span class="dt-arrow">→</span> <strong>Rust</strong> (memory-safe + zero-cost abstractions); legacy still C / C++.</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>Cloud back-end / microservices? <span class="dt-arrow">→</span> <strong>Go</strong> (simple, concurrent, single binary).</div></div>
-<div class="dt-node"><span class="dt-q">Q5:</span><div>Mobile apps? <span class="dt-arrow">→</span> iOS → <strong>Swift</strong>; Android → <strong>Kotlin</strong>; cross-platform → <strong>Flutter (Dart)</strong> or React Native.</div></div>
-<div class="dt-node"><span class="dt-q">Q6:</span><div>AI / ML? <span class="dt-arrow">→</span> <strong>Python + PyTorch</strong>; for inference speed, add <strong>Mojo</strong> or C++/CUDA.</div></div>
+<p>On an afternoon in 1957, John Backus's IBM team finally got the <strong>Fortran compiler</strong> running on the IBM 704. Before that, everyone wrote machine code or assembly — one typo cost a week of debugging. With Fortran, a scientist could write an engineering formula, press a key, and the compiler emitted hundreds of machine instructions automatically. <strong>From that day, "programming" stopped being only for EE PhDs and became an ordinary profession.</strong></p>
+<p>November 30, 2022 — OpenAI launched ChatGPT. Three years later (2026), Claude Code, Cursor, and Copilot can produce runnable Python from a sentence like "write me a FASTQ quality filter." <strong>The second revolution: natural language itself is becoming a programming language.</strong> But this also means people who can actually read code, debug, and review LLM output become <em>more</em> valuable, not less.</p>
+<p>This chapter isn't just "how to write a for-loop in Python." It answers: why must a 2026 bioinformatician learn both Python and R? When should you reach for Rust? Can you trust LLM-generated code?</p>
+</div>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<span data-lang="zh"><strong>核心觀念：</strong>不存在「最好」的語言，只有「最合適」的語言。每種語言都是一組取捨——速度 vs 可讀性、安全 vs 自由、新潮 vs 生態。學會「為情境挑工具」，比學會單一語言重要十倍。</span>
+<span data-lang="en"><strong>Core idea:</strong> There is no "best" language, only the "right" one. Every language is a set of trade-offs — speed vs readability, safety vs freedom, novelty vs ecosystem. Learning to <em>pick the right tool for the context</em> is 10× more valuable than mastering any single language.</span>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="核心概念" data-en="CORE CONCEPTS">核心：初學者必懂</div>
+<h2 data-zh="一、初學者必懂的六個核心概念" data-en="I. Six Core Concepts Every Beginner Needs">一、初學者必懂的六個核心概念</h2>
+<div class="card-grid cols-3">
+<div class="card"><div class="card-icon">📦</div><h4 data-zh="變數與型別" data-en="Variables &amp; Types">變數與型別</h4>
+<div data-lang="zh"><p>變數是「貼了名字的記憶體格子」。<code>x = 42</code> 把整數 42 存進名為 x 的格子。型別告訴電腦這個值是整數、字串、還是浮點數——不同型別佔不同記憶體、能做不同操作。</p></div>
+<div data-lang="en"><p>A variable is "a labeled memory slot." <code>x = 42</code> stores 42 under the name x. The type tells the computer what's inside — int, string, float — affecting memory usage and operations.</p></div></div>
+
+<div class="card"><div class="card-icon">🔀</div><h4 data-zh="控制流" data-en="Control Flow">控制流</h4>
+<div data-lang="zh"><p>程式不是只能「從上往下」執行。<strong>if / else</strong> 讓程式做選擇；<strong>for / while</strong> 讓程式重複；<strong>break / continue</strong> 讓程式跳出。控制流是「邏輯」的語法化。</p></div>
+<div data-lang="en"><p>Programs don't only flow top-to-bottom. <strong>if/else</strong> chooses, <strong>for/while</strong> repeats, <strong>break/continue</strong> escapes. Control flow is "logic made into syntax."</p></div></div>
+
+<div class="card"><div class="card-icon">🛠️</div><h4 data-zh="函式" data-en="Functions">函式</h4>
+<div data-lang="zh"><p>把一段邏輯包成「可呼叫的小機器」，給輸入、拿輸出。函式是「重複利用」與「思考分塊」的基石。DRY 原則：Don't Repeat Yourself。</p></div>
+<div data-lang="en"><p>Bundle logic into "callable mini-machines": inputs in, outputs out. Functions are the foundation of reuse and abstraction. DRY: Don't Repeat Yourself.</p></div></div>
+
+<div class="card"><div class="card-icon">🧱</div><h4 data-zh="OOP 四大支柱" data-en="Four Pillars of OOP">OOP 四大支柱</h4>
+<div data-lang="zh"><p><strong>封裝</strong>：把 state 藏在物件裡。<strong>繼承</strong>：Dog 繼承 Animal 的 name 屬性。<strong>多型</strong>：dog.speak() 和 cat.speak() 同名但不同行為。<strong>抽象</strong>：用 interface 隱藏實作細節。</p></div>
+<div data-lang="en"><p><strong>Encapsulation</strong>: hide state. <strong>Inheritance</strong>: Dog inherits name from Animal. <strong>Polymorphism</strong>: dog.speak() and cat.speak() same name, different behavior. <strong>Abstraction</strong>: hide details behind interfaces.</p></div></div>
+
+<div class="card"><div class="card-icon">🔁</div><h4 data-zh="編譯 vs 直譯 vs JIT" data-en="Compile vs Interpret vs JIT">編譯 vs 直譯 vs JIT</h4>
+<div data-lang="zh"><p><strong>編譯式</strong> (C/Rust/Go)：一次轉成機器碼，跑得快。<strong>直譯式</strong> (Python/Ruby)：逐行翻譯，啟動快。<strong>JIT</strong> (Java/JS)：先變位元碼，熱點動態優化。三者邊界越來越模糊。</p></div>
+<div data-lang="en"><p><strong>Compiled</strong> (C/Rust/Go): all to machine code up front — fast. <strong>Interpreted</strong> (Python/Ruby): line by line — fast startup. <strong>JIT</strong> (Java/JS): bytecode + runtime optimization. The lines are blurring.</p></div></div>
+
+<div class="card"><div class="card-icon">📜</div><h4 data-zh="五大典範" data-en="Five Paradigms">五大典範</h4>
+<div data-lang="zh"><p><strong>Imperative</strong> (step-by-step)、<strong>OOP</strong> (物件)、<strong>Functional</strong> (純函式)、<strong>Logic</strong> (規則)、<strong>Declarative</strong> (描述目標)。多數現代語言混用多種典範。</p></div>
+<div data-lang="en"><p><strong>Imperative</strong> (step-by-step), <strong>OOP</strong> (objects), <strong>Functional</strong> (pure functions), <strong>Logic</strong> (rules), <strong>Declarative</strong> (describe goals). Modern languages mix multiple paradigms.</p></div></div>
+</div>
+
+<table class="comp-table">
+<thead><tr><th data-zh="類型" data-en="Type">類型</th><th data-zh="翻譯時機" data-en="Translation">翻譯時機</th><th data-zh="速度 / 啟動" data-en="Speed / Startup">速度 / 啟動</th><th data-zh="代表" data-en="Examples">代表</th></tr></thead>
+<tbody>
+<tr><td data-zh="編譯式" data-en="Compiled">編譯式</td><td data-zh="執行前一次轉機器碼" data-en="All to machine code before run">執行前一次轉機器碼</td><td data-zh="執行最快 / 編譯需時" data-en="Fastest exec / slow build">執行最快 / 編譯需時</td><td>C, C++, Rust, Go</td></tr>
+<tr><td data-zh="直譯式" data-en="Interpreted">直譯式</td><td data-zh="執行時逐行翻譯" data-en="Line by line at runtime">執行時逐行翻譯</td><td data-zh="較慢 / 啟動快" data-en="Slower / fast startup">較慢 / 啟動快</td><td>Python, Ruby, Bash</td></tr>
+<tr><td data-zh="位元碼+JIT" data-en="Bytecode+JIT">位元碼+JIT</td><td data-zh="先位元碼，熱點 JIT" data-en="Bytecode + JIT hot paths">先位元碼，熱點 JIT</td><td data-zh="中 / 中" data-en="Mid / mid">中 / 中</td><td>Java, JavaScript, C#, PyPy</td></tr>
+</tbody></table>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動 #1" data-en="INTERACTIVE #1">語言熱度排行</div>
+<h2 data-zh="二、互動 #1：2026 程式語言熱度排行" data-en="II. Interactive #1: 2026 Language Popularity">二、2026 程式語言熱度排行</h2>
+<div data-lang="zh"><p>下圖綜合 <strong>TIOBE / PYPL / GitHub Octoverse 2026 Q1</strong> 數據。<strong>Python</strong> 因 AI 浪潮已連續四年居冠；<strong>Rust</strong> 是成長最快的系統語言，已進入 Linux kernel；<strong>TypeScript</strong> 在前端超越純 JavaScript 成為新預設；<strong>Go</strong> 在雲端後端與 Kubernetes 生態穩占一席。生物資訊圈最常見的組合：<strong>Python + R + Bash</strong>。</p></div>
+<div data-lang="en"><p>Below: 2026 Q1 popularity from <strong>TIOBE / PYPL / GitHub Octoverse</strong>. <strong>Python</strong> is #1 for the 4th straight year thanks to AI; <strong>Rust</strong> is the fastest-growing systems language, now in the Linux kernel; <strong>TypeScript</strong> has overtaken plain JS on the front-end; <strong>Go</strong> dominates cloud back-end and Kubernetes. In bioinformatics, the most common combo is <strong>Python + R + Bash</strong>.</p></div>
+<div class="interactive-panel">
+<div class="chart-container"><canvas id="langChart"></canvas></div>
+<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">資料來源：TIOBE Index + PYPL + GitHub Octoverse, 2026 Q1（合成估計，數值為相對熱度 %）</span><span data-lang="en">Source: TIOBE Index + PYPL + GitHub Octoverse, 2026 Q1 (composite, % popularity)</span></p>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="深入剖析" data-en="DEEP DIVE">進階：型別系統</div>
+<h2 data-zh="三、深入剖析：型別系統、GIL、與 Python 3.13 free-threading" data-en="III. Deep Dive: Type Systems, the GIL, and Python 3.13 Free-Threading">三、深入剖析：型別系統與 GIL</h2>
+
+<h3 data-zh="3.1 靜態型別 vs 動態型別" data-en="3.1 Static vs Dynamic Typing">3.1 靜態型別 vs 動態型別</h3>
+<div data-lang="zh"><p><strong>靜態型別</strong>：變數型別在編譯期就確定 (C/Java/Rust/TypeScript)。優點：編譯器早早抓錯、IDE 自動補全強、效能好。缺點：寫起來囉嗦。</p>
+<p><strong>動態型別</strong>：型別在執行期決定 (Python/JavaScript/Ruby)。優點：靈活、寫得快、適合探索式分析。缺點：執行到那一行才發現錯誤、IDE 補全弱。</p>
+<p><strong>2026 趨勢：「漸進式型別 (Gradual Typing)」</strong>。Python 從 3.5 起加入 <code>type hints</code>，TypeScript 是「JavaScript + 型別」，Ruby 加入 RBS，PHP 8 加入嚴格型別。動態語言全面「補課」型別檢查。</p></div>
+<div data-lang="en"><p><strong>Static typing</strong>: types fixed at compile time (C/Java/Rust/TypeScript). Pro: compiler catches errors early, IDE autocomplete is strong, performance is good. Con: verbose.</p>
+<p><strong>Dynamic typing</strong>: types determined at runtime (Python/JavaScript/Ruby). Pro: flexible, fast to write, great for exploratory analysis. Con: errors caught only when that line runs.</p>
+<p><strong>2026 trend: gradual typing.</strong> Python added <code>type hints</code> in 3.5, TypeScript = "JS + types," Ruby added RBS, PHP 8 added strict types. Dynamic languages are all retrofitting type checking.</p></div>
+
+<h3 data-zh="3.2 強型別 vs 弱型別" data-en="3.2 Strong vs Weak Typing">3.2 強型別 vs 弱型別</h3>
+<div data-lang="zh"><p>易混淆！<strong>強型別</strong>指型別轉換需要明示（Python: <code>"3" + 5</code> 直接報錯）；<strong>弱型別</strong>則默默隱式轉換（JavaScript: <code>"3" + 5 === "35"</code>）。Python 是「動態 + 強」，C 是「靜態 + 弱」（指標可任意轉型），Rust 是「靜態 + 強」（最嚴格）。</p></div>
+<div data-lang="en"><p>Often confused! <strong>Strong typing</strong>: explicit conversion required (Python: <code>"3" + 5</code> → error). <strong>Weak typing</strong>: silent implicit coercion (JS: <code>"3" + 5 === "35"</code>). Python is "dynamic + strong," C is "static + weak" (pointers cast freely), Rust is "static + strong" (strictest).</p></div>
+
+<h3 data-zh="3.3 Python GIL 與 3.13 的歷史性改變" data-en="3.3 Python's GIL and the Historic Python 3.13 Change">3.3 Python GIL 與 3.13 的歷史性改變</h3>
+<div data-lang="zh"><p>長期以來，Python 有一個惡名昭彰的 <strong>GIL (Global Interpreter Lock，全域直譯器鎖)</strong>：同一時間只有一個執行緒能執行 Python bytecode。這讓 Python 多執行緒在 CPU 密集任務上幾乎無加速效果，必須用 <code>multiprocessing</code> 開多個 process（記憶體開銷大）才能用滿多核心。</p>
+<p><strong>2024 年 10 月發布的 Python 3.13</strong> 引入了實驗性的 <strong>free-threading (PEP 703)</strong>，可編譯為 <code>--disable-gil</code> 的版本！這是 Python 30 年來最大的執行模型變革。雖然單執行緒效能略降（~10%），但多核心擴展性大幅提升——對 NumPy、scikit-learn、Scanpy 等科學運算意義重大。</p></div>
+<div data-lang="en"><p>Notoriously, Python has the <strong>GIL (Global Interpreter Lock)</strong>: only one thread executes Python bytecode at a time. This makes Python multithreading useless for CPU-bound work — you have to use <code>multiprocessing</code> with multiple processes (heavy memory overhead) to use multiple cores.</p>
+<p><strong>Python 3.13 (October 2024)</strong> introduced experimental <strong>free-threading (PEP 703)</strong> — a build option <code>--disable-gil</code>! This is the biggest execution-model change in Python's 30+ year history. Single-thread perf drops ~10%, but multi-core scaling is transformative — huge for NumPy/scikit-learn/Scanpy.</p></div>
+
+<h3 data-zh="3.4 型別提示 (Type Hints)" data-en="3.4 Type Hints">3.4 型別提示與靜態檢查工具</h3>
+<div data-lang="zh"><p>Python 3.5+ 加入 <code>type hints</code>：<code>def add(x: int, y: int) -> int:</code>。執行期不檢查，但配合 <strong>mypy / pyright / ty</strong> 工具可在 commit 前抓錯。Astral 2026 發布的 <strong>ty</strong> (Rust 寫的) 比 mypy 快 100×，成為新主流。</p></div>
+<div data-lang="en"><p>Python 3.5+ supports <code>type hints</code>: <code>def add(x: int, y: int) -> int:</code>. Not checked at runtime, but with <strong>mypy / pyright / ty</strong> they catch errors before commit. Astral's <strong>ty</strong> (Rust-based, 2026) is 100× faster than mypy and is becoming the new default.</p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="歷史故事" data-en="HISTORY">語言歷史：6 個改變世界的故事</div>
+<h2 data-zh="四、6 個改變世界的程式語言故事" data-en="IV. Six Programming Language Stories That Changed the World">四、改變世界的 6 個故事</h2>
+
+<div class="card-grid cols-2">
+<div class="card"><h4>① Grace Hopper &amp; A-0 (1952)</h4>
+<div data-lang="zh"><p>美國海軍少將 <strong>Grace Hopper</strong> 1952 年寫出史上第一個編譯器 <strong>A-0</strong>，能把符號指令轉成 UNIVAC I 機器碼。她跟長官說「電腦可以懂英文」，被嘲笑「電腦只會數學」。三年後她基於 A-0 設計了 <strong>FLOW-MATIC</strong>，成為 COBOL 的前身。她也是「bug」一詞的傳播者——1947 年 Mark II 電腦真的找到一隻蛾。</p></div>
+<div data-lang="en"><p>Rear Admiral <strong>Grace Hopper</strong> wrote the first compiler <strong>A-0</strong> for UNIVAC I in 1952. She told her bosses "computers can understand English" — and was mocked: "computers only do math." Three years later her <strong>FLOW-MATIC</strong> (built on A-0) became the ancestor of COBOL. She also popularized the word "bug" — a moth literally got stuck in the Mark II in 1947.</p></div></div>
+
+<div class="card"><h4>② COBOL (1959): 至今仍在跑</h4>
+<div data-lang="zh"><p>1959 年由 Hopper 等人主導設計的 <strong>COBOL</strong> 至今仍在運轉——估計 2026 年全球 43% 的銀行系統、95% 的 ATM、和大多數美國政府主機都跑著 COBOL。Y2K (2000) 前後 COBOL 程式設計師時薪暴漲到 200 USD；2020 年新澤西州因失業金系統 COBOL 故障，州長公開徵求「會 COBOL 的程式設計師」。</p></div>
+<div data-lang="en"><p>Designed in 1959 (with Hopper's leadership), <strong>COBOL</strong> still runs today — estimated 2026: 43% of global banking, 95% of ATMs, and most US government mainframes. Around Y2K (2000), COBOL devs commanded $200/hr; in 2020 New Jersey's governor publicly begged for COBOL programmers when the unemployment system broke.</p></div></div>
+
+<div class="card"><h4>③ Python (1991): 聖誕假期創作</h4>
+<div data-lang="zh"><p>1989 年聖誕節，荷蘭 CWI 研究員 <strong>Guido van Rossum</strong> 為了打發無聊，開始寫一個「ABC 語言的進階版」。語言名稱來自他喜歡的英國喜劇 Monty Python。1991 年 2 月公開首版。30 年後它成為全世界最熱門的語言。Guido 2018 卸任 BDFL，2020 加入微軟 Python 加速團隊。</p></div>
+<div data-lang="en"><p>Christmas 1989, CWI researcher <strong>Guido van Rossum</strong> started writing "an improved ABC language" to kill time. He named it after the British comedy <em>Monty Python</em>. First public release February 1991. Thirty years later it's #1. Guido stepped down as BDFL in 2018, joined Microsoft's Python performance team in 2020.</p></div></div>
+
+<div class="card"><h4>④ JavaScript (1995): 10 天寫成</h4>
+<div data-lang="zh"><p>1995 年 5 月，Netscape 雇用 <strong>Brendan Eich</strong>，要他「兩週內寫出一個可以在瀏覽器跑的腳本語言」。Eich 用 <strong>10 天</strong> 寫出了 JavaScript 原型——這也是它早期 quirks 多到出名的原因（<code>[] + [] === ""</code>、<code>typeof null === "object"</code>）。但今天全球 98% 網頁靠它運作。</p></div>
+<div data-lang="en"><p>May 1995, Netscape hired <strong>Brendan Eich</strong>: "write a browser scripting language in two weeks." Eich finished JS in <strong>10 days</strong> — which is why it has so many famous quirks (<code>[] + [] === ""</code>, <code>typeof null === "object"</code>). Yet today 98% of the web runs on it.</p></div></div>
+
+<div class="card"><h4>⑤ Rust (2010): 從 Mozilla 到 Linux kernel</h4>
+<div data-lang="zh"><p><strong>Graydon Hoare</strong> 2006 年在 Mozilla 內部開始寫 Rust，受夠了 Firefox 的 C++ 記憶體 bug。2010 公開、2015 1.0。2022 <strong>Linux kernel 接受 Rust</strong> 成為 C 之外第二個官方語言——這是 30 年來首次。AWS、Microsoft、Cloudflare、Discord 都在大量使用。Stack Overflow 連續 8 年「最受愛戴的語言」。</p></div>
+<div data-lang="en"><p><strong>Graydon Hoare</strong> began Rust internally at Mozilla in 2006, fed up with Firefox C++ memory bugs. Public in 2010, 1.0 in 2015. In 2022, the <strong>Linux kernel accepted Rust</strong> as a second official language alongside C — the first such addition in 30 years. AWS, Microsoft, Cloudflare, Discord use it heavily. Stack Overflow's "most loved language" for 8 straight years.</p></div></div>
+
+<div class="card"><h4>⑥ Mojo (2023): 為 AI 而生的 Python 超集</h4>
+<div data-lang="zh"><p>2023 年 LLVM/Swift 之父 <strong>Chris Lattner</strong> 創辦 Modular AI，發表 <strong>Mojo</strong>——一個 Python 超集 (super-set) 但能編譯成原生機器碼。對特定數值運算可達 35,000× Python 速度。2024 年開源。目標：取代 CUDA 成為 AI 加速器跨平台語言。</p></div>
+<div data-lang="en"><p>In 2023, <strong>Chris Lattner</strong> (creator of LLVM/Swift) founded Modular AI and released <strong>Mojo</strong> — a Python super-set that compiles to native code. Up to 35,000× Python speed on numerical workloads. Open-sourced 2024. Goal: replace CUDA as the cross-platform AI-accelerator language.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動 #2" data-en="INTERACTIVE #2">六語言 Hello World</div>
+<h2 data-zh="五、互動 #2：「Hello World」六語言並排對比" data-en="V. Interactive #2: Hello World in Six Languages">五、Hello World 六語言對比</h2>
+<div data-lang="zh"><p>點選下方語言按鈕，看同一個「印出 Hello World」在 6 種語言怎麼寫，以及如何編譯/執行。</p></div>
+<div data-lang="en"><p>Click a language below to see how the same "Hello World" looks across 6 languages — and how it's built and run.</p></div>
+<div class="interactive-panel">
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;" id="hwBtns">
+<button class="hw-btn active" data-lang="py" style="padding:8px 18px;border:1px solid var(--c-accent);background:var(--c-accent);color:#fff;border-radius:6px;cursor:pointer;font-weight:600;">Python</button>
+<button class="hw-btn" data-lang="r" style="padding:8px 18px;border:1px solid var(--c-accent);background:#fff;color:var(--c-accent);border-radius:6px;cursor:pointer;font-weight:600;">R</button>
+<button class="hw-btn" data-lang="js" style="padding:8px 18px;border:1px solid var(--c-accent);background:#fff;color:var(--c-accent);border-radius:6px;cursor:pointer;font-weight:600;">JavaScript</button>
+<button class="hw-btn" data-lang="c" style="padding:8px 18px;border:1px solid var(--c-accent);background:#fff;color:var(--c-accent);border-radius:6px;cursor:pointer;font-weight:600;">C</button>
+<button class="hw-btn" data-lang="rust" style="padding:8px 18px;border:1px solid var(--c-accent);background:#fff;color:var(--c-accent);border-radius:6px;cursor:pointer;font-weight:600;">Rust</button>
+<button class="hw-btn" data-lang="mojo" style="padding:8px 18px;border:1px solid var(--c-accent);background:#fff;color:var(--c-accent);border-radius:6px;cursor:pointer;font-weight:600;">Mojo</button>
+</div>
+<div id="hwCode" style="background:var(--c-code-bg);color:var(--c-code-text);padding:18px;border-radius:10px;font-family:var(--font-mono);font-size:.9rem;line-height:1.7;min-height:140px;"></div>
+<div id="hwInfo" style="margin-top:12px;padding:14px;background:var(--c-surface-alt);border-radius:8px;font-size:.88rem;color:var(--c-ink-light);"></div>
+</div>
+</section>
+
+<section class="section" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-radius:14px;padding:32px;">
+<div class="section-label" style="color:#16a34a;">🧬 <span data-zh="生物資訊連結" data-en="BIOINFORMATICS LINK">給生物資訊學家</span></div>
+<h2 data-zh="六、🧬 生物資訊連結點：為什麼要學 Python + R 雙修？" data-en="VI. 🧬 Bioinformatics Link: Why Python + R Together?">六、🧬 生資連結：Python + R 雙修 + 5 種語言的位置</h2>
+
+<div data-lang="zh">
+<p><strong>真實的生資工作流，幾乎沒人能只用一種語言。</strong> 從 FASTQ 到報告，至少要動用 3 種：</p>
+
+<h3>1. Python（資料科學與 AI 的事實標準）</h3>
+<p>Python 在生資的兩大支柱：<strong>Scanpy</strong> (單細胞 RNA-seq、Wolf 2018 Genome Biology)、<strong>scikit-learn</strong> (機器學習)、<strong>PyTorch</strong> (深度學習，AlphaFold 2 / Geneformer / scGPT 都用)。NumPy + pandas + matplotlib 是任何 EDA 的起點。</p>
+
+<h3>2. R（生物統計與 Bioconductor 的家園）</h3>
+<p>R 的優勢：<strong>Bioconductor</strong> 收錄 2,200+ 套件 (2026)，從 RNA-seq (<strong>DESeq2</strong> Love 2014, <strong>edgeR</strong>) 到單細胞 (<strong>Seurat</strong> Hao 2023)、空間轉錄組 (<strong>Visium/Squidpy</strong>)、流式 (<strong>flowCore</strong>)。統計學家寫的套件多用 R。<strong>tidyverse</strong> (Wickham 2019) 讓資料處理變優雅。</p>
+
+<h3>3. Julia (新興：高效能科學計算)</h3>
+<p>Julia 在計算系統生物學日益重要。<strong>Catalyst.jl</strong> + <strong>DifferentialEquations.jl</strong> 是世界級的反應網路與 ODE 模擬器。<strong>JuliaCall</strong> 讓 R/Python 也能呼叫 Julia。速度接近 C 但語法接近 Python。</p>
+
+<h3>4. Rust（新興：效能關鍵的 bio 工具）</h3>
+<p><strong>rust-htslib</strong> 是 Rust 版的 BAM/VCF 處理。新工具像 <strong>nanopolish</strong> 的繼承者、<strong>fgbio</strong> 的某些模組、<strong>varlociraptor</strong> 都用 Rust。speed 是 Python 的 10–100×，記憶體安全是 C++ 沒有的。</p>
+
+<h3>5. MATLAB（影像分析的歷史地位）</h3>
+<p><strong>CellProfiler</strong> 早期版本 (2005) 用 MATLAB，後改寫 Python。<strong>Image Processing Toolbox</strong> 仍是顯微鏡影像的傳統工具。學界 license 普遍可用，但年輕一代多轉向 <strong>Fiji/ImageJ</strong> (Java) + Python (<strong>scikit-image</strong>, <strong>cellpose</strong> Stringer 2025 Nat Methods)。</p>
+
+<h3>6. Shell scripting (Bash + awk + sed)：bioinformatician 的必備</h3>
+<p>沒有 Bash 就沒有生物資訊。<code>samtools view file.bam | awk '$5 > 30' | wc -l</code> 是日常。<strong>GNU Parallel</strong> 把單核心腳本平行化。Snakemake / Nextflow 的底層也是 shell。</p>
+</div>
+
+<div data-lang="en">
+<p><strong>Real bioinformatics workflows almost never use just one language.</strong> From FASTQ to report, you'll touch at least 3:</p>
+
+<h3>1. Python (the de-facto data-science + AI standard)</h3>
+<p>Two pillars: <strong>Scanpy</strong> (single-cell RNA-seq, Wolf 2018 Genome Biology), <strong>scikit-learn</strong>, <strong>PyTorch</strong> (used by AlphaFold 2, Geneformer, scGPT). NumPy + pandas + matplotlib are any EDA's starting point.</p>
+
+<h3>2. R (home of biostatistics &amp; Bioconductor)</h3>
+<p>R's edge: <strong>Bioconductor</strong> hosts 2,200+ packages (2026) — RNA-seq (<strong>DESeq2</strong> Love 2014, <strong>edgeR</strong>), single-cell (<strong>Seurat</strong> Hao 2023), spatial (<strong>Visium/Squidpy</strong>), flow (<strong>flowCore</strong>). Statistician-authored packages favor R. <strong>tidyverse</strong> (Wickham 2019) makes data work elegant.</p>
+
+<h3>3. Julia (rising: high-performance scientific computing)</h3>
+<p>Big in systems biology. <strong>Catalyst.jl</strong> + <strong>DifferentialEquations.jl</strong> are world-class ODE/reaction-network engines. <strong>JuliaCall</strong> bridges R/Python. C-class speed with Python-class syntax.</p>
+
+<h3>4. Rust (rising: performance-critical bio tools)</h3>
+<p><strong>rust-htslib</strong> handles BAM/VCF in Rust. Newer tools like successors to nanopolish, parts of <strong>fgbio</strong>, and <strong>varlociraptor</strong> are Rust. 10–100× Python speed, memory-safe unlike C++.</p>
+
+<h3>5. MATLAB (historical role in image analysis)</h3>
+<p><strong>CellProfiler</strong>'s early version (2005) was MATLAB before moving to Python. The <strong>Image Processing Toolbox</strong> remains a traditional microscopy tool, but the next generation prefers <strong>Fiji/ImageJ</strong> (Java) + Python (<strong>scikit-image</strong>, <strong>cellpose</strong> Stringer 2025 Nat Methods).</p>
+
+<h3>6. Shell scripting (Bash + awk + sed): the bioinformatician's daily bread</h3>
+<p>No Bash, no bioinformatics. <code>samtools view file.bam | awk '$5 > 30' | wc -l</code> is everyday. <strong>GNU Parallel</strong> parallelizes single-core scripts. Snakemake/Nextflow ultimately call shell underneath.</p>
+</div>
+
+<div class="callout" style="background:#fff;border-left:4px solid #16a34a;margin-top:18px;">
+<span class="callout-icon">🎯</span><div>
+<div data-lang="zh"><strong>建議學習順序：</strong>① Python 打底（語法、pandas、scikit-learn）→ ② R + Bioconductor（DESeq2、Seurat）→ ③ Bash + Snakemake → ④ 進階用 Rust 寫熱點，或 Julia 模擬 ODE。<strong>不要追求「精通一種」就好</strong>，要的是「能讀懂、能改、能組合」3–4 種。</div>
+<div data-lang="en"><strong>Recommended path:</strong> (1) Python foundation (syntax, pandas, scikit-learn) → (2) R + Bioconductor (DESeq2, Seurat) → (3) Bash + Snakemake → (4) advanced: Rust for hot paths, Julia for ODEs. <strong>Don't aim to "master one"</strong> — aim to "read, edit, and combine" 3–4 of them.</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="決策樹" data-en="DECISION TREE">該學什麼語言？</div>
+<h2 data-zh="七、🌳 決策樹：我該學/用哪個語言？" data-en="VII. 🌳 Decision Tree: Which Language Should I Use?">七、🌳 該學/用哪個語言？</h2>
+<div class="decision-tree">
+<h4>🌳 <span data-zh="語言選擇樹（生資與一般用途）" data-en="Language Picker (Bio &amp; General)">語言選擇樹</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>第一次學程式？<span class="dt-arrow">→</span> <strong>Python</strong>：語法接近英文、最廣的就業面、AI/生資全包。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>做生物統計、RNA-seq DE、單細胞？<span class="dt-arrow">→</span> <strong>R + Bioconductor</strong>（DESeq2/Seurat/edgeR）。許多統計學家只用 R。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>深度學習 / 大模型？<span class="dt-arrow">→</span> <strong>Python + PyTorch</strong>；訓練加速用 <strong>JAX</strong> 或 <strong>Mojo</strong>；推論部署考慮 <strong>C++/CUDA</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>寫高速 bio 工具（比對器、變異 caller）？<span class="dt-arrow">→</span> <strong>Rust</strong>（記憶體安全 + 接近 C 速度）；既有大量 codebase 仍是 <strong>C/C++</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>跑 ODE / 反應網路 / 系統生物學模擬？<span class="dt-arrow">→</span> <strong>Julia + Catalyst.jl</strong> 或 Python + scipy.integrate。</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>Web 前端 / Shiny dashboard？<span class="dt-arrow">→</span> 前端 <strong>TypeScript + React</strong>；快速 dashboard <strong>R Shiny / Streamlit</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q7:</span><div>雲端後端 / API / 微服務？<span class="dt-arrow">→</span> <strong>Go</strong> 或 <strong>Python + FastAPI</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q8:</span><div>串聯多個 bio 工具 / cluster jobs？<span class="dt-arrow">→</span> <strong>Bash + Snakemake</strong> 或 <strong>Nextflow (Groovy)</strong>。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>First time programming? <span class="dt-arrow">→</span> <strong>Python</strong>: English-like, broadest hiring, covers AI &amp; bio.</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Biostatistics, RNA-seq DE, single-cell? <span class="dt-arrow">→</span> <strong>R + Bioconductor</strong> (DESeq2/Seurat/edgeR). Many statisticians use only R.</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Deep learning / LLMs? <span class="dt-arrow">→</span> <strong>Python + PyTorch</strong>; for training speed, add <strong>JAX</strong> or <strong>Mojo</strong>; for deployment, <strong>C++/CUDA</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Building fast bio tools (aligner, caller)? <span class="dt-arrow">→</span> <strong>Rust</strong> (memory-safe, C-class speed); legacy codebases still <strong>C/C++</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>ODEs / reaction networks / systems bio? <span class="dt-arrow">→</span> <strong>Julia + Catalyst.jl</strong> or Python + scipy.integrate.</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>Web front-end / Shiny dashboards? <span class="dt-arrow">→</span> Front-end: <strong>TypeScript + React</strong>; quick dashboards: <strong>R Shiny / Streamlit</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q7:</span><div>Cloud back-end / API / microservices? <span class="dt-arrow">→</span> <strong>Go</strong> or <strong>Python + FastAPI</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q8:</span><div>Chaining bio tools / cluster jobs? <span class="dt-arrow">→</span> <strong>Bash + Snakemake</strong> or <strong>Nextflow (Groovy)</strong>.</div></div>
 </div>
 </div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
-<h2 data-zh="六、動手寫：Python Hello World + 函式 + 類別" data-en="VI. Hands-on: Python Hello World + function + class">六、動手寫 Python</h2>
-<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
-<div class="code-tab-content active" id="py1"><pre><span class="comment"># 1. Hello World</span>
-<span class="func">print</span>(<span class="str">"Hello, World!"</span>)
+<div class="section-label" data-zh="程式碼" data-en="CODE">Python · R · Pseudocode</div>
+<h2 data-zh="八、動手寫：階乘 + OOP（三語並列）" data-en="VIII. Hands-on: Factorial + OOP (3 languages)">八、動手寫：階乘 + OOP 三語</h2>
+<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'r1')">R</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
 
-<span class="comment"># 2. 變數、控制流、函式 / Variables, control flow, function</span>
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># Python 3.13: 階乘 + OOP / Factorial + OOP</span>
+<span class="kw">from</span> functools <span class="kw">import</span> reduce
+
+<span class="comment"># 1. 遞迴 / Recursive</span>
 <span class="kw">def</span> <span class="func">factorial</span>(n: <span class="kw">int</span>) -> <span class="kw">int</span>:
-    <span class="comment">"""遞迴計算 n! / recursive factorial"""</span>
-    <span class="kw">if</span> n <= <span class="num">1</span>:
-        <span class="kw">return</span> <span class="num">1</span>
+    <span class="kw">if</span> n <= <span class="num">1</span>: <span class="kw">return</span> <span class="num">1</span>
     <span class="kw">return</span> n * <span class="func">factorial</span>(n - <span class="num">1</span>)
 
-<span class="kw">for</span> i <span class="kw">in</span> <span class="func">range</span>(<span class="num">1</span>, <span class="num">6</span>):
-    <span class="func">print</span>(<span class="str">f"{i}! = {factorial(i)}"</span>)
+<span class="comment"># 2. 函數式 / Functional (reduce)</span>
+fact_fn = <span class="kw">lambda</span> n: <span class="func">reduce</span>(<span class="kw">lambda</span> a,b: a*b, <span class="func">range</span>(<span class="num">1</span>, n+<span class="num">1</span>), <span class="num">1</span>)
 
-<span class="comment"># 3. OOP：封裝 + 繼承 + 多型 / Encapsulation + inheritance + polymorphism</span>
+<span class="comment"># 3. OOP: Encapsulation + Inheritance + Polymorphism</span>
 <span class="kw">class</span> <span class="func">Animal</span>:
     <span class="kw">def</span> __init__(self, name: <span class="kw">str</span>):
-        self.name = name        <span class="comment"># 封裝：state</span>
+        self._name = name             <span class="comment"># 封裝：private-ish</span>
     <span class="kw">def</span> <span class="func">speak</span>(self) -> <span class="kw">str</span>:
         <span class="kw">return</span> <span class="str">"..."</span>
 
-<span class="kw">class</span> <span class="func">Dog</span>(Animal):       <span class="comment"># 繼承</span>
-    <span class="kw">def</span> <span class="func">speak</span>(self):       <span class="comment"># 多型：覆寫</span>
-        <span class="kw">return</span> <span class="str">f"{self.name} says Woof!"</span>
+<span class="kw">class</span> <span class="func">Dog</span>(Animal):                  <span class="comment"># 繼承</span>
+    <span class="kw">def</span> <span class="func">speak</span>(self):              <span class="comment"># 多型</span>
+        <span class="kw">return</span> <span class="str">f"{self._name} says Woof!"</span>
 
-<span class="kw">class</span> <span class="func">Cat</span>(Animal):
-    <span class="kw">def</span> <span class="func">speak</span>(self):
-        <span class="kw">return</span> <span class="str">f"{self.name} says Meow!"</span>
+<span class="kw">for</span> a <span class="kw">in</span> [<span class="func">Dog</span>(<span class="str">"Rex"</span>), Animal(<span class="str">"X"</span>)]:
+    <span class="func">print</span>(a.<span class="func">speak</span>())</pre></div>
 
-<span class="kw">for</span> a <span class="kw">in</span> [<span class="func">Dog</span>(<span class="str">"Rex"</span>), <span class="func">Cat</span>(<span class="str">"Luna"</span>)]:
-    <span class="func">print</span>(a.<span class="func">speak</span>())   <span class="comment"># 多型呼叫同一介面</span></pre></div>
-<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// 同樣的功能寫成偽碼 / Same logic in pseudocode</span>
-<span class="func">PRINT</span>(<span class="str">"Hello, World!"</span>)
+<div class="code-tab-content" id="r1"><pre><span class="comment"># R: 階乘 + S4 OOP / Factorial + S4 OOP</span>
+<span class="comment"># 1. 遞迴</span>
+factorial <- function(n) {
+  <span class="kw">if</span> (n <= 1) <span class="kw">return</span>(1)
+  n * <span class="func">factorial</span>(n - 1)
+}
+
+<span class="comment"># 2. 函數式 (Reduce)</span>
+fact_fn <- function(n) <span class="func">Reduce</span>(<span class="str">`*`</span>, 1:n)
+
+<span class="comment"># 3. S4 class（R 的 OOP）</span>
+<span class="func">setClass</span>(<span class="str">"Animal"</span>, representation(name = <span class="str">"character"</span>))
+<span class="func">setGeneric</span>(<span class="str">"speak"</span>, function(x) <span class="func">standardGeneric</span>(<span class="str">"speak"</span>))
+<span class="func">setMethod</span>(<span class="str">"speak"</span>, <span class="str">"Animal"</span>, function(x) <span class="str">"..."</span>)
+
+<span class="func">setClass</span>(<span class="str">"Dog"</span>, contains = <span class="str">"Animal"</span>)   <span class="comment"># 繼承</span>
+<span class="func">setMethod</span>(<span class="str">"speak"</span>, <span class="str">"Dog"</span>,
+          function(x) <span class="func">paste0</span>(x@name, <span class="str">" says Woof!"</span>))
+
+rex <- <span class="func">new</span>(<span class="str">"Dog"</span>, name = <span class="str">"Rex"</span>)
+<span class="func">print</span>(<span class="func">speak</span>(rex))   <span class="comment"># "Rex says Woof!"</span>
+
+<span class="comment"># tidyverse 簡潔風格</span>
+library(purrr)
+1:5 |> map_dbl(factorial)   <span class="comment"># [1]   1   2   6  24 120</span></pre></div>
+
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// Pseudocode: 階乘 + OOP</span>
 
 <span class="kw">function</span> <span class="func">Factorial</span>(n):
     <span class="kw">if</span> n <= <span class="num">1</span>: <span class="kw">return</span> <span class="num">1</span>
     <span class="kw">return</span> n × <span class="func">Factorial</span>(n − <span class="num">1</span>)
 
-<span class="kw">for</span> i <span class="kw">from</span> <span class="num">1</span> <span class="kw">to</span> <span class="num">5</span>:
-    <span class="func">PRINT</span>(i, <span class="str">"! ="</span>, <span class="func">Factorial</span>(i))
-
 <span class="kw">class</span> Animal:
     field name
-    method speak(): <span class="kw">return</span> <span class="str">"..."</span>
+    method <span class="func">speak</span>(): <span class="kw">return</span> <span class="str">"..."</span>
 
-<span class="kw">class</span> Dog <span class="kw">extends</span> Animal:
-    method speak(): <span class="kw">return</span> name + <span class="str">" says Woof!"</span>
+<span class="kw">class</span> Dog <span class="kw">extends</span> Animal:           <span class="comment">// 繼承 inherit</span>
+    method <span class="func">speak</span>():                   <span class="comment">// 多型 polymorphism</span>
+        <span class="kw">return</span> name + <span class="str">" says Woof!"</span>
 
-<span class="kw">class</span> Cat <span class="kw">extends</span> Animal:
-    method speak(): <span class="kw">return</span> name + <span class="str">" says Meow!"</span>
+<span class="kw">for</span> a <span class="kw">in</span> [Dog(<span class="str">"Rex"</span>), Animal(<span class="str">"X"</span>)]:
+    <span class="func">PRINT</span>(a.speak())                <span class="comment">// 多型呼叫同一介面</span></pre></div>
+</div>
+</section>
 
-<span class="kw">for</span> a <span class="kw">in</span> [Dog(<span class="str">"Rex"</span>), Cat(<span class="str">"Luna"</span>)]:
-    <span class="func">PRINT</span>(a.speak())</pre></div>
+<section class="section">
+<div class="section-label" data-zh="案例研究" data-en="CASE STUDY">scverse 多語整合的真實案例</div>
+<h2 data-zh="八-B、案例：scverse 如何用「Python + R + Rust」三語整合單細胞生態系" data-en="VIII-B. Case Study: scverse Three-Language Integration in Single-Cell">八-B、scverse 三語整合案例</h2>
+<div data-lang="zh"><p>2025 年 scverse consortium (Virshup et al., Nature Biotechnology 2023) 已成為單細胞分析事實標準。它的價值不是「另一個 Scanpy」，而是 <strong>把 Python + R + Rust 的優勢縫在一起</strong>：</p>
+<ul style="margin-left:20px;line-height:1.85;">
+<li><strong>核心 Python 套件</strong>：anndata（資料結構）、scanpy（分析）、scvi-tools（深度學習）、squidpy（空間轉錄組）——選 Python 是因為深度學習與 NumPy 生態無敵。</li>
+<li><strong>R 互通層</strong>：anndata2ri、zellkonverter（Bioconductor）——可把 AnnData 物件無痛在 Seurat / SingleCellExperiment 之間轉換。這讓使用者可在 DESeq2 + Seurat 的 R 工作流跟 scvi-tools + Scanpy 的 Python 工作流間自由切換。</li>
+<li><strong>Rust 加速</strong>：anndata-rs（讀寫加速 5×）、scirpy 的核心比對引擎、未來的稀疏矩陣引擎都計畫用 Rust。</li>
+<li><strong>容器化</strong>：scverse 提供官方 Docker image，整個 stack（含 GPU drivers）一行 <code>docker pull</code>。</li>
+<li><strong>標準格式</strong>：<code>.h5ad</code> + <code>.zarr</code>（雲端原生），可跑 100 萬細胞 in-memory，也可遠端 lazy load 1000 萬細胞。</li>
+</ul>
+<p><strong>這個案例的啟示</strong>：① 真正成功的科學軟體生態系都是「多語混用」；② Python 作 glue、R 作統計、Rust 作 hot path —— 各司其職；③ <strong>互通性 (interoperability) 比效能更重要</strong>——別人能輕鬆讀寫你的資料格式，比你的工具快 10% 更有價值。</p></div>
+<div data-lang="en"><p>By 2025, the scverse consortium (Virshup et al., Nature Biotechnology 2023) became the de facto single-cell standard. Its real value isn't being "another Scanpy" — it's <strong>stitching together Python + R + Rust strengths</strong>:</p>
+<ul style="margin-left:20px;line-height:1.85;">
+<li><strong>Core Python packages</strong>: anndata (data structure), scanpy (analysis), scvi-tools (deep learning), squidpy (spatial). Python was chosen because its DL + NumPy ecosystem is unmatched.</li>
+<li><strong>R interop layer</strong>: anndata2ri, zellkonverter (Bioconductor) — convert AnnData ↔ Seurat / SingleCellExperiment seamlessly. Users move freely between DESeq2 + Seurat (R) and scvi-tools + Scanpy (Python).</li>
+<li><strong>Rust acceleration</strong>: anndata-rs (5× faster I/O), scirpy's matching engine, future sparse-matrix engines planned in Rust.</li>
+<li><strong>Containerization</strong>: scverse ships official Docker images — whole stack (incl. GPU drivers) in one <code>docker pull</code>.</li>
+<li><strong>Standard formats</strong>: <code>.h5ad</code> + <code>.zarr</code> (cloud-native) — 1M cells in-memory, 10M cells via remote lazy loading.</li>
+</ul>
+<p><strong>Takeaways:</strong> (1) every truly successful scientific software ecosystem is multi-language; (2) Python as glue, R for stats, Rust for hot paths — different jobs; (3) <strong>interoperability matters more than performance</strong> — letting others read your format easily is worth more than being 10% faster.</p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="常見誤解" data-en="MISCONCEPTIONS">常見誤解</div>
+<h2 data-zh="九、常見誤解與陷阱" data-en="IX. Common Misconceptions">九、常見誤解</h2>
+<div class="card-grid cols-2">
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ 「Python 慢，不能做科學運算」</h4>
+<div data-lang="zh"><p>純 Python 確實慢，但 <strong>NumPy</strong> (C/Fortran 底層)、<strong>Numba</strong> (JIT)、<strong>Cython</strong>、<strong>JAX</strong> 把熱點降到接近 C 的速度。Scanpy 處理 100 萬細胞只要分鐘級——背後是高度向量化的 NumPy/scipy。</p></div>
+<div data-lang="en"><p>Pure Python is slow, but <strong>NumPy</strong> (C/Fortran inside), <strong>Numba</strong> (JIT), <strong>Cython</strong>, <strong>JAX</strong> bring hot paths near C speed. Scanpy processes 1M cells in minutes thanks to heavily-vectorized NumPy/scipy.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ 「OOP 是唯一範式」</h4>
+<div data-lang="zh"><p>Java 1990 年代讓全世界以為「程式設計 = OOP」。但 <strong>functional</strong> 在資料管線、<strong>declarative</strong> 在 SQL/HTML、<strong>imperative</strong> 在嵌入式都更合適。pandas / dplyr / Spark 都重度借鏡 FP。</p></div>
+<div data-lang="en"><p>1990s Java made the world think "programming = OOP." But <strong>functional</strong> is better for data pipelines, <strong>declarative</strong> for SQL/HTML, <strong>imperative</strong> for embedded. pandas / dplyr / Spark all heavily borrow from FP.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ 「會 ChatGPT 寫程式就不用學了」</h4>
+<div data-lang="zh"><p>LLM 寫的程式 <strong>30%+ 有錯</strong> (Anthropic 2025 內部評估)。你需要懂程式才能審查、debug、判斷它有沒有亂編 API。<strong>真正的能力是「快速讀懂並驗證」</strong>，這恰好是 LLM 還做不好的事。</p></div>
+<div data-lang="en"><p>LLM-written code is <strong>wrong 30%+ of the time</strong> (Anthropic 2025 internal eval). You need to read, debug, and detect hallucinated APIs. <strong>The real skill is "read &amp; verify fast"</strong> — which LLMs still can't do well.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ 「型別提示拖慢執行」</h4>
+<div data-lang="zh"><p>Python 的 type hints <strong>執行期不檢查</strong>，只是給 mypy/pyright/IDE 用的注解。對效能零影響，反而讓編輯器補全與重構更強大。</p></div>
+<div data-lang="en"><p>Python type hints are <strong>not checked at runtime</strong> — they're annotations for mypy/pyright/IDEs. Zero perf impact, plus much better autocomplete &amp; refactoring.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="進階主題 A" data-en="ADVANCED A">記憶體管理三大派</div>
+<h2 data-zh="九-A、進階：記憶體管理三大派系" data-en="IX-A. Advanced: Three Schools of Memory Management">九-A、記憶體管理三大派系</h2>
+<div data-lang="zh"><p>「誰負責釋放記憶體？」這個問題分裂了整個程式語言世界，演變出三大派別：</p></div>
+<div data-lang="en"><p>"Who frees memory?" — this question fractured the programming-language world into three schools:</p></div>
+<div class="card-grid cols-3">
+<div class="card"><div class="card-icon">🧹</div><h4 data-zh="① 手動 (C / C++)" data-en="① Manual (C/C++)">① 手動（C/C++）</h4>
+<div data-lang="zh"><p><strong>程式員自己 malloc/free、new/delete。</strong>最快、最自由，但 <strong>memory leak</strong>、<strong>use-after-free</strong>、<strong>double-free</strong> 是無止盡的 bug 源。Heartbleed (2014) 與大量 CVE 都源自此類錯誤。C++ 11 起的 <strong>smart pointer</strong>（unique_ptr、shared_ptr）是部分補救。</p></div>
+<div data-lang="en"><p><strong>You malloc/free yourself.</strong> Fastest, most flexible, but <strong>memory leaks</strong>, <strong>use-after-free</strong>, and <strong>double-free</strong> are endless bug sources. Heartbleed (2014) and countless CVEs come from this. C++11's <strong>smart pointers</strong> (unique_ptr / shared_ptr) are partial mitigation.</p></div></div>
+<div class="card"><div class="card-icon">♻️</div><h4 data-zh="② Garbage Collection (Java/Python/Go/JS/R)" data-en="② GC (Java/Python/Go/JS/R)">② GC（Java/Python/Go/JS/R）</h4>
+<div data-lang="zh"><p><strong>runtime 自動偵測「無人引用」的物件並回收。</strong>主流演算法：<strong>tracing GC</strong>（mark-sweep、generational、G1）與 <strong>reference counting</strong>（Python CPython 主用 RC + cycle detector）。優：開發效率高、無記憶體錯誤。缺：<strong>暫停 (GC pause)</strong> 影響低延遲應用、記憶體膨脹。Go 把 GC pause 壓到 &lt; 1ms 是工程奇蹟。</p></div>
+<div data-lang="en"><p><strong>The runtime detects unreachable objects and reclaims them.</strong> Two big families: <strong>tracing GC</strong> (mark-sweep, generational, G1) and <strong>reference counting</strong> (CPython is RC + cycle detector). Pro: high productivity, no memory errors. Con: <strong>GC pauses</strong> hurt low-latency apps, memory bloat. Go shrinking GC pauses below 1 ms is an engineering marvel.</p></div></div>
+<div class="card"><div class="card-icon">🔒</div><h4 data-zh="③ Ownership (Rust)" data-en="③ Ownership (Rust)">③ Ownership（Rust）</h4>
+<div data-lang="zh"><p>Rust 的<strong>第三條路</strong>：編譯期就解決——每個值「只能有一個 owner」，owner 離開 scope 即釋放。借用 (&amp;) 規則 + lifetime 由 <strong>borrow checker</strong> 在編譯期驗證。<strong>無 GC、無 memory bug</strong>。代價：學習曲線陡，但一旦學會，bug 大幅減少。Linux kernel 2022 起接受 Rust。</p></div>
+<div data-lang="en"><p>Rust's <strong>third way</strong>: solve it at compile time — each value has one owner; freed when the owner leaves scope. Borrowing (&amp;) rules + lifetimes are verified by the <strong>borrow checker</strong>. <strong>No GC, no memory bugs.</strong> Cost: steep learning curve, but bugs collapse once learned. Linux kernel accepted Rust in 2022.</p></div></div>
+</div>
+<div class="callout warn" style="margin-top:14px;"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>對生資的啟示：</strong>處理 100 GB BAM/VCF 時，<strong>GC 的暫停可能讓 8 小時的 job 多花 1 小時</strong>；Python 的 reference counting 在循環引用時還可能 leak。Rust 的 rust-htslib、htsget 等工具受惠於 ownership：可預測的記憶體曲線 + 無 GC 抖動。</div>
+<div data-lang="en"><strong>For bioinformatics:</strong> When processing 100 GB BAM/VCF, <strong>GC pauses can add an hour to an 8-hour job</strong>; Python reference counting may even leak on cycles. Rust tools (rust-htslib, htsget) benefit from ownership: predictable memory curves with no GC jitter.</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="進階主題 B" data-en="ADVANCED B">錯誤處理哲學</div>
+<h2 data-zh="九-B、進階：錯誤處理的三種哲學" data-en="IX-B. Advanced: Three Philosophies of Error Handling">九-B、錯誤處理的三種哲學</h2>
+<div data-lang="zh"><p>同一個錯誤「打開不存在的檔案」，三種語言哲學完全不同：</p></div>
+<div data-lang="en"><p>The same error "open a non-existent file" is handled three completely different ways:</p></div>
+<table class="comp-table">
+<thead><tr><th data-zh="風格" data-en="Style">風格</th><th data-zh="代表語言" data-en="Representative">代表語言</th><th data-zh="關鍵字" data-en="Keywords">關鍵字</th><th data-zh="優點 / 缺點" data-en="Pros / Cons">優點 / 缺點</th></tr></thead>
+<tbody>
+<tr><td><strong>Exceptions</strong></td><td>Python, Java, C#, Ruby</td><td><code>try / except / raise</code></td><td data-zh="✓ 寫起來自然 ✗ 「隱形 control flow」、效能差" data-en="✓ Natural to write ✗ Hidden control flow, perf cost">✓ 自然 ✗ 隱形流程</td></tr>
+<tr><td><strong>Result / Option</strong></td><td>Rust, Haskell, Scala, Swift</td><td><code>Result&lt;T,E&gt;</code>, <code>?</code></td><td data-zh="✓ 型別系統強制處理 ✗ 寫起來囉嗦" data-en="✓ Type-system forces handling ✗ Verbose">✓ 強制處理 ✗ 囉嗦</td></tr>
+<tr><td><strong>Multi-value / err</strong></td><td>Go</td><td><code>val, err := f()</code></td><td data-zh="✓ 簡單明顯 ✗ if err 滿天飛" data-en="✓ Explicit ✗ if-err everywhere">✓ 顯式 ✗ 噪音</td></tr>
+<tr><td><strong>Panic / Abort</strong></td><td>Rust panic!, Go panic, C abort</td><td><code>panic!()</code></td><td data-zh="只用於「無法繼續」的程式錯誤" data-en="Only for unrecoverable bugs">不可恢復</td></tr>
+</tbody></table>
+<div class="callout tip" style="margin-top:14px;"><span class="callout-icon">💡</span><div>
+<div data-lang="zh"><strong>R 的「警告 vs 錯誤」三層級：</strong><code>message()</code>、<code>warning()</code>、<code>stop()</code>。生資的 DESeq2 與 edgeR 會在資料異常時用 <code>warning()</code>——務必把 R 設定 <code>options(warn = 2)</code> 將警告升級為錯誤，否則容易漏看關鍵警示。</div>
+<div data-lang="en"><strong>R's three levels:</strong> <code>message()</code>, <code>warning()</code>, <code>stop()</code>. Bioconductor packages like DESeq2/edgeR raise warnings on anomalies — set <code>options(warn = 2)</code> to escalate warnings to errors, otherwise critical warnings are easily missed.</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="進階主題 C" data-en="ADVANCED C">並行模型四大流派</div>
+<h2 data-zh="九-C、進階：並行 (Concurrency) 模型四大流派" data-en="IX-C. Advanced: Four Concurrency Models">九-C、並行四大模型</h2>
+<div class="card-grid cols-2">
+<div class="card"><h4 data-zh="① OS Threads + Locks" data-en="① OS Threads + Locks">① OS Threads + Locks</h4>
+<div data-lang="zh"><p>POSIX pthread、Java Thread、Python <code>threading</code>。每 thread 是 OS 排程單位，共享記憶體要靠 <strong>mutex / semaphore</strong>。<strong>陷阱</strong>：deadlock、race condition、priority inversion。Python 因 GIL 在 CPU bound 上幾乎無用，但 I/O bound 仍有效。Python 3.13 free-threading 是轉折點。</p></div>
+<div data-lang="en"><p>POSIX pthreads, Java Threads, Python <code>threading</code>. Each thread is an OS scheduling unit; shared memory requires <strong>mutexes/semaphores</strong>. <strong>Pitfalls</strong>: deadlocks, races, priority inversion. Python's GIL makes threads useless for CPU-bound work, but they still help for I/O. Python 3.13 free-threading is a turning point.</p></div></div>
+<div class="card"><h4 data-zh="② Async / await (event loop)" data-en="② Async / await (event loop)">② Async / await（事件迴圈）</h4>
+<div data-lang="zh"><p>Python <code>asyncio</code> / JS / Rust <code>tokio</code> / C# <code>Task</code>。<strong>單 thread 上跑多個 coroutine</strong>，I/O wait 時切換。<strong>對網路服務、爬蟲、API gateway 極適合</strong>，可同時處理 10K+ 連線。但 CPU bound 完全幫不上忙——還是要 process pool。</p></div>
+<div data-lang="en"><p>Python <code>asyncio</code>, JS, Rust <code>tokio</code>, C# <code>Task</code>. <strong>Multiple coroutines on one thread</strong>, swapped at I/O waits. <strong>Perfect for network services, scrapers, API gateways</strong> — 10k+ connections at once. Useless for CPU-bound work — use a process pool.</p></div></div>
+<div class="card"><h4 data-zh="③ Actors (message passing)" data-en="③ Actors (message passing)">③ Actor 模型（訊息傳遞）</h4>
+<div data-lang="zh"><p>Erlang / Elixir / Akka / Pony。<strong>每個 actor 有獨立 state，只能透過訊息溝通</strong>——無共享記憶體 = 無 race。WhatsApp 在 Erlang 上用 200 萬連線/單機。Erlang 的「let it crash」哲學影響了現代 microservices。</p></div>
+<div data-lang="en"><p>Erlang / Elixir / Akka / Pony. <strong>Each actor has private state, communicates only via messages</strong> — no shared memory = no races. WhatsApp ran 2M connections per box on Erlang. The "let it crash" philosophy shaped modern microservices.</p></div></div>
+<div class="card"><h4 data-zh="④ CSP / channels" data-en="④ CSP / channels">④ CSP（Go channels）</h4>
+<div data-lang="zh"><p>Tony Hoare 1978 提出 CSP，Go 的 <strong>goroutine + channel</strong> 是最成功的實作。輕量 thread（2KB stack）+ typed channel 通訊。"Don't communicate by sharing memory; share memory by communicating." 是 Go 名言。Kubernetes、Docker、Prometheus、CockroachDB 都用此模型。</p></div>
+<div data-lang="en"><p>Tony Hoare 1978 invented CSP; Go's <strong>goroutines + channels</strong> are the most successful implementation. Lightweight threads (2 KB stack) + typed channels. "Don't communicate by sharing memory; share memory by communicating" — Go's motto. Kubernetes, Docker, Prometheus, CockroachDB all use this model.</p></div></div>
+</div>
+<div class="callout" style="background:#fff;border-left:4px solid var(--c-accent);margin-top:14px;"><span class="callout-icon">🎯</span><div>
+<div data-lang="zh"><strong>生資對應：</strong>BLAST、BWA、STAR 多用 OS thread + OpenMP；長 read 流式工具用 async；nf-core 在 Nextflow 內部用 actor-like dataflow（每個 process 是一個 actor，靠 channel 串接）。<strong>知道你的工具用哪種模型，能更好調 thread/memory 參數</strong>。</div>
+<div data-lang="en"><strong>Bioinformatics mapping:</strong> BLAST/BWA/STAR use OS threads + OpenMP; long-read streaming tools use async; nf-core uses actor-like dataflow inside Nextflow (each process is an actor, wired via channels). <strong>Knowing your tool's model helps you tune threads and memory.</strong></div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="進階主題 D" data-en="ADVANCED D">2026 Python 工具鏈革命</div>
+<h2 data-zh="九-D、進階：2026 年 Python 工具鏈大革命（Astral 帶頭）" data-en="IX-D. Advanced: 2026 Python Tooling Revolution (Astral)">九-D、2026 Python 工具鏈大革命</h2>
+<div data-lang="zh"><p>2024-2026 期間，Python 工具鏈經歷了 <strong>30 年來最大變革</strong>——由舊金山新創 <strong>Astral</strong>（Charlie Marsh 創辦）一波接一波推出 Rust 寫的新工具，全部 10-100× 快過原版：</p>
+<ul style="margin-left:20px;line-height:1.9;">
+<li><strong>ruff (2022)</strong>：取代 flake8 + isort + pylint + autoflake + pydocstyle……一個工具搞定，比 flake8 <strong>100× 快</strong>。Pandas、FastAPI、HuggingFace 全部換上。</li>
+<li><strong>uv (2024)</strong>：取代 pip + pip-tools + virtualenv + pipx + poetry + pyenv。lockfile 速度 <strong>10-100× 快過 poetry</strong>。可一鍵裝 Python 版本（內建 python-build-standalone）。<strong>2026 年 uv 已成事實標準</strong>，連官方 docs 都推薦。</li>
+<li><strong>ty (2025)</strong>：取代 mypy + pyright，是 type checker 的下一代。比 mypy <strong>100× 快</strong>，支援 PEP 695 新泛型語法、增量檢查。</li>
+<li><strong>rye → uv 合併 (2024-09)</strong>：Armin Ronacher 把 rye 捐給 Astral，並入 uv。</li>
+</ul>
+<p><strong>對生資的影響</strong>：① Snakemake / Nextflow 都已加入 uv 支援；② Bioconductor 雖在 R 端，但 reticulate 後端 Python env 也建議用 uv；③ 上 cluster 安裝環境從 30 分鐘變 30 秒；④ Conda/Bioconda 在 2026 仍是 bioinformatics 主流，但個人 Python 開發已大量轉向 uv。</p></div>
+<div data-lang="en"><p>From 2024 to 2026, Python tooling saw its <strong>biggest shake-up in 30 years</strong>, driven by SF startup <strong>Astral</strong> (Charlie Marsh) shipping Rust-based tools 10-100× faster than originals:</p>
+<ul style="margin-left:20px;line-height:1.9;">
+<li><strong>ruff (2022)</strong>: replaces flake8 + isort + pylint + autoflake + pydocstyle — one tool, <strong>100× faster than flake8</strong>. Adopted by pandas, FastAPI, HuggingFace.</li>
+<li><strong>uv (2024)</strong>: replaces pip + pip-tools + virtualenv + pipx + poetry + pyenv. Lockfiles <strong>10-100× faster than poetry</strong>. Installs Python versions in one command (bundles python-build-standalone). <strong>By 2026 uv is the de facto standard</strong>; official docs recommend it.</li>
+<li><strong>ty (2025)</strong>: replaces mypy + pyright. Next-gen type checker, <strong>100× faster than mypy</strong>; supports PEP 695 generics, incremental checking.</li>
+<li><strong>rye → uv merger (Sep 2024)</strong>: Armin Ronacher donated rye to Astral, merged into uv.</li>
+</ul>
+<p><strong>Bioinformatics impact:</strong> (1) Snakemake/Nextflow added uv support; (2) Bioconductor stays on R but reticulate's Python backend benefits; (3) cluster env install drops from 30 min to 30 sec; (4) Conda/Bioconda remains the bio mainstream in 2026, but personal Python dev has moved heavily to uv.</p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="經典書單" data-en="CLASSICS">推薦閱讀</div>
+<h2 data-zh="九-E、經典推薦書單（按等級分）" data-en="IX-E. Recommended Reading by Level">九-E、推薦書單</h2>
+<div class="card-grid cols-2">
+<div class="card"><h4 data-zh="入門 (0-1 年)" data-en="Beginner (0-1 yr)">入門 (0-1 年)</h4>
+<div data-lang="zh"><ul style="margin-left:18px;line-height:1.8;">
+<li><strong>Python Crash Course</strong> (Eric Matthes, 3rd ed 2023)</li>
+<li><strong>Automate the Boring Stuff with Python</strong> (Al Sweigart)</li>
+<li><strong>R for Data Science</strong> (Wickham &amp; Grolemund, 2nd ed 2023)</li>
+<li><strong>Bioinformatics Data Skills</strong> (Vince Buffalo, O'Reilly)</li>
+</ul></div>
+<div data-lang="en"><ul style="margin-left:18px;line-height:1.8;">
+<li><strong>Python Crash Course</strong> (Eric Matthes, 3rd ed 2023)</li>
+<li><strong>Automate the Boring Stuff with Python</strong> (Al Sweigart)</li>
+<li><strong>R for Data Science</strong> (Wickham &amp; Grolemund, 2nd ed 2023)</li>
+<li><strong>Bioinformatics Data Skills</strong> (Vince Buffalo, O'Reilly)</li>
+</ul></div></div>
+<div class="card"><h4 data-zh="進階 (1-3 年)" data-en="Intermediate (1-3 yr)">進階 (1-3 年)</h4>
+<div data-lang="zh"><ul style="margin-left:18px;line-height:1.8;">
+<li><strong>Fluent Python</strong> (Luciano Ramalho, 2nd ed 2022)</li>
+<li><strong>Advanced R</strong> (Hadley Wickham, 2nd ed)</li>
+<li><strong>Programming Rust</strong> (Blandy &amp; Orendorff, 2nd ed 2021)</li>
+<li><strong>The Linux Command Line</strong> (William Shotts, 2nd ed)</li>
+</ul></div>
+<div data-lang="en"><ul style="margin-left:18px;line-height:1.8;">
+<li><strong>Fluent Python</strong> (Luciano Ramalho, 2nd ed 2022)</li>
+<li><strong>Advanced R</strong> (Hadley Wickham, 2nd ed)</li>
+<li><strong>Programming Rust</strong> (Blandy &amp; Orendorff, 2nd ed 2021)</li>
+<li><strong>The Linux Command Line</strong> (William Shotts, 2nd ed)</li>
+</ul></div></div>
+<div class="card"><h4 data-zh="專家 (3+ 年)" data-en="Expert (3+ yr)">專家 (3+ 年)</h4>
+<div data-lang="zh"><ul style="margin-left:18px;line-height:1.8;">
+<li><strong>Structure and Interpretation of Computer Programs</strong> (SICP, Abelson &amp; Sussman) — 永遠的程式設計聖經</li>
+<li><strong>The Pragmatic Programmer, 20th Anniversary</strong> (Hunt &amp; Thomas, 2019)</li>
+<li><strong>Designing Data-Intensive Applications</strong> (Martin Kleppmann, 2nd ed 2024)</li>
+<li><strong>Crafting Interpreters</strong> (Robert Nystrom, free online)</li>
+</ul></div>
+<div data-lang="en"><ul style="margin-left:18px;line-height:1.8;">
+<li><strong>SICP — Structure and Interpretation of Computer Programs</strong> (Abelson &amp; Sussman) — the eternal CS bible</li>
+<li><strong>The Pragmatic Programmer, 20th Anniversary</strong> (Hunt &amp; Thomas, 2019)</li>
+<li><strong>Designing Data-Intensive Applications</strong> (Martin Kleppmann, 2nd ed 2024)</li>
+<li><strong>Crafting Interpreters</strong> (Robert Nystrom, free online)</li>
+</ul></div></div>
+<div class="card"><h4 data-zh="生資專門" data-en="Bioinformatics-specific">生資專門</h4>
+<div data-lang="zh"><ul style="margin-left:18px;line-height:1.8;">
+<li><strong>Modern Statistics for Modern Biology</strong> (Holmes &amp; Huber, 2019)</li>
+<li><strong>Computational Genomics with R</strong> (Akalin, 2020+)</li>
+<li><strong>Bioinformatics Algorithms: An Active Learning Approach</strong> (Compeau &amp; Pevzner, 3rd ed)</li>
+<li><strong>scverse / Scanpy + Seurat / Bioconductor 線上 vignettes</strong></li>
+</ul></div>
+<div data-lang="en"><ul style="margin-left:18px;line-height:1.8;">
+<li><strong>Modern Statistics for Modern Biology</strong> (Holmes &amp; Huber, 2019)</li>
+<li><strong>Computational Genomics with R</strong> (Akalin, 2020+)</li>
+<li><strong>Bioinformatics Algorithms: An Active Learning Approach</strong> (Compeau &amp; Pevzner, 3rd ed)</li>
+<li><strong>scverse / Scanpy + Seurat / Bioconductor online vignettes</strong></li>
+</ul></div></div>
 </div>
 </section>
 
 <section class="quiz-section">
-<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<h3>📝 <span data-zh="自我檢測（5 題）" data-en="Self-Check (5 questions)">自我檢測</span></h3>
+
 <div class="quiz-q" data-answer="1">
-<p data-lang="zh">1. 下列何者最能描述「直譯式語言」與「編譯式語言」的差別？</p>
-<p data-lang="en">1. Which best describes the difference between interpreted and compiled languages?</p>
+<p data-lang="zh">1. 編譯式與直譯式語言的最主要差別是？</p>
+<p data-lang="en">1. The main difference between compiled and interpreted languages is?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 直譯式較快，編譯式較慢</span><span data-lang="en">A. Interpreted is faster, compiled is slower</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 編譯式先一次轉換成機器碼，直譯式則逐行翻譯執行</span><span data-lang="en">B. Compiled translates the whole program to machine code first; interpreted translates line by line at runtime</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 編譯式只能寫低階語言，直譯式只能寫高階語言</span><span data-lang="en">C. Compiled is only for low-level languages; interpreted for high-level</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 直譯式不需要 CPU</span><span data-lang="en">D. Interpreted languages don't need a CPU</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 直譯式較快</span><span data-lang="en">A. Interpreted is faster</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 編譯式先轉成機器碼一次，直譯式逐行翻譯</span><span data-lang="en">B. Compiled translates to machine code up front; interpreted translates line by line</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 編譯式只能寫低階語言</span><span data-lang="en">C. Compiled is only low-level</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 直譯式不需要 CPU</span><span data-lang="en">D. Interpreted doesn't need a CPU</span></div>
 </div><div class="quiz-feedback" id="fb1"></div></div>
 
 <div class="quiz-q" data-answer="2">
 <p data-lang="zh">2. OOP 四大支柱「不」包含下列哪項？</p>
-<p data-lang="en">2. Which is NOT one of the four pillars of OOP?</p>
+<p data-lang="en">2. Which is NOT one of OOP's four pillars?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 封裝 (Encapsulation)</span><span data-lang="en">A. Encapsulation</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 繼承 (Inheritance)</span><span data-lang="en">B. Inheritance</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 編譯 (Compilation)</span><span data-lang="en">C. Compilation</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 多型 (Polymorphism)</span><span data-lang="en">D. Polymorphism</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 封裝 Encapsulation</span><span data-lang="en">A. Encapsulation</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 繼承 Inheritance</span><span data-lang="en">B. Inheritance</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 編譯 Compilation</span><span data-lang="en">C. Compilation</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 多型 Polymorphism</span><span data-lang="en">D. Polymorphism</span></div>
 </div><div class="quiz-feedback" id="fb2"></div></div>
 
-<div class="quiz-q" data-answer="0">
-<p data-lang="zh">3. 關於 Python，下列何者正確？</p>
-<p data-lang="en">3. Which statement about Python is correct?</p>
+<div class="quiz-q" data-answer="3">
+<p data-lang="zh">3. 關於 Python GIL 的敘述，下列何者正確？</p>
+<p data-lang="en">3. Which statement about Python's GIL is correct?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Python 是直譯式高階語言，動態型別、支援多種典範 (procedural / OOP / FP)</span><span data-lang="en">A. Python is an interpreted high-level language, dynamically typed, multi-paradigm (procedural / OOP / FP)</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Python 純粹是函數式語言</span><span data-lang="en">B. Python is purely functional</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Python 程式必須先用 GCC 編譯成 .exe 才能執行</span><span data-lang="en">C. Python programs must be compiled with GCC to .exe before running</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Python 是靜態型別，宣告變數必須指定型別</span><span data-lang="en">D. Python is statically typed; variables require explicit type declarations</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. GIL 是 GPU 的鎖</span><span data-lang="en">A. GIL is a GPU lock</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. GIL 已在 Python 2.7 移除</span><span data-lang="en">B. GIL was removed in Python 2.7</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. GIL 使 Python 多執行緒在 I/O 密集任務也完全失效</span><span data-lang="en">C. GIL makes multithreading useless even for I/O-bound work</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. GIL 限制單一時間只有一個執行緒能執行 Python bytecode，3.13 引入可選 free-threading 模式</span><span data-lang="en">D. GIL restricts one thread at a time for Python bytecode; Python 3.13 introduced optional free-threading</span></div>
 </div><div class="quiz-feedback" id="fb3"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">4. 一位生物資訊學家需要做 RNA-seq DE 分析 (DESeq2) 和訓練單細胞深度學習模型 (scGPT)，最合適的語言組合是？</p>
+<p data-lang="en">4. A bioinformatician needs to do RNA-seq DE (DESeq2) and train a single-cell deep model (scGPT). Best language combination?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 只用 Python</span><span data-lang="en">A. Python only</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 只用 R</span><span data-lang="en">B. R only</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. R (Bioconductor / DESeq2) + Python (PyTorch / scGPT)，必要時 Bash 串接</span><span data-lang="en">C. R (Bioconductor/DESeq2) + Python (PyTorch/scGPT), Bash to glue if needed</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 只用 Excel</span><span data-lang="en">D. Excel only</span></div>
+</div><div class="quiz-feedback" id="fb4"></div></div>
+
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">5. 關於 Rust 在生物資訊的角色，下列何者最正確？</p>
+<p data-lang="en">5. About Rust in bioinformatics, which is most accurate?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Rust 是統計分析的主流</span><span data-lang="en">A. Rust dominates statistical analysis</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Rust 提供 C 級的速度與更強的記憶體安全，rust-htslib 等新工具逐漸替代 C++</span><span data-lang="en">B. Rust offers C-class speed with stronger memory safety; rust-htslib and similar are gradually replacing C++</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Rust 比 Python 慢 100×</span><span data-lang="en">C. Rust is 100× slower than Python</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Rust 沒有套件管理</span><span data-lang="en">D. Rust has no package manager</span></div>
+</div><div class="quiz-feedback" id="fb5"></div></div>
+</section>
+
+<section class="section" style="background:#fef3c7;border-radius:14px;padding:32px;">
+<div class="section-label" style="color:#b45309;">💭 <span data-zh="延伸思考" data-en="DISCUSSION">延伸思考</span></div>
+<h2 data-zh="十、延伸思考與討論" data-en="X. Discussion &amp; Reflection">十、延伸思考</h2>
+<ol style="margin-left:20px;line-height:1.9;color:var(--c-ink);">
+<li data-lang="zh"><strong>LLM 會讓「會寫程式」變得不再重要嗎？</strong>還是反而會放大「能讀懂並驗證程式碼」的人之間的差距？2026 年起，「Vibe Coding」一詞被廣泛討論——靠自然語言 prompt 寫程式。但 AlphaFold、Scanpy 這種需要嚴格正確性的科學程式，LLM 真的能取代資深開發者嗎？</li>
+<li data-lang="en"><strong>Will LLMs make "knowing how to program" obsolete?</strong> Or will they amplify the gap between people who can read &amp; verify code and those who can't? "Vibe coding" became a buzzword in 2026 — programming through natural-language prompts. But for scientific code where correctness matters (AlphaFold, Scanpy), can LLMs really replace senior devs?</li>
+<li data-lang="zh"><strong>Python 與 Rust 各佔什麼生態位？</strong>Python 在 AI、資料科學、生資、科學運算一統江湖；Rust 在系統工具、CLI、效能熱點、區塊鏈崛起。它們會在何處衝突？bioinformatics 工具生態系最終會被哪個吃下？</li>
+<li data-lang="en"><strong>Where do Python and Rust each fit?</strong> Python rules AI / data science / bioinformatics; Rust rules system tools / CLIs / hot paths / blockchain. Where will they collide? Which ends up dominating the bioinformatics tooling stack?</li>
+<li data-lang="zh"><strong>R 會被 Python 完全取代嗎？</strong>2010 年 R 在生物統計獨領風騷，但 Python + statsmodels + pandas 一路追擊。Bioconductor 是 R 的最後堡壘——你認為它 2030 年還會是統計學家的首選嗎？</li>
+<li data-lang="en"><strong>Will Python fully replace R?</strong> Pre-2010 R dominated biostatistics; Python + statsmodels + pandas have been catching up. Bioconductor is R's last fortress — will it still be statisticians' default in 2030?</li>
+</ol>
 </section>
 
 <nav class="page-nav">
@@ -222,10 +590,37 @@ function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.co
 // Language popularity chart (2026 Q1 composite, %)
 const langs=['Python','C/C++','Java','TypeScript','JavaScript','C#','Go','Rust','SQL','Swift'];
 const popularity=[28.4,11.2,9.6,9.1,8.5,5.8,4.7,4.1,3.6,2.9];
-new Chart(document.getElementById('langChart'),{type:'bar',data:{labels:langs,datasets:[{label:'2026 Popularity (%)',data:popularity,backgroundColor:'rgba(29,78,216,.75)',borderColor:'rgba(29,78,216,1)',borderWidth:1}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>c.parsed.x+'%'}}},scales:{x:{title:{display:true,text:'Popularity %'},beginAtZero:true,max:30},y:{title:{display:false}}}}});
+new Chart(document.getElementById('langChart'),{type:'bar',data:{labels:langs,datasets:[{label:'2026 Popularity (%)',data:popularity,backgroundColor:['rgba(29,78,216,.85)','rgba(29,78,216,.7)','rgba(29,78,216,.65)','rgba(29,78,216,.6)','rgba(29,78,216,.55)','rgba(29,78,216,.5)','rgba(29,78,216,.45)','rgba(220,38,38,.7)','rgba(29,78,216,.4)','rgba(29,78,216,.35)'],borderColor:'rgba(29,78,216,1)',borderWidth:1}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>c.parsed.x+'%'}}},scales:{x:{title:{display:true,text:'Popularity %'},beginAtZero:true,max:30}}}});
+
+// Hello World interactive
+const HW={
+ py:{code:"# Python 3.x\nprint(\"Hello, World!\")",info:{zh:"直譯式｜動態強型別｜首版 1991｜執行：python hello.py｜代表用途：AI / 資料 / 生資 / web 後端",en:"Interpreted | dynamic strong | 1991 | run: python hello.py | uses: AI / data / bio / web backend"}},
+ r:{code:"# R 4.x\nprint(\"Hello, World!\")\n# or:\ncat(\"Hello, World!\\n\")",info:{zh:"直譯式｜動態｜首版 1993｜執行：Rscript hello.R｜代表用途：生物統計 / Bioconductor / 視覺化",en:"Interpreted | dynamic | 1993 | run: Rscript hello.R | uses: biostatistics / Bioconductor / viz"}},
+ js:{code:"// JavaScript ES2024\nconsole.log(\"Hello, World!\");",info:{zh:"JIT (V8)｜動態弱型別｜首版 1995｜執行：node hello.js 或瀏覽器｜代表用途：Web 前端 / 全端",en:"JIT (V8) | dynamic weak | 1995 | run: node hello.js or in browser | uses: web front-end / full-stack"}},
+ c:{code:"// C99\n#include <stdio.h>\nint main(void) {\n    printf(\"Hello, World!\\n\");\n    return 0;\n}",info:{zh:"編譯式｜靜態弱型別｜首版 1972｜編譯：gcc hello.c -o hello && ./hello｜代表用途：OS / 嵌入式 / 高效能工具",en:"Compiled | static weak | 1972 | build: gcc hello.c -o hello && ./hello | uses: OS / embedded / perf tools"}},
+ rust:{code:"// Rust 1.x\nfn main() {\n    println!(\"Hello, World!\");\n}",info:{zh:"編譯式 (LLVM)｜靜態強型別｜首版 2010｜編譯：cargo run｜代表用途：系統工具 / CLI / Linux kernel / bio CLI",en:"Compiled (LLVM) | static strong | 2010 | build: cargo run | uses: systems / CLI / Linux kernel / bio CLI"}},
+ mojo:{code:"# Mojo 25.x — Python superset, compiles to native\nfn main():\n    print(\"Hello, World!\")",info:{zh:"編譯式 (MLIR)｜靜態+漸進｜首版 2023｜編譯：mojo build hello.mojo｜代表用途：AI 加速器 / 取代 CUDA",en:"Compiled (MLIR) | static + gradual | 2023 | build: mojo build hello.mojo | uses: AI accelerators / CUDA replacement"}}
+};
+const hwCode=document.getElementById('hwCode'),hwInfo=document.getElementById('hwInfo');
+function showHW(lang){const L=I18n.get();hwCode.textContent=HW[lang].code;hwInfo.textContent=HW[lang].info[L];document.querySelectorAll('.hw-btn').forEach(b=>{if(b.dataset.lang===lang){b.style.background='var(--c-accent)';b.style.color='#fff';}else{b.style.background='#fff';b.style.color='var(--c-accent)';}});}
+document.querySelectorAll('.hw-btn').forEach(b=>b.addEventListener('click',()=>showHW(b.dataset.lang)));
+showHW('py');
+window.addEventListener('langChange',()=>{const active=document.querySelector('.hw-btn[style*="rgb(27, 54, 93)"]')||document.querySelector('.hw-btn');showHW(active?active.dataset.lang:'py');});
 
 // Quiz feedback
-const QF={zh:{q1_y:'編譯式產出 .exe / binary 一次到位；直譯式則邊讀邊執行，啟動快但每次都重新翻譯。',q1_n:'答案 B。',q2_y:'OOP 四大支柱：封裝、繼承、多型、抽象。「編譯」是語言實作層的議題，不是 OOP 概念。',q2_n:'答案 C。',q3_y:'Python 確實是直譯式、動態型別、多典範語言——這也是它對新手最友善的原因。',q3_n:'答案 A。'},en:{q1_y:'Compiled produces a binary up front; interpreted translates line by line at runtime.',q1_n:'Answer: B.',q2_y:"OOP's four pillars are encapsulation, inheritance, polymorphism, abstraction. Compilation is a language-implementation concern.",q2_n:'Answer: C.',q3_y:'Python is interpreted, dynamically typed, and multi-paradigm — which is why it is beginner-friendly.',q3_n:'Answer: A.'}};
+const QF={zh:{
+q1_y:'編譯式產出 .exe / binary 一次到位；直譯式邊讀邊執行，啟動快但每次都重新翻譯。',q1_n:'答案 B。',
+q2_y:'OOP 四大支柱：封裝、繼承、多型、抽象。「編譯」屬於語言實作層，與 OOP 概念無關。',q2_n:'答案 C。',
+q3_y:'GIL 確實是「一次只允許一個 thread 跑 Python bytecode」的鎖。Python 3.13 (2024-10) 引入實驗性 free-threading (PEP 703)，是 30 年來最大變革。',q3_n:'答案 D。',
+q4_y:'雙語生態互補：DESeq2 在 R / Bioconductor，scGPT 在 Python / PyTorch。Bash 串接 pipeline。',q4_n:'答案 C。',
+q5_y:'Rust 以記憶體安全 + 接近 C 的速度，逐漸在 bioinformatics 取代某些 C++ 工具，如 rust-htslib、varlociraptor。',q5_n:'答案 B。'
+},en:{
+q1_y:'Compiled emits a binary up front; interpreted reads and runs line by line.',q1_n:'Answer: B.',
+q2_y:"OOP's four pillars: encapsulation, inheritance, polymorphism, abstraction. Compilation is an implementation concern.",q2_n:'Answer: C.',
+q3_y:"GIL allows only one thread at a time to execute Python bytecode. Python 3.13 (Oct 2024) introduced experimental free-threading (PEP 703) — the biggest change in 30 years.",q3_n:'Answer: D.',
+q4_y:'Two ecosystems complement each other: DESeq2 in R/Bioconductor, scGPT in Python/PyTorch. Bash glues the pipeline.',q4_n:'Answer: C.',
+q5_y:'Rust offers memory safety + C-class speed; it is gradually replacing some C++ bioinformatics tools, e.g., rust-htslib, varlociraptor.',q5_n:'Answer: B.'
+}};
 document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
 </script>
 </body></html>

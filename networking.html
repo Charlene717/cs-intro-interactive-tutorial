@@ -11,213 +11,391 @@
 </div></nav>
 <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
 <header class="page-hero"><div class="step-badge">CHAPTER 7 / 16</div>
-<h1 data-zh="電腦網路" data-en="Computer Networking">電腦網路</h1>
-<p class="subtitle" data-lang="zh">從家裡的 Wi-Fi 路由器到全球 Internet，本章帶你穿越 OSI 七層、TCP/IP、HTTP/3、IPv6 與 5G/Wi-Fi 7 的 2026 全貌。</p>
-<p class="subtitle" data-lang="en">From a home Wi-Fi router to the global Internet — traverse the OSI 7 layers, TCP/IP, HTTP/3, IPv6, and the 2026 landscape of 5G and Wi-Fi 7.</p>
+<h1 data-zh="電腦網路" data-en="Computer Networks">電腦網路</h1>
+<p class="subtitle" data-lang="zh">從 1969 年第一個「LO」訊息，到你今天用 prefetch 從 NCBI 下載 50 GB FASTQ——本章解開 OSI/TCP-IP 分層、三次握手、HTTP/1→2→3、DNS 與 CDN，以及 bioinformatician 必懂的 Aspera 與 Globus。</p>
+<p class="subtitle" data-lang="en">From the first "LO" message in 1969 to <code>prefetch</code>-ing 50 GB FASTQ from NCBI today — this chapter unpacks OSI/TCP-IP layers, the 3-way handshake, HTTP/1→2→3, DNS and CDN, plus the Aspera and Globus tools every bioinformatician should know.</p>
 </header>
 <main class="content-wrap">
 
 <section class="section">
-<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
-<h2 data-zh="網路：把每台機器串起來" data-en="Networking: Wiring Every Machine Together">網路：把每台機器串起來</h2>
-<div data-lang="zh"><p>1969 年 ARPANET 把 4 台電腦連起來；2026 年全球已有 <strong>180 億</strong>個聯網裝置——手機、PC、IoT 感測器、汽車、家電。要讓不同廠商的硬體、不同 OS、不同程式能彼此溝通，必須有共同的「協定 (protocol)」。</p>
-<p>網路工程把通訊難題分層解決：每一層只負責一件事，上層使用下層提供的服務。這就是 <strong>OSI 七層模型</strong>與 <strong>TCP/IP 四層模型</strong>的精神。</p></div>
-<div data-lang="en"><p>In 1969 ARPANET linked 4 computers; in 2026 there are <strong>18 billion</strong> connected devices — phones, PCs, IoT sensors, cars, appliances. To let different vendors, OSes, and apps talk to each other, we need shared <strong>protocols</strong>.</p>
-<p>Networking breaks the problem into layers: each layer does one job and uses the services of the layer below. That's the spirit of the <strong>OSI 7-layer</strong> and <strong>TCP/IP 4-layer</strong> models.</p></div>
+<div class="section-label" data-zh="開場故事" data-en="OPENING STORY">"LO" 與網路的誕生</div>
+<h2 data-zh="1969 年 10 月 29 日：剛打 'LO' 系統就當機" data-en="October 29, 1969: The System Crashed After 'LO'">1969 年 10 月 29 日：'LO' 然後當機</h2>
+<div data-lang="zh"><p>1969 年 10 月 29 日 22:30，UCLA 的研究生 <strong>Charley Kline</strong> 坐在一台 SDS Sigma 7 電腦前，準備透過 ARPANET 連到 480 公里外的 Stanford 研究所 (SRI)。他打算發送 "LOGIN"，登入遠端機器跑程式。他在電話另一頭跟 SRI 的工程師 Bill Duvall 確認："你看到 L 了嗎？" "看到了。" "看到 O 嗎？" "看到了。" 接著 Kline 打了 G——<strong>系統當機</strong>。</p>
+<p>就這樣，網際網路的<strong>第一個訊息</strong>是 "<strong>LO</strong>"——意外但詩意（"lo and behold" 的開頭）。一個小時後系統恢復，Kline 成功完成登入。<strong>ARPANET</strong>（美國國防部高等研究計畫署網路）這個只有 4 個節點的雛形，56 年後變成連結 50 億人、傳輸 100 ZB/年的全球網際網路。</p>
+<p>本章帶你看：① <strong>OSI 7 層</strong> vs <strong>TCP/IP 4 層</strong>怎麼把「複雜的網路」拆成可管理的抽象？② TCP 的 3-way handshake 為何需要 3 步而不是 2 步？③ HTTP/1 → /2 → /3 怎麼一路演進到「跑在 UDP 上」？④ 對 bioinformatician 最切身：為何下載 NCBI FASTQ 要用 <strong>Aspera</strong> 而不只是 HTTP？跨機構傳 1 TB 資料用 <strong>Globus</strong> 有什麼魔法？</p></div>
+<div data-lang="en"><p>October 29, 1969, 22:30 — UCLA grad student <strong>Charley Kline</strong> sat at an SDS Sigma 7, preparing to connect over ARPANET to SRI 480 km away at Stanford. He intended to send "LOGIN" and log into the remote machine. He confirmed with SRI's Bill Duvall by phone: "Did you get the L?" "Got it." "Got the O?" "Got it." Then Kline typed G — <strong>the system crashed</strong>.</p>
+<p>So the internet's <strong>first message</strong> was "<strong>LO</strong>" — accidental but poetic (the opening of "lo and behold"). An hour later the system was back and Kline finished the login. <strong>ARPANET</strong> — the US ARPA's 4-node prototype — became, 56 years later, the global internet connecting 5 billion people and moving 100 ZB/year.</p>
+<p>This chapter: (1) how do <strong>OSI's 7 layers</strong> vs <strong>TCP/IP's 4</strong> tame "the network" into manageable abstractions? (2) Why does TCP's 3-way handshake need 3 steps, not 2? (3) How did HTTP/1 → /2 → /3 end up running on UDP? (4) For bioinformaticians: why use <strong>Aspera</strong>, not just HTTPS, for NCBI FASTQ? What magic lets <strong>Globus</strong> ship 1 TB across institutions?</p></div>
 <div class="callout tip"><span class="callout-icon">💡</span><div>
-<span data-lang="zh"><strong>核心觀念：</strong>網路是「分層的抽象」。你的瀏覽器只需呼叫 HTTP，不需要知道 TCP 怎麼握手、IP 怎麼路由、Wi-Fi 怎麼調變射頻——每一層各司其職。</span>
-<span data-lang="en"><strong>Core idea:</strong> Networking is layered abstraction. Your browser calls HTTP without knowing how TCP handshakes, how IP routes, or how Wi-Fi modulates RF — each layer has its own job.</span>
+<span data-lang="zh"><strong>核心觀念：</strong>網路是「<strong>每層只解決一個小問題</strong>」的分層工程——物理層管電壓、IP 層管位址、TCP 層管可靠傳輸、HTTP 層管應用語意。一層只與相鄰層對話，這就是工程能在 56 年內把「兩台電腦聊天」擴展成「全球 5 G 個裝置互聯」的祕密。</span>
+<span data-lang="en"><strong>Core idea:</strong> The network is layered engineering — <strong>each layer solves one small problem</strong>. Physical layer handles voltage; IP layer handles addressing; TCP handles reliable transport; HTTP handles application semantics. Layers only talk to neighbors. That's how 56 years of engineering scaled "two computers chatting" to "5 billion devices interconnected."</span>
 </div></div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="OSI 七層" data-en="OSI 7 LAYERS">OSI 與 TCP/IP</div>
-<h2 data-zh="一、OSI 七層 vs TCP/IP 四層" data-en="I. OSI 7-Layer vs TCP/IP 4-Layer">一、OSI 七層 vs TCP/IP 四層</h2>
+<div class="section-label" data-zh="核心概念" data-en="CORE CONCEPTS">OSI vs TCP/IP</div>
+<h2 data-zh="一、核心概念：OSI 7 層 vs TCP/IP 4 層" data-en="I. Core Concepts: OSI 7 Layers vs TCP/IP 4 Layers">一、核心概念：分層架構</h2>
+<div data-lang="zh"><p><strong>OSI Model</strong>（ISO 1984 正式發布）是理想化的 7 層教學模型；<strong>TCP/IP Model</strong>（DoD 1980s）是實際運作的 4 層工程模型——後者勝出。每一層只看下面提供的服務、只給上面一個更高階的抽象。</p></div>
+<div data-lang="en"><p>The <strong>OSI model</strong> (ISO 1984) is the idealized 7-layer teaching model; the <strong>TCP/IP model</strong> (DoD 1980s) is the 4-layer engineering model that actually runs the internet. Each layer consumes the one below and exposes a cleaner abstraction above.</p></div>
+
 <table class="comp-table">
-<thead><tr><th>#</th><th data-zh="OSI 層" data-en="OSI Layer">OSI 層</th><th data-zh="負責什麼" data-en="Responsibility">負責什麼</th><th data-zh="代表協定" data-en="Protocols">代表協定</th><th>TCP/IP</th></tr></thead>
+<thead><tr><th>OSI</th><th>TCP/IP</th><th data-zh="例子" data-en="Examples">例子</th><th data-zh="單位" data-en="PDU">單位</th></tr></thead>
 <tbody>
-<tr><td>7</td><td data-lang="zh">應用層 (Application)</td><td data-lang="en">Application</td><td data-lang="zh">使用者程式介面</td><td data-lang="en">User-facing</td><td>HTTP, DNS, SMTP, SSH</td><td rowspan="3" data-lang="zh">Application</td></tr>
-<tr><td>6</td><td data-lang="zh">表現層 (Presentation)</td><td data-lang="en">Presentation</td><td data-lang="zh">編碼、加密、壓縮</td><td data-lang="en">Encoding, encryption</td><td>TLS, JPEG, UTF-8</td></tr>
-<tr><td>5</td><td data-lang="zh">會話層 (Session)</td><td data-lang="en">Session</td><td data-lang="zh">建立/維護對話</td><td data-lang="en">Session control</td><td>NetBIOS, RPC</td></tr>
-<tr><td>4</td><td data-lang="zh">傳輸層 (Transport)</td><td data-lang="en">Transport</td><td data-lang="zh">端對端、可靠性、順序</td><td data-lang="en">End-to-end, reliability</td><td>TCP, UDP, QUIC</td><td>Transport</td></tr>
-<tr><td>3</td><td data-lang="zh">網路層 (Network)</td><td data-lang="en">Network</td><td data-lang="zh">跨網路尋址與路由</td><td data-lang="en">Addressing & routing</td><td>IPv4, IPv6, ICMP</td><td>Internet</td></tr>
-<tr><td>2</td><td data-lang="zh">資料連結層 (Data Link)</td><td data-lang="en">Data Link</td><td data-lang="zh">同網段框架、MAC</td><td data-lang="en">Local-link frames</td><td>Ethernet, Wi-Fi, ARP</td><td rowspan="2" data-lang="zh">Link</td></tr>
-<tr><td>1</td><td data-lang="zh">實體層 (Physical)</td><td data-lang="en">Physical</td><td data-lang="zh">電壓、光、無線電</td><td data-lang="en">Voltage, optics, RF</td><td data-lang="zh">銅纜、光纖、5G</td><td data-lang="en">Copper, fiber, 5G</td></tr>
+<tr><td>7. Application</td><td rowspan="3">Application</td><td>HTTP, DNS, SMTP, SSH, FTP, gRPC</td><td>Message</td></tr>
+<tr><td>6. Presentation</td><td>TLS, JPEG, UTF-8</td><td>—</td></tr>
+<tr><td>5. Session</td><td>Sockets, TLS session</td><td>—</td></tr>
+<tr><td>4. Transport</td><td>Transport</td><td><strong>TCP</strong>, <strong>UDP</strong>, QUIC</td><td>Segment</td></tr>
+<tr><td>3. Network</td><td>Internet</td><td><strong>IP</strong>, ICMP, BGP, OSPF</td><td>Packet</td></tr>
+<tr><td>2. Data Link</td><td rowspan="2">Network Access</td><td>Ethernet, Wi-Fi, MAC</td><td>Frame</td></tr>
+<tr><td>1. Physical</td><td data-lang="zh">電纜、光纖、無線電波</td><td data-lang="en">Cable, fiber, radio</td><td>Bit</td></tr>
 </tbody></table>
-<div class="callout tip"><span class="callout-icon">💡</span><div>
-<div data-lang="zh"><strong>記憶口訣：</strong>「Please Do Not Throw Sausage Pizza Away」（Physical → Application）。實務上工程師多用 TCP/IP 4 層（Link / Internet / Transport / Application）。</div>
-<div data-lang="en"><strong>Mnemonic:</strong> "Please Do Not Throw Sausage Pizza Away" (Physical → Application). In practice engineers use the TCP/IP 4-layer model.</div>
-</div></div>
+
+<div class="card-grid cols-3">
+<div class="card"><div class="card-icon">📍</div><h4 data-zh="IPv4 vs IPv6" data-en="IPv4 vs IPv6">IPv4 vs IPv6</h4>
+<div data-lang="zh"><p>IPv4 用 <strong>32 bit</strong> 表達位址（4 G 個），1993 就不夠了，靠 NAT 撐到現在。IPv6 用 <strong>128 bit</strong>（足夠給地球每粒沙都有 10^18 個位址）。2026 全球 IPv6 流量占 45%。</p></div>
+<div data-lang="en"><p>IPv4 uses <strong>32 bits</strong> (4 G addrs) — ran out by 1993, propped up by NAT. IPv6 uses <strong>128 bits</strong> (enough for 10^18 addrs per grain of sand). 2026: ~45% of global traffic is IPv6.</p></div></div>
+<div class="card"><div class="card-icon">🔁</div><h4 data-zh="TCP：可靠傳輸" data-en="TCP: Reliable Transport">TCP：可靠傳輸</h4>
+<div data-lang="zh"><p>連線導向、有序、可靠、有流量與壅塞控制。HTTP/HTTPS、SSH、FTP 都用 TCP。代價：3-way handshake、ACK 重傳、慢啟動。</p></div>
+<div data-lang="en"><p>Connection-oriented, ordered, reliable, with flow & congestion control. HTTP/HTTPS, SSH, FTP all use TCP. Costs: 3-way handshake, ACK retransmits, slow start.</p></div></div>
+<div class="card"><div class="card-icon">⚡</div><h4 data-zh="UDP：不可靠快遞" data-en="UDP: Fire and Forget">UDP：快但不可靠</h4>
+<div data-lang="zh"><p>無連線、不重傳、不保證順序。用於 DNS（單包問答）、VoIP、視訊串流、線上遊戲——丟一兩包比延遲幾百毫秒好。QUIC/HTTP/3 也用 UDP 為底層。</p></div>
+<div data-lang="en"><p>Connectionless, no retries, no ordering. Used by DNS (single-packet Q&amp;A), VoIP, video, games — better to drop a packet than wait 100s of ms. QUIC/HTTP/3 also runs on UDP.</p></div></div>
+</div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="IP 位址" data-en="IP ADDRESSES">IP 位址</div>
-<h2 data-zh="二、IPv4 vs IPv6" data-en="II. IPv4 vs IPv6">二、IPv4 vs IPv6</h2>
-<div data-lang="zh"><p>每台聯網裝置都需要一個唯一的 <strong>IP 位址</strong>。1981 年定義的 <strong>IPv4</strong> 用 32 bit，最多 ~43 億個位址——已於 2011 年用盡 (IANA)。<strong>IPv6 (1998)</strong> 用 128 bit，提供 3.4 × 10³⁸ 個位址（地球每平方公分可分到 10²⁸ 個）。</p>
-<p><strong>2026 年實況：</strong>Google 統計，全球約 <strong>45%</strong> 的使用者已透過 IPv6 連線，行動網路採用率更高 (~70%)。</p></div>
-<div data-lang="en"><p>Every connected device needs a unique <strong>IP address</strong>. <strong>IPv4</strong> (1981) uses 32 bits — about 4.3 billion addresses, exhausted by IANA in 2011. <strong>IPv6</strong> (1998) uses 128 bits — 3.4 × 10³⁸ addresses (10²⁸ per square centimeter of Earth).</p>
-<p><strong>2026 reality:</strong> per Google, ~<strong>45%</strong> of users reach Google over IPv6 globally; mobile networks are even higher (~70%).</p></div>
-<table class="comp-table">
-<thead><tr><th></th><th>IPv4</th><th>IPv6</th></tr></thead>
-<tbody>
-<tr><td data-lang="zh">位元長度</td><td data-lang="en">Length</td><td>32 bit</td><td>128 bit</td></tr>
-<tr><td data-lang="zh">位址數量</td><td data-lang="en">Addresses</td><td>~4.3 × 10⁹</td><td>~3.4 × 10³⁸</td></tr>
-<tr><td data-lang="zh">寫法</td><td data-lang="en">Notation</td><td><code>192.168.1.1</code></td><td><code>2001:db8::1</code></td></tr>
-<tr><td data-lang="zh">2026 採用率</td><td data-lang="en">2026 adoption</td><td>~55%</td><td>~45% (rising)</td></tr>
-</tbody></table>
-<div data-lang="zh"><p>輔助協定：<strong>DNS</strong>（網域名稱 → IP，如 www.google.com → 142.250.x.x）、<strong>ARP</strong>（IP → MAC，同網段）、<strong>DHCP</strong>（自動發位址）、<strong>ICMP</strong>（ping、traceroute）、<strong>NAT</strong>（多台內網裝置共用 1 個公網 IP）、<strong>CIDR</strong>（位址聚合，<code>10.0.0.0/8</code> 表前 8 bit 為網路號）。</p></div>
-<div data-lang="en"><p>Helper protocols: <strong>DNS</strong> (name → IP), <strong>ARP</strong> (IP → MAC, local segment), <strong>DHCP</strong> (auto-assign address), <strong>ICMP</strong> (ping, traceroute), <strong>NAT</strong> (many private IPs sharing one public IP), <strong>CIDR</strong> (<code>10.0.0.0/8</code> means first 8 bits are the network part).</p></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="TCP vs UDP" data-en="TCP vs UDP">傳輸層協定</div>
-<h2 data-zh="三、TCP vs UDP 與三向交握" data-en="III. TCP vs UDP & 3-Way Handshake">三、TCP vs UDP</h2>
-<table class="comp-table">
-<thead><tr><th></th><th>TCP</th><th>UDP</th></tr></thead>
-<tbody>
-<tr><td data-lang="zh">可靠性</td><td data-lang="en">Reliability</td><td data-lang="zh">保證送達、按序、無重複</td><td data-lang="en">Delivery, order, no duplicates</td><td data-lang="zh">無保證</td><td data-lang="en">Best-effort only</td></tr>
-<tr><td data-lang="zh">連線</td><td data-lang="en">Connection</td><td data-lang="zh">3-way handshake 建立</td><td data-lang="en">3-way handshake</td><td data-lang="zh">無連線</td><td data-lang="en">Connectionless</td></tr>
-<tr><td data-lang="zh">表頭</td><td data-lang="en">Header</td><td>20+ bytes</td><td>8 bytes</td></tr>
-<tr><td data-lang="zh">適用</td><td data-lang="en">Use cases</td><td>HTTP, SSH, email, file transfer</td><td>DNS, VoIP, 遊戲, 串流</td></tr>
-</tbody></table>
-<div data-lang="zh"><p><strong>TCP 三向交握 (3-way handshake)：</strong></p>
-<ol style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li>Client → Server: <code>SYN</code> (seq=x)</li>
-<li>Server → Client: <code>SYN-ACK</code> (seq=y, ack=x+1)</li>
-<li>Client → Server: <code>ACK</code> (ack=y+1) → 連線建立</li>
-</ol></div>
-<div data-lang="en"><p><strong>TCP 3-way handshake:</strong></p>
-<ol style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li>Client → Server: <code>SYN</code> (seq=x)</li>
-<li>Server → Client: <code>SYN-ACK</code> (seq=y, ack=x+1)</li>
-<li>Client → Server: <code>ACK</code> (ack=y+1) → connection established</li>
-</ol></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="互動比較" data-en="INTERACTIVE">HTTP 版本比較</div>
-<h2 data-zh="四、互動：HTTP/1.1 vs HTTP/2 vs HTTP/3" data-en="IV. Interactive: HTTP/1.1 vs HTTP/2 vs HTTP/3">四、互動：HTTP 演進</h2>
-<div data-lang="zh"><p>下圖比較三個版本載入「同一個有 50 個資源的網頁」所需時間（模擬數據，含 100ms RTT）。<strong>HTTP/1.1</strong> 每連線只能 1 個請求；<strong>HTTP/2 (2015)</strong> 引入多工複用 (multiplexing)；<strong>HTTP/3 (2022, RFC 9114)</strong> 改建立在 <strong>QUIC</strong> (UDP 之上)，消除 TCP head-of-line blocking。</p></div>
-<div data-lang="en"><p>The chart below compares loading a single page with 50 assets across three HTTP versions (simulated, 100ms RTT). <strong>HTTP/1.1</strong> sends one request per connection; <strong>HTTP/2 (2015)</strong> multiplexes; <strong>HTTP/3 (2022, RFC 9114)</strong> runs on <strong>QUIC</strong> (over UDP), eliminating TCP head-of-line blocking.</p></div>
+<div class="section-label" data-zh="互動 #1" data-en="INTERACTIVE #1">HTTP 版本對比</div>
+<h2 data-zh="二、互動：HTTP/1.1 vs HTTP/2 vs HTTP/3 多請求延遲" data-en="II. Interactive: HTTP/1.1 vs HTTP/2 vs HTTP/3 Latency">二、互動：HTTP 版本延遲對比</h2>
+<div data-lang="zh"><p>下圖比較載入一個有 <strong>30 個資源</strong>（圖片、CSS、JS）的網頁時，HTTP 三個主要版本的累積延遲（假設 RTT=50 ms）。<strong>HTTP/1.1</strong> 序列化請求（最多 6 個並行連線）；<strong>HTTP/2</strong> 用 multiplexing 把所有請求塞進一條 TCP 連線；<strong>HTTP/3 + QUIC</strong> 跑在 UDP 上，解決 TCP 的 head-of-line blocking 與消除 TLS 1.3 的額外 RTT。</p></div>
+<div data-lang="en"><p>Below, cumulative latency to load <strong>30 resources</strong> (images, CSS, JS) under HTTP's three major versions, RTT = 50 ms. <strong>HTTP/1.1</strong> serializes requests (max 6 parallel connections); <strong>HTTP/2</strong> multiplexes all on one TCP connection; <strong>HTTP/3 + QUIC</strong> runs on UDP — kills TCP head-of-line blocking and rolls TLS 1.3 into 0-RTT.</p></div>
 <div class="interactive-panel">
 <div class="chart-container"><canvas id="httpChart"></canvas></div>
-<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">2026 統計：HTTP/3 已佔約 35% 全球網頁流量 (W3Techs)</span><span data-lang="en">2026 stats: HTTP/3 carries ~35% of global web traffic (W3Techs)</span></p>
+<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">資料近似值；實際差距依封包遺失率變動。網路差時 HTTP/3 比 HTTP/2 快 2× 不罕見。</span><span data-lang="en">Approximate; real gaps depend on packet loss. With lossy links, HTTP/3 over HTTP/2 by 2× is common.</span></p>
 </div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">協定選擇</div>
-<h2 data-zh="五、TCP vs UDP 決策樹" data-en="V. TCP vs UDP Decision Tree">五、協定決策樹</h2>
+<div class="section-label" data-zh="深入剖析" data-en="DEEP DIVE">3-way handshake / 壅塞控制 / DNS</div>
+<h2 data-zh="三、深入剖析：3-way handshake、壅塞控制、DNS、CDN" data-en="III. Deep Dive: 3-way Handshake, Congestion Control, DNS, CDN">三、深入剖析</h2>
+
+<h3 data-zh="3.1 為何 TCP 需要 3 次握手？" data-en="3.1 Why does TCP need 3 handshakes?">3.1 3-way handshake</h3>
+<div data-lang="zh"><p>TCP 建立連線的步驟：</p>
+<ol style="margin:8px 0 14px 24px;color:var(--c-ink-light);">
+<li><strong>SYN</strong>（Client → Server）：「我想連你，我的初始序號是 X」</li>
+<li><strong>SYN-ACK</strong>（Server → Client）：「OK，我的初始序號是 Y，確認你的 X+1」</li>
+<li><strong>ACK</strong>（Client → Server）：「確認你的 Y+1，開始傳資料」</li>
+</ol>
+<p><strong>為何不是 2 步？</strong>2 步無法解決「雙向同意 + 序號協商」這件事。即使 client 對 server 說了 SYN，server 也需要確認「自己的 SYN-ACK 真的被 client 收到」——這就是第 3 步的 ACK。少了它，server 不知道 client 是否在線，可能無止盡重送 SYN-ACK。<strong>為何不是 4 步？</strong>因為 server 的 ACK + SYN 可以合併成一個 SYN-ACK 封包，省一次 RTT。</p>
+<p><strong>SYN flood 攻擊</strong>：駭客發送大量假 SYN 不發 ACK，讓 server 的半開連線佇列爆滿，拒絕真實使用者。緩解：SYN cookies。</p></div>
+<div data-lang="en"><p>TCP connection setup:</p>
+<ol style="margin:8px 0 14px 24px;color:var(--c-ink-light);">
+<li><strong>SYN</strong> (Client → Server): "I want to connect; my initial seq is X."</li>
+<li><strong>SYN-ACK</strong> (Server → Client): "OK, my seq is Y, ack your X+1."</li>
+<li><strong>ACK</strong> (Client → Server): "Ack your Y+1, sending data."</li>
+</ol>
+<p><strong>Why not 2 steps?</strong> Because two-way agreement + sequence-number negotiation needs both sides to confirm receipt. Even after client SYN, the server must know "my SYN-ACK reached the client" — that's step 3. Without it, the server might retransmit SYN-ACK forever. <strong>Why not 4?</strong> Because the server's ACK + SYN can be coalesced into one SYN-ACK packet, saving an RTT.</p>
+<p><strong>SYN flood attack</strong>: send tons of fake SYNs without ACKs to fill the half-open queue and deny real users. Mitigation: SYN cookies.</p></div>
+
+<h3 data-zh="3.2 壅塞控制：TCP Reno、Cubic、BBR" data-en="3.2 Congestion Control: Reno, Cubic, BBR">3.2 壅塞控制</h3>
+<div data-lang="zh"><p>網際網路的「<strong>沒有中央調度</strong>」是它規模擴展的祕密，但這也代表大家共用線路時必須<strong>自律</strong>。TCP 用「窗口大小 (congestion window, cwnd)」控制一次飛在路上的封包數：</p>
+<ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
+<li><strong>Slow start</strong>：cwnd 從 1 開始，每收 1 個 ACK 加倍——指數成長到偵測到擁塞。</li>
+<li><strong>Congestion avoidance</strong>：之後線性成長。</li>
+<li><strong>Loss detection</strong>：丟包 → cwnd 折半（Reno）或調整數學模型（Cubic、預設於 Linux）。</li>
+<li><strong>BBR</strong>（Google 2016）：不依賴丟包當訊號，而是估計頻寬與 RTT 直接逼近最優點。YouTube 流量起初試用，2024 後廣泛部署。</li>
+</ul></div>
+<div data-lang="en"><p>The internet has <strong>no central scheduler</strong> — that's why it scales — but it also means everyone must <strong>self-throttle</strong> on shared links. TCP uses a <strong>congestion window (cwnd)</strong> to cap in-flight packets:</p>
+<ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
+<li><strong>Slow start</strong>: cwnd starts at 1; doubles on each ACK — exponential until congestion is detected.</li>
+<li><strong>Congestion avoidance</strong>: then linear growth.</li>
+<li><strong>Loss detection</strong>: drop → halve cwnd (Reno) or adjust by a math model (Cubic, default on Linux).</li>
+<li><strong>BBR</strong> (Google 2016): doesn't use loss as a signal; estimates bandwidth and RTT directly. First trialed on YouTube; widespread post-2024.</li>
+</ul></div>
+
+<h3 data-zh="3.3 DNS：把 ncbi.nlm.nih.gov 變成 IP" data-en="3.3 DNS: Turning ncbi.nlm.nih.gov into an IP">3.3 DNS 解析</h3>
+<div data-lang="zh"><p>當你 <code>curl https://ncbi.nlm.nih.gov</code>：</p>
+<ol style="margin:8px 0 14px 24px;color:var(--c-ink-light);">
+<li>瀏覽器先查本地 DNS cache、再查 OS resolver cache。</li>
+<li>沒命中 → 問你 ISP 的 <strong>recursive resolver</strong>（如 8.8.8.8 Google DNS、1.1.1.1 Cloudflare）。</li>
+<li>Resolver 先問 <strong>root server</strong>（13 組）「.gov 在哪？」→ 回傳 .gov 的 TLD server。</li>
+<li>問 .gov TLD server「nih.gov 在哪？」→ 回 nih.gov 的 authoritative NS。</li>
+<li>問 nih.gov NS「ncbi.nlm.nih.gov 的 A record？」→ 回 IP（如 130.14.29.110）。</li>
+<li>結果快取（TTL 通常 300 s–1 day），下次免再查。</li>
+</ol>
+<p>整個流程通常 &lt; 50 ms。<strong>DNS over HTTPS (DoH)</strong> 與 <strong>DNS over TLS (DoT)</strong> 加密 DNS 查詢，2020+ 主流瀏覽器預設啟用——隱私改善，但 ISP/IT 部門難做網域過濾。</p></div>
+<div data-lang="en"><p>When you <code>curl https://ncbi.nlm.nih.gov</code>:</p>
+<ol style="margin:8px 0 14px 24px;color:var(--c-ink-light);">
+<li>Browser checks its DNS cache, then the OS resolver cache.</li>
+<li>Miss → ask your ISP's <strong>recursive resolver</strong> (e.g. 8.8.8.8 Google, 1.1.1.1 Cloudflare).</li>
+<li>Resolver asks a <strong>root server</strong> (13 sets): "where is .gov?" → returns the .gov TLD server.</li>
+<li>Asks .gov TLD: "where is nih.gov?" → returns nih.gov's authoritative NS.</li>
+<li>Asks nih.gov NS: "A record for ncbi.nlm.nih.gov?" → returns the IP (e.g. 130.14.29.110).</li>
+<li>Caches the result (TTL usually 300 s–1 day).</li>
+</ol>
+<p>Usually &lt; 50 ms end-to-end. <strong>DNS over HTTPS (DoH)</strong> and <strong>DNS over TLS (DoT)</strong> encrypt DNS queries — defaults in browsers post-2020. Privacy gain, but domain filtering by ISP/IT gets harder.</p></div>
+
+<h3 data-zh="3.4 CDN：Cloudflare、Akamai、AWS CloudFront" data-en="3.4 CDN: Cloudflare, Akamai, AWS CloudFront">3.4 CDN</h3>
+<div data-lang="zh"><p>當你在台灣下載一個由美國伺服器提供的 200 MB 檔案，跨太平洋光纖 RTT 約 150 ms——你的下載 throughput 受限於 <strong>TCP 窗口 / RTT</strong>，連 1 GB 寬頻都跑不滿。<strong>CDN (Content Delivery Network)</strong> 在全球部署數千個 edge servers，把熱資料 cache 在離你 30 ms 以內的節點。原理：DNS 解析時根據你的 IP 回傳離你最近的 edge IP（anycast routing）。</p></div>
+<div data-lang="en"><p>Downloading a 200 MB file from a US server in Taiwan crosses the Pacific (~150 ms RTT) — your throughput is capped by <strong>TCP window / RTT</strong>, can't saturate even 1 Gbps. A <strong>CDN (Content Delivery Network)</strong> deploys thousands of edge servers worldwide and caches hot content within 30 ms of you. Mechanism: DNS responses are personalized to return the nearest edge IP (anycast).</p></div>
+
+<h3 data-zh="3.5 ARP、ICMP、DHCP — 區網的小幫手" data-en="3.5 ARP, ICMP, DHCP — LAN Helpers">3.5 區網三劍客</h3>
+<table class="comp-table">
+<thead><tr><th data-zh="協定" data-en="Protocol">協定</th><th data-zh="功能" data-en="Purpose">功能</th><th data-zh="常見指令" data-en="Common command">常見指令</th></tr></thead>
+<tbody>
+<tr><td><strong>ARP</strong></td><td data-lang="zh">把 IP 轉成 MAC（區網層）</td><td data-lang="en">Maps IP → MAC (LAN layer)</td><td><code>arp -a</code></td></tr>
+<tr><td><strong>ICMP</strong></td><td data-lang="zh">網路診斷（ping、traceroute）</td><td data-lang="en">Network diagnostics (ping, traceroute)</td><td><code>ping 8.8.8.8</code></td></tr>
+<tr><td><strong>DHCP</strong></td><td data-lang="zh">自動配發 IP、子網路、DNS</td><td data-lang="en">Auto-assigns IP, subnet, DNS</td><td><code>ipconfig /renew</code></td></tr>
+<tr><td><strong>NAT</strong></td><td data-lang="zh">把多個內網 IP 對應到 1 個公網 IP</td><td data-lang="en">Maps many private IPs to one public IP</td><td>router NAT table</td></tr>
+</tbody></table>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="歷史故事" data-en="HISTORY">五個關鍵時刻</div>
+<h2 data-zh="四、五個關鍵時刻：ARPANET、Flag Day、WWW、IPv6、BGP 事故" data-en="IV. Five Key Moments">四、五個關鍵時刻</h2>
+<div class="workflow">
+<div class="workflow-step" data-step="1"><h4 data-zh="1969：ARPANET 與 'LO'" data-en="1969: ARPANET and 'LO'">1969：ARPANET</h4>
+<div data-lang="zh"><p>1969 年 10 月，ARPANET 連起 UCLA、SRI、UCSB、Utah 四個節點，使用 IMP (Interface Message Processor) 路由器 + NCP 協定（後被 TCP/IP 取代）。第一筆訊息 "LO" 後 1 小時系統復原；3 年後 ARPANET 公開展示 23 個節點；1973 年 Vint Cerf 與 Bob Kahn 開始設計 TCP/IP——他們因此後來被稱為「網際網路之父」。</p></div>
+<div data-lang="en"><p>October 1969 — ARPANET connected UCLA, SRI, UCSB, and Utah using IMP routers (Interface Message Processor) + NCP (later replaced by TCP/IP). First message "LO" — system recovered in an hour. 3 years later ARPANET demoed 23 nodes publicly. In 1973 Vint Cerf and Bob Kahn started designing TCP/IP — later called the "Fathers of the Internet."</p></div></div>
+<div class="workflow-step" data-step="2"><h4 data-zh="1983 年 1 月 1 日：Flag Day" data-en="January 1, 1983: Flag Day">1983：Flag Day</h4>
+<div data-lang="zh"><p>1983 年 1 月 1 日，整個 ARPANET <strong>強制</strong>從 NCP 切換到 TCP/IP——當天全網一次性升級，沒有過渡期，這就是「<strong>Flag Day</strong>」。這是史上最大的一次「協定大遷徙」，所有 400 多個節點必須同時準備好。今天網路規模太大，再也不可能 Flag Day——這也是 IPv6 過了 30 年仍未完全取代 IPv4 的根本原因。</p></div>
+<div data-lang="en"><p>January 1, 1983 — the entire ARPANET <strong>forcibly</strong> switched from NCP to TCP/IP overnight, no transition period — the famous "<strong>Flag Day</strong>". The largest protocol migration ever; all 400+ nodes had to be ready simultaneously. The internet is now too big for another Flag Day — that's the fundamental reason IPv6 hasn't fully replaced IPv4 after 30 years.</p></div></div>
+<div class="workflow-step" data-step="3"><h4 data-zh="1989：Tim Berners-Lee 在 CERN 發明 WWW" data-en="1989: Tim Berners-Lee Invents WWW at CERN">1989：WWW 誕生</h4>
+<div data-lang="zh"><p>1989 年 3 月，英國工程師 <strong>Tim Berners-Lee</strong> 在歐洲核子研究組織 (CERN) 寫了一份 13 頁的提案《Information Management: A Proposal》，主管 Mike Sendall 在封面寫下「Vague, but exciting」（模糊但令人興奮）批准之。Berners-Lee 隨後發明了 <strong>HTTP、HTML、URL</strong>——構成 World Wide Web 的三大支柱。1991 年 8 月 6 日他發布世界第一個網站（info.cern.ch，仍可訪問）。<strong>他選擇不申請專利、讓 WWW 永遠開放</strong>——這個決定塑造了現代互聯網的開放精神。</p></div>
+<div data-lang="en"><p>March 1989 — British engineer <strong>Tim Berners-Lee</strong> at CERN wrote a 13-page proposal, "Information Management: A Proposal." His manager Mike Sendall scrawled "Vague, but exciting" on the cover and approved it. Berners-Lee invented <strong>HTTP, HTML, and URL</strong> — WWW's three pillars. On August 6, 1991, he published the world's first website (info.cern.ch, still online). <strong>He chose not to patent it, keeping WWW open forever</strong> — that decision shaped the modern internet's open ethos.</p></div></div>
+<div class="workflow-step" data-step="4"><h4 data-zh="2011：World IPv6 Day（為什麼還沒換完？）" data-en="2011: World IPv6 Day (Why Aren't We Done?)">2011：IPv6 為何尚未取代 IPv4？</h4>
+<div data-lang="zh"><p>2011 年 6 月 8 日，Google、Facebook、Yahoo 等大廠同步啟用 IPv6 一整天，測試問題。2012 年 IPv6 Launch Day 正式永久啟用。然而 15 年後，IPv4 仍佔大半流量。為何？因為 IPv6 與 IPv4 「<strong>不直接相容</strong>」（不是 IPv4 的超集合），雙方必須跑 dual-stack 或 NAT64 翻譯。家用路由器、企業防火牆、舊系統升級成本巨大——<strong>沒有公司願意當第一個只跑 IPv6 的人</strong>。NAT 又把 IPv4 壽命「不必要地」延長了。</p></div>
+<div data-lang="en"><p>June 8, 2011 — Google, Facebook, Yahoo enabled IPv6 for a day to test. June 6, 2012 was the permanent IPv6 Launch Day. Yet 15 years later IPv4 still carries most traffic. Why? IPv6 is <strong>not backward-compatible</strong> with IPv4 (it's not a superset) — both must run dual-stack or NAT64 translation. Home routers, firewalls, legacy systems all need upgrades. <strong>No one wants to be the first IPv6-only site</strong>. And NAT extends IPv4's life "unnecessarily."</p></div></div>
+<div class="workflow-step" data-step="5"><h4 data-zh="2022：Cloudflare 一句 BGP 設錯，半個網路癱瘓" data-en="2022: One Cloudflare BGP Misconfig Took Down Half the Internet">2022：BGP 大停擺</h4>
+<div data-lang="zh"><p>2022 年 6 月 21 日，Cloudflare 工程師對 BGP (邊界閘道協定) 路由設定的一句修改，<strong>意外把全球 19 個資料中心從網路上「撤出」</strong>。Cloudflare 服務 1/5 全球網站，Discord、Shopify、Coinbase 同時下線約 75 分鐘。原因：BGP 的「<strong>信任模型</strong>」——所有運營商互相通告自己擁有哪些 IP 段，網路相信你說的。一個錯誤通告就能黑洞掉巨量流量。BGP 是 1989 年設計的「臨時方案」，至今未被取代——網際網路的根基比想像中脆弱。</p></div>
+<div data-lang="en"><p>June 21, 2022 — a Cloudflare engineer's one-line BGP route change <strong>accidentally withdrew 19 global data centers from the internet</strong>. Cloudflare serves 1/5 of the web; Discord, Shopify, Coinbase went down for ~75 minutes. Cause: BGP's <strong>trust model</strong> — every ISP announces what IP ranges it owns, and the rest of the world believes you. One bad announcement black-holes massive traffic. BGP was designed in 1989 as a "temporary" solution; never replaced — the internet's foundations are more fragile than they look.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動 #2" data-en="INTERACTIVE #2">CIDR 子網路計算器</div>
+<h2 data-zh="五、互動：CIDR / 子網路計算器" data-en="V. Interactive: CIDR / Subnet Calculator">五、互動：子網路計算器</h2>
+<div data-lang="zh"><p>輸入 CIDR 區塊（例如 192.168.0.0/24）自動算 network、broadcast、可用主機。CIDR 是 IPv4 的延命神器。</p></div>
+<div data-lang="en"><p>Enter a CIDR block (e.g. 192.168.0.0/24) and compute network, broadcast, usable host range. CIDR extended IPv4's life.</p></div>
+<div class="interactive-panel">
+<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px;">
+<label style="font-size:.88rem;font-weight:600;" data-zh="CIDR 區塊：" data-en="CIDR block:">CIDR 區塊：</label>
+<input id="cidrInput" type="text" value="192.168.10.0/24" style="flex:1;min-width:200px;padding:8px 12px;border:1px solid var(--c-border);border-radius:6px;font-family:var(--font-mono);font-size:.95rem;">
+<button id="cidrCalc" class="lang-toggle" data-zh="計算" data-en="Calculate">計算</button>
+</div>
+<div id="cidrOut" style="font-family:var(--font-mono);font-size:.9rem;background:var(--c-surface-alt);border-radius:8px;padding:14px;color:var(--c-ink);"></div>
+<p style="font-size:.82rem;color:var(--c-ink-muted);margin-top:10px;"><span data-lang="zh">試試：10.0.0.0/8、172.16.0.0/12、192.168.1.100/26。</span><span data-lang="en">Try: 10.0.0.0/8, 172.16.0.0/12, 192.168.1.100/26.</span></p>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="🧬 生資連結" data-en="BIOINFO LINKS">給生物資訊學家</div>
+<h2 data-zh="六、🧬 給生物資訊學家：從 NCBI 下載 50 GB FASTQ 的學問" data-en="VI. For Bioinformaticians">六、🧬 給生物資訊學家</h2>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;">
+<span class="callout-icon">🧬</span>
+<div>
+<strong data-zh="① prefetch + fasterq-dump：SRA toolkit" data-en="① prefetch + fasterq-dump: SRA toolkit">① 從 NCBI SRA 下載 FASTQ</strong>
+<p data-lang="zh">NCBI SRA 用 SRA 壓縮格式（私有 FASTQ 容器），不能直接 wget。必須 <code>prefetch SRR123456</code> + <code>fasterq-dump SRR123456</code>。<strong>fasterq-dump</strong>（2018+ 取代 fastq-dump）多執行緒解壓快 5–10 倍。一個 50 GB FASTQ：prefetch 20 分 + dump 30 分。</p>
+<p data-lang="en">NCBI SRA uses the SRA compressed format (proprietary FASTQ container). Use <code>prefetch SRR123456</code> then <code>fasterq-dump SRR123456</code>. <strong>fasterq-dump</strong> (2018+) is 5–10× faster than fastq-dump. 50 GB FASTQ: ~20 min prefetch + 30 min dump.</p>
+</div></div>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;">
+<span class="callout-icon">🧬</span>
+<div>
+<strong data-zh="② Aspera (ascp)：UDP 高速傳輸" data-en="② Aspera (ascp): UDP High-Speed Transfer">② Aspera：UDP-based 高速傳輸</strong>
+<p data-lang="zh">下載 1 TB 跨太平洋 HTTPS 受 TCP 窗口+RTT 限制，可能只跑 50 MB/s。<strong>Aspera (ascp)</strong> 用 IBM FASP 協定跑在 UDP 上，自己做可靠性，<strong>不受 TCP 慢啟動束縛</strong>，可塞滿 1 Gbps 光纖。NCBI、EBI、DDBJ、Broad 都有 Aspera 端點。免費替代：UDT、BBCP、GridFTP。</p>
+<p data-lang="en">1 TB cross-Pacific HTTPS is capped by TCP window+RTT — maybe 50 MB/s. <strong>Aspera (ascp)</strong> uses IBM FASP over UDP with its own reliability — <strong>bypasses TCP slow start</strong>, saturates 1 Gbps fiber. NCBI, EBI, DDBJ, Broad provide Aspera endpoints. Free alternatives: UDT, BBCP, GridFTP.</p>
+</div></div>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;">
+<span class="callout-icon">🧬</span>
+<div>
+<strong data-zh="③ Ensembl / UCSC REST API" data-en="③ Ensembl / UCSC REST API">③ REST API 自動化</strong>
+<p data-lang="zh">想知道 BRCA1 在小鼠基因組位置？用 Ensembl REST：<code>https://rest.ensembl.org/lookup/symbol/mus_musculus/Brca1</code>，2 秒回傳。Ensembl REST 提供 100+ endpoints；NCBI E-utilities 老牌但仍主力。實務：API 有 rate limit（Ensembl 15 req/s），超過會被 ban；用 <code>time.sleep(0.1)</code>。</p>
+<p data-lang="en">Want BRCA1 in mouse? Ensembl REST: <code>https://rest.ensembl.org/lookup/symbol/mus_musculus/Brca1</code> — 2 second response. 100+ endpoints. NCBI E-utilities is older but still core. APIs have <strong>rate limits</strong> (Ensembl 15 req/s); use <code>time.sleep(0.1)</code>.</p>
+</div></div>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;">
+<span class="callout-icon">🧬</span>
+<div>
+<strong data-zh="④ Globus：跨機構搬 1 TB" data-en="④ Globus: 1 TB Across Institutions">④ Globus 跨機構傳輸</strong>
+<p data-lang="zh">把 1 TB 從台大 HPC 傳到 Harvard FAS RC，scp 一週也未必成功（斷網重來）。<strong>Globus</strong>（UChicago + Argonne）做 fire-and-forget：選 source/dest endpoint，自動 GridFTP + 續傳 + checksum + email 通知。學術界 99% HPC 都有 Globus endpoint，是 ENCODE/TCGA 跨機構合作的事實標準。</p>
+<p data-lang="en">Moving 1 TB from NTU HPC to Harvard FAS RC via scp may take a week with retries. <strong>Globus</strong> (UChicago + Argonne) is fire-and-forget — pick endpoints, get auto GridFTP + resume + checksum + email. 99% of academic HPCs have Globus endpoints — de facto standard for ENCODE/TCGA collaborations.</p>
+</div></div>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;">
+<span class="callout-icon">🧬</span>
+<div>
+<strong data-zh="⑤ Cloud egress：AWS 收 \$90 下載 1 TB" data-en="⑤ Cloud Egress: AWS Charges \$90 per 1 TB">⑤ 雲端流量費的陷阱</strong>
+<p data-lang="zh">上傳 1 TB 到 S3：免費。下載回本地：約 \$90 美元（egress \$0.09/GB）。學術界吃這個悶虧——上雲後發現下載不起。AWS 2024 推出 Open Data Sponsorship；Cloudflare R2、Backblaze B2 完全免 egress。建議：① 評估 egress；② 用 AWS Snowball 物理寄硬碟（&gt;100 TB 比網路便宜）；③ 在雲端做分析，只下結果。</p>
+<p data-lang="en">Upload 1 TB to S3: free. Download to local: ~\$90 (egress \$0.09/GB). Academia stung — upload, then can't afford download. AWS Open Data Sponsorship (2024) + Cloudflare R2 + Backblaze B2 are zero-egress. Tips: (1) estimate egress, (2) AWS Snowball physical drives for &gt;100 TB, (3) compute in-cloud, download only results.</p>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="決策樹" data-en="DECISION TREE">何時用什麼？</div>
+<h2 data-zh="七、🌳 決策樹" data-en="VII. 🌳 Decision Tree">七、🌳 決策樹</h2>
 <div class="decision-tree">
-<h4>🌳 <span data-zh="該選 TCP 還是 UDP？" data-en="Pick TCP or UDP?">該選 TCP 還是 UDP？</span></h4>
+<h4>🌳 <span data-zh="傳輸協定選擇" data-en="Transport Protocol Choice">傳輸協定選擇</span></h4>
 <div data-lang="zh">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>遺失一個封包會造成「資料毀損」？<span class="dt-arrow">→ 是 →</span> <strong>TCP</strong>（檔案、網頁、SSH）。</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>需要「低延遲、即時性」（晚到不如不到）？<span class="dt-arrow">→ 是 →</span> <strong>UDP</strong>（VoIP、線上遊戲、即時影像）。</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>想要 TCP 的可靠性 + UDP 的速度？<span class="dt-arrow">→</span> 用 <strong>QUIC / HTTP/3</strong>（建立在 UDP 上，自帶可靠性、加密）。</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>多個請求並行載入（大量小檔）？<span class="dt-arrow">→</span> 用 <strong>HTTP/2 或 HTTP/3</strong>（多工複用，避免 head-of-line blocking）。</div></div>
+<div class="dt-node"><span class="dt-q">Q1:</span><div>必須不丟資料？<span class="dt-arrow">→</span> <strong>TCP</strong>（HTTPS、SSH、FTP）。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>要低延遲容許丟包？<span class="dt-arrow">→</span> <strong>UDP</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>網頁多資源、行動網路？<span class="dt-arrow">→</span> <strong>HTTP/3 (QUIC)</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>下載 FASTQ &lt; 50 GB？<span class="dt-arrow">→</span> <code>prefetch + fasterq-dump</code>。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>&gt; 100 GB 或跨太平洋？<span class="dt-arrow">→</span> <strong>Aspera (ascp)</strong> 或 <strong>Globus</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>跨學術機構搬資料？<span class="dt-arrow">→</span> <strong>Globus</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q7:</span><div>&gt; 100 TB 從雲端拉回？<span class="dt-arrow">→</span> <strong>AWS Snowball</strong>。</div></div>
 </div>
 <div data-lang="en">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>Would a lost packet corrupt the data? <span class="dt-arrow">→ Yes →</span> <strong>TCP</strong> (files, web, SSH).</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>Need ultra-low latency (late = useless)? <span class="dt-arrow">→ Yes →</span> <strong>UDP</strong> (VoIP, games, live video).</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>Want TCP reliability + UDP speed? <span class="dt-arrow">→</span> Use <strong>QUIC / HTTP/3</strong> (on UDP, with reliability and encryption built-in).</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>Many parallel requests (lots of small assets)? <span class="dt-arrow">→</span> <strong>HTTP/2 or HTTP/3</strong> — multiplexing avoids head-of-line blocking.</div></div>
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Lossless required? <span class="dt-arrow">→</span> <strong>TCP</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Low latency + loss-tolerant? <span class="dt-arrow">→</span> <strong>UDP</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Many web resources, flaky mobile? <span class="dt-arrow">→</span> <strong>HTTP/3 (QUIC)</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>FASTQ &lt; 50 GB? <span class="dt-arrow">→</span> <code>prefetch + fasterq-dump</code>.</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>&gt; 100 GB or cross-Pacific? <span class="dt-arrow">→</span> <strong>Aspera</strong> or <strong>Globus</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>Inter-institution? <span class="dt-arrow">→</span> <strong>Globus</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q7:</span><div>&gt; 100 TB cloud → on-prem? <span class="dt-arrow">→</span> <strong>AWS Snowball</strong>.</div></div>
 </div>
 </div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="無線與 2026 趨勢" data-en="WIRELESS & 2026">無線與最新趨勢</div>
-<h2 data-zh="六、無線網路與 2026 趨勢" data-en="VI. Wireless Networks & 2026 Trends">六、無線網路與 2026 趨勢</h2>
-<div class="card-grid cols-3">
-<div class="card"><h4>📶 Wi-Fi 7 (802.11be)</h4><div data-lang="zh"><p>2024 正式批准，理論峰值 <strong>46 Gbps</strong>。新功能：320 MHz 通道、多鏈路操作 (MLO)、4096-QAM。</p></div><div data-lang="en"><p>Ratified 2024, theoretical peak <strong>46 Gbps</strong>. New features: 320 MHz channels, Multi-Link Operation (MLO), 4096-QAM.</p></div></div>
-<div class="card"><h4>📱 5G / 6G</h4><div data-lang="zh"><p>5G 商用密度已過 60%。6G 規格化進行中 (3GPP Release 21+, 預計 2030 商用)，目標 1 Tbps、亞毫秒延遲。</p></div><div data-lang="en"><p>5G is in &gt;60% of regions. 6G is being standardized (3GPP Rel 21+, ~2030 launch) — targeting 1 Tbps and sub-ms latency.</p></div></div>
-<div class="card"><h4>🚀 HTTP/3 + QUIC</h4><div data-lang="zh"><p>2026 全球流量約 35% 為 HTTP/3。Google、Cloudflare、Meta 主導推動；TLS 1.3 內建。</p></div><div data-lang="en"><p>~35% of global web traffic in 2026. Driven by Google, Cloudflare, Meta. TLS 1.3 built-in.</p></div></div>
-<div class="card"><h4>🔒 HTTPS = HTTP + TLS 1.3</h4><div data-lang="zh"><p>2026 全球 95%+ 網頁使用 HTTPS；TLS 1.3 (RFC 8446) 將握手從 2-RTT 縮減為 1-RTT，更安全更快。</p></div><div data-lang="en"><p>95%+ of web pages use HTTPS in 2026; TLS 1.3 (RFC 8446) cuts the handshake from 2-RTT to 1-RTT — safer and faster.</p></div></div>
-<div class="card"><h4>🔵 Bluetooth 5.x</h4><div data-lang="zh"><p>低功耗 BLE 主導 IoT；Bluetooth 5.3 提升通道分類、降低干擾；6.0 標準 2025 公布。</p></div><div data-lang="en"><p>BLE dominates IoT. Bluetooth 5.3 improves channel classification; 6.0 was published in 2025.</p></div></div>
-<div class="card"><h4>🛰️ 衛星網路</h4><div data-lang="zh"><p>Starlink、Amazon Kuiper 部署 LEO 衛星群，提供偏遠地區 100+ Mbps、~30ms 延遲。</p></div><div data-lang="en"><p>Starlink, Amazon Kuiper deploy LEO constellations — 100+ Mbps and ~30ms latency in remote areas.</p></div></div>
+<div class="section-label" data-zh="程式碼" data-en="CODE">Code Tabs</div>
+<h2 data-zh="八、Code-tabs" data-en="VIII. Code Tabs">八、Code-tabs</h2>
+<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'r1')">R</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># requests + Ensembl REST</span>
+<span class="kw">import</span> requests, time, subprocess
+server = <span class="str">"https://rest.ensembl.org"</span>
+r = requests.<span class="func">get</span>(<span class="str">f"{server}/lookup/symbol/homo_sapiens/BRCA1?expand=1"</span>,
+                 headers={<span class="str">"Content-Type"</span>:<span class="str">"application/json"</span>})
+data = r.<span class="func">json</span>()
+<span class="func">print</span>(<span class="func">len</span>(data[<span class="str">'Transcript'</span>]))
+
+<span class="comment"># 批次：rate limit</span>
+<span class="kw">for</span> g <span class="kw">in</span> [<span class="str">"TP53"</span>,<span class="str">"BRCA1"</span>,<span class="str">"EGFR"</span>]:
+    r = requests.<span class="func">get</span>(<span class="str">f"{server}/lookup/symbol/homo_sapiens/{g}"</span>,
+                     headers={<span class="str">"Content-Type"</span>:<span class="str">"application/json"</span>})
+    time.<span class="func">sleep</span>(<span class="num">0.1</span>)
+
+<span class="comment"># SRA download</span>
+subprocess.<span class="func">run</span>([<span class="str">"prefetch"</span>, <span class="str">"SRR1234567"</span>], check=<span class="kw">True</span>)
+subprocess.<span class="func">run</span>([<span class="str">"fasterq-dump"</span>, <span class="str">"SRR1234567"</span>, <span class="str">"--split-files"</span>, <span class="str">"-e"</span>, <span class="str">"8"</span>])</pre></div>
+<div class="code-tab-content" id="r1"><pre><span class="comment"># R: httr2 (2023+ replaces httr)</span>
+<span class="kw">library</span>(httr2)
+req <- <span class="func">request</span>(<span class="str">"https://rest.ensembl.org"</span>) |&gt;
+  <span class="func">req_url_path</span>(<span class="str">"/lookup/symbol/homo_sapiens/BRCA1"</span>) |&gt;
+  <span class="func">req_headers</span>(<span class="str">"Content-Type"</span>=<span class="str">"application/json"</span>) |&gt;
+  <span class="func">req_throttle</span>(rate=<span class="num">10</span>)
+resp <- <span class="func">req_perform</span>(req)
+data <- <span class="func">resp_body_json</span>(resp)
+
+<span class="comment"># Bioconductor: biomaRt</span>
+<span class="kw">library</span>(biomaRt)
+mart <- <span class="func">useEnsembl</span>(biomart=<span class="str">"genes"</span>, dataset=<span class="str">"hsapiens_gene_ensembl"</span>)
+<span class="func">getBM</span>(attributes=<span class="func">c</span>(<span class="str">"hgnc_symbol"</span>,<span class="str">"chromosome_name"</span>),
+      filters=<span class="str">"hgnc_symbol"</span>, values=<span class="func">c</span>(<span class="str">"BRCA1"</span>,<span class="str">"TP53"</span>), mart=mart)</pre></div>
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// TCP 3-way handshake</span>
+<span class="kw">function</span> <span class="func">TcpConnect</span>(ip, port):
+    isn_c = <span class="func">RandomSeqNum</span>()
+    <span class="func">Send</span>(SYN, seq=isn_c)              <span class="comment">// 步驟 1</span>
+    pkt = <span class="func">Receive</span>(timeout=<span class="num">3</span>s)         <span class="comment">// 步驟 2: SYN-ACK</span>
+    <span class="kw">if</span> pkt.flags != SYN|ACK: <span class="kw">retry</span>
+    isn_s = pkt.seq
+    <span class="func">Send</span>(ACK, seq=isn_c+<span class="num">1</span>, ack=isn_s+<span class="num">1</span>)  <span class="comment">// 步驟 3</span>
+    state = ESTABLISHED
+
+<span class="comment">// HTTP/2 multiplexing</span>
+<span class="kw">function</span> <span class="func">Http2Request</span>(streams):
+    <span class="kw">parallel for</span> stream <span class="kw">in</span> streams:
+        send_frame(stream_id, HEADERS, stream.headers)
+        send_frame(stream_id, DATA,   stream.body)
+    <span class="comment">// server 可亂序回應；client 按 stream_id 重組</span></pre></div>
 </div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
-<h2 data-zh="七、Python: HTTP 與 socket" data-en="VII. Python: HTTP & sockets">七、HTTP 與 socket</h2>
-<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
-<div class="code-tab-content active" id="py1"><pre><span class="comment"># 高階：requests 函式庫送 HTTPS 請求 / High-level HTTPS via requests</span>
-<span class="kw">import</span> requests
-r = requests.<span class="func">get</span>(<span class="str">"https://api.github.com/users/torvalds"</span>,
-                 headers={<span class="str">"User-Agent"</span>: <span class="str">"intro-cs"</span>}, timeout=<span class="num">5</span>)
-<span class="func">print</span>(r.status_code, r.json()[<span class="str">"name"</span>])   <span class="comment"># 200 Linus Torvalds</span>
-
-<span class="comment"># 低階：純 TCP socket 對話 / Raw TCP socket</span>
-<span class="kw">import</span> socket
-s = socket.<span class="func">socket</span>(socket.AF_INET, socket.SOCK_STREAM)
-s.<span class="func">connect</span>((<span class="str">"example.com"</span>, <span class="num">80</span>))         <span class="comment"># 三向交握在此完成</span>
-s.<span class="func">sendall</span>(<span class="str">b"GET / HTTP/1.0\r\nHost: example.com\r\n\r\n"</span>)
-data = s.<span class="func">recv</span>(<span class="num">4096</span>)
-<span class="func">print</span>(data[:<span class="num">200</span>])
-s.<span class="func">close</span>()
-
-<span class="comment"># UDP 範例（DNS 查詢）/ UDP example (DNS lookup)</span>
-<span class="kw">import</span> socket
-u = socket.<span class="func">socket</span>(socket.AF_INET, socket.SOCK_DGRAM)   <span class="comment"># SOCK_DGRAM = UDP</span>
-u.<span class="func">sendto</span>(query, (<span class="str">"8.8.8.8"</span>, <span class="num">53</span>))                    <span class="comment"># Google DNS</span></pre></div>
-<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// TCP 三向交握與資料傳輸 / TCP 3-way handshake and data exchange</span>
-<span class="kw">function</span> <span class="func">TCPConnect</span>(client, server):
-    <span class="comment">// 1. Client 送 SYN</span>
-    client.<span class="func">send</span>(<span class="func">Packet</span>(SYN=<span class="kw">true</span>, seq=x))
-    <span class="comment">// 2. Server 回 SYN-ACK</span>
-    server.<span class="func">send</span>(<span class="func">Packet</span>(SYN=<span class="kw">true</span>, ACK=<span class="kw">true</span>, seq=y, ack=x+<span class="num">1</span>))
-    <span class="comment">// 3. Client 回 ACK</span>
-    client.<span class="func">send</span>(<span class="func">Packet</span>(ACK=<span class="kw">true</span>, ack=y+<span class="num">1</span>))
-    <span class="comment">// 連線建立 / Connection established</span>
-    <span class="kw">return</span> <span class="str">"ESTABLISHED"</span>
-
-<span class="comment">// 之後資料傳輸：每個封包都需被 ACK，未 ACK 則重傳</span>
-<span class="kw">function</span> <span class="func">TCPSend</span>(data):
-    segments = <span class="func">split</span>(data, MSS)         <span class="comment">// 切成最大段大小</span>
-    <span class="kw">for</span> seg <span class="kw">in</span> segments:
-        <span class="func">send</span>(seg); <span class="func">start_timer</span>()
-        <span class="kw">if not</span> <span class="func">wait_for_ack</span>(timeout):
-            <span class="func">retransmit</span>(seg)</pre></div>
+<div class="section-label" data-zh="常見誤解" data-en="MISCONCEPTIONS">常見陷阱</div>
+<h2 data-zh="九、常見誤解" data-en="IX. Common Misconceptions">九、常見誤解</h2>
+<div class="card-grid cols-2">
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4 data-zh="❌ IPv6 一定取代 IPv4" data-en="❌ IPv6 must replace IPv4">❌ IPv6 一定取代 IPv4</h4>
+<div data-lang="zh"><p><strong>真相：</strong>IANA 中央池 2011 耗盡，但 NAT 把 IPv4 壽命延長 30+ 年。15 年後 IPv4 仍佔大半流量。IPv6 取代是「何時」不是「會不會」，可能 20–30 年慢慢過渡。</p></div>
+<div data-lang="en"><p><strong>Truth:</strong> IANA pool exhausted 2011, but NAT extended IPv4 30+ years. After 15 years IPv4 still dominates. IPv6 replacement is "when" not "if" — likely 20–30-year transition.</p></div></div>
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4 data-zh="❌ HTTP/3 = HTTPS" data-en="❌ HTTP/3 = HTTPS">❌ HTTP/3 = HTTPS</h4>
+<div data-lang="zh"><p><strong>真相：</strong>HTTPS 是「HTTP over TLS」（加密層）；HTTP/3 是「HTTP over QUIC over UDP」——換掉了底層 TCP！HTTP/3 必須加密，所以「HTTP/3」≈「最新 HTTPS」但是不同層次。</p></div>
+<div data-lang="en"><p><strong>Truth:</strong> HTTPS = "HTTP over TLS" (encryption); HTTP/3 = "HTTP over QUIC over UDP" (replaces TCP!). HTTP/3 mandates encryption, so HTTP/3 ≈ latest HTTPS — but different layers.</p></div></div>
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4 data-zh="❌ 頻寬大一定快" data-en="❌ More bandwidth = faster">❌ 頻寬大一定快</h4>
+<div data-lang="zh"><p><strong>真相：</strong>下載 = min(頻寬, TCP 窗口/RTT)。台灣 1 Gbps 到美國 RTT 150 ms，預設 64 KB 窗口時上限只有 427 KB/s。要開 TCP window scaling + BBR。</p></div>
+<div data-lang="en"><p><strong>Truth:</strong> Throughput = min(bandwidth, TCP window/RTT). 1 Gbps Taiwan → US with 150 ms RTT and 64 KB window caps at 427 KB/s. Need TCP window scaling + BBR.</p></div></div>
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4 data-zh="❌ HTTPS 絕對安全" data-en="❌ HTTPS = absolute security">❌ HTTPS 絕對安全</h4>
+<div data-lang="zh"><p><strong>真相：</strong>HTTPS 只保證傳輸途中加密 + 伺服器經 CA 認證。不保證：伺服器不洩密、不被釣魚域名（ncbı.nlm.nih.gov）、瀏覽器沒被 MITM。資安是縱深防禦。</p></div>
+<div data-lang="en"><p><strong>Truth:</strong> HTTPS only guarantees in-transit privacy + CA-verified server. Doesn't prevent: server breach, phishing domains (ncbı.nlm.nih.gov), MITM-installed certs. Security is defense-in-depth.</p></div></div>
 </div>
 </section>
 
 <section class="quiz-section">
-<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<h3>📝 <span data-zh="自我檢測（5 題）" data-en="Self-Check (5 Qs)">自我檢測</span></h3>
 <div class="quiz-q" data-answer="2">
-<p data-lang="zh">1. 下列哪一個協定屬於 OSI 第 4 層（傳輸層）？</p>
-<p data-lang="en">1. Which protocol belongs to OSI Layer 4 (Transport)?</p>
+<p data-lang="zh">1. TCP 為何需要 3 次握手？</p>
+<p data-lang="en">1. Why does TCP need a 3-way handshake?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. HTTP</span><span data-lang="en">A. HTTP</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. IP</span><span data-lang="en">B. IP</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. TCP</span><span data-lang="en">C. TCP</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Ethernet</span><span data-lang="en">D. Ethernet</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 加密</span><span data-lang="en">A. Encryption</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 相容 UDP</span><span data-lang="en">B. UDP compat</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 雙方必須互相確認初始序號</span><span data-lang="en">C. Both must confirm seq numbers</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 純歷史</span><span data-lang="en">D. Historical</span></div>
 </div><div class="quiz-feedback" id="fb1"></div></div>
-
 <div class="quiz-q" data-answer="1">
-<p data-lang="zh">2. HTTP/3 建立在哪一個傳輸層協定之上？</p>
-<p data-lang="en">2. HTTP/3 is built on top of which transport protocol?</p>
+<p data-lang="zh">2. HTTP/3 底層傳輸協定？</p>
+<p data-lang="en">2. HTTP/3 transport?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. TCP（與 HTTP/1.1、HTTP/2 相同）</span><span data-lang="en">A. TCP (same as HTTP/1.1 and HTTP/2)</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. UDP（透過 QUIC 提供可靠性與加密）</span><span data-lang="en">B. UDP (via QUIC for reliability and encryption)</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. TCP</span><span data-lang="en">A. TCP</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. QUIC over UDP</span><span data-lang="en">B. QUIC over UDP</span></div>
 <div class="quiz-opt" data-idx="2"><span data-lang="zh">C. ICMP</span><span data-lang="en">C. ICMP</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 直接跑在 IP 之上</span><span data-lang="en">D. Directly on IP</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. SCTP</span><span data-lang="en">D. SCTP</span></div>
 </div><div class="quiz-feedback" id="fb2"></div></div>
-
 <div class="quiz-q" data-answer="3">
-<p data-lang="zh">3. IPv6 位址的長度是多少位元？</p>
-<p data-lang="en">3. How many bits long is an IPv6 address?</p>
+<p data-lang="zh">3. 跨太平洋下載 100 GB FASTQ 最快方案？</p>
+<p data-lang="en">3. Fastest 100 GB trans-Pacific FASTQ download?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 32 bit</span><span data-lang="en">A. 32 bits</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 48 bit</span><span data-lang="en">B. 48 bits</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 64 bit</span><span data-lang="en">C. 64 bits</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 128 bit</span><span data-lang="en">D. 128 bits</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. wget HTTPS</span><span data-lang="en">A. wget</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. scp</span><span data-lang="en">B. scp</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. FTP</span><span data-lang="en">C. FTP</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Aspera/Globus（UDP，無 TCP 慢啟動）</span><span data-lang="en">D. Aspera/Globus (UDP, no TCP slow start)</span></div>
 </div><div class="quiz-feedback" id="fb3"></div></div>
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">4. <code>192.168.1.0/24</code> 是？</p>
+<p data-lang="en">4. <code>192.168.1.0/24</code> means?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. port 24</span><span data-lang="en">A. port 24</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 24 addrs</span><span data-lang="en">B. 24 addrs</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 24-bit 前綴，256 位址，254 可用</span><span data-lang="en">C. 24-bit prefix, 256 addrs, 254 usable</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 24 hops</span><span data-lang="en">D. 24 hops</span></div>
+</div><div class="quiz-feedback" id="fb4"></div></div>
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">5. S3 下載 1 TB egress 約多少？</p>
+<p data-lang="en">5. S3 → local 1 TB egress ≈?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 免費</span><span data-lang="en">A. Free</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. \$90（\$0.09/GB）</span><span data-lang="en">B. \$90 (\$0.09/GB)</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. \$10</span><span data-lang="en">C. \$10</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. \$1000</span><span data-lang="en">D. \$1000</span></div>
+</div><div class="quiz-feedback" id="fb5"></div></div>
+</section>
+
+<section class="section" style="background:#fef3c7;border-radius:14px;padding:32px;">
+<div class="section-label">💭 <span data-zh="延伸思考" data-en="DISCUSSION">延伸思考</span></div>
+<h2 data-zh="十、延伸思考" data-en="X. Discussion">十、延伸思考</h2>
+<ol style="margin-left:20px;line-height:1.9;color:var(--c-ink);">
+<li><strong data-zh="衛星網路 (Starlink) 會取代海底光纜嗎？" data-en="Will Starlink replace undersea cables?">衛星網路取代海底光纜？</strong><br>
+<span data-lang="zh">2026 年 Starlink 已部署 7000+ 顆衛星。光在真空中比光纖快 50%，倫敦-紐約 RTT 衛星 40 ms vs 光纖 76 ms——金融高頻交易先採用。但骨幹 99% 仍跑海底光纜（每條 100+ Tbps）。衛星硬限：軌道擁擠、空間碎片、容量低於單根光纜。對 bioinformatics 國際合作（NIH-EMBL 分享），會混合架構嗎？</span>
+<span data-lang="en">By 2026 Starlink has 7000+ satellites. Light is 50% faster in vacuum than fiber: London-NY 40 ms (sat) vs 76 ms (fiber). High-frequency trading adopted first. But 99% of backbone is ~530 undersea cables (100+ Tbps each). Limits: orbital congestion, space debris, capacity. For NIH-EMBL data sharing, will we see hybrid architectures?</span></li>
+<li><strong data-zh="DoH：隱私還是中央化？" data-en="DoH: privacy or centralization?">DNS over HTTPS 影響隱私？</strong><br>
+<span data-lang="zh">傳統 DNS 是明文 UDP；DoH 藏 DNS 在 HTTPS 中。看似隱私改善，實則所有 DoH 流量集中流向 Google/Cloudflare——你的瀏覽歷史不再被 ISP 看見，但全集中到大廠手裡。企業/學校/醫院 DNS-based 過濾被破壞。隱私 vs 中央化，是進步嗎？</span>
+<span data-lang="en">Classic DNS is plaintext UDP; DoH hides queries in HTTPS. Seems privacy-positive, but all DoH traffic concentrates on Google/Cloudflare — ISPs no longer see, but Big Tech does. Enterprise/school/hospital DNS filtering breaks. Privacy vs centralization — is that progress?</span></li>
+</ol>
 </section>
 
 <nav class="page-nav">
 <a href="os.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 6: 作業系統" data-en="Ch 6: Operating Systems">Ch 6: 作業系統</span></a>
-<a href="database.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 8: 資料庫系統" data-en="Ch 8: Database Systems">Ch 8: 資料庫系統</span></a>
+<a href="database.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 8: 資料庫" data-en="Ch 8: Databases">Ch 8: 資料庫</span></a>
 </nav>
 </main>
 <footer class="site-footer">© Charlene — Introduction to Computer Science · Interactive Tutorial</footer>
@@ -226,17 +404,62 @@ u.<span class="func">sendto</span>(query, (<span class="str">"8.8.8.8"</span>, <
 window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
 function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
 
-// HTTP version comparison: time-to-load 50 assets over a 100ms-RTT link (simulated)
-new Chart(document.getElementById('httpChart'),{type:'bar',data:{
-  labels:['HTTP/1.1','HTTP/2','HTTP/3 (QUIC)'],
-  datasets:[
-    {label:'TCP/QUIC handshake (ms)',data:[300,300,0],backgroundColor:'rgba(190,18,60,.75)'},
-    {label:'TLS handshake (ms)',data:[200,200,100],backgroundColor:'rgba(217,119,6,.75)'},
-    {label:'Asset transfer (ms)',data:[1600,520,420],backgroundColor:'rgba(29,78,216,.75)'}
-  ]
-},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'},title:{display:true,text:'Time to load 50 assets — 100ms RTT (simulated)'}},scales:{x:{stacked:true,title:{display:true,text:'Total time (ms)'}},y:{stacked:true}}}});
+const labels = Array.from({length:31}, (_,i)=> i);
+const RTT = 50;
+const d1 = labels.map(n=> n===0 ? 3*RTT : 3*RTT + Math.ceil(n/6) * RTT);
+const d2 = labels.map(n=> n===0 ? 3*RTT : 3*RTT + 1.2*RTT);
+const d3 = labels.map(n=> n===0 ? 0.5*RTT : 0.5*RTT + 1*RTT);
+new Chart(document.getElementById('httpChart'),{
+  type:'line',data:{labels,datasets:[
+    {label:'HTTP/1.1',data:d1,borderColor:'#dc2626',backgroundColor:'rgba(220,38,38,.1)',tension:.1,pointRadius:0},
+    {label:'HTTP/2',  data:d2,borderColor:'#d97706',backgroundColor:'rgba(217,119,6,.1)', tension:.1,pointRadius:0},
+    {label:'HTTP/3 (QUIC)',data:d3,borderColor:'#16a34a',backgroundColor:'rgba(22,163,74,.1)',tension:.1,pointRadius:0}]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'top'},tooltip:{callbacks:{label:(c)=>c.dataset.label+': '+c.parsed.y.toFixed(0)+' ms'}}},
+    scales:{x:{title:{display:true,text:'Resources fetched'}},y:{title:{display:true,text:'Cumulative ms (RTT=50)'}}}}
+});
 
-const QF={zh:{q1_y:'TCP 與 UDP 是傳輸層協定，提供端對端通訊。',q1_n:'答案 C。',q2_y:'HTTP/3 跑在 QUIC 上，而 QUIC 跑在 UDP 上，所以 RFC 9114 規定 HTTP/3 透過 UDP 傳輸。',q2_n:'答案 B。',q3_y:'IPv6 位址 128 bit，可用 8 組 16-bit hex 表示，例如 2001:db8::1。',q3_n:'答案 D。'},en:{q1_y:'TCP and UDP are transport-layer protocols providing end-to-end delivery.',q1_n:'Answer: C.',q2_y:'HTTP/3 runs on QUIC, which runs on UDP — RFC 9114 defines HTTP/3 over UDP.',q2_n:'Answer: B.',q3_y:'IPv6 addresses are 128 bits, written as eight 16-bit hex groups (e.g. 2001:db8::1).',q3_n:'Answer: D.'}};
+function ipToInt(ip){return ip.split('.').reduce((a,o)=>a*256+parseInt(o,10),0);}
+function intToIp(n){return [(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255].join('.');}
+function cidrCalc(){
+  const input = document.getElementById('cidrInput').value.trim();
+  const m = input.match(/^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\/(\d{1,2})$/);
+  const out = document.getElementById('cidrOut');
+  if(!m){ out.innerHTML='<span style="color:#dc2626;">Invalid CIDR</span>'; return; }
+  const ip=m[1], prefix=parseInt(m[2],10);
+  if(prefix<0||prefix>32){ out.innerHTML='<span style="color:#dc2626;">prefix 0..32</span>'; return; }
+  const ipN=ipToInt(ip);
+  const mask=prefix===0?0:(0xFFFFFFFF<<(32-prefix))>>>0;
+  const network=(ipN&mask)>>>0, broadcast=(network|(~mask>>>0))>>>0;
+  const total=Math.pow(2,32-prefix), usable=Math.max(0,total-2);
+  const lang=(window.I18n && I18n.get && I18n.get()==='en')?'en':'zh';
+  const L = lang==='en' ? {net:'Network:',mask:'Netmask:',bc:'Broadcast:',first:'First host:',last:'Last host:',total:'Total:',usable:'Usable hosts:'}
+                        : {net:'網段:',mask:'子網路遮罩:',bc:'廣播位址:',first:'第一主機:',last:'最後主機:',total:'總位址:',usable:'可用主機:'};
+  out.innerHTML = `<div>${L.net} <strong>${intToIp(network)}</strong></div>
+    <div>${L.mask} ${intToIp(mask)} (/${prefix})</div>
+    <div>${L.bc} ${intToIp(broadcast)}</div>
+    <div>${L.first} ${prefix>=31?'—':intToIp(network+1)}</div>
+    <div>${L.last}  ${prefix>=31?'—':intToIp(broadcast-1)}</div>
+    <div>${L.total} ${total.toLocaleString()}</div>
+    <div>${L.usable} ${usable.toLocaleString()}</div>`;
+}
+document.getElementById('cidrCalc').onclick=cidrCalc;
+document.getElementById('cidrInput').addEventListener('keypress',(e)=>{if(e.key==='Enter')cidrCalc();});
+cidrCalc();
+
+const QF={zh:{
+q1_y:'第 3 步 ACK 讓 server 確認 client 收到 SYN-ACK，雙方序號同步。',q1_n:'答案 C。',
+q2_y:'HTTP/3 拋棄 TCP，跑在 QUIC(UDP) 上。',q2_n:'答案 B。',
+q3_y:'TCP 高 RTT 被慢啟動拖累；Aspera/Globus 用 UDP 自做可靠性。',q3_n:'答案 D。',
+q4_y:'/24 = 前 24 bit 為網段，256 位址扣 network+broadcast 共 254 可用。',q4_n:'答案 C。',
+q5_y:'AWS S3 standard egress \$0.09/GB → 1 TB ≈ \$90。',q5_n:'答案 B。'
+},en:{
+q1_y:'The 3rd ACK lets server confirm client received SYN-ACK; seq numbers sync.',q1_n:'Answer: C.',
+q2_y:'HTTP/3 abandons TCP, runs on QUIC over UDP.',q2_n:'Answer: B.',
+q3_y:'TCP suffers slow start on high RTT; Aspera/Globus do reliability on UDP.',q3_n:'Answer: D.',
+q4_y:'/24 = 24-bit network prefix, 256 addrs minus network+broadcast = 254 usable.',q4_n:'Answer: C.',
+q5_y:'AWS S3 standard egress \$0.09/GB → 1 TB ≈ \$90.',q5_n:'Answer: B.'
+}};
 document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
 </script>
 </body></html>

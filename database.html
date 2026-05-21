@@ -11,268 +11,442 @@
 </div></nav>
 <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
 <header class="page-hero"><div class="step-badge">CHAPTER 8 / 16</div>
-<h1 data-zh="資料庫系統" data-en="Database Systems">資料庫系統</h1>
-<p class="subtitle" data-lang="zh">為什麼不能用 CSV？因為資料庫提供併發控制、ACID 交易、索引加速與查詢語言——從關聯式到 NoSQL 再到 2026 的向量資料庫。</p>
-<p class="subtitle" data-lang="en">Why not just use a CSV? Because databases offer concurrency, ACID transactions, indexes, and a query language — from relational to NoSQL to 2026's vector DBs.</p>
+<h1 data-zh="資料庫" data-en="Databases">資料庫</h1>
+<p class="subtitle" data-lang="zh">1970 年 Edgar Codd 寫下一篇 12 頁論文，10 年後關聯式資料庫主宰世界。本章從 SQL 的勝利講到 NoSQL 復興，再到 2024 後向量資料庫崛起——並告訴你 Ensembl 為何用 MySQL、scRNA-seq embedding 為何愛 Milvus。</p>
+<p class="subtitle" data-lang="en">In 1970, Edgar Codd published a 12-page paper; ten years later relational databases ruled the world. From SQL's triumph to NoSQL's revival, then the 2024+ rise of vector DBs — including why Ensembl runs on MySQL and scRNA-seq embeddings love Milvus.</p>
 </header>
 <main class="content-wrap">
 
 <section class="section">
-<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
-<h2 data-zh="為何需要資料庫？" data-en="Why do we need a database?">為何需要資料庫？</h2>
-<div data-lang="zh"><p>把資料存成 CSV 或 JSON 看似簡單，但一旦遇到「<strong>1000 個使用者同時下單</strong>」就會崩潰：誰先讀寫？讀到一半當機怎辦？要查「過去 30 天台北的訂單」要全表掃描嗎？</p>
-<p>資料庫管理系統 (DBMS) 為此而生，提供四大核心能力：</p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>併發 (Concurrency)</strong>：許多使用者同時讀寫不衝突</li>
-<li><strong>ACID 交易</strong>：要嘛全做、要嘛全不做</li>
-<li><strong>查詢語言 (SQL)</strong>：用宣告式語法描述「想要什麼」，由引擎決定「怎麼拿」</li>
-<li><strong>索引 (Index)</strong>：在百萬筆資料中以 ~µs 找到一筆</li>
-</ul></div>
-<div data-lang="en"><p>Storing data as CSV or JSON sounds simple — until <strong>1000 users place orders concurrently</strong> and the file collapses: who wrote first? What if the process crashed mid-write? Does every "orders in Taipei in last 30 days" query scan the whole file?</p>
-<p>A <strong>DBMS</strong> (Database Management System) solves this with four core capabilities:</p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>Concurrency</strong> — many users read/write without conflict</li>
-<li><strong>ACID transactions</strong> — all-or-nothing</li>
-<li><strong>Query language (SQL)</strong> — declarative "what I want," engine decides "how to fetch"</li>
-<li><strong>Indexes</strong> — find one row among millions in microseconds</li>
-</ul></div>
+<div class="section-label" data-zh="開場故事" data-en="OPENING STORY">Codd 的 12 頁論文</div>
+<h2 data-zh="1970：被 IBM 忽視的 12 頁論文，10 年後改變產業" data-en="1970: A 12-Page Paper IBM Ignored, Then Reshaped the Industry">1970：Codd 的 12 頁論文</h2>
+<div data-lang="zh"><p>1970 年 6 月，IBM 聖荷西實驗室的數學家 <strong>Edgar F. Codd</strong> 在 ACM 期刊發表一篇 12 頁的論文：《<strong>A Relational Model of Data for Large Shared Data Banks</strong>》。論文主張：資料應該以「關聯 (relation, 即表格)」表達，使用者只需描述「<strong>要什麼</strong>」(declarative)，不必管「怎麼拿」——這套<strong>關聯模型</strong>後來變成 SQL 的數學基礎。</p>
+<p>但 IBM 的高層當時並不在意——他們在賣自家的 IMS (Information Management System)，層級式資料庫已賺進大錢，不想自打嘴巴。Codd 為此抗議多年。<strong>1977 年</strong>，一位前 IBM 員工 <strong>Larry Ellison</strong> 在加州 Redwood 創辦了一家叫 Software Development Laboratories 的公司，讀完 Codd 的論文後決定<strong>搶在 IBM 之前</strong>商業化關聯式資料庫。1979 年他們發布 Oracle V2，把對手 IBM DB2 整整甩開 4 年。今天 Oracle 市值 4500 億美元；Larry Ellison 是世界最富的人之一——<strong>全部建立在 IBM 自己當年不重視的論文上</strong>。</p>
+<p>2026 年的今天：① <strong>關聯式 DB</strong>（PostgreSQL、MySQL、Oracle、SQL Server）仍是企業資料的基石；② <strong>NoSQL</strong>（MongoDB、Redis、Cassandra）填補大規模分散式需求；③ <strong>向量資料庫</strong>（Pinecone、Milvus、Weaviate、pgvector）因為 RAG 與 AI 興起一夕爆紅。本章帶你看：SQL 50 年來為何打不倒？NoSQL 為何叫「Not Only SQL」？scRNA-seq embedding 在向量 DB 怎麼跑 KNN？</p></div>
+<div data-lang="en"><p>June 1970 — IBM San Jose mathematician <strong>Edgar F. Codd</strong> published a 12-page paper in ACM: "<strong>A Relational Model of Data for Large Shared Data Banks</strong>." It argued that data should be represented as <strong>relations (tables)</strong>; users state <strong>what</strong> they want (declarative), not how to fetch it. This <strong>relational model</strong> became SQL's mathematical foundation.</p>
+<p>But IBM brass didn't care — they were selling their hierarchical IMS database, raking in cash, and didn't want to cannibalize themselves. Codd protested for years. <strong>In 1977</strong>, ex-IBM engineer <strong>Larry Ellison</strong> founded Software Development Laboratories in Redwood, CA. After reading Codd's paper, he decided to <strong>beat IBM to market</strong> with a relational DB. Oracle V2 shipped in 1979 — four years ahead of IBM DB2. Today Oracle is worth USD 450B; Ellison is one of the richest people alive — <strong>built entirely on IBM's own ignored paper</strong>.</p>
+<p>2026 today: (1) <strong>relational DBs</strong> (PostgreSQL, MySQL, Oracle, SQL Server) still anchor enterprise data; (2) <strong>NoSQL</strong> (MongoDB, Redis, Cassandra) fills distributed-scale needs; (3) <strong>vector DBs</strong> (Pinecone, Milvus, Weaviate, pgvector) exploded with RAG/AI. This chapter: why hasn't SQL died in 50 years? Why is NoSQL really "Not Only SQL"? How do scRNA-seq embeddings run KNN in a vector DB?</p></div>
 <div class="callout tip"><span class="callout-icon">💡</span><div>
-<span data-lang="zh"><strong>核心觀念：</strong>資料庫是「<strong>結構化儲存 + 併發控制 + 查詢引擎</strong>」三位一體。沒這三項，就只是檔案。</span>
-<span data-lang="en"><strong>Core idea:</strong> A database is the trinity of <strong>structured storage + concurrency control + query engine</strong>. Strip any of these and it's just a file.</span>
+<span data-lang="zh"><strong>核心觀念：</strong>資料庫的根本價值不在「存資料」（檔案系統就能存）——而在於<strong>並行控制 (concurrency)</strong>、<strong>事務 (transactions)</strong>、<strong>查詢優化 (query optimization)</strong> 與<strong>持久性 (durability)</strong>。沒有 DB，1000 個使用者同時改一份 Excel 會立刻打架。</span>
+<span data-lang="en"><strong>Core idea:</strong> A database's fundamental value isn't "storing data" (a filesystem does that) — it's <strong>concurrency control</strong>, <strong>transactions</strong>, <strong>query optimization</strong>, and <strong>durability</strong>. Without a DB, 1000 users editing one Excel file would deadlock instantly.</span>
 </div></div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="RDBMS vs NoSQL" data-en="RDBMS vs NoSQL">關聯式 vs NoSQL</div>
-<h2 data-zh="一、關聯式 vs NoSQL 五大家族" data-en="I. Relational vs NoSQL: Five Families">一、關聯式 vs NoSQL</h2>
-<table class="comp-table">
-<thead><tr><th data-zh="類型" data-en="Family">類型</th><th data-zh="資料模型" data-en="Model">資料模型</th><th data-zh="代表產品" data-en="Examples">代表產品</th><th data-zh="使用場景" data-en="Use case">使用場景</th></tr></thead>
-<tbody>
-<tr><td><strong>RDBMS</strong></td><td data-lang="zh">表 (rows × columns)，SQL</td><td data-lang="en">Tables (rows × cols), SQL</td><td>PostgreSQL, MySQL, Oracle, SQL Server</td><td data-lang="zh">交易系統、ERP、財務</td><td data-lang="en">Transactional, ERP, finance</td></tr>
-<tr><td><strong>Key-Value</strong></td><td data-lang="zh">鍵 → 值</td><td data-lang="en">key → value</td><td>Redis, DynamoDB, etcd</td><td data-lang="zh">快取、session、計數器</td><td data-lang="en">Cache, sessions, counters</td></tr>
-<tr><td><strong>Document</strong></td><td data-lang="zh">JSON 文件</td><td data-lang="en">JSON documents</td><td>MongoDB, Couchbase</td><td data-lang="zh">CMS、產品目錄、彈性 schema</td><td data-lang="en">CMS, catalogs, flexible schema</td></tr>
-<tr><td><strong>Column</strong></td><td data-lang="zh">寬列（按欄存）</td><td data-lang="en">Wide-column (column-oriented)</td><td>Cassandra, HBase, BigTable</td><td data-lang="zh">海量寫入、時間序列</td><td data-lang="en">Massive writes, time series</td></tr>
-<tr><td><strong>Graph</strong></td><td data-lang="zh">節點與邊</td><td data-lang="en">Nodes and edges</td><td>Neo4j, ArangoDB</td><td data-lang="zh">社群圖譜、推薦、詐欺偵測</td><td data-lang="en">Social graphs, recommendation, fraud</td></tr>
-<tr><td><strong>Vector</strong></td><td data-lang="zh">高維向量 + 近鄰索引</td><td data-lang="en">High-dim vectors + ANN index</td><td>Pinecone, Milvus, pgvector, Weaviate</td><td data-lang="zh">RAG、語義搜尋、AI 記憶</td><td data-lang="en">RAG, semantic search, AI memory</td></tr>
-</tbody></table>
+<div class="section-label" data-zh="核心概念" data-en="CORE CONCEPTS">RDBMS vs NoSQL</div>
+<h2 data-zh="一、核心概念：關聯式 vs NoSQL 五大家族" data-en="I. Core Concepts: Relational vs NoSQL's Five Families">一、核心概念：六大資料庫家族</h2>
+<div data-lang="zh"><p>2026 年的資料庫世界可分成六大家族，每家有不同的存取模式、規模假設與一致性權衡：</p></div>
+<div data-lang="en"><p>The 2026 database world has six families, each with different access patterns, scale assumptions, and consistency trade-offs:</p></div>
+
+<div class="card-grid cols-2">
+<div class="card"><div class="card-icon">📊</div><h4 data-zh="① RDBMS (關聯式)" data-en="① RDBMS (Relational)">① RDBMS（關聯式）</h4>
+<div data-lang="zh"><p><strong>代表：</strong>PostgreSQL、MySQL、Oracle、SQL Server、SQLite。<br><strong>資料模型：</strong>表格 + 外鍵；ACID 保證；SQL 查詢。<br><strong>適用：</strong>金融、ERP、訂單系統、生物醫學登記資料庫。佔企業資料庫 70%+。</p></div>
+<div data-lang="en"><p><strong>Examples:</strong> PostgreSQL, MySQL, Oracle, SQL Server, SQLite.<br><strong>Model:</strong> Tables + foreign keys; ACID; SQL.<br><strong>Best for:</strong> Finance, ERP, orders, biomedical registries. 70%+ of enterprise DB market.</p></div></div>
+<div class="card"><div class="card-icon">🔑</div><h4 data-zh="② Key-Value Store" data-en="② Key-Value Store">② Key-Value Store</h4>
+<div data-lang="zh"><p><strong>代表：</strong>Redis、Memcached、DynamoDB、etcd。<br><strong>資料模型：</strong>純粹的 key → value 對應；O(1) 查詢。<br><strong>適用：</strong>session cache、即時排行榜、API rate limiting。記憶體優先（Redis 可達百萬 QPS）。</p></div>
+<div data-lang="en"><p><strong>Examples:</strong> Redis, Memcached, DynamoDB, etcd.<br><strong>Model:</strong> Pure key → value; O(1) lookups.<br><strong>Best for:</strong> Session cache, leaderboards, API rate limiting. Memory-first (Redis hits 1M QPS).</p></div></div>
+<div class="card"><div class="card-icon">📄</div><h4 data-zh="③ Document DB" data-en="③ Document DB">③ Document DB</h4>
+<div data-lang="zh"><p><strong>代表：</strong>MongoDB、Couchbase、Firestore。<br><strong>資料模型：</strong>JSON-like 文件，schema 彈性；嵌套結構。<br><strong>適用：</strong>電子病歷 (EHR)、CMS 內容、產品目錄、IoT 半結構化資料。</p></div>
+<div data-lang="en"><p><strong>Examples:</strong> MongoDB, Couchbase, Firestore.<br><strong>Model:</strong> JSON-like documents, flexible schema; nested.<br><strong>Best for:</strong> EHR, CMS, product catalogs, IoT semi-structured data.</p></div></div>
+<div class="card"><div class="card-icon">📚</div><h4 data-zh="④ Wide-Column" data-en="④ Wide-Column">④ Wide-Column</h4>
+<div data-lang="zh"><p><strong>代表：</strong>Cassandra、ScyllaDB、HBase、Google Bigtable。<br><strong>資料模型：</strong>稀疏的 row → column-family；水平擴展設計。<br><strong>適用：</strong>時序資料、廣告點擊串流、Netflix 推薦快取。Cassandra 跑 PB 級毫無壓力。</p></div>
+<div data-lang="en"><p><strong>Examples:</strong> Cassandra, ScyllaDB, HBase, Google Bigtable.<br><strong>Model:</strong> Sparse row → column-family; horizontal-scale-first.<br><strong>Best for:</strong> Time-series, ad clickstreams, Netflix recommendation cache. Cassandra handles PB scale easily.</p></div></div>
+<div class="card"><div class="card-icon">🕸️</div><h4 data-zh="⑤ Graph DB" data-en="⑤ Graph DB">⑤ Graph DB</h4>
+<div data-lang="zh"><p><strong>代表：</strong>Neo4j、ArangoDB、Amazon Neptune、TigerGraph。<br><strong>資料模型：</strong>節點 + 邊；查詢用 Cypher / Gremlin。<br><strong>適用：</strong>社群網路、推薦系統、欺詐偵測、生物 pathway（KEGG、Reactome）。</p></div>
+<div data-lang="en"><p><strong>Examples:</strong> Neo4j, ArangoDB, Amazon Neptune, TigerGraph.<br><strong>Model:</strong> Nodes + edges; queried via Cypher / Gremlin.<br><strong>Best for:</strong> Social networks, recommendations, fraud detection, biological pathways (KEGG, Reactome).</p></div></div>
+<div class="card"><div class="card-icon">🧠</div><h4 data-zh="⑥ Vector DB" data-en="⑥ Vector DB">⑥ Vector DB</h4>
+<div data-lang="zh"><p><strong>代表：</strong>Pinecone、Milvus、Weaviate、Qdrant、pgvector（Postgres 外掛）。<br><strong>資料模型：</strong>高維向量 (~768、~1536 維)；查詢 = ANN（近似最近鄰）。<br><strong>適用：</strong>RAG（LLM 檢索）、語意搜尋、scRNA-seq embedding 比對、影像相似度搜尋。2024 後爆紅。</p></div>
+<div data-lang="en"><p><strong>Examples:</strong> Pinecone, Milvus, Weaviate, Qdrant, pgvector (Postgres extension).<br><strong>Model:</strong> High-dim vectors (~768, ~1536-d); queries = ANN (approx nearest neighbor).<br><strong>Best for:</strong> RAG (LLM retrieval), semantic search, scRNA-seq embedding lookup, image similarity. Exploded after 2024.</p></div></div>
+</div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="關聯模型" data-en="RELATIONAL MODEL">關聯模型基礎</div>
-<h2 data-zh="二、主鍵、外鍵與正規化" data-en="II. Primary Key, Foreign Key, Normalization">二、主鍵、外鍵與正規化</h2>
-<div data-lang="zh"><p><strong>主鍵 (Primary Key, PK)</strong>：唯一識別一筆紀錄的欄位（如 student_id）。<strong>外鍵 (Foreign Key, FK)</strong>：指向另一表主鍵的欄位，建立關聯。</p>
-<p><strong>正規化 (Normalization)</strong> 減少冗餘與更新異常：</p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>1NF</strong>：每欄都是「原子值」，不允許重複群組或陣列。</li>
-<li><strong>2NF</strong>：滿足 1NF，且非主鍵欄完全相依於整個主鍵（消除部分相依）。</li>
-<li><strong>3NF</strong>：滿足 2NF，且非主鍵欄不可相依於其他非主鍵欄（消除遞移相依）。</li>
-</ul>
-<p><strong>反正規化 (Denormalization)</strong>：為了讀取效能故意冗餘——常見於資料倉儲與 OLAP。</p></div>
-<div data-lang="en"><p>A <strong>primary key (PK)</strong> uniquely identifies a row (e.g., student_id). A <strong>foreign key (FK)</strong> references a PK in another table, creating a relationship.</p>
-<p><strong>Normalization</strong> reduces redundancy and update anomalies:</p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>1NF</strong> — every column is an atomic value (no nested arrays/groups).</li>
-<li><strong>2NF</strong> — 1NF + non-key columns fully depend on the whole PK (no partial dependency).</li>
-<li><strong>3NF</strong> — 2NF + no non-key column depends on another non-key column (no transitive dependency).</li>
-</ul>
-<p><strong>Denormalization</strong> deliberately duplicates data for read speed — common in data warehouses / OLAP.</p></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="互動 JOIN" data-en="INTERACTIVE JOIN">互動：SQL JOIN 演示</div>
-<h2 data-zh="三、互動：JOIN 演示" data-en="III. Interactive: JOIN Demo">三、互動：JOIN 演示</h2>
-<div data-lang="zh"><p>下方有 <strong>students</strong> 與 <strong>enrollments</strong> 兩張表。選擇 JOIN 類型即可看到結果：INNER 只回傳兩邊都有的；LEFT 保留左表所有列；RIGHT 保留右表；FULL 保留兩邊。</p></div>
-<div data-lang="en"><p>Below are two tables: <strong>students</strong> and <strong>enrollments</strong>. Pick a JOIN type to see the result. INNER returns matches only; LEFT keeps all left rows; RIGHT keeps all right; FULL keeps both.</p></div>
+<div class="section-label" data-zh="互動 #1" data-en="INTERACTIVE #1">SQL JOIN 演示</div>
+<h2 data-zh="二、互動：SQL JOIN 四種類型即時演示" data-en="II. Interactive: SQL JOIN — Live Demo of Four Types">二、互動：SQL JOIN 演示</h2>
+<div data-lang="zh"><p>JOIN 是 SQL 最重要也最常被誤用的功能。下面有兩張小表 <code>students</code> 與 <code>courses</code>，按按鈕切換四種 JOIN 看結果如何變。</p></div>
+<div data-lang="en"><p>JOIN is SQL's most important — and most misused — operation. Below are two small tables <code>students</code> and <code>courses</code>; click to switch among four JOIN types and watch the result.</p></div>
 <div class="interactive-panel">
-<div style="display:flex;gap:24px;flex-wrap:wrap;justify-content:center;margin-bottom:16px;">
-  <div><div style="font-size:.85rem;font-weight:700;color:var(--c-ink-muted);margin-bottom:4px;">students</div>
-  <table class="comp-table" style="margin:0;font-size:.88rem;"><thead><tr><th>id</th><th>name</th></tr></thead><tbody>
-  <tr><td>1</td><td>Ada</td></tr><tr><td>2</td><td>Bob</td></tr><tr><td>3</td><td>Cleo</td></tr><tr><td>4</td><td>Dan</td></tr>
-  </tbody></table></div>
-  <div><div style="font-size:.85rem;font-weight:700;color:var(--c-ink-muted);margin-bottom:4px;">enrollments</div>
-  <table class="comp-table" style="margin:0;font-size:.88rem;"><thead><tr><th>student_id</th><th>course</th></tr></thead><tbody>
-  <tr><td>1</td><td>CS101</td></tr><tr><td>2</td><td>CS101</td></tr><tr><td>2</td><td>MATH200</td></tr><tr><td>5</td><td>BIO110</td></tr>
-  </tbody></table></div>
+<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;">
+<div style="flex:1;min-width:210px;">
+<div style="font-size:.8rem;font-weight:700;color:var(--c-accent);margin-bottom:6px;">TABLE: students</div>
+<table style="width:100%;font-size:.82rem;border-collapse:collapse;background:#fff;border-radius:6px;overflow:hidden;">
+<thead style="background:#e0e7ff;"><tr><th style="padding:6px 10px;text-align:left;">sid</th><th style="padding:6px 10px;text-align:left;">name</th></tr></thead>
+<tbody>
+<tr><td style="padding:6px 10px;border-top:1px solid #e2e8f0;">1</td><td style="padding:6px 10px;border-top:1px solid #e2e8f0;">Alice</td></tr>
+<tr><td style="padding:6px 10px;border-top:1px solid #e2e8f0;">2</td><td style="padding:6px 10px;border-top:1px solid #e2e8f0;">Bob</td></tr>
+<tr><td style="padding:6px 10px;border-top:1px solid #e2e8f0;">3</td><td style="padding:6px 10px;border-top:1px solid #e2e8f0;">Carol</td></tr>
+<tr><td style="padding:6px 10px;border-top:1px solid #e2e8f0;">4</td><td style="padding:6px 10px;border-top:1px solid #e2e8f0;">Dan</td></tr>
+</tbody></table></div>
+<div style="flex:1;min-width:210px;">
+<div style="font-size:.8rem;font-weight:700;color:var(--c-accent);margin-bottom:6px;">TABLE: courses (sid is FK)</div>
+<table style="width:100%;font-size:.82rem;border-collapse:collapse;background:#fff;border-radius:6px;overflow:hidden;">
+<thead style="background:#fef3c7;"><tr><th style="padding:6px 10px;text-align:left;">cid</th><th style="padding:6px 10px;text-align:left;">sid</th><th style="padding:6px 10px;text-align:left;">course</th></tr></thead>
+<tbody>
+<tr><td style="padding:6px 10px;border-top:1px solid #e2e8f0;">101</td><td style="padding:6px 10px;border-top:1px solid #e2e8f0;">1</td><td style="padding:6px 10px;border-top:1px solid #e2e8f0;">Math</td></tr>
+<tr><td style="padding:6px 10px;border-top:1px solid #e2e8f0;">102</td><td style="padding:6px 10px;border-top:1px solid #e2e8f0;">2</td><td style="padding:6px 10px;border-top:1px solid #e2e8f0;">Bio</td></tr>
+<tr><td style="padding:6px 10px;border-top:1px solid #e2e8f0;">103</td><td style="padding:6px 10px;border-top:1px solid #e2e8f0;">2</td><td style="padding:6px 10px;border-top:1px solid #e2e8f0;">Chem</td></tr>
+<tr><td style="padding:6px 10px;border-top:1px solid #e2e8f0;">104</td><td style="padding:6px 10px;border-top:1px solid #e2e8f0;">5</td><td style="padding:6px 10px;border-top:1px solid #e2e8f0;">Phys</td></tr>
+</tbody></table></div>
 </div>
-<div style="text-align:center;margin:12px 0;">
-  <label style="font-size:.9rem;font-weight:600;margin-right:8px;" data-zh="JOIN 類型" data-en="JOIN type">JOIN 類型</label>
-  <select id="joinType" style="padding:6px 10px;font-size:.95rem;font-family:var(--font-mono);">
-    <option value="INNER">INNER JOIN</option>
-    <option value="LEFT">LEFT JOIN</option>
-    <option value="RIGHT">RIGHT JOIN</option>
-    <option value="FULL">FULL OUTER JOIN</option>
-  </select>
+<div class="toggle-row">
+<button class="toggle-btn active" data-join="inner">INNER JOIN</button>
+<button class="toggle-btn" data-join="left">LEFT JOIN</button>
+<button class="toggle-btn" data-join="right">RIGHT JOIN</button>
+<button class="toggle-btn" data-join="full">FULL OUTER JOIN</button>
 </div>
-<pre id="sqlOut" style="text-align:center;font-family:var(--font-mono);margin:8px 0;color:var(--c-accent-dark);font-size:.95rem;"></pre>
-<div id="joinResult" style="display:flex;justify-content:center;"></div>
+<div style="font-family:var(--font-mono);font-size:.82rem;background:#0f172a;color:#e2e8f0;padding:10px 14px;border-radius:6px;margin-bottom:10px;" id="joinSql">
+SELECT s.name, c.course FROM students s INNER JOIN courses c ON s.sid = c.sid;
+</div>
+<div style="font-size:.8rem;font-weight:700;color:var(--c-accent);margin-bottom:6px;">RESULT</div>
+<table style="width:100%;font-size:.82rem;border-collapse:collapse;background:#fff;border-radius:6px;overflow:hidden;" id="joinResult"></table>
+<p style="font-size:.78rem;color:var(--c-ink-muted);margin-top:8px;line-height:1.55;" id="joinExplain"></p>
 </div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="ACID vs BASE" data-en="ACID vs BASE">交易模型</div>
-<h2 data-zh="四、ACID vs BASE 與 CAP 定理" data-en="IV. ACID vs BASE & CAP Theorem">四、ACID、BASE 與 CAP</h2>
-<table class="comp-table">
-<thead><tr><th>ACID</th><th data-zh="意涵" data-en="Meaning">意涵</th></tr></thead>
-<tbody>
-<tr><td><strong>Atomicity</strong></td><td data-lang="zh">交易內所有操作「全部成功或全部失敗」</td><td data-lang="en">All ops in a transaction succeed or all fail</td></tr>
-<tr><td><strong>Consistency</strong></td><td data-lang="zh">交易前後資料庫滿足所有約束（PK/FK、check）</td><td data-lang="en">DB stays valid w.r.t. all constraints (PK/FK, check)</td></tr>
-<tr><td><strong>Isolation</strong></td><td data-lang="zh">同時的多個交易彷彿依序執行（4 個隔離級別）</td><td data-lang="en">Concurrent transactions behave as if serial (4 isolation levels)</td></tr>
-<tr><td><strong>Durability</strong></td><td data-lang="zh">已 commit 的資料即使斷電也不會遺失</td><td data-lang="en">Committed data survives crashes</td></tr>
-</tbody></table>
-<div data-lang="zh"><p><strong>BASE</strong> = Basically Available, Soft state, Eventually consistent。許多 NoSQL（如 DynamoDB、Cassandra）為了水平擴展犧牲嚴格一致性，採用「最終一致」。</p>
-<p><strong>CAP 定理 (Brewer 2000)：</strong>分散式系統最多只能同時滿足三項中的兩項：</p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>C</strong>onsistency（所有節點看到相同資料）</li>
-<li><strong>A</strong>vailability（每次請求都得到回應）</li>
-<li><strong>P</strong>artition tolerance（網路分裂仍可運作）</li>
-</ul>
-<p>網路分裂幾乎一定會發生，所以實務上是「C 或 A 二選一」：MongoDB、HBase 選 CP；Cassandra、DynamoDB 選 AP。</p></div>
-<div data-lang="en"><p><strong>BASE</strong> = Basically Available, Soft state, Eventually consistent. Many NoSQL stores (DynamoDB, Cassandra) trade strict consistency for horizontal scale via eventual consistency.</p>
-<p><strong>CAP Theorem (Brewer 2000):</strong> a distributed system can pick at most two of three:</p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>C</strong>onsistency (all nodes see the same data)</li>
-<li><strong>A</strong>vailability (every request gets a response)</li>
-<li><strong>P</strong>artition tolerance (works under network splits)</li>
-</ul>
-<p>Network partitions are inevitable, so the real choice is C or A: MongoDB and HBase choose CP; Cassandra and DynamoDB choose AP.</p></div>
-</section>
+<div class="section-label" data-zh="深入剖析" data-en="DEEP DIVE">正規化 / ACID / CAP / 索引</div>
+<h2 data-zh="三、深入剖析：正規化、ACID、CAP、Indexing" data-en="III. Deep Dive: Normalization, ACID, CAP, Indexing">三、深入剖析</h2>
 
-<section class="section">
-<div class="section-label" data-zh="索引" data-en="INDEX">索引</div>
-<h2 data-zh="五、索引：B-tree、Hash、Inverted、Vector" data-en="V. Indexes: B-tree, Hash, Inverted, Vector">五、索引</h2>
+<h3 data-zh="3.1 正規化 1NF → BCNF" data-en="3.1 Normalization 1NF → BCNF">3.1 正規化</h3>
+<div data-lang="zh"><p>正規化 (normalization) 是把資料拆分成多張表以消除冗餘與更新異常：</p>
+<ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
+<li><strong>1NF (第一正規式)</strong>：每個欄位只存單一值（不可有 list）。</li>
+<li><strong>2NF</strong>：在 1NF 基礎上，所有非主鍵欄位都必須完全依賴於主鍵（不能依賴主鍵的一部分）。</li>
+<li><strong>3NF</strong>：在 2NF 基礎上，非主鍵欄位之間不能相互依賴（消除遞移依賴）。</li>
+<li><strong>BCNF (Boyce-Codd)</strong>：3NF 的加強版，幾乎所有教科書範例的「正確設計」。</li>
+</ul>
+<p><strong>反向操作 = 反正規化 (denormalization)</strong>：為了加速讀取，故意在多張表存重複資料。OLAP（資料倉儲）愛用——例如 GTEx 把 gene × tissue × sample 全部展平到一張寬表，查詢飛快但更新麻煩。<strong>OLTP（交易系統）追求正規化；OLAP（分析）追求反正規化</strong>。</p></div>
+<div data-lang="en"><p>Normalization splits data across tables to eliminate redundancy and update anomalies:</p>
+<ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
+<li><strong>1NF</strong>: each cell holds a single value (no lists).</li>
+<li><strong>2NF</strong>: 1NF + all non-key columns depend on the whole primary key (no partial dependency).</li>
+<li><strong>3NF</strong>: 2NF + no transitive dependency between non-key columns.</li>
+<li><strong>BCNF (Boyce-Codd)</strong>: a stricter 3NF; "correct design" in most textbooks.</li>
+</ul>
+<p><strong>The inverse = denormalization</strong>: deliberately duplicate data across tables to speed up reads. Loved by OLAP (data warehouses) — e.g., GTEx flattens gene × tissue × sample into one wide table for fast queries (slow updates). <strong>OLTP wants normalization; OLAP wants denormalization.</strong></p></div>
+
+<h3 data-zh="3.2 ACID vs BASE" data-en="3.2 ACID vs BASE">3.2 ACID vs BASE</h3>
 <table class="comp-table">
-<thead><tr><th data-zh="索引類型" data-en="Index">索引類型</th><th data-zh="複雜度" data-en="Complexity">查詢</th><th data-zh="適用" data-en="Best for">適用</th></tr></thead>
+<thead><tr><th></th><th>ACID (RDBMS)</th><th>BASE (NoSQL)</th></tr></thead>
 <tbody>
-<tr><td><strong>B-tree / B+tree</strong></td><td>O(log n)</td><td data-lang="zh">範圍查詢、排序（多數 RDBMS 預設）</td><td data-lang="en">Range queries, sorts (RDBMS default)</td></tr>
-<tr><td><strong>Hash</strong></td><td>O(1) avg</td><td data-lang="zh">精確等值查詢，不支援範圍</td><td data-lang="en">Exact equality, no range</td></tr>
-<tr><td><strong>Inverted index</strong></td><td>O(log n)</td><td data-lang="zh">全文搜尋（Elasticsearch、Lucene）</td><td data-lang="en">Full-text search (Elasticsearch, Lucene)</td></tr>
-<tr><td><strong>Bitmap</strong></td><td>O(n/64)</td><td data-lang="zh">低基數欄位（性別、布林）</td><td data-lang="en">Low-cardinality columns</td></tr>
-<tr><td><strong>HNSW / IVF (向量)</strong></td><td>O(log n) ANN</td><td data-lang="zh">高維向量近鄰（RAG、語義搜尋）</td><td data-lang="en">High-dim ANN (RAG, semantic search)</td></tr>
+<tr><td>A</td><td><strong>Atomicity</strong> <span data-lang="zh">原子性：事務全成或全失</span><span data-lang="en">All or nothing</span></td><td><strong>Basically Available</strong> <span data-lang="zh">基本可用</span><span data-lang="en">Mostly available</span></td></tr>
+<tr><td>C</td><td><strong>Consistency</strong> <span data-lang="zh">一致性：違反 constraint 就 rollback</span><span data-lang="en">Constraints enforced</span></td><td><strong>Soft state</strong> <span data-lang="zh">狀態可短暫不一致</span><span data-lang="en">State may drift</span></td></tr>
+<tr><td>I</td><td><strong>Isolation</strong> <span data-lang="zh">並行事務互不干擾</span><span data-lang="en">Concurrent txns don't see each other</span></td><td><strong>Eventually consistent</strong> <span data-lang="zh">最終一致</span><span data-lang="en">Converges over time</span></td></tr>
+<tr><td>D</td><td><strong>Durability</strong> <span data-lang="zh">commit 後 power loss 也不丟</span><span data-lang="en">Survives crash after commit</span></td><td>—</td></tr>
 </tbody></table>
 <div class="callout warn"><span class="callout-icon">⚠️</span><div>
-<div data-lang="zh"><strong>索引不是免費的：</strong>每加一個索引，<code>INSERT/UPDATE/DELETE</code> 都得多維護一個結構。寫多讀少的表索引要少；讀多寫少的表（如報表、查詢）可以多。</div>
-<div data-lang="en"><strong>Indexes aren't free:</strong> each one slows down <code>INSERT/UPDATE/DELETE</code>. Write-heavy tables should have fewer; read-heavy tables (reports) can have many.</div>
+<div data-lang="zh"><strong>Isolation levels（隔離級別）：</strong>從寬鬆到嚴格——<strong>Read Uncommitted</strong>（看到髒讀）→ <strong>Read Committed</strong>（PostgreSQL 預設）→ <strong>Repeatable Read</strong>（MySQL InnoDB 預設）→ <strong>Serializable</strong>（最嚴格，最慢）。隔離越強、並行越差，這是核心 trade-off。</div>
+<div data-lang="en"><strong>Isolation levels:</strong> from loose to strict — <strong>Read Uncommitted</strong> (dirty reads visible) → <strong>Read Committed</strong> (PostgreSQL default) → <strong>Repeatable Read</strong> (MySQL InnoDB default) → <strong>Serializable</strong> (strictest, slowest). Stronger isolation = worse concurrency — the core trade-off.</div>
+</div></div>
+
+<h3 data-zh="3.3 CAP 定理：選兩個" data-en="3.3 CAP Theorem: Pick Two">3.3 CAP 定理</h3>
+<div data-lang="zh"><p>Eric Brewer 2000 年提出的 <strong>CAP 定理</strong>：分散式系統不可能同時滿足三者，只能擇二。</p>
+<ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
+<li><strong>C (Consistency)</strong>：所有節點看到相同資料。</li>
+<li><strong>A (Availability)</strong>：每次請求都能得到回應（不一定是最新的）。</li>
+<li><strong>P (Partition tolerance)</strong>：網路斷掉時系統仍能運作。</li>
+</ul>
+<p>因為網路<strong>必定會斷</strong>（光纖被挖、機房斷電），P 是必須的。所以實務上是「<strong>CP</strong>（如 MongoDB、HBase——斷網時拒絕回應保持一致）」vs「<strong>AP</strong>（如 Cassandra、DynamoDB——斷網時繼續回應但可能不一致）」。<strong>RDBMS 在單機環境是 CA，分散式環境通常變 CP。</strong></p></div>
+<div data-lang="en"><p>Eric Brewer's 2000 <strong>CAP theorem</strong>: a distributed system can't satisfy all three — pick two.</p>
+<ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
+<li><strong>C</strong>: all nodes see the same data.</li>
+<li><strong>A</strong>: every request gets a response (possibly stale).</li>
+<li><strong>P</strong>: tolerates network partitions.</li>
+</ul>
+<p>Since networks <strong>will partition</strong> (fibers cut, racks lose power), P is mandatory. So the real choice is <strong>CP</strong> (MongoDB, HBase — refuse responses during partition to stay consistent) vs <strong>AP</strong> (Cassandra, DynamoDB — keep responding, possibly stale). <strong>Single-node RDBMS is CA; distributed RDBMS usually becomes CP.</strong></p></div>
+
+<h3 data-zh="3.4 Indexing：B-tree、Hash、Inverted、HNSW" data-en="3.4 Indexing: B-tree, Hash, Inverted, HNSW">3.4 索引型別</h3>
+<table class="comp-table">
+<thead><tr><th data-zh="索引" data-en="Index">索引</th><th data-zh="複雜度" data-en="Complexity">複雜度</th><th data-zh="適合查詢" data-en="Good for">適合查詢</th></tr></thead>
+<tbody>
+<tr><td><strong>B-tree / B+tree</strong></td><td>O(log n)</td><td data-lang="zh">範圍查詢（&lt;, &gt;, BETWEEN）、ORDER BY；RDBMS 預設</td><td data-lang="en">Range queries (&lt;, &gt;, BETWEEN), ORDER BY; RDBMS default</td></tr>
+<tr><td><strong>Hash Index</strong></td><td>O(1) 平均</td><td data-lang="zh">精確匹配 (=)；無法做範圍。Redis、Memcached</td><td data-lang="en">Exact match (=); no range. Redis, Memcached</td></tr>
+<tr><td><strong>Inverted Index</strong></td><td>O(log n)</td><td data-lang="zh">全文搜尋；Elasticsearch、Lucene 的核心</td><td data-lang="en">Full-text search; core of Elasticsearch / Lucene</td></tr>
+<tr><td><strong>R-tree / GiST</strong></td><td>O(log n)</td><td data-lang="zh">地理空間查詢（PostGIS）</td><td data-lang="en">Geospatial queries (PostGIS)</td></tr>
+<tr><td><strong>HNSW / IVF</strong></td><td>O(log n) approx</td><td data-lang="zh">高維向量近似最近鄰；向量 DB 的招牌</td><td data-lang="en">High-dim approximate nearest neighbor; vector DBs</td></tr>
+</tbody></table>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="歷史故事" data-en="HISTORY">四個經典時刻</div>
+<h2 data-zh="四、四個經典故事：Codd 被忽視、NoSQL 誕生、MongoDB ACID、向量 DB 爆發" data-en="IV. Four Stories">四、四個經典故事</h2>
+<div class="workflow">
+<div class="workflow-step" data-step="1"><h4 data-zh="1970–79：Codd 被忽視，Oracle 搶先一步" data-en="1970–79: Codd Ignored, Oracle First to Market">1970–79：Codd 被自家忽視</h4>
+<div data-lang="zh"><p>1970 年 Codd 在 IBM 內部已經有原型 System R，但 IBM 高層不想自己打自己的 IMS。1973 年 Codd 公開挑戰 IBM CEO，被冷處理。前 IBM 員工 Larry Ellison 在 1977 年成立 SDL（後改名 Oracle），<strong>1979 年發布 Oracle V2</strong>——比 IBM 自家的 DB2 (1983) 整整早 4 年。IBM 後來才被迫加入競賽。<strong>Codd 1981 年獲圖靈獎</strong>，IBM 才正式承認他的貢獻。教訓：「<strong>偉大論文未必是好商業</strong>」，從學術到產品有巨大鴻溝。</p></div>
+<div data-lang="en"><p>By 1970 Codd had a working System R prototype inside IBM, but executives didn't want to cannibalize IMS. In 1973 Codd publicly challenged the IBM CEO and was sidelined. Ex-IBM engineer Larry Ellison founded SDL (later Oracle) in 1977 and shipped <strong>Oracle V2 in 1979</strong> — four years ahead of IBM's DB2 (1983). IBM had to scramble to catch up. <strong>Codd won the Turing Award in 1981</strong> — IBM finally acknowledged him. Lesson: <strong>great papers don't make great products</strong> — academia to product is a huge gap.</p></div></div>
+<div class="workflow-step" data-step="2"><h4 data-zh="2009：「NoSQL」一詞誕生於 San Francisco 一場 meetup" data-en="2009: 'NoSQL' Was Coined at a San Francisco Meetup">2009：NoSQL 一詞誕生</h4>
+<div data-lang="zh"><p>2009 年 6 月 11 日，Last.fm 工程師 <strong>Johan Oskarsson</strong> 在舊金山辦了一個 meetup，主題是「分散式、開源、非關聯式資料庫」。為了在 Twitter 上發文方便，他用了 <strong>#NoSQL</strong> 這個 hashtag。沒想到這個臨時取的詞紅了，10 年內催生 200+ 個 NoSQL 產品。重點：「NoSQL」<strong>從來不是「No SQL」（拒絕 SQL）</strong>——是「<strong>Not Only SQL</strong>」（不只用 SQL）。Cassandra、MongoDB、Couchbase 後來都加上類 SQL 的查詢語言（CQL、MQL）。</p></div>
+<div data-lang="en"><p>June 11, 2009 — Last.fm engineer <strong>Johan Oskarsson</strong> organized a San Francisco meetup on "distributed, open-source, non-relational databases." For Twitter convenience he used the hashtag <strong>#NoSQL</strong>. The casual name stuck and spawned 200+ NoSQL products in a decade. Crucially, "NoSQL" was <strong>never "No SQL"</strong> — it's "<strong>Not Only SQL</strong>." Cassandra, MongoDB, Couchbase later added SQL-like languages (CQL, MQL).</p></div></div>
+<div class="workflow-step" data-step="3"><h4 data-zh="2018：MongoDB 終於擁抱 ACID（多文件事務）" data-en="2018: MongoDB Embraces ACID (Multi-Document Transactions)">2018：MongoDB 認輸了？</h4>
+<div data-lang="zh"><p>2009 年 MongoDB 出現時，主打「<strong>沒有 schema、沒有 ACID</strong>」——「資料庫應該很彈性」。批評者抨擊：「沒有 ACID 怎麼能叫資料庫？」。經過 9 年市場洗禮，<strong>2018 年 MongoDB 4.0 正式加入「multi-document ACID transactions」</strong>。NoSQL 陣營實質上回到了 RDBMS 的設計原則。教訓：<strong>當你拋棄一個成熟系統 50 年累積的功能時，10 年內你會把它們一一再發明回來</strong>。今天 MongoDB、Cassandra、DynamoDB 都支援事務、二級索引、JOIN-like 操作。</p></div>
+<div data-lang="en"><p>When MongoDB launched in 2009 it sold "<strong>no schema, no ACID</strong>" — "databases should be flexible." Critics retorted: "how can it be a DB without ACID?" Nine years later, <strong>MongoDB 4.0 (2018) added multi-document ACID transactions</strong>. NoSQL effectively returned to RDBMS principles. Lesson: <strong>when you throw away 50 years of mature system features, you'll reinvent them all within 10 years</strong>. Today MongoDB, Cassandra, DynamoDB all support transactions, secondary indexes, and JOIN-like operations.</p></div></div>
+<div class="workflow-step" data-step="4"><h4 data-zh="2024：向量資料庫一年內估值翻 10 倍" data-en="2024: Vector DBs Saw 10× Valuation in a Year">2024：向量 DB 爆發</h4>
+<div data-lang="zh"><p>ChatGPT 2022 年底引爆 LLM 熱潮後，RAG (Retrieval-Augmented Generation) 成為主流架構：先把文件 embed 成向量、存在 vector DB、查詢時找最相似的 K 個丟給 LLM。<strong>Pinecone</strong> 從 2023 的 7.5 億美元估值飆到 2024 的 75 億；<strong>Weaviate</strong>、<strong>Milvus</strong>、<strong>Qdrant</strong> 也都拿到大筆募資。同時 Postgres 的 <strong>pgvector</strong> 外掛實作 IVFFlat 與 HNSW，讓「在現有 RDBMS 內做向量檢索」變得簡單——很多人質疑專屬 vector DB 是否需要存在。<strong>2025+ 的趨勢</strong>：向量功能融入主流 DB（PostgreSQL、SQLite、MongoDB Atlas）vs 高效能專屬 vector DB 兩條路線並行。</p></div>
+<div data-lang="en"><p>After ChatGPT (late 2022) sparked the LLM boom, RAG (Retrieval-Augmented Generation) became the dominant pattern: embed documents into vectors, store in a vector DB, retrieve top-K similar at query time. <strong>Pinecone</strong> went from a USD 750M valuation in 2023 to USD 7.5B in 2024; <strong>Weaviate</strong>, <strong>Milvus</strong>, <strong>Qdrant</strong> all raised heavily. Meanwhile, Postgres's <strong>pgvector</strong> extension implements IVFFlat and HNSW, making "vector search inside an existing RDBMS" simple — many wonder if dedicated vector DBs are still needed. <strong>2025+ trend</strong>: two roads in parallel — vector features absorbed into mainstream DBs (PostgreSQL, SQLite, MongoDB Atlas) vs high-performance dedicated vector DBs.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動 #2" data-en="INTERACTIVE #2">向量相似度演示</div>
+<h2 data-zh="五、互動：向量相似度（cosine / Euclidean / Manhattan）" data-en="V. Interactive: Vector Similarity">五、互動：向量相似度</h2>
+<div data-lang="zh"><p>向量 DB 用「相似度」找最近鄰。三種度量：Cosine（角度，NLP 預設）、Euclidean（直線）、Manhattan（街區）。下面是 2D 範例（向量 DB 通常 768/1536 維，原理相同）。拖滑桿改變向量，看三種距離怎麼變。</p></div>
+<div data-lang="en"><p>Vector DBs find nearest neighbors by similarity. Three metrics: Cosine (angle, NLP default), Euclidean (straight-line), Manhattan (city-block). 2D demo (real vector DBs use 768/1536-d, same principle). Drag sliders to change vectors.</p></div>
+<div class="interactive-panel">
+<div style="display:flex;gap:14px;flex-wrap:wrap;">
+<svg id="vecSvg" viewBox="-10 -10 220 220" style="width:300px;height:300px;background:var(--c-surface-alt);border-radius:10px;"></svg>
+<div style="flex:1;min-width:220px;">
+<div class="slider-group"><label>Vector A.x: <span id="vAxv">80</span></label><input type="range" id="vAx" min="-100" max="100" value="80"></div>
+<div class="slider-group"><label>Vector A.y: <span id="vAyv">60</span></label><input type="range" id="vAy" min="-100" max="100" value="60"></div>
+<div class="slider-group"><label>Vector B.x: <span id="vBxv">50</span></label><input type="range" id="vBx" min="-100" max="100" value="50"></div>
+<div class="slider-group"><label>Vector B.y: <span id="vByv">80</span></label><input type="range" id="vBy" min="-100" max="100" value="80"></div>
+<div class="sim-stats" style="margin-top:14px;flex-direction:column;align-items:stretch;">
+<div class="sim-stat pass" style="text-align:center;">Cosine similarity: <strong id="cosOut">0</strong></div>
+<div class="sim-stat" style="background:#fde68a;color:#92400e;text-align:center;">Euclidean: <strong id="eucOut">0</strong></div>
+<div class="sim-stat" style="background:#bfdbfe;color:#1e3a8a;text-align:center;">Manhattan: <strong id="manOut">0</strong></div>
+</div></div></div>
+<p style="font-size:.78rem;color:var(--c-ink-muted);margin-top:10px;"><span data-lang="zh">Cosine 1.0 = 完全同向；0 = 垂直。NLP embedding 多用 cosine。</span><span data-lang="en">Cosine 1.0 = identical direction; 0 = orthogonal. NLP embeddings prefer cosine.</span></p>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="🧬 生資連結" data-en="BIOINFO LINKS">給生物資訊學家</div>
+<h2 data-zh="六、🧬 給生物資訊學家" data-en="VI. For Bioinformaticians">六、🧬 給生物資訊學家</h2>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;">
+<span class="callout-icon">🧬</span>
+<div>
+<strong data-zh="① Ensembl / UCSC = MySQL" data-en="① Ensembl / UCSC = MySQL">① Ensembl / UCSC = MySQL</strong>
+<p data-lang="zh">Ensembl 與 UCSC Genome Browser 後端都用 <strong>MySQL</strong>，存數十億筆基因/轉錄本/變異記錄。典型查詢：<code>SELECT * FROM gene WHERE chr='chr1' AND start &gt; 1000000 AND biotype='protein_coding'</code>。為何 MySQL？因為基因組查詢本質是「<strong>範圍查詢 + JOIN</strong>」，正是 RDBMS + B-tree 索引強項。UCSC 提供 public MySQL（genome-mysql.soe.ucsc.edu）任何人可直接連線，bioinformatics 開放科學的好榜樣。</p>
+<p data-lang="en">Ensembl and UCSC use <strong>MySQL</strong> as backend, storing billions of gene/transcript/variant records. Typical query: <code>SELECT * FROM gene WHERE chr='chr1' AND start &gt; 1000000 AND biotype='protein_coding'</code>. Why MySQL? Genome queries are <strong>range + JOIN</strong> — perfect for RDBMS + B-tree. UCSC's public MySQL (genome-mysql.soe.ucsc.edu) is a great open-science example.</p>
+</div></div>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;">
+<span class="callout-icon">🧬</span>
+<div>
+<strong data-zh="② TCGA cBioPortal：臨床 + 基因組" data-en="② TCGA cBioPortal: Clinical + Genomic">② cBioPortal 整合臨床與基因組</strong>
+<p data-lang="zh"><strong>cBioPortal</strong>（MSK，33 萬樣本）整合 TCGA、GENIE、ICGC 的癌症基因組+臨床資料，後端 MySQL + Spring Boot。「TP53 突變的肺癌存活曲線」需要 JOIN mutations + clinical_data。RDBMS 在這場景無敵；NoSQL 要寫複雜 application-level JOIN。<strong>學 SQL 比學任何 NoSQL 重要 100 倍——TCGA、UK Biobank、All of Us 全是關聯式。</strong></p>
+<p data-lang="en"><strong>cBioPortal</strong> (MSK, 330k samples) integrates TCGA, GENIE, ICGC on MySQL + Spring Boot. "Survival of TP53-mutant lung cancers" needs JOIN mutations + clinical_data. RDBMS wins; NoSQL needs ugly application JOINs. <strong>Learn SQL — 100× more important than any NoSQL. TCGA, UK Biobank, All of Us — all relational.</strong></p>
+</div></div>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;">
+<span class="callout-icon">🧬</span>
+<div>
+<strong data-zh="③ Neo4j：KEGG / Reactome / GRN" data-en="③ Neo4j: KEGG / Reactome / GRN">③ Neo4j 與生物路徑</strong>
+<p data-lang="zh">生物 pathway 本質是<strong>圖</strong>：基因→酶→反應→代謝物。用 RDBMS 表達需要 6 次 JOIN（「EGFR 下游 3 步內」），Cypher 一行：<code>MATCH (g:Gene {symbol:'EGFR'})-[*1..3]-&gt;(t) RETURN t</code>。KEGG、Reactome 內部用 graph 模型；STRING-DB 蛋白互動可匯入 Neo4j；scRNA-seq GRN 推論（SCENIC）輸出天然是圖。藥物 repurposing（找與疾病 graph-鄰近的藥物）也是 Neo4j 招牌應用。</p>
+<p data-lang="en">Biological pathways are <strong>graphs</strong>: gene→enzyme→reaction→metabolite. RDBMS needs 6 JOINs ("3 steps downstream of EGFR"); Cypher: <code>MATCH (g:Gene {symbol:'EGFR'})-[*1..3]-&gt;(t) RETURN t</code> — one line. KEGG, Reactome use graph internally; STRING-DB imports to Neo4j; scRNA-seq GRN inference (SCENIC) outputs are graphs. Drug repurposing (find drugs graph-adjacent to disease) is a Neo4j signature.</p>
+</div></div>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;">
+<span class="callout-icon">🧬</span>
+<div>
+<strong data-zh="④ Milvus / Pinecone：scRNA-seq embedding KNN" data-en="④ Milvus / Pinecone: scRNA-seq Embedding KNN">④ 向量 DB 與單細胞</strong>
+<p data-lang="zh">百萬細胞 scRNA-seq atlas 經 PCA/scVI/Geneformer 後，每細胞為 50–256 維向量。Reference mapping = 1M query × 1M-NN = 1 兆次距離計算。樸素方法不可能。<strong>Milvus/Pinecone/pgvector</strong> 用 <strong>HNSW</strong> 或 IVF 索引把 O(N) 降到 O(log N)——百萬細胞 KNN 從幾小時變幾秒。Scanpy/Seurat 2024 後加上向量 DB integration（SCimilarity、CellRefiner）。</p>
+<p data-lang="en">A 1M-cell atlas after PCA/scVI/Geneformer = 50–256-d vectors. Reference mapping = 1M queries × 1M-NN = 1 trillion distance computes — naive is hopeless. <strong>Milvus/Pinecone/pgvector</strong> use <strong>HNSW</strong> or IVF to drop O(N) to O(log N) — million-cell KNN goes from hours to seconds. Scanpy/Seurat (2024+) integrate vector DBs via SCimilarity, CellRefiner.</p>
+</div></div>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;">
+<span class="callout-icon">🧬</span>
+<div>
+<strong data-zh="⑤ MongoDB：電子病歷彈性 schema" data-en="⑤ MongoDB: Flexible EHR Schema">⑤ MongoDB 與 EHR</strong>
+<p data-lang="zh">EHR 是半結構化的代表：每病患結構不同。塞進關聯式 schema 會有 100+ 張表 + 大量 NULL。MongoDB 文件模型契合——每病患一個 document。FHIR（HL7 JSON 標準）天然 maps 到 MongoDB。Mayo Clinic、Mount Sinai 都這樣用。2018 後加上 ACID 可行。代價：cross-patient SQL JOIN 要靠 aggregation pipeline 補。</p>
+<p data-lang="en">EHRs are semi-structured — each patient differs. Relational schema = 100+ tables with NULLs. MongoDB documents fit naturally — one doc per patient. FHIR (HL7 JSON) maps to MongoDB directly. Mayo Clinic, Mount Sinai use this. Post-2018 ACID makes it viable. Trade-off: cross-patient JOIN needs aggregation pipeline.</p>
 </div></div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">資料庫選型</div>
-<h2 data-zh="六、該選哪種資料庫？" data-en="VI. Which Database to Choose?">六、資料庫選型決策樹</h2>
+<div class="section-label" data-zh="決策樹" data-en="DECISION TREE">六選一</div>
+<h2 data-zh="七、🌳 資料庫選擇決策樹" data-en="VII. 🌳 DB Choice Tree">七、🌳 決策樹</h2>
 <div class="decision-tree">
-<h4>🌳 <span data-zh="資料庫選型決策樹" data-en="DB Selection Decision Tree">資料庫選型決策樹</span></h4>
+<h4>🌳 <span data-zh="資料庫選擇" data-en="Database Choice">資料庫選擇</span></h4>
 <div data-lang="zh">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>需要強 ACID 交易與固定 schema（金融、訂單）？<span class="dt-arrow">→ 是 →</span> <strong>RDBMS</strong>（PostgreSQL、MySQL）。</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>只需快取、session、計數器（µs 級延遲）？<span class="dt-arrow">→ 是 →</span> <strong>Redis</strong>（KV）。</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>資料結構彈性大、文件巢狀深（CMS、產品目錄）？<span class="dt-arrow">→ 是 →</span> <strong>MongoDB</strong>（Document）。</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>關係查詢深（朋友的朋友的推薦）？<span class="dt-arrow">→ 是 →</span> <strong>Neo4j</strong>（Graph）。</div></div>
-<div class="dt-node"><span class="dt-q">Q5:</span><div>要做 RAG／語義搜尋（embedding 近鄰）？<span class="dt-arrow">→ 是 →</span> <strong>Pinecone / Milvus / pgvector</strong>（Vector）。</div></div>
-<div class="dt-node"><span class="dt-q">Q6:</span><div>每秒寫入 100 萬以上、可接受最終一致？<span class="dt-arrow">→ 是 →</span> <strong>Cassandra / DynamoDB</strong>（Wide-column）。</div></div>
+<div class="dt-node"><span class="dt-q">Q1:</span><div>強事務（金融、訂單）？<span class="dt-arrow">→</span> <strong>RDBMS</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>結構固定 + JOIN（基因組、TCGA）？<span class="dt-arrow">→</span> <strong>RDBMS + B-tree</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>純 key-lookup、超高 QPS？<span class="dt-arrow">→</span> <strong>Redis / DynamoDB</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>半結構化（EHR、CMS）？<span class="dt-arrow">→</span> <strong>MongoDB</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>PB 時序、寫遠多於讀？<span class="dt-arrow">→</span> <strong>Cassandra</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>多步關係導航（KEGG、GRN）？<span class="dt-arrow">→</span> <strong>Neo4j</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q7:</span><div>高維向量 KNN（RAG、scRNA-seq）？<span class="dt-arrow">→</span> <strong>Pinecone / Milvus / pgvector</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q8:</span><div>想一個 DB 通吃？<span class="dt-arrow">→</span> <strong>PostgreSQL + extensions</strong>（pgvector、PostGIS、Timescale、AGE）。</div></div>
 </div>
 <div data-lang="en">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>Need strict ACID + fixed schema (finance, orders)? <span class="dt-arrow">→ Yes →</span> <strong>RDBMS</strong> (PostgreSQL, MySQL).</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>Cache, session, counters (µs latency)? <span class="dt-arrow">→ Yes →</span> <strong>Redis</strong> (KV).</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>Flexible nested documents (CMS, catalogs)? <span class="dt-arrow">→ Yes →</span> <strong>MongoDB</strong> (Document).</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>Deep relational queries (friend-of-friend recs)? <span class="dt-arrow">→ Yes →</span> <strong>Neo4j</strong> (Graph).</div></div>
-<div class="dt-node"><span class="dt-q">Q5:</span><div>RAG / semantic search (embedding ANN)? <span class="dt-arrow">→ Yes →</span> <strong>Pinecone / Milvus / pgvector</strong> (Vector).</div></div>
-<div class="dt-node"><span class="dt-q">Q6:</span><div>&gt;1M writes/sec, eventual consistency OK? <span class="dt-arrow">→ Yes →</span> <strong>Cassandra / DynamoDB</strong> (Wide-column).</div></div>
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Strong transactions (finance)? <span class="dt-arrow">→</span> <strong>RDBMS</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Rigid schema + JOIN (genome, TCGA)? <span class="dt-arrow">→</span> <strong>RDBMS + B-tree</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Pure key-lookup, ultra-high QPS? <span class="dt-arrow">→</span> <strong>Redis / DynamoDB</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Semi-structured (EHR, CMS)? <span class="dt-arrow">→</span> <strong>MongoDB</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>PB time-series, write-heavy? <span class="dt-arrow">→</span> <strong>Cassandra</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>Multi-hop relations (KEGG, GRN)? <span class="dt-arrow">→</span> <strong>Neo4j</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q7:</span><div>High-dim KNN (RAG, scRNA-seq)? <span class="dt-arrow">→</span> <strong>Pinecone / Milvus / pgvector</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q8:</span><div>One DB for all? <span class="dt-arrow">→</span> <strong>PostgreSQL + extensions</strong>.</div></div>
 </div>
 </div>
-<div class="callout tip"><span class="callout-icon">💡</span><div>
-<div data-lang="zh"><strong>2026 趨勢：</strong>向量資料庫成為 LLM/RAG 的標配。PostgreSQL + <code>pgvector</code> 擴充模組讓你不用換資料庫就能做語義搜尋。</div>
-<div data-lang="en"><strong>2026 trend:</strong> Vector DBs have become standard infrastructure for LLM/RAG. PostgreSQL + the <code>pgvector</code> extension lets you do semantic search without leaving your existing DB.</div>
-</div></div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
-<h2 data-zh="七、Python: sqlite3 與 SQLAlchemy" data-en="VII. Python: sqlite3 & SQLAlchemy">七、Python 操作資料庫</h2>
-<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
-<div class="code-tab-content active" id="py1"><pre><span class="comment"># 低階：標準函式庫 sqlite3 / Low-level: stdlib sqlite3</span>
+<div class="section-label" data-zh="程式碼" data-en="CODE">Code Tabs</div>
+<h2 data-zh="八、Code-tabs" data-en="VIII. Code Tabs">八、Code-tabs</h2>
+<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'r1')">R</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># SQLite：Python 內建，零安裝</span>
 <span class="kw">import</span> sqlite3
-con = sqlite3.<span class="func">connect</span>(<span class="str">"school.db"</span>)
+con = sqlite3.<span class="func">connect</span>(<span class="str">"gene_db.sqlite"</span>)
 cur = con.<span class="func">cursor</span>()
-cur.<span class="func">execute</span>(<span class="str">"""CREATE TABLE IF NOT EXISTS students
-                 (id INTEGER PRIMARY KEY, name TEXT, score REAL)"""</span>)
-cur.<span class="func">execute</span>(<span class="str">"INSERT INTO students(name,score) VALUES (?,?)"</span>, (<span class="str">"Ada"</span>,<span class="num">95</span>))
-con.<span class="func">commit</span>()                       <span class="comment"># 結束交易</span>
+cur.<span class="func">execute</span>(<span class="str">"""CREATE TABLE IF NOT EXISTS genes(
+  id INTEGER PRIMARY KEY, symbol TEXT UNIQUE, chr TEXT, start INT, end INT)"""</span>)
+cur.<span class="func">execute</span>(<span class="str">"CREATE INDEX IF NOT EXISTS idx_loc ON genes(chr, start, end)"</span>)
 
-<span class="comment"># JOIN 查詢 / JOIN query</span>
-cur.<span class="func">execute</span>(<span class="str">"""SELECT s.name, e.course FROM students s
-                 INNER JOIN enrollments e ON e.student_id = s.id
-                 WHERE s.score &gt; ?"""</span>, (<span class="num">80</span>,))
-<span class="kw">for</span> row <span class="kw">in</span> cur.<span class="func">fetchall</span>():
-    <span class="func">print</span>(row)
+genes = [(<span class="str">"BRCA1"</span>,<span class="str">"chr17"</span>,<span class="num">43044295</span>,<span class="num">43125483</span>),
+         (<span class="str">"TP53"</span>, <span class="str">"chr17"</span>,<span class="num">7668401</span>, <span class="num">7687550</span>)]
+cur.<span class="func">executemany</span>(<span class="str">"INSERT OR REPLACE INTO genes(symbol,chr,start,end) VALUES(?,?,?,?)"</span>, genes)
+con.<span class="func">commit</span>()
 
-<span class="comment"># 高階 ORM：SQLAlchemy 2.x / Modern ORM</span>
-<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine, Column, Integer, String
+rows = cur.<span class="func">execute</span>(<span class="str">"SELECT symbol FROM genes WHERE chr=? AND start&gt;?"</span>,
+                   (<span class="str">"chr17"</span>, <span class="num">1000000</span>)).<span class="func">fetchall</span>()
+<span class="func">print</span>(rows)
+
+<span class="comment"># SQLAlchemy ORM</span>
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine, Column, Integer, String, select
 <span class="kw">from</span> sqlalchemy.orm <span class="kw">import</span> declarative_base, Session
 Base = <span class="func">declarative_base</span>()
-<span class="kw">class</span> Student(Base):
-    __tablename__ = <span class="str">"students"</span>
+<span class="kw">class</span> <span class="func">Gene</span>(Base):
+    __tablename__ = <span class="str">"genes"</span>
     id = <span class="func">Column</span>(Integer, primary_key=<span class="kw">True</span>)
-    name = <span class="func">Column</span>(String); score = <span class="func">Column</span>(Integer)
-
-engine = <span class="func">create_engine</span>(<span class="str">"sqlite:///school.db"</span>)
+    symbol = <span class="func">Column</span>(String)
+engine = <span class="func">create_engine</span>(<span class="str">"sqlite:///gene_db.sqlite"</span>)
 <span class="kw">with</span> <span class="func">Session</span>(engine) <span class="kw">as</span> s:
-    s.<span class="func">add</span>(<span class="func">Student</span>(name=<span class="str">"Bob"</span>, score=<span class="num">88</span>))
-    s.<span class="func">commit</span>()</pre></div>
-<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// JOIN 的概念演算法（巢狀迴圈版）/ Conceptual JOIN (nested-loop)</span>
-<span class="kw">function</span> <span class="func">InnerJoin</span>(left, right, on_left, on_right):
-    <span class="kw">let</span> result = []
-    <span class="kw">for</span> l <span class="kw">in</span> left:
-        <span class="kw">for</span> r <span class="kw">in</span> right:
-            <span class="kw">if</span> l[on_left] == r[on_right]:
-                result.<span class="func">push</span>(<span class="func">merge</span>(l, r))
+    g = s.<span class="func">scalars</span>(<span class="func">select</span>(Gene).<span class="func">where</span>(Gene.symbol==<span class="str">"BRCA1"</span>)).<span class="func">first</span>()
+    <span class="func">print</span>(g.symbol)</pre></div>
+<div class="code-tab-content" id="r1"><pre><span class="comment"># R: DBI 統一介面</span>
+<span class="kw">library</span>(DBI); <span class="kw">library</span>(RSQLite)
+con <- <span class="func">dbConnect</span>(<span class="func">SQLite</span>(), <span class="str">"gene_db.sqlite"</span>)
+
+<span class="kw">library</span>(dplyr)
+genes <- <span class="func">tibble</span>(symbol=<span class="func">c</span>(<span class="str">"BRCA1"</span>,<span class="str">"TP53"</span>),
+                chr=<span class="func">c</span>(<span class="str">"chr17"</span>,<span class="str">"chr17"</span>),
+                start=<span class="func">c</span>(<span class="num">43044295</span>,<span class="num">7668401</span>))
+<span class="func">dbWriteTable</span>(con, <span class="str">"genes"</span>, genes, overwrite=<span class="kw">TRUE</span>)
+<span class="func">dbGetQuery</span>(con, <span class="str">"SELECT symbol FROM genes WHERE chr='chr17'"</span>)
+
+<span class="comment"># dbplyr：dplyr 語法自動翻譯成 SQL</span>
+<span class="kw">library</span>(dbplyr)
+<span class="func">tbl</span>(con, <span class="str">"genes"</span>) |&gt;
+  <span class="func">filter</span>(chr == <span class="str">"chr17"</span>) |&gt; <span class="func">show_query</span>()
+<span class="func">dbDisconnect</span>(con)</pre></div>
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// Hash Join：建立 + 探測階段</span>
+<span class="kw">function</span> <span class="func">InnerJoin</span>(R, S, key):
+    hash = {}
+    <span class="kw">for</span> r <span class="kw">in</span> R: hash[r[key]] = r            <span class="comment">// build</span>
+    result = []
+    <span class="kw">for</span> s <span class="kw">in</span> S:
+        <span class="kw">if</span> s[key] <span class="kw">in</span> hash:
+            result.<span class="func">append</span>(merge(hash[s[key]], s))   <span class="comment">// probe</span>
     <span class="kw">return</span> result
+    <span class="comment">// O(|R|+|S|) vs nested-loop O(|R|×|S|)</span>
 
-<span class="comment">// 實際 DB 引擎會用 hash-join 或 merge-join，把 O(n·m) 降為 O(n+m)</span>
-<span class="comment">// Real engines use hash-join or merge-join, O(n+m) instead of O(n·m)</span>
+<span class="comment">// ACID transaction</span>
+<span class="kw">function</span> <span class="func">Transfer</span>(from_acc, to_acc, amount):
+    <span class="func">BeginTransaction</span>()
+    <span class="kw">try</span>:
+        balance = SELECT balance FROM accounts WHERE id = from_acc
+        <span class="kw">if</span> balance &lt; amount: <span class="kw">throw</span> InsufficientFunds
+        UPDATE accounts SET balance = balance - amount WHERE id = from_acc
+        UPDATE accounts SET balance = balance + amount WHERE id = to_acc
+        <span class="func">Commit</span>()
+    <span class="kw">catch</span> e:
+        <span class="func">Rollback</span>(); <span class="kw">throw</span> e
 
-<span class="comment">// 交易範本 / Transaction template</span>
-<span class="func">BEGIN</span>
-    <span class="func">UPDATE</span> accounts <span class="func">SET</span> balance = balance − <span class="num">100</span> <span class="func">WHERE</span> id = <span class="num">1</span>
-    <span class="func">UPDATE</span> accounts <span class="func">SET</span> balance = balance + <span class="num">100</span> <span class="func">WHERE</span> id = <span class="num">2</span>
-    <span class="kw">if</span> 任一失敗: <span class="func">ROLLBACK</span>
-    <span class="kw">else</span>:       <span class="func">COMMIT</span></pre></div>
+<span class="comment">// HNSW vector search</span>
+<span class="kw">function</span> <span class="func">HnswSearch</span>(query_vec, K):
+    entry = top_layer.entry
+    <span class="kw">for</span> layer <span class="kw">in</span> top ... bottom:
+        entry = <span class="func">GreedySearch</span>(layer, entry, query_vec)
+    <span class="kw">return</span> <span class="func">TopK</span>(bottom.neighbors_of(entry), K)
+    <span class="comment">// O(log N) vs brute-force O(N)</span></pre></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="常見誤解" data-en="MISCONCEPTIONS">常見陷阱</div>
+<h2 data-zh="九、常見誤解" data-en="IX. Common Misconceptions">九、常見誤解</h2>
+<div class="card-grid cols-2">
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4 data-zh="❌ NoSQL = No SQL" data-en="❌ NoSQL = No SQL">❌ NoSQL = No SQL</h4>
+<div data-lang="zh"><p><strong>真相：</strong>NoSQL = <strong>Not Only SQL</strong>。Cassandra 有 CQL、MongoDB 有 MQL、CouchDB 有 N1QL。2018 後 NoSQL 紛紛加上 ACID。</p></div>
+<div data-lang="en"><p><strong>Truth:</strong> NoSQL = <strong>Not Only SQL</strong>. Cassandra has CQL, MongoDB has MQL, CouchDB has N1QL. Post-2018 NoSQLs added ACID.</p></div></div>
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4 data-zh="❌ 索引越多越好" data-en="❌ More indexes are better">❌ 索引越多越好</h4>
+<div data-lang="zh"><p><strong>真相：</strong>每個 index 是額外 B-tree 副本，INSERT/UPDATE/DELETE 要同步更新。10 個 index 可能讓 INSERT 慢 5–10×。原則：只對真會被查詢的欄位建；OLTP 克制 / OLAP 放鬆。WHERE、JOIN ON、ORDER BY 欄位首選。</p></div>
+<div data-lang="en"><p><strong>Truth:</strong> Each index = extra B-tree copy; INSERT/UPDATE/DELETE must update all. 10 indexes can slow INSERT 5–10×. Rule: index only what's actually queried; OLTP — minimize, OLAP — be generous. Prefer WHERE, JOIN ON, ORDER BY columns.</p></div></div>
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4 data-zh="❌ MongoDB 比 SQL 快" data-en="❌ MongoDB beats SQL">❌ MongoDB 比 SQL 快</h4>
+<div data-lang="zh"><p><strong>真相：</strong>視場景而定。MongoDB 在「單一文件 get/put」可能快；OLAP benchmark（TPC-H）PostgreSQL/DuckDB 完勝。真正快的不是 NoSQL，而是「放棄 ACID + JOIN 換來的水平擴展性」。</p></div>
+<div data-lang="en"><p><strong>Truth:</strong> It depends. MongoDB may win on single-doc get/put; PostgreSQL/DuckDB crush MongoDB on OLAP (TPC-H). What's fast isn't NoSQL — it's "horizontal scale bought by dropping ACID + JOIN."</p></div></div>
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4 data-zh="❌ 用 ORM 不必懂 SQL" data-en="❌ ORM frees you from SQL">❌ ORM 不必懂 SQL</h4>
+<div data-lang="zh"><p><strong>真相：</strong>SQLAlchemy、Django ORM 產生的 SQL 常常次優。經典 N+1 問題：取 N 個訂單、每個查客戶 → 1+N queries 而非 1 個 JOIN。在 R dbplyr 一定要 <code>show_query()</code> 看翻譯結果。<strong>學會 SQL 比學任何 ORM 重要</strong>。</p></div>
+<div data-lang="en"><p><strong>Truth:</strong> SQLAlchemy, Django ORM often emit suboptimal SQL. Classic N+1 problem: fetch N orders, then query customer for each → 1+N queries instead of one JOIN. In R dbplyr always <code>show_query()</code>. <strong>Learn SQL — beats any ORM.</strong></p></div></div>
 </div>
 </section>
 
 <section class="quiz-section">
-<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
-<div class="quiz-q" data-answer="1">
-<p data-lang="zh">1. ACID 中的「I」代表什麼？</p>
-<p data-lang="en">1. What does the "I" in ACID stand for?</p>
-<div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Integrity（完整性）</span><span data-lang="en">A. Integrity</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Isolation（隔離性）</span><span data-lang="en">B. Isolation</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Indexing（索引）</span><span data-lang="en">C. Indexing</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Independence（獨立性）</span><span data-lang="en">D. Independence</span></div>
-</div><div class="quiz-feedback" id="fb1"></div></div>
-
+<h3>📝 <span data-zh="自我檢測（5 題）" data-en="Self-Check (5 Qs)">自我檢測</span></h3>
 <div class="quiz-q" data-answer="2">
-<p data-lang="zh">2. 下列情境中，最適合使用 NoSQL（如 MongoDB）而非 RDBMS 的是？</p>
-<p data-lang="en">2. Which scenario most favors NoSQL (e.g., MongoDB) over an RDBMS?</p>
+<p data-lang="zh">1. ACID 中 "I" 是？</p>
+<p data-lang="en">1. ACID's "I" stands for?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 銀行轉帳系統，需要嚴格的 ACID 保證</span><span data-lang="en">A. A bank transfer system needing strict ACID</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 學生選課系統，schema 固定且要查成績</span><span data-lang="en">B. A student enrollment system with fixed schema and grade queries</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 內容管理系統，每篇文章欄位差異大、schema 彈性</span><span data-lang="en">C. A CMS where article fields vary and schema needs to be flexible</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 月結報表需大量複雜 JOIN</span><span data-lang="en">D. Monthly reports needing many complex JOINs</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Indexing</span><span data-lang="en">A. Indexing</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Integrity</span><span data-lang="en">B. Integrity</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Isolation（隔離性）</span><span data-lang="en">C. Isolation</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Immutability</span><span data-lang="en">D. Immutability</span></div>
+</div><div class="quiz-feedback" id="fb1"></div></div>
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">2. CAP 定理：網路斷裂時必須選？</p>
+<p data-lang="en">2. CAP: during partition, must choose?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. C、A、P 全部</span><span data-lang="en">A. All of C,A,P</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. C 或 A 之一</span><span data-lang="en">B. Either C or A</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 丟掉 P</span><span data-lang="en">C. Drop P</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 只能用 RDBMS</span><span data-lang="en">D. Use only RDBMS</span></div>
 </div><div class="quiz-feedback" id="fb2"></div></div>
-
-<div class="quiz-q" data-answer="0">
-<p data-lang="zh">3. 為什麼資料庫要建立索引 (Index)？</p>
-<p data-lang="en">3. Why do databases create indexes?</p>
+<div class="quiz-q" data-answer="3">
+<p data-lang="zh">3. scRNA-seq 百萬 atlas reference mapping 用哪個 DB？</p>
+<p data-lang="en">3. scRNA-seq 1M atlas reference mapping — which DB?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 加速查詢，把 O(n) 全表掃描降為 O(log n) 或 O(1)</span><span data-lang="en">A. Speed up queries — reduce O(n) full scans to O(log n) or O(1)</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 強制 INSERT 操作加速</span><span data-lang="en">B. Make INSERTs faster</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 節省儲存空間</span><span data-lang="en">C. Save storage space</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 取代主鍵的角色</span><span data-lang="en">D. Replace the primary key</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. PostgreSQL（純）</span><span data-lang="en">A. Plain PostgreSQL</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. MongoDB</span><span data-lang="en">B. MongoDB</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Redis</span><span data-lang="en">C. Redis</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Vector DB (Pinecone/Milvus/pgvector)</span><span data-lang="en">D. Vector DB (Pinecone/Milvus/pgvector)</span></div>
 </div><div class="quiz-feedback" id="fb3"></div></div>
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">4. Ensembl/UCSC 為何仍用 MySQL？</p>
+<p data-lang="en">4. Why does Ensembl/UCSC still run on MySQL?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. MySQL 免費</span><span data-lang="en">A. MySQL is free</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 慣性</span><span data-lang="en">B. Inertia</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 基因組查詢是「範圍 + JOIN」，正是 RDBMS+B-tree 強項</span><span data-lang="en">C. Genome queries are "range + JOIN" — RDBMS+B-tree sweet spot</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. NoSQL 不支援 query</span><span data-lang="en">D. NoSQL has no queries</span></div>
+</div><div class="quiz-feedback" id="fb4"></div></div>
+<div class="quiz-q" data-answer="0">
+<p data-lang="zh">5. "NoSQL" 正確含義？</p>
+<p data-lang="en">5. What does "NoSQL" mean?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Not Only SQL — 不只用 SQL</span><span data-lang="en">A. Not Only SQL — beyond SQL</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. No SQL — 拒絕 SQL</span><span data-lang="en">B. No SQL — reject it</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. New SQL</span><span data-lang="en">C. New SQL</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Non-relational SQL</span><span data-lang="en">D. Non-relational SQL</span></div>
+</div><div class="quiz-feedback" id="fb5"></div></div>
+</section>
+
+<section class="section" style="background:#fef3c7;border-radius:14px;padding:32px;">
+<div class="section-label">💭 <span data-zh="延伸思考" data-en="DISCUSSION">延伸思考</span></div>
+<h2 data-zh="十、延伸思考" data-en="X. Discussion">十、延伸思考</h2>
+<ol style="margin-left:20px;line-height:1.9;color:var(--c-ink);">
+<li><strong data-zh="為何 SQL 50 年沒被取代？" data-en="Why hasn't SQL died in 50 years?">為何 SQL 50 年沒被取代？</strong><br>
+<span data-lang="zh">1974 IBM 的 SQL 至今主流。GraphQL 想取代 API 層；NoSQL 想取代——10 年後加回 SQL-like。SQL 頑強：① 聲明式（說 what，DB 負責 how）；② 嚴謹數學基礎（關聯代數）；③ 大學+業界正回饋。<strong>下個 50 年</strong>：自然語言查詢取代手寫 SQL？還是 SQL 變成 LLM 的「中間表示」？</span>
+<span data-lang="en">IBM's 1974 SQL still dominates. GraphQL tried API layer; NoSQL added SQL-like back in 10 years. SQL is resilient: (1) declarative, (2) rigorous math, (3) academia+industry feedback. <strong>Next 50 years</strong>: will natural language replace hand-written SQL? Or will SQL be LLM's "intermediate representation"?</span></li>
+<li><strong data-zh="Vector DB：併入 Postgres 還是獨立？" data-en="Vector DB: merge with Postgres or stay separate?">Vector DB 併入 Postgres？</strong><br>
+<span data-lang="zh">2024 RAG 熱讓 Pinecone/Milvus 成獨角獸。但 Postgres pgvector 也飛快——中等規模直接加 HNSW 就夠。趨勢：① 主流 DB 都加向量功能 → 專屬 vector DB 像 ETL 一樣被吸收；② 超大規模（10 億+向量）仍需專屬系統。對 bioinformatics 1 億細胞 ×768 維 atlas 哪個合適？scale-out vs scale-up 經典難題。</span>
+<span data-lang="en">2024's RAG boom made Pinecone/Milvus unicorns. But pgvector improved fast — mid-scale apps just add HNSW. Two paths: (1) mainstream DBs absorb vector features (dedicated vector DBs swallowed like ETL tools); (2) ultra-large (10B+ vectors) still needs dedicated. For 100M-cell × 768-d atlas — which? Classic scale-out vs scale-up.</span></li>
+</ol>
 </section>
 
 <nav class="page-nav">
-<a href="networking.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 7: 電腦網路" data-en="Ch 7: Computer Networking">Ch 7: 電腦網路</span></a>
-<a href="programming.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 9: 程式設計入門" data-en="Ch 9: Introduction to Programming">Ch 9: 程式設計入門</span></a>
+<a href="networking.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 7: 電腦網路" data-en="Ch 7: Computer Networks">Ch 7: 電腦網路</span></a>
+<a href="programming.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 9: 程式語言與編譯" data-en="Ch 9: Programming &amp; Compilation">Ch 9: 程式語言與編譯</span></a>
 </nav>
 </main>
 <footer class="site-footer">© Charlene — Introduction to Computer Science · Interactive Tutorial</footer>
@@ -281,29 +455,99 @@ engine = <span class="func">create_engine</span>(<span class="str">"sqlite:///sc
 window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
 function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
 
-// Interactive JOIN demo
-const students=[{id:1,name:'Ada'},{id:2,name:'Bob'},{id:3,name:'Cleo'},{id:4,name:'Dan'}];
-const enrollments=[{student_id:1,course:'CS101'},{student_id:2,course:'CS101'},{student_id:2,course:'MATH200'},{student_id:5,course:'BIO110'}];
-function joinDo(type){
-  const rows=[];
-  if(type==='INNER'){students.forEach(s=>enrollments.forEach(e=>{if(s.id===e.student_id)rows.push([s.id,s.name,e.student_id,e.course]);}));}
-  else if(type==='LEFT'){students.forEach(s=>{const m=enrollments.filter(e=>e.student_id===s.id);if(m.length)m.forEach(e=>rows.push([s.id,s.name,e.student_id,e.course]));else rows.push([s.id,s.name,'NULL','NULL']);});}
-  else if(type==='RIGHT'){enrollments.forEach(e=>{const s=students.find(st=>st.id===e.student_id);if(s)rows.push([s.id,s.name,e.student_id,e.course]);else rows.push(['NULL','NULL',e.student_id,e.course]);});}
-  else{const seen=new Set();students.forEach(s=>{const m=enrollments.filter(e=>e.student_id===s.id);if(m.length)m.forEach(e=>{rows.push([s.id,s.name,e.student_id,e.course]);seen.add(e.student_id);});else rows.push([s.id,s.name,'NULL','NULL']);});enrollments.forEach(e=>{if(!seen.has(e.student_id)&&!students.find(s=>s.id===e.student_id))rows.push(['NULL','NULL',e.student_id,e.course]);});}
-  return rows;
+// JOIN demo
+const students = [{sid:1,name:'Alice'},{sid:2,name:'Bob'},{sid:3,name:'Carol'},{sid:4,name:'Dan'}];
+const courses  = [{cid:101,sid:1,course:'Math'},{cid:102,sid:2,course:'Bio'},{cid:103,sid:2,course:'Chem'},{cid:104,sid:5,course:'Phys'}];
+function renderJoin(kind){
+  let rows=[], sql='', explainZh='', explainEn='';
+  if(kind==='inner'){
+    sql=`SELECT s.name, c.course FROM students s INNER JOIN courses c ON s.sid = c.sid;`;
+    explainZh='INNER JOIN 只回傳兩邊都匹配的列。'; explainEn='INNER JOIN: only matched rows.';
+    students.forEach(s=>courses.forEach(c=>{ if(s.sid===c.sid) rows.push({name:s.name,course:c.course}); }));
+  } else if(kind==='left'){
+    sql=`SELECT s.name, c.course FROM students s LEFT JOIN courses c ON s.sid = c.sid;`;
+    explainZh='LEFT JOIN 保留左表所有列，右表無匹配填 NULL。'; explainEn='LEFT JOIN: all left rows; NULL on no match.';
+    students.forEach(s=>{
+      const m = courses.filter(c=>c.sid===s.sid);
+      if(m.length===0) rows.push({name:s.name,course:'NULL'});
+      else m.forEach(c=>rows.push({name:s.name,course:c.course}));
+    });
+  } else if(kind==='right'){
+    sql=`SELECT s.name, c.course FROM students s RIGHT JOIN courses c ON s.sid = c.sid;`;
+    explainZh='RIGHT JOIN 保留右表所有列。'; explainEn='RIGHT JOIN: all right rows.';
+    courses.forEach(c=>{
+      const s = students.find(s=>s.sid===c.sid);
+      rows.push({name: s? s.name:'NULL', course:c.course});
+    });
+  } else if(kind==='full'){
+    sql=`SELECT s.name, c.course FROM students s FULL OUTER JOIN courses c ON s.sid = c.sid;`;
+    explainZh='FULL OUTER JOIN 保留兩邊所有列。'; explainEn='FULL OUTER JOIN: all from both sides.';
+    const seen=new Set();
+    students.forEach(s=>{
+      const m = courses.filter(c=>c.sid===s.sid);
+      if(m.length===0) rows.push({name:s.name,course:'NULL'});
+      else m.forEach(c=>{rows.push({name:s.name,course:c.course}); seen.add(c.cid);});
+    });
+    courses.forEach(c=>{ if(!seen.has(c.cid)) rows.push({name:'NULL',course:c.course}); });
+  }
+  document.getElementById('joinSql').textContent = sql;
+  const rt = document.getElementById('joinResult');
+  rt.innerHTML = '<thead style="background:#1B365D;color:#fff;"><tr><th style="padding:6px 10px;text-align:left;">name</th><th style="padding:6px 10px;text-align:left;">course</th></tr></thead><tbody>' +
+    rows.map(r=>`<tr><td style="padding:6px 10px;border-top:1px solid #e2e8f0;${r.name==='NULL'?'color:#94a3b8;font-style:italic;':''}">${r.name}</td><td style="padding:6px 10px;border-top:1px solid #e2e8f0;${r.course==='NULL'?'color:#94a3b8;font-style:italic;':''}">${r.course}</td></tr>`).join('') + '</tbody>';
+  const explain = document.getElementById('joinExplain');
+  explain.innerHTML = `<span data-lang="zh">${explainZh}</span><span data-lang="en">${explainEn}</span>`;
+  if(window.I18n && I18n.apply) I18n.apply();
 }
-function renderJoin(){
-  const t=document.getElementById('joinType').value;
-  document.getElementById('sqlOut').textContent='SELECT * FROM students s '+t+(t==='FULL'?' OUTER':'')+' JOIN enrollments e ON s.id = e.student_id;';
-  const rows=joinDo(t);
-  let html='<table class="comp-table" style="font-size:.88rem;"><thead><tr><th>s.id</th><th>s.name</th><th>e.student_id</th><th>e.course</th></tr></thead><tbody>';
-  rows.forEach(r=>{html+='<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>';});
-  html+='</tbody></table>';
-  document.getElementById('joinResult').innerHTML=html;
-}
-document.getElementById('joinType').addEventListener('change',renderJoin); renderJoin();
+document.querySelectorAll('[data-join]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('[data-join]').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); renderJoin(b.dataset.join);
+  });
+});
+renderJoin('inner');
 
-const QF={zh:{q1_y:'Isolation 確保並行交易彼此不互相干擾（4 個隔離級別：read-uncommitted/committed/repeatable-read/serializable）。',q1_n:'答案 B。',q2_y:'NoSQL（Document store）擅長處理 schema 彈性、巢狀結構的資料。',q2_n:'答案 C。',q3_y:'索引是空間換時間：用 B-tree 把線性掃描變成對數查詢。',q3_n:'答案 A。'},en:{q1_y:'Isolation ensures concurrent transactions don\'t interfere (4 levels: read-uncommitted/committed/repeatable-read/serializable).',q1_n:'Answer: B.',q2_y:'NoSQL (document stores) excel at flexible schemas and nested data.',q2_n:'Answer: C.',q3_y:'Indexes trade space for time — a B-tree turns linear scans into log lookups.',q3_n:'Answer: A.'}};
+// Vector demo
+function vecRender(){
+  const Ax=+document.getElementById('vAx').value, Ay=+document.getElementById('vAy').value;
+  const Bx=+document.getElementById('vBx').value, By=+document.getElementById('vBy').value;
+  document.getElementById('vAxv').textContent=Ax; document.getElementById('vAyv').textContent=Ay;
+  document.getElementById('vBxv').textContent=Bx; document.getElementById('vByv').textContent=By;
+  const dot=Ax*Bx+Ay*By, magA=Math.sqrt(Ax*Ax+Ay*Ay), magB=Math.sqrt(Bx*Bx+By*By);
+  const cos = magA*magB===0?0:dot/(magA*magB);
+  const euc = Math.sqrt((Ax-Bx)**2+(Ay-By)**2);
+  const man = Math.abs(Ax-Bx)+Math.abs(Ay-By);
+  document.getElementById('cosOut').textContent=cos.toFixed(3);
+  document.getElementById('eucOut').textContent=euc.toFixed(1);
+  document.getElementById('manOut').textContent=man.toFixed(0);
+  const cx=100, cy=100, tx=v=>cx+v*0.9, ty=v=>cy-v*0.9;
+  document.getElementById('vecSvg').innerHTML = `
+    <line x1="${cx}" y1="0" x2="${cx}" y2="200" stroke="#cbd5e1" stroke-width="1"/>
+    <line x1="0" y1="${cy}" x2="200" y2="${cy}" stroke="#cbd5e1" stroke-width="1"/>
+    <line x1="${cx}" y1="${cy}" x2="${tx(Ax)}" y2="${ty(Ay)}" stroke="#1B365D" stroke-width="3" marker-end="url(#arr1)"/>
+    <line x1="${cx}" y1="${cy}" x2="${tx(Bx)}" y2="${ty(By)}" stroke="#dc2626" stroke-width="3" marker-end="url(#arr2)"/>
+    <text x="${tx(Ax)+4}" y="${ty(Ay)-4}" fill="#1B365D" font-weight="700" font-size="11">A</text>
+    <text x="${tx(Bx)+4}" y="${ty(By)-4}" fill="#dc2626" font-weight="700" font-size="11">B</text>
+    <defs>
+      <marker id="arr1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><polygon points="0,0 8,3 0,6" fill="#1B365D"/></marker>
+      <marker id="arr2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><polygon points="0,0 8,3 0,6" fill="#dc2626"/></marker>
+    </defs>`;
+}
+['vAx','vAy','vBx','vBy'].forEach(id=>document.getElementById(id).addEventListener('input',vecRender));
+vecRender();
+
+const QF={zh:{
+q1_y:'I = Isolation 隔離性，避免並行事務互相看到中間狀態。',q1_n:'答案 C。',
+q2_y:'P 不可避免，只能在 C 與 A 之間擇一。',q2_n:'答案 B。',
+q3_y:'高維 KNN 是 vector DB 強項，HNSW 把 O(N) 降到 O(log N)。',q3_n:'答案 D。',
+q4_y:'gene JOIN transcript + chr/start/end 範圍查詢正是 RDBMS B-tree 最擅長。',q4_n:'答案 C。',
+q5_y:'NoSQL = Not Only SQL，從不是「拒絕 SQL」。',q5_n:'答案 A。'
+},en:{
+q1_y:'I = Isolation: prevents concurrent transactions from seeing each other\'s intermediate state.',q1_n:'Answer: C.',
+q2_y:'P is unavoidable, so the real choice is between C and A.',q2_n:'Answer: B.',
+q3_y:'High-dim KNN is the vector DB sweet spot; HNSW drops O(N) to O(log N).',q3_n:'Answer: D.',
+q4_y:'gene JOIN transcript + chr/start/end ranges is exactly RDBMS B-tree territory.',q4_n:'Answer: C.',
+q5_y:'NoSQL = Not Only SQL — never meant reject-SQL.',q5_n:'Answer: A.'
+}};
 document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
 </script>
 </body></html>

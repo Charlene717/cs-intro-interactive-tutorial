@@ -12,58 +12,82 @@
 <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
 <header class="page-hero"><div class="step-badge">CHAPTER 1 / 16</div>
 <h1 data-zh="計算機發展簡史" data-en="History of Computing">計算機發展簡史</h1>
-<p class="subtitle" data-lang="zh">從算盤、Babbage 分析機到圖靈、von Neumann、ENIAC 與 2026 年量子優勢——理解七十年來計算機如何形塑現代生活。</p>
-<p class="subtitle" data-lang="en">From abacus and Babbage to Turing, von Neumann, ENIAC, and 2026's quantum advantage — understand how seven decades of computing have shaped modern life.</p>
+<p class="subtitle" data-lang="zh">從一位伯爵夫人的詩意預言到 ChatGPT——七十年來，計算機如何從房間大小的鋼鐵巨獸，演變為你口袋中比阿波羅登月電腦快一億倍的玻璃方塊？</p>
+<p class="subtitle" data-lang="en">From a Countess's poetic prophecy to ChatGPT — how did computers shrink from room-sized iron beasts to a glass slab in your pocket, 100 million times faster than the Apollo Moon-landing computer?</p>
 </header>
 <main class="content-wrap">
 
 <section class="section">
-<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
-<h2 data-zh="為什麼要懂計算機歷史？" data-en="Why learn computing history?">為什麼要懂計算機歷史？</h2>
-<div data-lang="zh"><p>每一項你今天使用的技術——從手機、雲端服務到 ChatGPT——都站在數十年累積的概念之上。<strong>圖靈機 (1936)</strong> 定義了「可計算」的數學邊界，<strong>von Neumann 架構 (1945)</strong> 至今仍是 99% 計算機的設計藍圖，<strong>摩爾定律 (1965)</strong> 推動了半導體產業的指數成長。</p><p>理解歷史能幫你：① 避免重新發明輪子；② 看清當前技術的限制來自何處；③ 預測下一波典範轉移（如量子運算、神經型態運算）。</p></div>
-<div data-lang="en"><p>Every technology you use today — phones, cloud, ChatGPT — rests on decades of accumulated ideas. The <strong>Turing Machine (1936)</strong> defined the mathematical boundary of "computable," <strong>von Neumann architecture (1945)</strong> remains the blueprint for 99% of computers, and <strong>Moore's Law (1965)</strong> drove exponential semiconductor growth.</p><p>Understanding history helps you: (1) avoid reinventing wheels, (2) see where current limits come from, (3) predict the next paradigm shift (quantum, neuromorphic).</p></div>
+<div class="section-label" data-zh="開場故事" data-en="OPENING STORY">時光機：1843</div>
+<h2 data-zh="一、1843 年：第一個程式，寫在一台從未存在的機器上" data-en="I. 1843: The First Program, for a Machine That Never Existed">一、1843：寫在尚未存在的機器上的程式</h2>
+<div data-lang="zh"><p>1843 年的倫敦冬天，27 歲的 <strong>Ada Lovelace</strong>（拜倫勛爵的女兒）伏案疾書，為一台從未被建造出來的機器——Charles Babbage 設計的<strong>分析機 (Analytical Engine)</strong>——寫下世界上第一個演算法：用機器計算 <em>Bernoulli 數</em>。她的「Note G」中包含 25 步驟的指令序列，後人尊稱她為「第一位程式設計師」。</p>
+<p>更驚人的是 Ada 的<strong>預言</strong>：她在 Note A 中寫道，這台機器「終將能譜寫精緻、複雜程度任意的科學音樂」——比她預言的時代早了整整 130 年。1965 年，當第一個電腦合成音樂響起時，這預言才終於兌現。</p>
+<p>但 Babbage 至死都沒能完成那台機器。他的圖紙裡有 25,000 個齒輪和 8 噸重的銅鐵——維多利亞時代的英國工業根本造不出來。直到 <strong>1991 年</strong>，倫敦科學博物館才依原圖造出 Difference Engine No. 2——它真的能運作。Babbage 領先時代 150 年。</p></div>
+<div data-lang="en"><p>London, winter of 1843. A 27-year-old <strong>Ada Lovelace</strong> (daughter of Lord Byron) hunched over her desk, writing the world's first algorithm — for a machine that did not yet exist. Charles Babbage's <strong>Analytical Engine</strong> was a paper dream of 25,000 brass gears, and Ada's <em>Note G</em> contained a 25-step program to compute the <em>Bernoulli numbers</em>. We honor her as the first programmer.</p>
+<p>Even more astonishing was her <strong>prophecy</strong>: in Note A, she wrote that the machine "might compose elaborate and scientific pieces of music of any degree of complexity" — 130 years before the first computer-synthesized music played in 1965.</p>
+<p>But Babbage died without finishing the machine. Victorian England's industry simply could not manufacture his 8-ton apparatus. Not until <strong>1991</strong> did London's Science Museum build Difference Engine No. 2 from his drawings — and it actually worked. Babbage was 150 years ahead of his time.</p></div>
 <div class="callout tip"><span class="callout-icon">💡</span><div>
-<span data-lang="zh"><strong>核心觀念：</strong>計算機 ≠ 電子產品。計算機是「能執行演算法、儲存資料」的任何系統，從機械齒輪、繼電器、真空管、電晶體、積體電路一路演進到今天的量子位元。</span>
-<span data-lang="en"><strong>Core idea:</strong> A computer is not just an electronic device. It is <em>any</em> system that executes algorithms and stores data — from mechanical gears to relays, vacuum tubes, transistors, ICs, and quantum bits.</span>
+<span data-lang="zh"><strong>核心觀念：</strong>「計算機」≠「電子產品」。任何能<strong>執行演算法、儲存資料、按指令動作</strong>的系統都算計算機——從算盤、機械齒輪、繼電器、真空管、電晶體、積體電路，到 2026 年的量子位元，都是同一條故事線。</span>
+<span data-lang="en"><strong>Core idea:</strong> A "computer" is not just an electronic device. It is <em>any</em> system that runs algorithms, stores data, and acts on instructions — from abacuses to gears, relays, vacuum tubes, transistors, ICs, and now in 2026, quantum bits. It's all one story.</span>
 </div></div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="五大世代" data-en="FIVE GENERATIONS">世代演進</div>
-<h2 data-zh="一、計算機的五大世代" data-en="I. The Five Generations of Computers">一、計算機的五大世代</h2>
-<table class="comp-table">
-<thead><tr><th data-zh="世代" data-en="Generation">世代</th><th data-zh="年代" data-en="Era">年代</th><th data-zh="代表技術" data-en="Tech">代表技術</th><th data-zh="代表機器" data-en="Examples">代表機器</th></tr></thead>
-<tbody>
-<tr><td><strong>0</strong></td><td>BC 2700 – 1940</td><td data-lang="zh">機械式（齒輪、繼電器）</td><td data-lang="en">Mechanical (gears, relays)</td><td>算盤、Pascaline、Z3 (Zuse, 1941)</td></tr>
-<tr><td><strong>1</strong></td><td>1940 – 1956</td><td data-lang="zh">真空管（Vacuum tube）</td><td data-lang="en">Vacuum tubes</td><td>ENIAC (1945)、UNIVAC I (1951)</td></tr>
-<tr><td><strong>2</strong></td><td>1956 – 1963</td><td data-lang="zh">電晶體（Transistor）</td><td data-lang="en">Transistors</td><td>IBM 7090、PDP-1</td></tr>
-<tr><td><strong>3</strong></td><td>1964 – 1971</td><td data-lang="zh">積體電路（IC）</td><td data-lang="en">Integrated circuits</td><td>IBM System/360 (1964)</td></tr>
-<tr><td><strong>4</strong></td><td>1971 – present</td><td data-lang="zh">微處理器（VLSI/ULSI）</td><td data-lang="en">Microprocessor (VLSI/ULSI)</td><td>Intel 4004 (1971)、Apple II、PC、smartphone</td></tr>
-<tr><td><strong>5+</strong></td><td>2020+</td><td data-lang="zh">AI + 量子 + 邊緣（爭議性世代劃分）</td><td data-lang="en">AI + Quantum + Edge (debated)</td><td>Apple M-series、IBM Heron/Nighthawk、Google Willow</td></tr>
-</tbody></table>
-</section>
+<div class="section-label" data-zh="核心概念" data-en="CORE CONCEPTS">五千年的計算演化</div>
+<h2 data-zh="二、初學者地圖：從算盤到量子位元" data-en="II. Beginner's Map: From Abacus to Qubit">二、從算盤到量子位元</h2>
+<div data-lang="zh"><p>整部計算機史可以濃縮為一個主題：<strong>如何把「狀態」儲存、操作、傳遞得越來越快、越來越小</strong>。每一次儲存媒介的突破，都把計算速度推進三到六個數量級。</p></div>
+<div data-lang="en"><p>The entire history of computing boils down to one theme: <strong>how to store, manipulate, and transmit "state" faster and smaller</strong>. Each leap in storage medium pushed compute speed by 3–6 orders of magnitude.</p></div>
 
-<section class="section">
-<div class="section-label" data-zh="關鍵人物" data-en="KEY FIGURES">關鍵人物</div>
-<h2 data-zh="二、十位塑造計算機科學的人" data-en="II. Ten People Who Shaped Computer Science">二、十位塑造計算機科學的人</h2>
 <div class="card-grid cols-3">
-<div class="card"><h4>🧮 Charles Babbage (1791–1871)</h4><div data-lang="zh"><p>設計「分析機 (Analytical Engine)」——史上第一台可程式化機械計算機，雖未完工，但定義了 CPU + 記憶體 + I/O 的架構雛形。</p></div><div data-lang="en"><p>Designed the Analytical Engine — the first programmable mechanical computer. Never completed, but laid out the CPU + memory + I/O architecture.</p></div></div>
-<div class="card"><h4>🌹 Ada Lovelace (1815–1852)</h4><div data-lang="zh"><p>為 Babbage 分析機寫出第一個「程式」，被譽為史上第一位程式設計師。預言計算機能處理「非數字」的符號。</p></div><div data-lang="en"><p>Wrote the first "program" for Babbage's machine. Considered the first computer programmer. Foresaw that computers could manipulate non-numeric symbols.</p></div></div>
-<div class="card"><h4>🧠 Alan Turing (1912–1954)</h4><div data-lang="zh"><p>提出 <strong>圖靈機</strong> 與 <strong>圖靈測試</strong>。二戰期間破解 Enigma 密碼。所有現代計算機在數學上都等價於圖靈機。</p></div><div data-lang="en"><p>Defined the <strong>Turing machine</strong> and <strong>Turing test</strong>. Cracked the Enigma cipher in WWII. All modern computers are mathematically equivalent to a Turing machine.</p></div></div>
-<div class="card"><h4>📡 Claude Shannon (1916–2001)</h4><div data-lang="zh"><p><strong>資訊理論之父</strong>。1948 年定義「位元 (bit)」與通道容量公式 C = B·log₂(1+S/N)，奠定了所有數位通訊的基礎。</p></div><div data-lang="en"><p>Father of <strong>information theory</strong>. Defined the "bit" in 1948 and the channel capacity formula C = B·log₂(1+S/N), foundational to all digital communications.</p></div></div>
-<div class="card"><h4>🏛️ John von Neumann (1903–1957)</h4><div data-lang="zh"><p>1945 年提出「儲存程式概念 (stored-program)」——程式與資料儲存在同一記憶體中。所有現代 CPU 都基於 von Neumann 架構。</p></div><div data-lang="en"><p>Proposed the <strong>stored-program concept</strong> in 1945 — programs and data live in the same memory. All modern CPUs use von Neumann architecture.</p></div></div>
-<div class="card"><h4>🔋 Gordon Moore (1929–2023)</h4><div data-lang="zh"><p>Intel 創辦人之一。1965 年提出「摩爾定律」：IC 上的電晶體數每 18–24 個月增為兩倍。已維持 60 年，2020 年代開始放緩。</p></div><div data-lang="en"><p>Intel co-founder. In 1965 stated <strong>Moore's Law</strong>: transistors per IC double every 18–24 months. Held for 60 years, slowing in the 2020s.</p></div></div>
-<div class="card"><h4>👩‍💻 Grace Hopper (1906–1992)</h4><div data-lang="zh"><p>美國海軍少將。設計第一個編譯器 (A-0, 1952)、共同創造 COBOL；命名了「bug」與「debug」術語。</p></div><div data-lang="en"><p>U.S. Navy Rear Admiral. Built the first compiler (A-0, 1952); co-created COBOL. Coined the terms "bug" and "debug."</p></div></div>
-<div class="card"><h4>🐧 Linus Torvalds (1969–)</h4><div data-lang="zh"><p>21 歲時開發 Linux kernel (1991) 與後來的 Git (2005)。Linux 驅動了今天 90%+ 的雲端、超級電腦與 Android 裝置。</p></div><div data-lang="en"><p>At 21, created Linux kernel (1991) and later Git (2005). Linux powers 90%+ of today's cloud, supercomputers, and Android devices.</p></div></div>
-<div class="card"><h4>🌐 Tim Berners-Lee (1955–)</h4><div data-lang="zh"><p>1989 年於 CERN 發明 World Wide Web、HTTP 與 HTML。1990 年寫出世界第一個瀏覽器與網頁伺服器。</p></div><div data-lang="en"><p>Invented the World Wide Web, HTTP, and HTML at CERN in 1989. Built the first browser and web server in 1990.</p></div></div>
+<div class="card"><h4>🧮 <span data-zh="算盤（BC 2700）" data-en="Abacus (BC 2700)">算盤</span></h4><div data-lang="zh"><p>蘇美人發明，珠子代表狀態。今天仍在用——日本珠算冠軍能比計算機更快算心算除法。</p></div><div data-lang="en"><p>Sumerians, ~2700 BC. Beads encode state. Still used today — Japanese soroban champions beat calculators at mental arithmetic.</p></div></div>
+<div class="card"><h4>⚙️ <span data-zh="帕斯卡計算器（1642）" data-en="Pascaline (1642)">帕斯卡計算器</span></h4><div data-lang="zh"><p>19 歲的 Blaise Pascal 為當稅務官的父親設計，能加減六位數。是史上第一台量產的機械計算機。</p></div><div data-lang="en"><p>Built by 19-year-old Blaise Pascal to help his tax-collector father. Six-digit add/subtract. First mass-produced mechanical calculator.</p></div></div>
+<div class="card"><h4>📜 <span data-zh="提花織機（1804）" data-en="Jacquard Loom (1804)">提花織機</span></h4><div data-lang="zh"><p>用打孔卡編程紡織圖案——史上第一台「可編程」機器，直接啟發了 Babbage 與後來的 IBM 打孔卡。</p></div><div data-lang="en"><p>Programmed weaving patterns with punched cards — the first "programmable" machine. Directly inspired Babbage and later IBM's punch cards.</p></div></div>
+<div class="card"><h4>🏛️ <span data-zh="分析機（1837）" data-en="Analytical Engine (1837)">分析機</span></h4><div data-lang="zh"><p>Babbage 設計，含 mill (CPU) + store (記憶體) + 卡片讀取 (I/O)，是現代計算機的祖先。Ada 為它寫了第一個程式。</p></div><div data-lang="en"><p>Babbage's design with mill (CPU) + store (memory) + card reader (I/O). The ancestor of every modern computer. Ada wrote its first program.</p></div></div>
+<div class="card"><h4>🧠 <span data-zh="圖靈機（1936）" data-en="Turing Machine (1936)">圖靈機</span></h4><div data-lang="zh"><p>不是實體機器，而是「<em>什麼是可計算？</em>」的數學模型。所有現代計算機在邏輯上等價於圖靈機。</p></div><div data-lang="en"><p>Not a physical machine — a mathematical model of "what is computable?" Every modern computer is logically equivalent to a Turing machine.</p></div></div>
+<div class="card"><h4>⚡ <span data-zh="ENIAC（1945）" data-en="ENIAC (1945)">ENIAC</span></h4><div data-lang="zh"><p>賓州大學造，17,468 顆真空管，重 30 噸，佔地 167 m²。每秒 5,000 次加法——比當時的人類「計算員」快 1,000 倍。</p></div><div data-lang="en"><p>UPenn, 1945. 17,468 vacuum tubes, 30 tons, 167 m². 5,000 adds/sec — 1,000× faster than the human "computers" it replaced.</p></div></div>
+<div class="card"><h4>📡 <span data-zh="電晶體（1947）" data-en="Transistor (1947)">電晶體</span></h4><div data-lang="zh"><p>Bell Labs 的 Bardeen、Brattain、Shockley 發明（1956 諾貝爾物理獎）。取代真空管：體積小 1000 倍、耗能少 100 倍、壽命長 1000 倍。</p></div><div data-lang="en"><p>Bell Labs' Bardeen, Brattain, Shockley (1956 Nobel Prize in Physics). Replaced vacuum tubes — 1000× smaller, 100× less power, 1000× longer life.</p></div></div>
+<div class="card"><h4>🔬 <span data-zh="積體電路（1958）" data-en="Integrated Circuit (1958)">積體電路</span></h4><div data-lang="zh"><p>Jack Kilby（TI）與 Robert Noyce（Fairchild）幾乎同時發明：把多顆電晶體刻在同一塊矽片上，啟動半導體革命。</p></div><div data-lang="en"><p>Jack Kilby (TI) & Robert Noyce (Fairchild) almost simultaneously: etch many transistors on one silicon die. Sparked the semiconductor revolution.</p></div></div>
+<div class="card"><h4>🪐 <span data-zh="量子位元（2019+）" data-en="Qubit (2019+)">量子位元</span></h4><div data-lang="zh"><p>Google Sycamore (2019)、IBM Heron (2023)、Willow (2024)：用<strong>疊加態</strong>同時表達 0 和 1，挑戰古典計算的極限。</p></div><div data-lang="en"><p>Google Sycamore (2019), IBM Heron (2023), Willow (2024): qubits use <strong>superposition</strong> to be 0 and 1 at once, pushing past classical limits.</p></div></div>
 </div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="互動時間軸" data-en="INTERACTIVE TIMELINE">互動時間軸</div>
-<h2 data-zh="三、互動：摩爾定律與電晶體成長" data-en="III. Interactive: Moore's Law & Transistor Growth">三、互動：摩爾定律與電晶體成長</h2>
-<div data-lang="zh"><p>下圖以對數刻度顯示 1971–2024 年代表性微處理器的電晶體數量。可以看到 1971 年 Intel 4004 只有 2,300 顆電晶體，到 2024 年 Apple M4 Max 已達 280 億顆——50 年成長 <strong>1200 萬倍</strong>。</p></div>
-<div data-lang="en"><p>Below is a log-scale plot of transistor counts in representative microprocessors from 1971 to 2024. Intel 4004 had just 2,300 transistors in 1971; by 2024, Apple M4 Max reached <strong>28 billion</strong> — a 12-million-fold increase in 50 years.</p></div>
+<div class="section-label" data-zh="五大世代" data-en="FIVE GENERATIONS">電子計算機五代</div>
+<h2 data-zh="三、電子計算機五大世代" data-en="III. The Five Generations of Electronic Computers">三、五大世代</h2>
+<table class="comp-table">
+<thead><tr><th data-zh="世代" data-en="Generation">世代</th><th data-zh="年代" data-en="Era">年代</th><th data-zh="代表技術" data-en="Tech">代表技術</th><th data-zh="代表機器" data-en="Examples">代表機器</th></tr></thead>
+<tbody>
+<tr><td><strong>0</strong></td><td>BC 2700 – 1940</td><td data-lang="zh">機械式（齒輪、繼電器）</td><td data-lang="en">Mechanical (gears, relays)</td><td>Abacus, Pascaline, Z3 (Zuse 1941)</td></tr>
+<tr><td><strong>1</strong></td><td>1940 – 1956</td><td data-lang="zh">真空管</td><td data-lang="en">Vacuum tubes</td><td>ENIAC (1945), UNIVAC I (1951)</td></tr>
+<tr><td><strong>2</strong></td><td>1956 – 1963</td><td data-lang="zh">電晶體</td><td data-lang="en">Transistors</td><td>IBM 7090, PDP-1</td></tr>
+<tr><td><strong>3</strong></td><td>1964 – 1971</td><td data-lang="zh">積體電路 (IC)</td><td data-lang="en">Integrated circuits</td><td>IBM System/360 (1964)</td></tr>
+<tr><td><strong>4</strong></td><td>1971 – present</td><td data-lang="zh">微處理器 (VLSI/ULSI)</td><td data-lang="en">Microprocessor (VLSI/ULSI)</td><td>Intel 4004, Apple II, PC, smartphone</td></tr>
+<tr><td><strong>5+</strong></td><td>2020+</td><td data-lang="zh">AI + 量子 + 邊緣（爭議性劃代）</td><td data-lang="en">AI + Quantum + Edge (debated)</td><td>Apple M-series, IBM Heron/Nighthawk, Google Willow</td></tr>
+</tbody></table>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="關鍵人物" data-en="KEY FIGURES">塑造 CS 的十個人</div>
+<h2 data-zh="四、塑造計算機科學的十位先驅" data-en="IV. Ten Pioneers Who Shaped CS">四、十位先驅</h2>
+<div class="card-grid cols-3">
+<div class="card"><h4>🌹 Ada Lovelace (1815–1852)</h4><div data-lang="zh"><p>第一位程式設計師；預言「機器將能譜曲」。美國國防部 1980 年程式語言「Ada」以她命名。</p></div><div data-lang="en"><p>First programmer; foresaw computers composing music. The U.S. DoD's 1980 language "Ada" is named after her.</p></div></div>
+<div class="card"><h4>🧮 Charles Babbage (1791–1871)</h4><div data-lang="zh"><p>差分機與分析機設計者。生前未完成；1991 年依原圖造出 Difference Engine No. 2，運作完美。</p></div><div data-lang="en"><p>Designer of the Difference & Analytical Engines. Never finished; Difference Engine No. 2 built from his drawings in 1991 worked perfectly.</p></div></div>
+<div class="card"><h4>🧠 Alan Turing (1912–1954)</h4><div data-lang="zh"><p>圖靈機、圖靈測試、二戰破解 Enigma 拯救千萬生命。1952 因同性戀被英國政府化學閹割，1954 自殺；2013 才獲女王赦免。</p></div><div data-lang="en"><p>Turing machine, Turing test, WWII Enigma-cracking that saved millions. Chemically castrated by the UK for homosexuality in 1952; suicide 1954; royal pardon 2013.</p></div></div>
+<div class="card"><h4>📡 Claude Shannon (1916–2001)</h4><div data-lang="zh"><p>「資訊理論之父」。1948 定義「位元 (bit)」與通道容量公式。順帶發明了第一個西洋棋程式與雜耍機器人。</p></div><div data-lang="en"><p>Father of information theory. Defined the "bit" in 1948 along with the channel capacity formula. Also built the first chess program and juggling robots.</p></div></div>
+<div class="card"><h4>🏛️ John von Neumann (1903–1957)</h4><div data-lang="zh"><p>1945 EDVAC 報告提出「儲存程式概念」：程式即資料。99% 現代 CPU 仍是 von Neumann 架構。</p></div><div data-lang="en"><p>1945 EDVAC report introduced the stored-program concept: programs are data. 99% of modern CPUs still use von Neumann architecture.</p></div></div>
+<div class="card"><h4>👩‍💻 Grace Hopper (1906–1992)</h4><div data-lang="zh"><p>美國海軍少將；1952 寫出第一個編譯器 (A-0)；共同設計 COBOL；命名「bug / debug」。</p></div><div data-lang="en"><p>U.S. Navy Rear Admiral. Built the first compiler (A-0, 1952); co-designed COBOL; coined "bug" and "debug."</p></div></div>
+<div class="card"><h4>🔋 Gordon Moore (1929–2023)</h4><div data-lang="zh"><p>Intel 共同創辦人。1965 提出摩爾定律：電晶體每 18–24 個月增為兩倍。維持 60 年才放緩。</p></div><div data-lang="en"><p>Intel co-founder. 1965 Moore's Law: transistors double every 18–24 months. Held for 60 years.</p></div></div>
+<div class="card"><h4>🪟 Bill Gates / 🍎 Steve Jobs</h4><div data-lang="zh"><p>1975 微軟、1976 蘋果——讓個人電腦進入家庭。1984 麥金塔 + 1990 Windows 3.0 開啟 GUI 革命。</p></div><div data-lang="en"><p>Microsoft (1975), Apple (1976) — brought PCs into homes. 1984 Macintosh + 1990 Windows 3.0 sparked the GUI revolution.</p></div></div>
+<div class="card"><h4>🐧 Linus Torvalds (1969–)</h4><div data-lang="zh"><p>21 歲寫 Linux kernel (1991)、後來寫 Git (2005)。Linux 驅動 90%+ 雲端、超算、Android。</p></div><div data-lang="en"><p>At 21, wrote the Linux kernel (1991); later Git (2005). Linux powers 90%+ of cloud, supercomputers, and Android.</p></div></div>
+<div class="card"><h4>🌐 Tim Berners-Lee (1955–)</h4><div data-lang="zh"><p>1989 於 CERN 發明 WWW、HTTP、HTML。把網際網路從學術變成全人類的資訊空間。</p></div><div data-lang="en"><p>Invented WWW, HTTP, HTML at CERN, 1989. Transformed the internet from academic tool to global information space.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動圖表 #1" data-en="INTERACTIVE #1">摩爾定律</div>
+<h2 data-zh="五、互動 ①：摩爾定律 50 年" data-en="V. Interactive ①: 50 Years of Moore's Law">五、互動 ①：摩爾定律 50 年</h2>
+<div data-lang="zh"><p>下圖以對數刻度顯示 1971–2025 年代表性處理器的電晶體數量。從 1971 年 Intel 4004 只有 <strong>2,300 顆</strong>，到 2025 年 NVIDIA Blackwell 達 <strong>2080 億顆</strong>——54 年成長 <strong>9000 萬倍</strong>。把滑鼠移到圓點上，可以看到該年代代表晶片的詳細資料。</p></div>
+<div data-lang="en"><p>Below is a log-scale plot of transistor counts in representative processors from 1971 to 2025. Intel 4004 had just <strong>2,300</strong> transistors in 1971; by 2025, NVIDIA Blackwell reached <strong>208 billion</strong> — a 90-million-fold increase in 54 years. Hover over a dot to see chip details.</p></div>
 <div class="interactive-panel">
 <div class="chart-container"><canvas id="mooreChart"></canvas></div>
 <p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">資料來源：Wikipedia "Transistor count" entry, accessed 2026-05</span><span data-lang="en">Source: Wikipedia "Transistor count" entry, accessed 2026-05</span></p>
@@ -71,61 +95,172 @@
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">里程碑判讀</div>
-<h2 data-zh="四、五大里程碑判讀" data-en="IV. Five Milestones to Remember">四、五大里程碑判讀</h2>
-<div class="decision-tree">
-<h4>🌳 <span data-zh="計算機歷史五大轉折" data-en="Five Pivotal Moments">計算機歷史五大轉折</span></h4>
-<div data-lang="zh">
-<div class="dt-node"><span class="dt-q">1936</span><div>Turing 提出可計算性理論 <span class="dt-arrow">→</span> 任何「可計算」問題都可被機器解決，定義了 CS 的數學基礎。</div></div>
-<div class="dt-node"><span class="dt-q">1945</span><div>von Neumann 報告 <span class="dt-arrow">→</span> 統一程式與資料儲存，奠定 99% 現代 CPU 的設計。</div></div>
-<div class="dt-node"><span class="dt-q">1947</span><div>Bell Labs 發明電晶體 <span class="dt-arrow">→</span> 取代真空管，啟動半導體革命；發明者獲 1956 諾貝爾物理獎。</div></div>
-<div class="dt-node"><span class="dt-q">1969</span><div>ARPANET 上線 <span class="dt-arrow">→</span> 第一個封包交換網路，互聯網的雛形。</div></div>
-<div class="dt-node"><span class="dt-q">2022</span><div>ChatGPT 公開 <span class="dt-arrow">→</span> 大型語言模型走入大眾，標誌「生成式 AI 時代」開端。</div></div>
-</div>
-<div data-lang="en">
-<div class="dt-node"><span class="dt-q">1936</span><div>Turing's computability paper <span class="dt-arrow">→</span> defined what is "computable" and the math foundation of CS.</div></div>
-<div class="dt-node"><span class="dt-q">1945</span><div>von Neumann report <span class="dt-arrow">→</span> unified program + data storage; blueprint for 99% of modern CPUs.</div></div>
-<div class="dt-node"><span class="dt-q">1947</span><div>Bell Labs invents the transistor <span class="dt-arrow">→</span> replaces vacuum tubes; launches the semiconductor era. Inventors win the 1956 Nobel Prize.</div></div>
-<div class="dt-node"><span class="dt-q">1969</span><div>ARPANET goes live <span class="dt-arrow">→</span> first packet-switched network — direct ancestor of today's internet.</div></div>
-<div class="dt-node"><span class="dt-q">2022</span><div>ChatGPT public release <span class="dt-arrow">→</span> LLMs reach mass consumers; marks the start of the "generative AI era."</div></div>
-</div>
-</div>
+<div class="section-label" data-zh="深入剖析" data-en="DEEP DIVE">圖靈機與停機問題</div>
+<h2 data-zh="六、進階：圖靈機 & 停機問題" data-en="VI. Advanced: The Turing Machine & the Halting Problem">六、進階：圖靈機與停機問題</h2>
+<div data-lang="zh"><p>1936 年，24 歲的 Alan Turing 在《On Computable Numbers》中提出一個極度抽象的機器：</p>
+<ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
+<li>一條<strong>無限長的紙帶</strong>，分格儲存符號（0/1）。</li>
+<li>一個<strong>讀寫頭</strong>，可以讀目前格、寫入新符號、左移或右移一格。</li>
+<li>一張<strong>狀態轉移表</strong>：根據當前狀態 + 讀到的符號，決定要寫什麼、移到哪、跳到什麼狀態。</li>
+</ul>
+<p>這就是計算的最小模型。<strong>Church-Turing 論題</strong>主張：任何能被「演算法」解決的問題，都可被圖靈機解決。今天的 Python、CPU、量子電腦在「能算什麼」上都不超過圖靈機（雖然量子電腦在「多快算」上更快）。</p>
+<p><strong>停機問題 (Halting Problem)：</strong>Turing 同時證明了一個驚人結論——「給定任意程式 P 與輸入 I，能否寫一個通用程式 H 來判斷 P(I) 會不會停機？」答案是<strong>不可能</strong>。這是計算機科學第一個「無法計算」的問題，奠定了<strong>可計算性理論</strong>的基礎。</p></div>
+<div data-lang="en"><p>In 1936, a 24-year-old Alan Turing introduced an absurdly abstract machine in <em>On Computable Numbers</em>:</p>
+<ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
+<li>An <strong>infinite tape</strong> divided into cells holding symbols (0/1).</li>
+<li>A <strong>read/write head</strong> that reads, writes, and shifts one cell at a time.</li>
+<li>A <strong>state-transition table</strong>: given (current state, symbol read), decide what to write, which way to move, and which state to enter next.</li>
+</ul>
+<p>That's the minimal model of computation. The <strong>Church-Turing thesis</strong> claims: anything an "algorithm" can solve, a Turing machine can solve. Today's Python, CPUs, even quantum computers cannot compute anything beyond what a Turing machine can (though quantum computers may compute some things faster).</p>
+<p><strong>The Halting Problem:</strong> Turing also proved a stunning negative result. "Given any program P and input I, can we build a universal program H that decides whether P(I) halts?" The answer is <strong>no, impossible</strong>. This was the first uncomputable problem in computer science — the foundation of <strong>computability theory</strong>.</p></div>
 
-<div class="callout warn"><span class="callout-icon">⚠️</span><div>
-<div data-lang="zh"><strong>2026 觀察：</strong>摩爾定律的「每 18 個月翻倍」已減速到約 30 個月。新的成長動力來自：① <strong>3D 堆疊封裝</strong> (Intel Foveros、TSMC SoIC)；② <strong>chiplet 架構</strong>；③ <strong>專用 AI 加速器</strong>（GPU/NPU/TPU）；④ <strong>後 CMOS 技術</strong>（量子、光子、神經型態）。</div>
-<div data-lang="en"><strong>2026 perspective:</strong> Moore's classic "18-month doubling" has slowed to ~30 months. New growth drivers: (1) <strong>3D-stacked packaging</strong> (Intel Foveros, TSMC SoIC); (2) <strong>chiplet architectures</strong>; (3) <strong>specialized AI accelerators</strong> (GPUs/NPUs/TPUs); (4) <strong>post-CMOS</strong> (quantum, photonic, neuromorphic).</div>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<div data-lang="zh"><strong>為什麼這對你重要？</strong>停機問題告訴我們：永遠寫不出一個「萬能 bug 偵測器」來判斷任意程式會不會無限迴圈、會不會崩潰。這就是為何 software testing 永遠不會被「自動化證明」完全取代。</div>
+<div data-lang="en"><strong>Why this matters:</strong> The Halting Problem says we can never write a "universal bug detector" that decides if any program will loop forever or crash. That is why software testing will never be fully replaced by automated proofs.</div>
 </div></div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
-<h2 data-zh="五、體驗：用 Python 計算摩爾定律" data-en="V. Hands-on: Compute Moore's Law in Python">五、用 Python 計算摩爾定律</h2>
-<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
-<div class="code-tab-content active" id="py1"><pre><span class="comment"># 摩爾定律：電晶體數每 18 個月翻倍 / Moore's law: transistors double every 18 months</span>
-<span class="kw">def</span> <span class="func">moore_predict</span>(start_year, start_count, target_year, doubling_months=<span class="num">18</span>):
-    months = (target_year - start_year) * <span class="num">12</span>
-    doublings = months / doubling_months
-    <span class="kw">return</span> start_count * (<span class="num">2</span> ** doublings)
+<div class="section-label" data-zh="經典故事" data-en="LEGENDARY STORIES">五則必聽歷史</div>
+<h2 data-zh="七、五則必聽的歷史故事" data-en="VII. Five Legendary Stories">七、五則必聽的歷史故事</h2>
+<div class="card-grid cols-2">
+<div class="card"><h4>🐛 <span data-zh="1947：真的有蟲" data-en="1947: The Actual Bug">1947：真的有蟲</span></h4><div data-lang="zh"><p>Grace Hopper 操作 Harvard Mark II 時，機器突然故障。她打開繼電器，發現一隻 <strong>真的蛾</strong> 卡在裡面。她把蛾貼到實驗日誌上，寫下「First actual case of bug being found」。<strong>「Debug」這個詞從此誕生</strong>，那頁日誌至今仍保存在華盛頓 Smithsonian 博物館。</p></div><div data-lang="en"><p>Grace Hopper was operating the Harvard Mark II when it failed. Opening the relay, she found <strong>an actual moth</strong> jammed inside. She taped it into the log, writing "First actual case of bug being found." Thus was born <strong>"debug,"</strong> and that page still sits in the Smithsonian.</p></div></div>
+<div class="card"><h4>💔 <span data-zh="Turing 的悲劇" data-en="Turing's Tragedy">Turing 的悲劇</span></h4><div data-lang="zh"><p>二戰時 Turing 領導布萊切利園破解 Enigma 密碼，估計縮短戰爭 2–4 年、救了 1400 萬條人命。1952 因「同性戀罪」被英國政府逼迫接受化學閹割（注射雌激素一年）。1954 年咬下沾有氰化物的蘋果自殺，年僅 41 歲。2013 年伊麗莎白二世女王頒布皇家赦免。Apple Logo 上那顆缺一口的蘋果，常被謠傳為紀念 Turing——雖然 Apple 官方否認。</p></div><div data-lang="en"><p>At Bletchley Park, Turing led the team that cracked Enigma — estimated to have shortened WWII by 2–4 years and saved 14 million lives. In 1952 he was forced to undergo chemical castration for being gay. He died in 1954 by biting a cyanide-laced apple, age 41. Queen Elizabeth II granted a royal pardon in 2013. The bitten-apple Apple logo is often (incorrectly) rumored to honor him.</p></div></div>
+<div class="card"><h4>🚀 <span data-zh="阿波羅 AGC：64KB 上月球" data-en="Apollo AGC: 64KB to the Moon">阿波羅 AGC：64KB 上月球</span></h4><div data-lang="zh"><p>1969 年阿波羅 11 號的<strong>登月導引電腦 (AGC)</strong> 由 MIT 設計，只有 64 KB ROM、4 KB RAM、時脈 2.048 MHz。比現在 USB 充電器內的晶片還弱。登月時 AGC 多次出現「1202 alarm」——記憶體溢位——但程式設計師 Margaret Hamilton 設計的<strong>優先排程</strong>讓它自動丟棄低優先工作、繼續導航。阿姆斯壯說：「沒有 Margaret 的軟體，我們不會降落。」</p></div><div data-lang="en"><p>The Apollo 11 <strong>Guidance Computer (AGC)</strong>, built at MIT, had just 64 KB ROM, 4 KB RAM, and a 2.048 MHz clock — weaker than today's USB charger chips. During landing it threw multiple "1202 alarms" (memory overflow), but Margaret Hamilton's <strong>priority scheduler</strong> auto-dropped low-priority work and kept navigating. Armstrong: "Without Margaret's software, we would not have landed."</p></div></div>
+<div class="card"><h4>📺 <span data-zh="1984 麥金塔：個人電腦革命" data-en="1984 Macintosh: PC Revolution">1984：個人電腦革命</span></h4><div data-lang="zh"><p>1984 年 1 月，Apple 在 Super Bowl 播出傳奇廣告《1984》：女運動員砸碎象徵 IBM 的「老大哥」螢幕。三天後，第一台<strong>麥金塔 (Macintosh)</strong> 上市——第一台真正普及的 GUI 個人電腦。售價 $2,495 ≈ 今天的 $7,500。從此「電腦」不再是科學家專屬。</p></div><div data-lang="en"><p>January 1984: Apple's legendary "1984" Super Bowl ad showed a female athlete smashing "Big Brother" (IBM). Three days later, the first <strong>Macintosh</strong> shipped — the first mass-market GUI personal computer. Price: $2,495 (~$7,500 today). Computers stopped belonging only to scientists.</p></div></div>
+<div class="card"><h4>📜 <span data-zh="Ada 的預言成真" data-en="Ada's Prophecy Fulfilled">Ada 的預言成真</span></h4><div data-lang="zh"><p>1843 年 Ada 在 Note A 寫道：「分析機……終將能譜寫精緻、複雜程度任意的科學音樂。」當時所有人都覺得她瘋了。1957 年第一首電腦合成音樂《Illiac Suite》在伊利諾大學奏響；1965 年第一張電腦合成專輯發行；2024 年 OpenAI 的 MuseNet、Google MusicLM 已能生成符合任意風格的整首曲子。Ada 領先時代 180 年。</p></div><div data-lang="en"><p>In Note A (1843), Ada wrote: "The Analytical Engine might compose elaborate and scientific pieces of music of any degree of complexity." Everyone thought her mad. 1957: the first computer-composed piece, <em>Illiac Suite</em>, played at the University of Illinois. 1965: first computer-music LP. 2024: OpenAI's MuseNet and Google's MusicLM generate full songs in any style. Ada was 180 years ahead.</p></div></div>
+<div class="card"><h4>🧬 <span data-zh="ENIAC 計算員都是女性" data-en="ENIAC's All-Female Programmers">ENIAC 的女程式員</span></h4><div data-lang="zh"><p>1945 年 ENIAC 首批六位程式員<strong>全部都是女性</strong>：Kathleen McNulty、Frances Bilas、Betty Snyder、Marlyn Wescoff、Ruth Lichterman、Jean Bartik。當時「programmer」被視為低階文書職，連照片上她們的名字都沒寫出。直到 1986 年才被歷史學家「重新發現」。</p></div><div data-lang="en"><p>The first six ENIAC programmers in 1945 were <strong>all women</strong>: Kathleen McNulty, Frances Bilas, Betty Snyder, Marlyn Wescoff, Ruth Lichterman, Jean Bartik. "Programmer" was then seen as low-status clerical work — their names weren't even captioned in photos. Historians only "rediscovered" them in 1986.</p></div></div>
+</div>
+</section>
 
-<span class="comment"># Intel 4004 (1971) 有 2,300 顆電晶體 / Intel 4004 had 2,300 transistors in 1971</span>
-predicted_2024 = <span class="func">moore_predict</span>(<span class="num">1971</span>, <span class="num">2300</span>, <span class="num">2024</span>)
-<span class="func">print</span>(<span class="str">f"Predicted 2024: {predicted_2024:,.0f}"</span>)
-<span class="comment"># 預測：~5.7 兆顆，但實際 Apple M4 Max ~280 億 → 摩爾定律已減速</span>
-<span class="comment"># Prediction: ~5.7 trillion, but Apple M4 Max has ~28 billion → Moore's slowing</span></pre></div>
-<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// 演算法：估算指定年份的電晶體數 / Algorithm: estimate transistor count at year Y</span>
-<span class="kw">function</span> <span class="func">MoorePredict</span>(start_year, start_count, target_year, doubling_months):
-    <span class="kw">let</span> months = (target_year - start_year) × <span class="num">12</span>
+<section class="section">
+<div class="section-label" data-zh="互動 #2" data-en="INTERACTIVE #2">互動式時間軸</div>
+<h2 data-zh="八、互動 ②：點擊年代，閱讀關鍵事件" data-en="VIII. Interactive ②: Click an Era, Read the Pivotal Event">八、互動 ②：歷史時間軸</h2>
+<div data-lang="zh"><p>點擊下方任一個年代，即可查看該事件詳情。試著按時間順序逐一點開——你會發現整部歷史以指數速度加速。</p></div>
+<div data-lang="en"><p>Click any year below to read its event detail. Try clicking in chronological order — you will feel history accelerating exponentially.</p></div>
+<div class="interactive-panel">
+<div id="timelineBtns" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:18px;"></div>
+<div id="timelineDetail" style="background:var(--c-surface-alt);border-left:4px solid var(--c-accent);padding:18px 22px;border-radius:0 8px 8px 0;min-height:120px;">
+<div style="color:var(--c-ink-muted);text-align:center;padding:30px 0;font-style:italic;" data-zh="← 點擊任一年代查看細節" data-en="← Click any era for details">← 點擊任一年代查看細節</div>
+</div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="生資連結" data-en="BIOINFO LINK">給生資人</div>
+<h2 data-zh="九、🧬 生資連結：為何生資人要懂計算機史？" data-en="IX. 🧬 Bioinformatics Link: Why History Matters to You">九、🧬 給生物資訊學家</h2>
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;"><span class="callout-icon">🧬</span><div>
+<strong data-zh="給生物資訊學家：計算機史就是生資史" data-en="For Bioinformaticians: Computing History Is Your History">給生物資訊學家：計算機史就是生資史</strong>
+<p data-lang="zh">生物資訊學 (bioinformatics) 一詞 1970 年代由 Paulien Hogeweg 提出，但學科真正誕生與計算機普及完全同步。你今天每一行 BWA、STAR、AlphaFold 程式碼，都站在 80 年計算機發展之上。</p>
+<p data-lang="en">The term "bioinformatics" was coined by Paulien Hogeweg in the 1970s, but the field truly emerged alongside the rise of computing. Every BWA, STAR, AlphaFold line you run today stands on 80 years of computing history.</p>
+</div></div>
+
+<div class="card-grid cols-2">
+<div class="card"><h4>📚 <span data-zh="1982：GenBank 與 IBM PC 同年誕生" data-en="1982: GenBank & IBM PC Born Together">1982：GenBank 與 PC 同年</span></h4><div data-lang="zh"><p>1981 年 IBM 推出 PC，1982 年 NIH 建立 GenBank——史上第一個基因序列公共資料庫，當時只有 606 條序列、680,338 bp。2026 年 GenBank 已收錄 <strong>4.4 兆 bp</strong>，成長 600 萬倍——與摩爾定律完美同步。</p></div><div data-lang="en"><p>IBM PC launched in 1981; NIH founded GenBank in 1982 — the first public DNA sequence database, with just 606 sequences and 680,338 bp. By 2026, GenBank holds <strong>4.4 trillion bp</strong> — a 6-million-fold increase, lockstep with Moore's Law.</p></div></div>
+<div class="card"><h4>🧬 <span data-zh="人類基因組計畫 (1990–2003)" data-en="Human Genome Project (1990–2003)">人類基因組計畫</span></h4><div data-lang="zh"><p>13 年、30 億美元、20 個國家合作完成首次人類基因組定序。它幾乎憑一己之力<strong>催生了整個計算生物學領域</strong>——序列比對演算法 (BLAST 1990)、組裝演算法 (Phrap, Celera)、註解工具 (Ensembl 1999) 全在這段時間誕生。</p></div><div data-lang="en"><p>13 years, $3 billion, 20 nations completed the first human genome. It almost single-handedly <strong>birthed computational biology</strong> — alignment (BLAST 1990), assembly (Phrap, Celera), annotation (Ensembl 1999) all emerged in this window.</p></div></div>
+<div class="card"><h4>💰 <span data-zh="定序成本：超越摩爾定律" data-en="Sequencing Cost: Faster Than Moore">定序成本超越摩爾</span></h4><div data-lang="zh"><p>2003 年首次人類定序成本 ≈ <strong>$2.7 億美元</strong>。2024 年 Illumina NovaSeq X 一份人類全基因組 <strong>&lt; $200</strong>——21 年成本下降 130 萬倍，<strong>遠超摩爾定律 (僅 ~30 倍)</strong>。這是史上最快的價格下跌曲線。</p></div><div data-lang="en"><p>The first human genome cost <strong>$2.7 billion</strong> in 2003. By 2024, an Illumina NovaSeq X whole genome costs <strong>under $200</strong> — a 1.3-million-fold drop in 21 years, <strong>vastly outpacing Moore's Law (~30×)</strong>. The fastest cost decline in history.</p></div></div>
+<div class="card"><h4>🤖 <span data-zh="AlphaFold 2021：AI 圖靈時刻" data-en="AlphaFold 2021: AI's Turing Moment">AlphaFold：AI 圖靈時刻</span></h4><div data-lang="zh"><p>2021 DeepMind AlphaFold2 一夜之間解決了 50 年的蛋白質摺疊問題 (Jumper 2021 Nature)，2024 共同獲得諾貝爾化學獎。<strong>這是 Turing 1936 論文之後生物學等待最久的「AI 圖靈時刻」</strong>——計算機真正改寫了一個學科的方法論。</p></div><div data-lang="en"><p>DeepMind's AlphaFold2 (Jumper 2021 Nature) overnight solved a 50-year protein folding problem, sharing the 2024 Nobel Prize in Chemistry. <strong>This is biology's most-awaited "AI Turing moment" since 1936</strong> — computing genuinely rewrote a discipline's method.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">技術改寫了哪些領域</div>
+<h2 data-zh="十、決策樹：每個技術突破改寫了哪個生資領域？" data-en="X. Decision Tree: Which Technology Rewrote Which Field?">十、技術 → 生資領域對照</h2>
+<div class="decision-tree">
+<h4>🌳 <span data-zh="計算技術 → 生資突破" data-en="Computing Tech → Bioinformatics Breakthrough">計算技術 → 生資突破</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">1980s</span><div>個人電腦普及 <span class="dt-arrow">→</span> 序列分析從紙筆變成軟體（GenBank、DDBJ、EMBL 三大資料庫成立）。</div></div>
+<div class="dt-node"><span class="dt-q">1990s</span><div>網際網路普及 <span class="dt-arrow">→</span> NCBI BLAST 線上服務 (1990)、Ensembl (1999)、UCSC Genome Browser (2000)，世界共享資料。</div></div>
+<div class="dt-node"><span class="dt-q">2000s</span><div>多核 CPU + Linux 叢集 <span class="dt-arrow">→</span> 次世代定序 (NGS) 興起、BWA/Bowtie/SAMtools 並行對齊管線。</div></div>
+<div class="dt-node"><span class="dt-q">2010s</span><div>GPU + 雲端 <span class="dt-arrow">→</span> Deep learning 進入生資（DeepBind 2015、DeepVariant 2017、scVI 2018）。</div></div>
+<div class="dt-node"><span class="dt-q">2020s</span><div>Transformer + 大語言模型 <span class="dt-arrow">→</span> AlphaFold2/3、ESM-2、scGPT、Evo——「生命的 ChatGPT 時刻」。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">1980s</span><div>PCs spread <span class="dt-arrow">→</span> sequence analysis moves from paper to software; GenBank, DDBJ, EMBL founded.</div></div>
+<div class="dt-node"><span class="dt-q">1990s</span><div>The internet arrives <span class="dt-arrow">→</span> NCBI BLAST online (1990), Ensembl (1999), UCSC Genome Browser (2000) — global data sharing.</div></div>
+<div class="dt-node"><span class="dt-q">2000s</span><div>Multi-core CPUs + Linux clusters <span class="dt-arrow">→</span> NGS rises; BWA, Bowtie, SAMtools parallel pipelines.</div></div>
+<div class="dt-node"><span class="dt-q">2010s</span><div>GPUs + cloud <span class="dt-arrow">→</span> deep learning enters bioinformatics (DeepBind 2015, DeepVariant 2017, scVI 2018).</div></div>
+<div class="dt-node"><span class="dt-q">2020s</span><div>Transformers + LLMs <span class="dt-arrow">→</span> AlphaFold2/3, ESM-2, scGPT, Evo — biology's ChatGPT moment.</div></div>
+</div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
+<h2 data-zh="十一、雙語動手試：摩爾定律與定序成本對比" data-en="XI. Hands-on (Python + R + Pseudocode)">十一、動手試</h2>
+<div class="code-tabs"><div class="code-tab-btns">
+<button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button>
+<button class="code-tab-btn" onclick="switchTab(this,'r1')">R</button>
+<button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># 比較摩爾定律 vs. 定序成本下跌 / Moore's Law vs. sequencing cost</span>
+<span class="kw">def</span> <span class="func">moore_predict</span>(year, start_year=<span class="num">1971</span>, start=<span class="num">2300</span>, doubling_months=<span class="num">18</span>):
+    months = (year - start_year) * <span class="num">12</span>
+    <span class="kw">return</span> start * (<span class="num">2</span> ** (months / doubling_months))
+
+<span class="kw">def</span> <span class="func">cost_decline</span>(year, start_year=<span class="num">2003</span>, start_cost=<span class="num">2.7e8</span>, halving_months=<span class="num">5</span>):
+    <span class="comment"># 觀察：2008-2015 NGS 成本每 5 個月減半（快過摩爾）</span>
+    months = (year - start_year) * <span class="num">12</span>
+    <span class="kw">return</span> start_cost / (<span class="num">2</span> ** (months / halving_months))
+
+<span class="func">print</span>(<span class="str">f"2024 Moore prediction: {moore_predict(2024):,.0f} transistors"</span>)
+<span class="func">print</span>(<span class="str">f"2024 genome cost (pre-2015 trend): ${cost_decline(2024):,.2f}"</span>)</pre></div>
+<div class="code-tab-content" id="r1"><pre><span class="comment"># R: 同樣邏輯 / Same logic in R</span>
+moore_predict &lt;- <span class="kw">function</span>(year, start_year=<span class="num">1971</span>, start=<span class="num">2300</span>, doubling_months=<span class="num">18</span>) {
+  months &lt;- (year - start_year) * <span class="num">12</span>
+  start * <span class="num">2</span>^(months / doubling_months)
+}
+<span class="func">sprintf</span>(<span class="str">"2024 Moore: %.2e transistors"</span>, <span class="func">moore_predict</span>(<span class="num">2024</span>))
+
+<span class="comment"># 視覺化 / Visualize</span>
+<span class="kw">library</span>(ggplot2)
+years &lt;- <span class="num">1971</span>:<span class="num">2025</span>
+df &lt;- <span class="func">data.frame</span>(year=years, transistors=<span class="func">moore_predict</span>(years))
+<span class="func">ggplot</span>(df, <span class="func">aes</span>(year, transistors)) + <span class="func">geom_line</span>() + <span class="func">scale_y_log10</span>()</pre></div>
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// 演算法：估算 Y 年的電晶體數 / Estimate transistor count at year Y</span>
+<span class="kw">function</span> <span class="func">MoorePredict</span>(Y, start_year, start_count, doubling_months):
+    <span class="kw">let</span> months = (Y − start_year) × <span class="num">12</span>
     <span class="kw">let</span> doublings = months ÷ doubling_months
     <span class="kw">return</span> start_count × <span class="num">2</span>^doublings
 
 <span class="comment">// 主程式 / Main</span>
-<span class="kw">let</span> result = <span class="func">MoorePredict</span>(<span class="num">1971</span>, <span class="num">2300</span>, <span class="num">2024</span>, <span class="num">18</span>)
-<span class="func">print</span>(result)</pre></div>
+<span class="kw">let</span> result_2024 = <span class="func">MoorePredict</span>(<span class="num">2024</span>, <span class="num">1971</span>, <span class="num">2300</span>, <span class="num">18</span>)
+<span class="func">print</span>(result_2024)</pre></div>
 </div>
 </section>
 
+<section class="section">
+<div class="section-label" data-zh="常見誤解" data-en="MISCONCEPTIONS">五個常見誤解</div>
+<h2 data-zh="十二、常見誤解與陷阱" data-en="XII. Common Misconceptions & Pitfalls">十二、常見誤解</h2>
+
+<div class="callout danger"><span class="callout-icon">🚨</span><div>
+<div data-lang="zh"><strong>誤解 #1：「von Neumann 發明了計算機」</strong>——錯。他在 1945 年 EDVAC 報告中總結並推廣<strong>儲存程式概念</strong>，但實際發明者是 Eckert 與 Mauchly。歷史學界至今仍在爭論誰的功勞最大。</div>
+<div data-lang="en"><strong>Myth #1:</strong> "von Neumann invented the computer." Wrong. He summarized and popularized the <strong>stored-program concept</strong> in the 1945 EDVAC report, but the actual inventors were Eckert & Mauchly. Historians still debate credit.</div>
+</div></div>
+
+<div class="callout danger"><span class="callout-icon">🚨</span><div>
+<div data-lang="zh"><strong>誤解 #2：「Alan Turing 設計了 ENIAC」</strong>——錯。Turing 從未到過賓州大學。ENIAC 由 Eckert & Mauchly 設計、ENIAC 6 位女性程式員程式化；Turing 戰時在英國 Bletchley Park 破解 Enigma，戰後在 NPL 設計 ACE。</div>
+<div data-lang="en"><strong>Myth #2:</strong> "Alan Turing designed ENIAC." Wrong. Turing never visited UPenn. ENIAC was designed by Eckert & Mauchly and programmed by the six ENIAC women. Turing cracked Enigma at Bletchley Park and designed the ACE at NPL.</div>
+</div></div>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>誤解 #3：「Apple Logo 的咬一口是紀念 Turing 自殺的氰化物蘋果」</strong>——浪漫但 <strong>錯</strong>。設計師 Rob Janoff 親口澄清：那只是為了讓蘋果看起來不像櫻桃。</div>
+<div data-lang="en"><strong>Myth #3:</strong> "The bite in Apple's logo honors Turing's cyanide apple." Romantic, but <strong>false</strong>. Designer Rob Janoff confirmed: it's just to make the apple not look like a cherry.</div>
+</div></div>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>誤解 #4：「摩爾定律是物理定律」</strong>——錯。它是一個<strong>經驗觀察</strong>與產業預測，由 Intel 為自己的 roadmap 努力維持。物理極限 (~1 nm) 已迫在眉睫。</div>
+<div data-lang="en"><strong>Myth #4:</strong> "Moore's Law is a physical law." Wrong. It is an <strong>empirical observation and industry projection</strong>, kept alive by Intel's effort. Physical limits (~1 nm) are now imminent.</div>
+</div></div>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>誤解 #5：「量子電腦會取代古典電腦」</strong>——不會。量子電腦只在<strong>特定問題</strong>（質因數分解、模擬量子系統）上有優勢。日常運算 (Word、瀏覽器、編譯) 仍是古典 CPU 的天下。</div>
+<div data-lang="en"><strong>Myth #5:</strong> "Quantum computers will replace classical." No. Quantum computers excel only at <strong>specific problems</strong> (factoring, quantum simulation). Day-to-day computing (Word, browsers, compilers) stays classical.</div>
+</div></div>
+</section>
+
 <section class="quiz-section">
-<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<h3>📝 <span data-zh="自我檢測（5 題）" data-en="Self-Check (5 Questions)">自我檢測</span></h3>
+
 <div class="quiz-q" data-answer="1">
 <p data-lang="zh">1. von Neumann 架構最核心的創新是什麼？</p>
 <p data-lang="en">1. What is the core innovation of von Neumann architecture?</p>
@@ -155,6 +290,43 @@ predicted_2024 = <span class="func">moore_predict</span>(<span class="num">1971<
 <div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 二戰期間參與破解德國 Enigma 密碼</span><span data-lang="en">C. Helping crack the German Enigma cipher in WWII</span></div>
 <div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 提出圖靈測試，討論機器智能</span><span data-lang="en">D. Proposing the Turing test for machine intelligence</span></div>
 </div><div class="quiz-feedback" id="fb3"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">4. 「停機問題 (Halting Problem) 不可解」的真正含義是？</p>
+<p data-lang="en">4. What does it mean that the Halting Problem is "undecidable"?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 現代 CPU 還沒夠快，未來會解決</span><span data-lang="en">A. CPUs are not yet fast enough; future ones will solve it</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Python 直譯器有 bug，C 語言可以解</span><span data-lang="en">B. Python has a bug; C can solve it</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 不存在任何演算法能判斷任意程式是否會停機</span><span data-lang="en">C. No algorithm exists that can decide arbitrary program halting</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 量子電腦發明後就可以解</span><span data-lang="en">D. Quantum computers will solve it</span></div>
+</div><div class="quiz-feedback" id="fb4"></div></div>
+
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">5. 哪一年 NIH 建立 GenBank，與 IBM PC 推出僅相隔一年？</p>
+<p data-lang="en">5. In which year did NIH found GenBank — just one year after IBM PC's launch?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 1975</span><span data-lang="en">A. 1975</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 1982</span><span data-lang="en">B. 1982</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 1990</span><span data-lang="en">C. 1990</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 2003</span><span data-lang="en">D. 2003</span></div>
+</div><div class="quiz-feedback" id="fb5"></div></div>
+</section>
+
+<section class="section" style="background:#fef3c7;border-radius:14px;padding:32px;">
+<div class="section-label">💭 <span data-zh="延伸思考" data-en="DISCUSSION">延伸思考</span></div>
+<h2 data-zh="十三、延伸思考與討論" data-en="XIII. Discussion & Reflection">十三、延伸思考</h2>
+<ol style="margin-left:20px;line-height:1.9;color:var(--c-ink);">
+<li data-lang="zh"><strong>AGI 何時到？</strong> 圖靈 1950 年預測「公元 2000 年機器能通過圖靈測試」——他低估了多少？2026 年的 GPT-5/Claude Opus 5 能算「通過」嗎？</li>
+<li data-lang="en"><strong>When will AGI arrive?</strong> In 1950, Turing predicted machines would pass his test "by 2000." How wrong was he? Do today's GPT-5 / Claude Opus 5 "pass"?</li>
+<li data-lang="zh"><strong>摩爾定律真的死了嗎？</strong> 物理上 3nm 已接近原子極限。chiplet、3D 堆疊、光子運算能撐多久？「每瓦效能」是不是更該注意的指標？</li>
+<li data-lang="en"><strong>Is Moore's Law dead?</strong> Physically, 3nm nears atomic limits. How long can chiplets, 3D-stacking, and photonics extend it? Should "performance per watt" be the new metric?</li>
+<li data-lang="zh"><strong>量子優勢 (quantum advantage) 對生資有意義嗎？</strong> 量子蛋白質摺疊、量子分子模擬可能比 AlphaFold 更精準——但 NISQ 時代何時結束？</li>
+<li data-lang="en"><strong>Does "quantum advantage" matter for bio?</strong> Quantum protein folding & molecular simulation may exceed AlphaFold — but when does the NISQ era end?</li>
+<li data-lang="zh"><strong>歷史的偶然性：</strong>如果 Turing 沒被迫害自殺、活到 90 歲，現代 AI 會早幾年到？如果 Ada 的分析機 1843 年真的造出來，工業革命會不會直接跳過？</li>
+<li data-lang="en"><strong>Historical counterfactuals:</strong> Had Turing lived to 90, would modern AI have arrived earlier? Had Babbage finished his engine in 1843, would the Industrial Revolution have leapt forward?</li>
+<li data-lang="zh"><strong>下一個典範轉移：</strong>2030 年代計算機的主流會是什麼？神經型態 (neuromorphic)？生物計算 (DNA storage 已商業化)？光子？</li>
+<li data-lang="en"><strong>Next paradigm shift:</strong> In the 2030s, what dominates? Neuromorphic chips? DNA storage (already commercial)? Photonics?</li>
+</ol>
 </section>
 
 <nav class="page-nav"><div class="placeholder"></div>
@@ -167,7 +339,6 @@ predicted_2024 = <span class="func">moore_predict</span>(<span class="num">1971<
 window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
 function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
 
-// Moore's law chart
 const mooreData = [
   {y:1971,n:'Intel 4004',c:2300},{y:1978,n:'Intel 8086',c:29000},{y:1985,n:'Intel 386',c:275000},
   {y:1993,n:'Pentium',c:3.1e6},{y:1999,n:'Pentium III',c:9.5e6},{y:2006,n:'Core 2 Duo',c:2.91e8},
@@ -176,11 +347,43 @@ const mooreData = [
   {y:2025,n:'NVIDIA Blackwell',c:2.08e11}
 ];
 new Chart(document.getElementById('mooreChart'),{type:'scatter',data:{datasets:[
-  {label:"Transistor count",data:mooreData.map(d=>({x:d.y,y:d.c,name:d.n})),backgroundColor:'rgba(29,78,216,.7)',borderColor:'rgba(29,78,216,1)',pointRadius:6,pointHoverRadius:9}
+  {label:"Transistor count",data:mooreData.map(d=>({x:d.y,y:d.c,name:d.n})),backgroundColor:'rgba(29,78,216,.7)',borderColor:'rgba(29,78,216,1)',pointRadius:7,pointHoverRadius:11}
 ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:(c)=>c.raw.name+' ('+c.raw.x+'): '+c.raw.y.toExponential(2)+' transistors'}}},scales:{x:{title:{display:true,text:'Year'},min:1970,max:2026},y:{type:'logarithmic',title:{display:true,text:'Transistor count (log scale)'},min:1000,max:5e11}}}});
 
-// Quiz
-const QF={zh:{q1_y:'stored-program 概念讓計算機真正成為「通用機器」——軟體即資料，可改寫指令。',q1_n:'正確答案已標示。',q2_y:'摩爾在 1965 年的 Electronics 雜誌中提出，後修正為 24 個月。',q2_n:'正確答案已標示。',q3_y:'ENIAC 由 Eckert 與 Mauchly 在賓州大學設計，與 Turing 無直接關連。',q3_n:'正確答案已標示。'},en:{q1_y:'The stored-program concept made computers true general-purpose machines — software is data, instructions can be rewritten.',q1_n:'Correct answer highlighted.',q2_y:'Moore stated this in Electronics magazine in 1965; later revised to 24 months.',q2_n:'Correct answer highlighted.',q3_y:'ENIAC was designed by Eckert & Mauchly at UPenn — unrelated to Turing.',q3_n:'Correct answer highlighted.'}};
+const timeline=[
+  {y:'1843',zh:{t:'Ada 寫下第一個程式',d:'27 歲的 Ada Lovelace 為 Babbage 從未建造的分析機寫下計算 Bernoulli 數的 25 步演算法，並預言「機器將譜寫音樂」。'},en:{t:'Ada writes the first program',d:'27-year-old Ada Lovelace writes a 25-step algorithm for Babbage\'s unbuilt Analytical Engine — and foresees machines composing music.'}},
+  {y:'1936',zh:{t:'圖靈機誕生',d:'24 歲的 Alan Turing 在《On Computable Numbers》提出圖靈機，定義「可計算性」的數學邊界，並證明停機問題不可解。'},en:{t:'The Turing Machine',d:'24-year-old Alan Turing defines the math boundary of "computable" in his paper, and proves the Halting Problem is undecidable.'}},
+  {y:'1945',zh:{t:'ENIAC + von Neumann',d:'ENIAC 開機（17,468 真空管）；同年 von Neumann 寫下 EDVAC 報告，定義「儲存程式概念」。'},en:{t:'ENIAC + von Neumann',d:'ENIAC powers on (17,468 vacuum tubes); same year, von Neumann\'s EDVAC report defines the stored-program concept.'}},
+  {y:'1947',zh:{t:'電晶體 + Bug',d:'Bell Labs 發明電晶體 (1956 諾貝爾物理獎)。Grace Hopper 在 Mark II 中找到史上第一隻真的 bug——一隻蛾。'},en:{t:'Transistor + the Bug',d:'Bell Labs invents the transistor (1956 Nobel Prize). Grace Hopper finds the literal first "bug" — an actual moth — in the Harvard Mark II.'}},
+  {y:'1958',zh:{t:'積體電路',d:'Jack Kilby 與 Robert Noyce 幾乎同時發明 IC——多顆電晶體共刻一片矽。半導體革命啟動。'},en:{t:'Integrated Circuit',d:'Jack Kilby (TI) and Robert Noyce (Fairchild) near-simultaneously invent the IC. The semiconductor revolution begins.'}},
+  {y:'1969',zh:{t:'阿波羅登月 + ARPANET',d:'AGC 用 64KB ROM 把人類送上月球；同年 ARPANET 第一次連線——互聯網的祖先。'},en:{t:'Apollo + ARPANET',d:'The Apollo Guidance Computer (64KB ROM) lands humans on the Moon; same year, ARPANET\'s first connection — ancestor of the internet.'}},
+  {y:'1971',zh:{t:'Intel 4004',d:'史上第一顆商用微處理器，2,300 電晶體。今天的 Apple M4 Max 已是 280 億顆——成長 1200 萬倍。'},en:{t:'Intel 4004',d:'The first commercial microprocessor — 2,300 transistors at 10 μm. Today\'s Apple M4 Max has 28 billion — a 12-million-fold increase.'}},
+  {y:'1984',zh:{t:'Macintosh',d:'Apple 在 Super Bowl 播《1984》廣告，3 天後麥金塔上市——第一台普及的 GUI 個人電腦。'},en:{t:'Macintosh',d:'Apple airs the "1984" Super Bowl ad; 3 days later the Macintosh ships — the first mass-market GUI PC.'}},
+  {y:'1989',zh:{t:'World Wide Web',d:'Tim Berners-Lee 在 CERN 發明 WWW、HTTP、HTML——從學術工具變成全球資訊空間。'},en:{t:'World Wide Web',d:'Tim Berners-Lee invents WWW, HTTP, HTML at CERN. Public 1991 — turns academic networks into the global information space.'}},
+  {y:'1991',zh:{t:'Linux 與生資崛起',d:'21 歲的 Linus Torvalds 釋出 Linux kernel；NCBI BLAST 1990 上線——生資進入網路時代。'},en:{t:'Linux + bio rises',d:'21-year-old Linus Torvalds releases Linux; NCBI BLAST goes online (1990) — bioinformatics enters the web era.'}},
+  {y:'2003',zh:{t:'人類基因組完成',d:'13 年、30 億美元、20 國協作完成首次人類基因組定序。直接催生整個計算生物學領域。'},en:{t:'Human Genome complete',d:'13 years, $3 billion, 20 nations finish the first human genome. Directly births the field of computational biology.'}},
+  {y:'2007',zh:{t:'iPhone',d:'Jobs 發表第一代 iPhone：你的口袋裡比阿波羅 AGC 強 1 億倍。從此「行動運算」變成主流。'},en:{t:'iPhone',d:'Jobs unveils the first iPhone — in your pocket, 100 million times stronger than the Apollo AGC. Mobile computing goes mainstream.'}},
+  {y:'2012',zh:{t:'AlexNet + 深度學習',d:'Krizhevsky 在 ImageNet 用 GPU 訓練 CNN 一舉拿下冠軍，啟動深度學習革命。'},en:{t:'AlexNet + Deep Learning',d:'Krizhevsky wins ImageNet with a GPU-trained CNN — launches the deep-learning revolution.'}},
+  {y:'2021',zh:{t:'AlphaFold2',d:'DeepMind 解決 50 年蛋白質摺疊問題 (Jumper 2021 Nature)，2024 共獲諾貝爾化學獎。'},en:{t:'AlphaFold2',d:'DeepMind cracks 50-year-old protein folding (Jumper 2021 Nature), shares 2024 Nobel in Chemistry.'}},
+  {y:'2022',zh:{t:'ChatGPT 公開',d:'OpenAI 釋出 ChatGPT，5 天衝破百萬用戶。LLM 走入大眾，「生成式 AI 時代」正式開始。'},en:{t:'ChatGPT goes public',d:'OpenAI releases ChatGPT — 1M users in 5 days. LLMs reach the public; the "generative AI era" officially begins.'}},
+  {y:'2025',zh:{t:'量子優勢',d:'Google Willow (105 qubits) 在 5 分鐘完成傳統超算需 10²⁵ 年的任務。NISQ 時代漸近尾聲。'},en:{t:'Quantum advantage',d:'Google Willow (105 qubits) does in 5 minutes what classical supercomputers would need 10²⁵ years for. The NISQ era nears its end.'}}
+];
+const btnsDiv=document.getElementById('timelineBtns');
+const detailDiv=document.getElementById('timelineDetail');
+timeline.forEach((ev,i)=>{
+  const b=document.createElement('button');
+  b.textContent=ev.y;
+  b.style.cssText='padding:8px 14px;border:1.5px solid var(--c-accent);background:#fff;color:var(--c-accent);border-radius:8px;font-family:var(--font-mono);font-weight:700;cursor:pointer;font-size:.9rem;transition:all .2s;';
+  b.onclick=()=>{
+    document.querySelectorAll('#timelineBtns button').forEach(x=>{x.style.background='#fff';x.style.color='var(--c-accent)';});
+    b.style.background='var(--c-accent)';b.style.color='#fff';
+    const L=I18n.get();
+    detailDiv.innerHTML='<div style="font-family:var(--font-mono);font-size:.78rem;color:var(--c-accent);font-weight:700;letter-spacing:2px;">'+ev.y+'</div><h4 style="font-family:var(--font-display);font-size:1.25rem;color:var(--c-ink);margin:6px 0 10px;">'+ev[L].t+'</h4><p style="color:var(--c-ink-light);margin:0;line-height:1.7;">'+ev[L].d+'</p>';
+  };
+  btnsDiv.appendChild(b);
+});
+
+const QF={zh:{q1_y:'stored-program 概念讓計算機真正成為「通用機器」——軟體即資料，可改寫指令。',q1_n:'正確答案 B。',q2_y:'摩爾在 1965 年的 Electronics 雜誌中提出，後修正為 24 個月。',q2_n:'正確答案 C。',q3_y:'ENIAC 由 Eckert 與 Mauchly 在賓州大學設計，與 Turing 無直接關連。',q3_n:'正確答案 A。',q4_y:'停機問題的不可解性是「邏輯上不可能」——任何未來硬體都不能繞過。',q4_n:'正確答案 C。',q5_y:'GenBank 1982 年成立，當時只有 606 條序列；IBM PC 1981 年推出。',q5_n:'正確答案 B。'},en:{q1_y:'The stored-program concept made computers true general-purpose machines — software is data, instructions can be rewritten.',q1_n:'Correct answer: B.',q2_y:'Moore stated this in Electronics magazine in 1965; later revised to 24 months.',q2_n:'Correct answer: C.',q3_y:'ENIAC was designed by Eckert & Mauchly at UPenn — unrelated to Turing.',q3_n:'Correct answer: A.',q4_y:'Halting Problem undecidability is a logical impossibility — no future hardware can bypass it.',q4_n:'Correct answer: C.',q5_y:'GenBank was founded in 1982 with just 606 sequences; IBM PC launched in 1981.',q5_n:'Correct answer: B.'}};
 document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
 </script>
 </body></html>

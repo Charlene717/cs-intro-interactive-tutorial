@@ -12,239 +12,587 @@
 <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
 <header class="page-hero"><div class="step-badge">CHAPTER 16 / 16</div>
 <h1 data-zh="資訊倫理與新興科技" data-en="Information Ethics & Emerging Tech">資訊倫理與新興科技</h1>
-<p class="subtitle" data-lang="zh">從 GDPR、EU AI Act、無障礙、開源授權到量子運算、區塊鏈、XR 與腦機介面——技術是中性的，使用方式不是。</p>
-<p class="subtitle" data-lang="en">From GDPR, EU AI Act, accessibility, open-source licenses to quantum, blockchain, XR, and BCI — technology is neutral, its use is not.</p>
+<p class="subtitle" data-lang="zh">從 1951 年 Henrietta Lacks 的 HeLa 細胞，到 2024 EU AI Act 與 IBM 量子晶片——技術中性，但使用方式不是。最後一章不是「課程結束」，是邀請你開始持續的倫理對話。</p>
+<p class="subtitle" data-lang="en">From Henrietta Lacks's 1951 HeLa cells to the 2024 EU AI Act and IBM quantum chips — technology is neutral, but its use is not. The final chapter isn't an ending; it's an invitation to start a lifelong ethical conversation.</p>
 </header>
 <main class="content-wrap">
 
+<!-- ===== Section 1: Opening ===== -->
 <section class="section">
-<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
-<h2 data-zh="為什麼工程師要懂倫理？" data-en="Why must engineers understand ethics?">為什麼工程師要懂倫理？</h2>
-<div data-lang="zh"><p>你寫的程式可能決定誰拿到貸款、誰的履歷被刷掉、誰的車能在路上自駕。<strong>2026 年全球至少有 130 個國家或地區制定資料保護或 AI 法規</strong>，「不知者無罪」已不適用。本章覆蓋三大主題：① 隱私與法規；② AI 倫理；③ 智財與綠色運算；並回顧五項正在改變未來十年的新興技術。</p></div>
-<div data-lang="en"><p>The code you write may decide who gets a loan, whose résumé is screened out, whose car may self-drive. <strong>By 2026 at least 130 countries/regions have data-protection or AI laws</strong> — ignorance is no longer a defence. This chapter covers (1) privacy and regulation, (2) AI ethics, (3) IP and green computing, and surveys five emerging technologies reshaping the next decade.</p></div>
-<div class="callout tip"><span class="callout-icon">💡</span><div>
-<span data-lang="zh"><strong>核心觀念：</strong>Lawrence Lessig 1999 提出 <em>「Code is law」</em>——軟體預設值有時比立法更能塑造人類行為。Facebook 的演算法、Google 的搜尋排序、TikTok 的推薦……都是隱形的「規則」。所以負責任地設計系統，就是負責任地塑造社會。</span>
-<span data-lang="en"><strong>Core idea:</strong> Lawrence Lessig (1999): <em>"Code is law."</em> Software defaults can shape human behavior more than statutes do. Facebook's algorithm, Google's ranking, TikTok's feed — all are invisible "rules." Designing systems responsibly is shaping society responsibly.</span>
-</div></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="隱私法規" data-en="PRIVACY LAW">隱私法規</div>
-<h2 data-zh="一、隱私法規與 AI Act" data-en="I. Privacy Laws and the AI Act">一、隱私法規與 AI Act</h2>
-<table class="comp-table">
-<thead><tr><th data-zh="法規" data-en="Law">法規</th><th data-zh="地區" data-en="Region">地區</th><th data-zh="生效" data-en="Effective">生效</th><th data-zh="核心要點" data-en="Key points">核心要點</th></tr></thead>
-<tbody>
-<tr><td><strong>GDPR</strong></td><td>EU</td><td>2018</td><td data-lang="zh">明確同意、被遺忘權、最高罰 4% 全球營收</td><td data-lang="en">Explicit consent, right to be forgotten, max fine 4% of global revenue</td></tr>
-<tr><td><strong>CCPA / CPRA</strong></td><td data-lang="zh">美加州</td><td data-lang="en">California, USA</td><td>2020 / 2023</td><td data-lang="zh">告知收集、選擇退出、查詢個資</td><td data-lang="en">Notice of collection, opt-out, data-access rights</td></tr>
-<tr><td><strong>PDPA / 個資法</strong></td><td data-lang="zh">台灣</td><td data-lang="en">Taiwan</td><td>2012 (2023 修)</td><td data-lang="zh">資料當事人同意、跨境傳輸限制</td><td data-lang="en">Data-subject consent, cross-border restrictions</td></tr>
-<tr><td><strong>HIPAA</strong></td><td data-lang="zh">美國醫療</td><td data-lang="en">US healthcare</td><td>1996</td><td data-lang="zh">受保護健康資訊 (PHI) 加密與審計</td><td data-lang="en">Encryption + audit for PHI</td></tr>
-<tr><td><strong>EU AI Act</strong></td><td>EU</td><td data-lang="zh">2024 通過、2026 全面執行</td><td data-lang="en">Passed 2024, fully enforced 2026</td><td data-lang="zh">依風險分四級；禁用社會評分、即時生物辨識</td><td data-lang="en">Four risk tiers; bans social scoring & real-time biometrics</td></tr>
-</tbody></table>
-
-<div class="callout warn"><span class="callout-icon">⚠️</span><div>
-<div data-lang="zh"><strong>EU AI Act 風險分級：</strong>① <strong>不可接受</strong>（禁用）：社會評分、利用弱勢族群、即時公共生物辨識；② <strong>高風險</strong>（嚴格規範）：招募、信用、教育、執法、關鍵基礎建設；③ <strong>有限風險</strong>（透明義務）：聊天機器人需告知是 AI；④ <strong>最小風險</strong>（自由使用）：垃圾郵件過濾、遊戲 AI。違反最高罰 3,500 萬歐元或 7% 全球營收。</div>
-<div data-lang="en"><strong>EU AI Act tiers:</strong> (1) <strong>Unacceptable</strong> — banned (social scoring, exploiting vulnerable groups, real-time public biometrics); (2) <strong>High</strong> — strict rules (hiring, credit, education, law enforcement, critical infra); (3) <strong>Limited</strong> — transparency (chatbots must disclose); (4) <strong>Minimal</strong> — free use. Max fine: €35M or 7% of global revenue.</div>
-</div></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="AI 倫理" data-en="AI ETHICS">AI 倫理與無障礙</div>
-<h2 data-zh="二、AI 倫理、無障礙與開源授權" data-en="II. AI Ethics, Accessibility, OSS Licenses">二、AI 倫理、無障礙、授權</h2>
-<div data-lang="zh"><p><strong>AI 倫理四支柱：</strong></p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>偏誤 (Bias)</strong>：訓練資料反映社會不平等。亞馬遜 2018 履歷篩選 AI 對女性不利，後被棄用。</li>
-<li><strong>公平性 (Fairness)</strong>：常用指標包括「群體公平」(demographic parity)、「機會公平」(equal opportunity)，且彼此可能互斥。</li>
-<li><strong>可解釋性 (XAI)</strong>：高風險決策（信用、醫療）必須能解釋。工具：SHAP、LIME、Integrated Gradients。</li>
-<li><strong>責任 (Accountability)</strong>：AI 出錯時誰負責——開發者、部署者、還是 AI？目前法規傾向「部署者」。</li>
-</ul>
-<p><strong>數位落差 (Digital Divide) &amp; 無障礙 (a11y)：</strong>全球仍有近 30% 人口沒有寬頻網路。無障礙網頁標準 <strong>WCAG 2.2</strong>（2023 發布）涵蓋鍵盤操作、色彩對比、螢幕閱讀器、字型放大等 50+ 項準則。</p></div>
-<div data-lang="en"><p><strong>Four pillars of AI ethics:</strong></p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>Bias</strong>: training data reflects social inequities. Amazon's 2018 résumé AI penalized women and was retired.</li>
-<li><strong>Fairness</strong>: common metrics include demographic parity and equal opportunity — and they can conflict.</li>
-<li><strong>Explainability (XAI)</strong>: high-stakes decisions (credit, healthcare) must be explainable. Tools: SHAP, LIME, Integrated Gradients.</li>
-<li><strong>Accountability</strong>: when AI errs, who is liable — developer, deployer, or the AI? Regulators lean toward the deployer.</li>
-</ul>
-<p><strong>Digital divide &amp; accessibility (a11y):</strong> nearly 30% of humans still lack broadband. The <strong>WCAG 2.2</strong> standard (2023) lists 50+ guidelines for keyboard operation, color contrast, screen readers, scalable fonts.</p></div>
-
-<table class="comp-table">
-<thead><tr><th data-zh="授權" data-en="License">授權</th><th data-zh="類型" data-en="Type">類型</th><th data-zh="核心義務" data-en="Obligation">核心義務</th><th data-zh="代表專案" data-en="Examples">代表專案</th></tr></thead>
-<tbody>
-<tr><td><strong>MIT</strong></td><td data-lang="zh">寬鬆 (Permissive)</td><td data-lang="en">Permissive</td><td data-lang="zh">保留版權聲明即可</td><td data-lang="en">Keep copyright notice</td><td>React、jQuery、Rails</td></tr>
-<tr><td><strong>Apache 2.0</strong></td><td data-lang="zh">寬鬆</td><td data-lang="en">Permissive</td><td data-lang="zh">保留聲明 + 專利授權</td><td data-lang="en">Notice + patent grant</td><td>Kubernetes、Android、TensorFlow</td></tr>
-<tr><td><strong>BSD</strong></td><td data-lang="zh">寬鬆</td><td data-lang="en">Permissive</td><td data-lang="zh">保留聲明</td><td data-lang="en">Keep notice</td><td>FreeBSD、nginx</td></tr>
-<tr><td><strong>GPL v3</strong></td><td data-lang="zh">著作傳染 (Copyleft)</td><td data-lang="en">Copyleft</td><td data-lang="zh">衍生作品也需 GPL 開源</td><td data-lang="en">Derivatives must also be GPL</td><td>Linux kernel、GCC、Bash</td></tr>
-<tr><td><strong>AGPL v3</strong></td><td data-lang="zh">強著作傳染</td><td data-lang="en">Strong copyleft</td><td data-lang="zh">連 SaaS 提供都要開源</td><td data-lang="en">Even SaaS use must open source</td><td>MongoDB（舊版）、Grafana</td></tr>
-</tbody></table>
-
-<div data-lang="zh"><p><strong>AI 生成內容的著作權：</strong>2023 美國著作權局判決「純 AI 生成」不受保護；歐盟 AI Act 要求生成式 AI 對訓練資料來源透明。目前主流做法：人類具實質創作貢獻才可主張著作權。</p></div>
-<div data-lang="en"><p><strong>Copyright of AI-generated content:</strong> The US Copyright Office (2023) ruled that purely AI-generated works are not protectable; the EU AI Act requires generative-AI training-data transparency. Mainstream approach: copyright attaches only when a human contributes substantively.</p></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="綠色運算" data-en="GREEN COMPUTING">綠色運算</div>
-<h2 data-zh="三、互動：資料中心耗電與 AI 訓練碳排" data-en="III. Interactive: Data-center Power & AI Carbon">三、資料中心與 AI 能源</h2>
-<div data-lang="zh"><p><strong>PUE (Power Usage Effectiveness)</strong> = 資料中心總耗電 ÷ IT 設備耗電。理想 = 1.0；2024 全球平均 1.58；Google / Meta 自家頂級水冷可達 1.10。</p>
-<p>國際能源署 (IEA) 2026 報告估計：全球資料中心 + AI + 加密貨幣占全球用電 <strong>~3.5%</strong>，預計 2030 上升至 7%。<strong>GPT-4 訓練</strong>估計耗電 ~1,300 MWh（相當於 130 個美國家庭一年用電）。</p></div>
-<div data-lang="en"><p><strong>PUE</strong> = total facility energy ÷ IT equipment energy. Ideal = 1.0; global average 1.58 (2024); top-tier Google/Meta water-cooled sites hit 1.10.</p>
-<p>IEA's 2026 report estimates data centers + AI + crypto consume ~<strong>3.5%</strong> of global electricity, projected to reach 7% by 2030. <strong>Training GPT-4</strong> used ~1,300 MWh — roughly the annual electricity of 130 US households.</p></div>
-<div class="interactive-panel">
-<div class="chart-container"><canvas id="qubitChart"></canvas></div>
-<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">資料來源：IBM Quantum / Google Quantum AI 公開路線圖，2026-05；qubits 為物理位元數，非邏輯位元。</span><span data-lang="en">Sources: IBM Quantum and Google Quantum AI public roadmaps, 2026-05; physical qubits, not logical.</span></p>
-</div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="新興科技" data-en="EMERGING TECH">五大新興科技</div>
-<h2 data-zh="四、五項改變未來十年的新興科技" data-en="IV. Five Technologies Shaping the Next Decade">四、五項新興科技</h2>
-<div class="card-grid cols-3">
-<div class="card"><h4>⚛️ <span data-lang="zh">量子運算</span><span data-lang="en">Quantum Computing</span></h4>
-<div data-lang="zh"><p>2026 兩大里程碑：<strong>IBM Nighthawk</strong>（120 qubit，相連性大幅提升）與 <strong>Google Willow</strong>（首度實現「below threshold」錯誤更正——增加 qubit 反而降低錯誤率）。Shor 演算法仍需數千邏輯 qubit，估計 2030+ 才能威脅 RSA。</p></div>
-<div data-lang="en"><p>Two 2026 milestones: <strong>IBM Nighthawk</strong> (120 qubits, far better connectivity) and <strong>Google Willow</strong> (first "below-threshold" error correction — adding qubits actually lowers error). Shor still needs thousands of logical qubits; threat to RSA likely 2030+.</p></div></div>
-
-<div class="card"><h4>⛓️ <span data-lang="zh">區塊鏈 / Web3</span><span data-lang="en">Blockchain / Web3</span></h4>
-<div data-lang="zh"><p>Bitcoin (2009)、Ethereum (2015) 為代表。2022 Ethereum「The Merge」轉為 Proof-of-Stake，耗電降 99.95%。NFT、DeFi、Web3 經歷 2022–24 寒冬後，2026 重心轉向<strong>真實世界資產代幣化 (RWA)</strong> 與穩定幣支付。</p></div>
-<div data-lang="en"><p>Bitcoin (2009), Ethereum (2015). The 2022 Ethereum "Merge" cut energy use by 99.95%. After the 2022–24 winter, NFTs/DeFi/Web3 have pivoted in 2026 to <strong>real-world asset tokenization</strong> and stablecoin payments.</p></div></div>
-
-<div class="card"><h4>🕶️ <span data-lang="zh">XR / AR / VR</span><span data-lang="en">XR / AR / VR</span></h4>
-<div data-lang="zh"><p><strong>Apple Vision Pro</strong>（2024 上市，2026 第二代降價）、<strong>Meta Quest 4</strong>、<strong>Pico 5</strong>。重點從消費娛樂轉向企業訓練、遠距協作、醫療規劃。「空間運算 (spatial computing)」成為新關鍵詞。</p></div>
-<div data-lang="en"><p><strong>Apple Vision Pro</strong> (2024 launch, 2026 cheaper Gen 2), <strong>Meta Quest 4</strong>, <strong>Pico 5</strong>. Focus has shifted from consumer entertainment to enterprise training, remote collaboration, and surgical planning. "Spatial computing" is the new buzzword.</p></div></div>
-
-<div class="card"><h4>🧠 <span data-lang="zh">神經型態運算</span><span data-lang="en">Neuromorphic</span></h4>
-<div data-lang="zh"><p>模仿腦神經元的「脈衝 (spike)」運算方式。代表晶片：<strong>Intel Loihi 2</strong>、<strong>IBM NorthPole</strong>。在邊緣 AI、感測器融合上能效比 GPU 高 10–100 倍，特別適合永遠在線 (always-on) 場景。</p></div>
-<div data-lang="en"><p>Chips that mimic neurons via "spikes." Notable: <strong>Intel Loihi 2</strong>, <strong>IBM NorthPole</strong>. 10–100× more energy-efficient than GPUs for edge AI and sensor fusion — ideal for always-on workloads.</p></div></div>
-
-<div class="card"><h4>🧪 <span data-lang="zh">腦機介面 (BCI)</span><span data-lang="en">Brain-Computer Interface</span></h4>
-<div data-lang="zh"><p>2024 <strong>Neuralink</strong> 首位人類植入者用腦波下棋與打 X；同時 <strong>Synchron</strong> 採微創血管路徑進行多人臨床試驗。短期應用：癱瘓患者溝通、義肢控制；長期：醫療輔助與認知擴展。倫理爭議：思想隱私、不可逆植入。</p></div>
-<div data-lang="en"><p>2024 <strong>Neuralink</strong> first human implant played chess and posted on X by thought; <strong>Synchron</strong> ran multi-patient trials via a less invasive vascular route. Near-term: communication for paralyzed patients, prosthesis control. Ethical concerns: mental privacy, irreversibility.</p></div></div>
-
-<div class="card"><h4>🛠️ <span data-lang="zh">職涯路徑</span><span data-lang="en">Career Paths</span></h4>
-<div data-lang="zh"><p>常見 CS 職涯：① 軟體工程師 (SWE)、② 資料科學家、③ ML 工程師、④ SRE / DevOps、⑤ 安全工程師、⑥ AI 研究員、⑦ 產品經理 (PM)、⑧ 量化交易 (Quant)、⑨ 雲端架構師。2026 「<strong>AI-native 工程師</strong>」（會用 AI 輔助開發 + ML 基礎）已成最熱職缺。</p></div>
-<div data-lang="en"><p>Common CS careers: (1) software engineer, (2) data scientist, (3) ML engineer, (4) SRE/DevOps, (5) security engineer, (6) AI researcher, (7) product manager, (8) quant, (9) cloud architect. In 2026 the hottest role is the "<strong>AI-native engineer</strong>" (uses AI to build + has ML fundamentals).</p></div></div>
-</div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">合規檢查</div>
-<h2 data-zh="五、決策樹：我的 AI 系統合規嗎？" data-en="V. Decision Tree: Is My AI System Compliant?">五、決策樹：合規檢查</h2>
-<div class="decision-tree">
-<h4>🌳 <span data-zh="我的 AI 系統合規嗎？" data-en="Is my AI system compliant?">我的 AI 系統合規嗎？</span></h4>
+<div class="section-label" data-zh="開場故事" data-en="OPENING STORY">HeLa 細胞與一場 70 年的倫理對話</div>
+<h2 data-zh="一、1951 年的細胞，至今仍在影響生物倫理" data-en="I. The 1951 Cells Still Shaping Bio-Ethics">一、Henrietta Lacks 的細胞</h2>
 <div data-lang="zh">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>會處理歐盟使用者個資？<span class="dt-arrow">→</span> 必須符合 <strong>GDPR</strong>：明確同意、被遺忘權、DPO（資料保護官）。</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>用於招募 / 信用 / 教育 / 執法？<span class="dt-arrow">→</span> 屬 EU AI Act <strong>高風險</strong>，需風險管理系統、人類監督、CE 標記。</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>會與用戶互動的聊天機器人？<span class="dt-arrow">→</span> <strong>必須揭露</strong>使用者正在與 AI 對話。</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>用敏感族群（性別、種族、宗教）資料訓練？<span class="dt-arrow">→</span> 加做<strong>偏誤稽核</strong>（fairlearn、aif360）並記錄差異。</div></div>
-<div class="dt-node"><span class="dt-q">Q5:</span><div>會做出影響個人權益的決策？<span class="dt-arrow">→</span> 提供<strong>解釋</strong>（SHAP/LIME）與<strong>申訴管道</strong>。</div></div>
+<p>1951 年 2 月，美國馬里蘭州 Johns Hopkins 醫院，一位 31 歲的非裔美國婦女 <strong>Henrietta Lacks</strong> 因子宮頸癌就醫。主治醫師 Howard Jones 在切片時取走了她的腫瘤組織，沒有經過她或家屬的同意。</p>
+<p>那塊組織後來被培養出第一個能在實驗室<strong>無限增殖</strong>的人類細胞株—<strong>HeLa</strong>。HeLa 細胞參與了小兒麻痺疫苗開發、IVF 技術、HPV/HIV 研究、太空輻射實驗、基因體解碼……至今<strong>已被引用 11 萬篇論文、創造數十億美元的生技產業</strong>。Henrietta 本人於同年 10 月過世，享年 31 歲。她的家族則直到 1973 年才得知此事，因醫療帳單與基因隱私問題抗爭了 50 年——<strong>2013 年才獲得 NIH 對 HeLa 基因組存取權的完整協議</strong>。</p>
+<p>這個故事是一面鏡子：技術本身是中性的——HeLa 救了百萬人——但「<strong>誰被取走了什麼、誰得到了什麼、誰被諮詢過</strong>」這些倫理問題從未失效。本章我們會看到，1951 年的議題以新的形式（AI bias、基因組隱私、AI 武器、演算法歧視）持續上演。</p>
 </div>
 <div data-lang="en">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>Process EU users' personal data? <span class="dt-arrow">→</span> Must comply with <strong>GDPR</strong>: explicit consent, right to be forgotten, DPO.</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>Used for hiring / credit / education / law enforcement? <span class="dt-arrow">→</span> <strong>High-risk</strong> under EU AI Act — risk-management system, human oversight, CE marking.</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>Chatbot interacting with users? <span class="dt-arrow">→</span> <strong>Must disclose</strong> that the user is talking to AI.</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>Trained on sensitive group data (gender, race, religion)? <span class="dt-arrow">→</span> Run <strong>bias audits</strong> (fairlearn, aif360) and document disparities.</div></div>
-<div class="dt-node"><span class="dt-q">Q5:</span><div>Decisions that affect individual rights? <span class="dt-arrow">→</span> Provide <strong>explanations</strong> (SHAP/LIME) and an <strong>appeal channel</strong>.</div></div>
+<p>February 1951, Johns Hopkins Hospital, Maryland. A 31-year-old Black woman, <strong>Henrietta Lacks</strong>, came in with cervical cancer. Dr. Howard Jones took a piece of her tumour for biopsy <strong>without her or her family's consent</strong>.</p>
+<p>That tissue gave rise to the first human cell line that could <strong>proliferate indefinitely in the lab</strong> — <strong>HeLa</strong>. HeLa cells went on to drive the polio vaccine, IVF, HPV/HIV research, space-radiation experiments, and the Human Genome Project — <strong>cited in 110,000+ papers and underpinning a multi-billion-dollar biotech industry</strong>. Henrietta died in October 1951 at age 31. Her family wasn't told the cells were being used until 1973, then fought medical bills and genetic-privacy battles for 50 years — <strong>not until 2013 did they finally have a formal NIH agreement on HeLa genome access</strong>.</p>
+<p>The story is a mirror. The technology is neutral — HeLa saved millions — but the ethical questions of "<strong>who was taken from, who benefited, who was consulted</strong>" never go out of date. This chapter shows the same 1951 issues reappearing in new forms: AI bias, genome privacy, AI weapons, algorithmic discrimination.</p>
 </div>
-</div>
-
-<div class="callout danger"><span class="callout-icon">🚨</span><div>
-<div data-lang="zh"><strong>未來十年四大辯論：</strong>① <strong>AGI / 超級智能</strong>——多久到？是福是禍？② <strong>勞動力轉型</strong>——白領工作受 AI 衝擊將如何重新分配？③ <strong>後量子安全遷移</strong>——已開始的「現在收割、未來解密」攻擊；④ <strong>永續資料中心</strong>——AI 用電爆炸 vs 淨零承諾如何兩全。</div>
-<div data-lang="en"><strong>Four debates for the coming decade:</strong> (1) <strong>AGI / superintelligence</strong> — how soon? boon or bane? (2) <strong>Labor transition</strong> — how will white-collar work be redistributed? (3) <strong>Post-quantum migration</strong> — "harvest now, decrypt later" is already happening. (4) <strong>Sustainable data centers</strong> — AI's power surge vs net-zero pledges.</div>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<span data-lang="zh"><strong>本章不是「課程結束」：</strong>計算機概論的 16 章交給你的是<strong>工具與語言</strong>；本章交給你的是<strong>持續對話的義務</strong>。倫理不是一次性檢核表，是每次設計決策都要問的問題。</span>
+<span data-lang="en"><strong>This chapter isn't an ending.</strong> The 16 chapters of Intro CS gave you <strong>tools and a vocabulary</strong>; this final chapter hands you the <strong>obligation of an ongoing conversation</strong>. Ethics isn't a checklist you tick once — it's a question to ask at every design decision.</span>
 </div></div>
 </section>
 
+<!-- ===== Section 2: Core Concepts ===== -->
 <section class="section">
-<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
-<h2 data-zh="六、Python 偏誤檢測：fairlearn" data-en="VI. Bias Detection in Python: fairlearn">六、用 fairlearn 檢測偏誤</h2>
-<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
-<div class="code-tab-content active" id="py1"><pre><span class="comment"># pip install fairlearn scikit-learn</span>
-<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
-<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
-<span class="kw">from</span> fairlearn.metrics <span class="kw">import</span> MetricFrame, demographic_parity_difference
-<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score
+<div class="section-label" data-zh="核心概念" data-en="CORE CONCEPTS">給初學者的入口</div>
+<h2 data-zh="二、資訊倫理五大支柱" data-en="II. Five Pillars of Information Ethics">二、倫理五大支柱</h2>
 
-<span class="comment"># 假設我們有信用貸款資料，sensitive_feature 是性別 / Loan data, sensitive = gender</span>
-X_tr, X_te, y_tr, y_te, A_tr, A_te = <span class="func">train_test_split</span>(X, y, gender, test_size=<span class="num">0.3</span>)
+<div class="card-grid cols-3">
+<div class="card"><div class="card-icon">🔐</div><h4 data-zh="隱私 Privacy" data-en="Privacy">隱私</h4>
+<div data-lang="zh"><p><strong>GDPR</strong>（歐盟 2018）、<strong>HIPAA</strong>（美國 1996）、<strong>PDPA</strong>（台灣 2010 / 大幅修訂中）規範個資的<strong>蒐集、處理、刪除、跨境傳輸</strong>。違規最高罰金可達年營收 4%。</p></div>
+<div data-lang="en"><p><strong>GDPR</strong> (EU, 2018), <strong>HIPAA</strong> (US, 1996), <strong>PDPA</strong> (Taiwan, 2010 / overhaul pending) govern the <strong>collection, processing, deletion, and cross-border transfer</strong> of personal data. Fines reach 4 % of annual revenue.</p></div></div>
 
-clf = <span class="func">LogisticRegression</span>(max_iter=<span class="num">1000</span>).<span class="func">fit</span>(X_tr, y_tr)
-y_pred = clf.<span class="func">predict</span>(X_te)
+<div class="card"><div class="card-icon">⚖️</div><h4 data-zh="AI 倫理 AI Ethics" data-en="AI Ethics">AI 倫理</h4>
+<div data-lang="zh"><p>核心四項：<strong>Fairness 公平</strong>、<strong>Accountability 究責</strong>、<strong>Transparency 透明</strong>、<strong>Explainability 可解釋</strong>（合稱 FATE）。新增 <strong>Safety</strong>（不傷害）、<strong>Robustness</strong>（對抗攻擊）。</p></div>
+<div data-lang="en"><p>Core four: <strong>Fairness, Accountability, Transparency, Explainability</strong> (FATE). Plus <strong>Safety</strong> (do no harm) and <strong>Robustness</strong> (against adversarial attacks).</p></div></div>
 
-<span class="comment"># 整體準確率 / Overall accuracy</span>
-<span class="func">print</span>(<span class="str">"Acc:"</span>, <span class="func">accuracy_score</span>(y_te, y_pred))
+<div class="card"><div class="card-icon">🌐</div><h4 data-zh="數位落差 Digital Divide" data-en="Digital Divide">數位落差</h4>
+<div data-lang="zh"><p>全球仍有 <strong>26 億人沒有網路</strong>（ITU 2024）。AI 與雲端可能拉大階級差距：高收入機構享有 H100 訓練 vs 偏鄉醫院連 PACS 都沒升級。包容性設計 (inclusive design)、<strong>WCAG 2.2 無障礙</strong>是必要措施。</p></div>
+<div data-lang="en"><p>The world still has <strong>2.6 billion people offline</strong> (ITU 2024). AI and cloud can widen class gaps — wealthy institutions train on H100s while rural hospitals can't even upgrade PACS. Inclusive design and <strong>WCAG 2.2 accessibility</strong> are essentials.</p></div></div>
 
-<span class="comment"># 分群準確率 / Per-group accuracy</span>
-mf = <span class="func">MetricFrame</span>(metrics=accuracy_score, y_true=y_te, y_pred=y_pred,
-                 sensitive_features=A_te)
-<span class="func">print</span>(mf.by_group)               <span class="comment"># 看是否各組差異過大</span>
+<div class="card"><div class="card-icon">📜</div><h4 data-zh="智慧財產 IP" data-en="IP">智慧財產</h4>
+<div data-lang="zh"><p><strong>專利</strong> (CRISPR 戰)、<strong>版權</strong> (AI 訓練資料官司)、<strong>商標</strong>、<strong>商業秘密</strong>。<strong>開源授權</strong>：MIT / BSD（最寬）→ Apache 2.0（含專利條款）→ GPL（強 copyleft）→ AGPL（連 SaaS 用都需公開）。</p></div>
+<div data-lang="en"><p><strong>Patents</strong> (CRISPR wars), <strong>copyright</strong> (AI training-data lawsuits), <strong>trademarks</strong>, <strong>trade secrets</strong>. <strong>OSS licenses</strong>: MIT/BSD (most permissive) → Apache 2.0 (with patent grant) → GPL (strong copyleft) → AGPL (covers SaaS use).</p></div></div>
 
-<span class="comment"># 群體公平差距 / Demographic-parity gap (越接近 0 越公平)</span>
-gap = <span class="func">demographic_parity_difference</span>(y_te, y_pred, sensitive_features=A_te)
-<span class="func">print</span>(<span class="str">f"DP gap = {gap:.3f}"</span>)
-<span class="comment"># 法規常見門檻 &lt; 0.1；若超過則須調整模型或重新採樣資料</span></pre></div>
-<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// AI 倫理檢查清單 / AI Ethics Checklist (deploy-time)</span>
-<span class="kw">function</span> <span class="func">EthicsReview</span>(model, dataset, use_case):
-    checks = []
+<div class="card"><div class="card-icon">🌱</div><h4 data-zh="綠色運算 Green Computing" data-en="Green Computing">綠色運算</h4>
+<div data-lang="zh"><p>資料中心已占全球用電 2–4%（IEA 2024）。訓練一個 GPT-3 估計排放 <strong>552 噸 CO₂</strong>（≈ 跨大西洋來回 300 次）。<strong>PUE</strong>（Power Usage Effectiveness）、<strong>液冷</strong>、<strong>核能 PPA</strong>（Microsoft 簽 Three Mile Island）成為新議題。</p></div>
+<div data-lang="en"><p>Data centres now consume 2–4 % of global electricity (IEA 2024). Training a single GPT-3 emitted an estimated <strong>552 t CO₂</strong> (≈ 300 round-trip transatlantic flights). <strong>PUE</strong>, <strong>liquid cooling</strong>, and <strong>nuclear PPAs</strong> (Microsoft contracted Three Mile Island) are now mainstream.</p></div></div>
 
-    <span class="comment">// 1. 法規分類</span>
-    <span class="kw">if</span> use_case <span class="kw">in</span> {hiring, credit, education, law}:
-        checks.<span class="func">add</span>(<span class="str">"high_risk: requires risk-mgmt + human oversight"</span>)
+<div class="card"><div class="card-icon">⚔️</div><h4 data-zh="自主武器與資訊戰" data-en="Autonomous weapons">武器化</h4>
+<div data-lang="zh"><p>AI 是雙刃劍：協助診斷癌症，也能用於致命自主武器系統 (LAWS)、Deepfake 假訊息、選舉操控（2024 多國選舉年）。<strong>聯合國《特定常規武器公約》</strong>仍在辯論 LAWS 全球禁令。</p></div>
+<div data-lang="en"><p>AI cuts both ways: it spots cancer and powers lethal autonomous weapon systems (LAWS), deepfakes, and election manipulation (2024 was a global election supercycle). The <strong>UN CCW</strong> still debates a global LAWS ban.</p></div></div>
+</div>
 
-    <span class="comment">// 2. 偏誤稽核</span>
-    <span class="kw">for each</span> protected_attr <span class="kw">in</span> {gender, race, age, disability}:
-        gap = <span class="func">DemographicParity</span>(model, dataset, protected_attr)
-        <span class="kw">if</span> |gap| > <span class="num">0.1</span>:
-            checks.<span class="func">add</span>(<span class="str">"bias gap on "</span> + protected_attr)
+<h3 data-zh="開源授權快速對照" data-en="OSS license cheat sheet">開源授權快速對照</h3>
+<table class="comp-table">
+<thead><tr><th data-zh="授權" data-en="License">授權</th><th data-zh="主要條款" data-en="Key terms">主要條款</th><th data-zh="商用?" data-en="Commercial?">商用?</th><th data-zh="改動需開源?" data-en="Must share modifications?">改動開源?</th><th data-zh="代表專案" data-en="Examples">代表專案</th></tr></thead>
+<tbody>
+<tr><td><strong>MIT</strong></td><td data-lang="zh">保留版權標示即可</td><td data-lang="en">Keep copyright notice</td><td>✅</td><td>❌</td><td>React、Rails、Vue、NumPy</td></tr>
+<tr><td><strong>BSD-3-Clause</strong></td><td data-lang="zh">不可拿原作者名背書</td><td data-lang="en">No author endorsement</td><td>✅</td><td>❌</td><td>FreeBSD、Postgres、Go</td></tr>
+<tr><td><strong>Apache 2.0</strong></td><td data-lang="zh">含明確專利授權條款</td><td data-lang="en">Includes patent grant</td><td>✅</td><td>❌</td><td>Kubernetes、TensorFlow、Android</td></tr>
+<tr><td><strong>GPL v3</strong></td><td data-lang="zh">分發時必須附原始碼</td><td data-lang="en">Must ship source on distribution</td><td>✅</td><td>✅ (copyleft)</td><td>Linux、GCC、Bash</td></tr>
+<tr><td><strong>AGPL v3</strong></td><td data-lang="zh">連 SaaS 使用都須開源</td><td data-lang="en">SaaS use triggers source disclosure</td><td>✅</td><td>✅ (網路使用也算)</td><td>MongoDB（舊版）、Nextcloud</td></tr>
+<tr><td><strong>CC-BY-4.0</strong></td><td data-lang="zh">用於文件/資料，需署名</td><td data-lang="en">For docs/data; require attribution</td><td>✅</td><td>❌</td><td>Wikipedia、許多開放資料</td></tr>
+<tr><td>(無授權)</td><td data-lang="zh">⚠️ 預設 ALL RIGHTS RESERVED——別人不能用</td><td data-lang="en">⚠️ Defaults to ALL RIGHTS RESERVED — nobody may use</td><td>❌</td><td>—</td><td>—</td></tr>
+</tbody></table>
+</section>
 
-    <span class="comment">// 3. 透明度</span>
-    <span class="kw">if</span> model.<span class="func">is_chatbot</span>():
-        checks.<span class="func">add</span>(<span class="str">"must disclose AI to user"</span>)
-
-    <span class="comment">// 4. 可解釋性</span>
-    <span class="kw">if</span> use_case.<span class="func">affects_rights</span>():
-        checks.<span class="func">add</span>(<span class="str">"provide SHAP/LIME explanation"</span>)
-
-    <span class="comment">// 5. 隱私</span>
-    <span class="kw">if</span> dataset.<span class="func">contains_PII</span>():
-        checks.<span class="func">add</span>(<span class="str">"GDPR consent + retention policy"</span>)
-
-    <span class="kw">return</span> checks</pre></div>
+<!-- ===== Section 3: Interactive #1 (Quantum Timeline) ===== -->
+<section class="section">
+<div class="section-label" data-zh="互動 #1" data-en="INTERACTIVE #1">量子計算十年</div>
+<h2 data-zh="三、互動：量子位元數成長 2016 → 2026" data-en="III. Interactive: Qubit Counts 2016 → 2026">三、量子十年</h2>
+<div data-lang="zh"><p>量子位元數不是唯一指標（更重要的是 fidelity 與 logical qubit），但仍是公眾關注的「快慢指標」。下圖展示十年來各家旗艦：IBM、Google、IonQ、Quantinuum、PsiQuantum、中國本源量子。注意 2024 Google <strong>Willow</strong> 號稱實現「<em>below-threshold</em>」error correction——量子糾錯的關鍵里程碑——比單純堆 qubit 重要得多。</p></div>
+<div data-lang="en"><p>Qubit count isn't the only metric (fidelity and logical qubits matter more), but it's the public-facing "speed signal". The chart shows flagship machines across a decade: IBM, Google, IonQ, Quantinuum, PsiQuantum, China's Origin Quantum. Note Google's 2024 <strong>Willow</strong>: it reportedly hit "<em>below-threshold</em>" error correction — the long-awaited QEC milestone, more meaningful than raw qubit counts.</p></div>
+<div class="interactive-panel">
+<div class="chart-container"><canvas id="qChart"></canvas></div>
+<p style="font-size:.78rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">關鍵里程碑：2019 Google Sycamore「量子優越」；2024 Willow「below threshold」；2025 IBM Nighthawk 120-qubit；2025 PsiQuantum 朝光子百萬 qubit。</span><span data-lang="en">Milestones: 2019 Google Sycamore "quantum supremacy"; 2024 Willow "below threshold"; 2025 IBM Nighthawk 120 qubits; 2025 PsiQuantum targets photonic million-qubit machines.</span></p>
 </div>
 </section>
 
+<!-- ===== Section 4: Deep Dive ===== -->
+<section class="section">
+<div class="section-label" data-zh="深入剖析" data-en="DEEP DIVE">進階：EU AI Act / ACM Code / WCAG</div>
+<h2 data-zh="四、進階：EU AI Act、ACM 倫理守則、WCAG 2.2" data-en="IV. EU AI Act, ACM Code, WCAG 2.2">四、深入剖析</h2>
+
+<h3>EU AI Act — <span data-zh="全球首部 AI 法律" data-en="the world's first AI law">2024 全球首部 AI 法律</span></h3>
+<div data-lang="zh"><p>2024 年 8 月正式生效，分階段執行至 2027。AI 系統按風險分四級：</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>① Unacceptable 不可接受</strong>（<strong>禁止</strong>）：社會評分、即時公共空間人臉辨識、操弄性 AI（如針對兒童）。違者最高罰 3,500 萬歐元或全球年營收 7%。</li>
+<li><strong>② High 高風險</strong>（嚴格規範）：醫療診斷、招募、信用評分、執法、教育評等、關鍵基礎設施。必須完成 conformity assessment、CE marking、人為監督、保留紀錄 10 年。</li>
+<li><strong>③ Limited 有限風險</strong>（透明度）：聊天機器人、Deepfake——必須明示「這是 AI 生成」。</li>
+<li><strong>④ Minimal 最小風險</strong>（自願）：垃圾郵件過濾、推薦系統——遵守 Code of Conduct 即可。</li>
+</ul>
+<p><strong>GPAI / Foundation Models</strong>（GPT-5、Claude Opus 4.7 等）有獨立規範：須揭露訓練資料摘要、版權合規、評估系統性風險（&gt; 10²⁵ FLOPs 訓練）。</p></div>
+<div data-lang="en"><p>Came into force August 2024, phasing in through 2027. AI systems by risk tier:</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>① Unacceptable</strong> (<strong>banned</strong>): social scoring, real-time public-space face recognition, manipulative AI (e.g. targeting children). Fines up to €35 M or 7 % of global turnover.</li>
+<li><strong>② High-risk</strong> (strict): medical diagnosis, hiring, credit scoring, law enforcement, education grading, critical infrastructure. Requires conformity assessment, CE marking, human oversight, 10-year logging.</li>
+<li><strong>③ Limited risk</strong> (transparency): chatbots, deepfakes — must disclose "AI-generated".</li>
+<li><strong>④ Minimal risk</strong> (voluntary): spam filters, recommenders — Code of Conduct suffices.</li>
+</ul>
+<p><strong>GPAI / foundation models</strong> (GPT-5, Claude Opus 4.7 etc.) face dedicated rules: training-data summaries, copyright compliance, systemic-risk evaluation (above 10²⁵ FLOPs training).</p></div>
+
+<h3>ACM Code of Ethics <span data-zh="（1992、2018 大修）" data-en="(1992, revised 2018)">7 大原則</span></h3>
+<div data-lang="zh"><p>美國 ACM (Association for Computing Machinery) 1992 公布、2018 大修。所有計算機專業人員的<strong>七大基本原則</strong>：</p>
+<ol style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>1.1 對社會與人類福祉做出貢獻</strong>——預設立場是「行善」。</li>
+<li><strong>1.2 避免傷害</strong>——任何時候 do no harm 優先。</li>
+<li><strong>1.3 誠實值得信賴</strong>——不誤導、不掩蓋系統限制。</li>
+<li><strong>1.4 公平、不歧視</strong>——主動審視 AI bias。</li>
+<li><strong>1.5 尊重智慧財產與創作</strong>。</li>
+<li><strong>1.6 尊重隱私</strong>——資料最小化原則。</li>
+<li><strong>1.7 維護機密</strong>——但發現重大風險須揭發 (whistleblowing)。</li>
+</ol></div>
+<div data-lang="en"><p>The US ACM Code (1992, major rewrite 2018). Seven foundational principles for every computing professional:</p>
+<ol style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>1.1</strong> Contribute to society and human well-being — default to "do good".</li>
+<li><strong>1.2</strong> Avoid harm — first, do no harm.</li>
+<li><strong>1.3</strong> Be honest and trustworthy — don't mislead about system limits.</li>
+<li><strong>1.4</strong> Be fair, take action against discrimination — actively audit AI bias.</li>
+<li><strong>1.5</strong> Respect IP and creative work.</li>
+<li><strong>1.6</strong> Respect privacy — data minimization by default.</li>
+<li><strong>1.7</strong> Honour confidentiality — but blow the whistle on serious harms.</li>
+</ol></div>
+
+<h3>GDPR Article 22 — <span data-zh="「不被自動化決策約束」之權利" data-en="right not to be subject to automated decisions">不被演算法定罪的權利</span></h3>
+<div data-lang="zh"><p>GDPR 第 22 條規定：「資料主體有權<strong>不受僅基於自動化處理</strong>（包括 profiling）所作出對其產生<strong>法律效果或重大影響</strong>的決策約束。」例：銀行純 AI 拒貸、學校演算法 fail 學生、招募系統淘汰履歷——須提供「<strong>人為審查 + 解釋權</strong>」。這對 deep learning 是嚴峻挑戰：黑盒模型如何「解釋」？SHAP、LIME、Integrated Gradients 等 XAI 工具因此成為合規必備。</p></div>
+<div data-lang="en"><p>GDPR Article 22: data subjects have the right "<strong>not to be subject to a decision based solely on automated processing</strong> (including profiling) which produces legal effects or similarly significant effects". Examples: a bank denying credit purely by AI, a school flunking via algorithm, an HR system rejecting CVs — these require <strong>human review and the right to explanation</strong>. A serious challenge to deep learning: how do you "explain" a black box? XAI tools like SHAP, LIME, and Integrated Gradients become compliance-essential.</p></div>
+
+<h3>WCAG 2.2 — <span data-zh="網頁無障礙標準" data-en="web accessibility">無障礙 4 大原則</span></h3>
+<div data-lang="zh"><p>Web Content Accessibility Guidelines 由 W3C 維護，2.2 版（2023 發布）。<strong>POUR</strong> 四原則：</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>Perceivable 可感知</strong>：圖片需有 alt text、影片需字幕、色彩對比足夠（≥ 4.5:1）。</li>
+<li><strong>Operable 可操作</strong>：所有功能可用鍵盤操作、不會誘發癲癇、提供足夠時間。</li>
+<li><strong>Understandable 可理解</strong>：文字清楚、操作可預測、錯誤訊息明確。</li>
+<li><strong>Robust 穩健</strong>：相容輔助科技（screen reader）、語意 HTML、ARIA 屬性。</li>
+</ul>
+<p>合規等級：A（最低）、AA（業界標準）、AAA（最高）。歐盟 European Accessibility Act 2025 強制公共網站達 AA。</p></div>
+<div data-lang="en"><p>Maintained by W3C; 2.2 released 2023. <strong>POUR</strong> principles:</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>Perceivable</strong>: alt text for images, captions for video, sufficient contrast (≥ 4.5:1).</li>
+<li><strong>Operable</strong>: all features keyboard-accessible, no seizure-inducing flashes, ample time.</li>
+<li><strong>Understandable</strong>: clear text, predictable interactions, explicit error messages.</li>
+<li><strong>Robust</strong>: works with assistive tech (screen readers), semantic HTML, ARIA attributes.</li>
+</ul>
+<p>Conformance levels: A (min), AA (industry standard), AAA (highest). The 2025 EU European Accessibility Act mandates AA on public-facing sites.</p></div>
+</section>
+
+<!-- ===== Section 5: Historical Cases ===== -->
+<section class="section">
+<div class="section-label" data-zh="歷史故事" data-en="HISTORICAL CASES">9 個改寫倫理對話的案例</div>
+<h2 data-zh="五、9 個改寫倫理對話的歷史案例" data-en="V. Nine Cases That Reshaped the Ethics Conversation">五、歷史案例</h2>
+<div class="workflow">
+<div class="workflow-step" data-step="1"><h4>1951 — <span data-zh="Henrietta Lacks 與 HeLa 細胞" data-en="Henrietta Lacks & HeLa">未經同意的細胞</span></h4>
+<div data-lang="zh"><p>HeLa 細胞推動現代醫學（小兒麻痺疫苗、IVF、HPV/HIV 研究），但取得未經 Henrietta 同意。家族 50 年抗爭至 2013 才有 NIH 完整協議。<strong>啟示</strong>：知情同意 + 利益共享 + 對少數族裔的尊重。</p></div>
+<div data-lang="en"><p>HeLa drove modern medicine (polio vaccine, IVF, HPV/HIV) but was taken without consent. The family fought 50 years until a formal NIH agreement in 2013. <strong>Lessons</strong>: informed consent, benefit sharing, respect for minoritized communities.</p></div></div>
+
+<div class="workflow-step" data-step="2"><h4>1985–87 — <span data-zh="Therac-25 軟體 bug 致死" data-en="Therac-25 software kills">史上最致命軟體 bug</span></h4>
+<div data-lang="zh"><p>加拿大 AECL 的放射治療儀 Therac-25 在 1985–87 因 race condition 軟體 bug，在 6 名患者身上施加致命劑量（百倍正常值）。其中 3 人死亡。<strong>啟示</strong>：軟體即生命安全；醫療軟體必須有 fail-safe 與獨立硬體互鎖。</p></div>
+<div data-lang="en"><p>Canadian AECL's Therac-25 radiation machine, due to a race-condition bug, delivered lethal (100×) doses to 6 patients in 1985–87. Three died. <strong>Lessons</strong>: software is life-safety; medical software demands fail-safes and independent hardware interlocks.</p></div></div>
+
+<div class="workflow-step" data-step="3"><h4>2008 — <span data-zh="Cambridge Analytica & Facebook" data-en="Cambridge Analytica & Facebook">演算法操弄民主</span></h4>
+<div data-lang="zh"><p>劍橋分析利用 8,700 萬 Facebook 帳號心理特徵建模，用於 2016 美國總統選舉與英國脫歐廣告投放。事件揭發後 Facebook 在 2019 被 FTC 罰 50 億美元，<strong>歐盟 GDPR</strong> 即此事件後加速通過。</p></div>
+<div data-lang="en"><p>Cambridge Analytica psychographed 87 M Facebook profiles to target ads in the 2016 US election and Brexit. After exposure, the FTC fined Facebook $5 B in 2019; the EU's <strong>GDPR</strong> was finalized in this aftermath.</p></div></div>
+
+<div class="workflow-step" data-step="4"><h4>2018 — <span data-zh="Google Project Maven 員工反抗" data-en="Google Project Maven walkout">員工拒絕 AI 武器</span></h4>
+<div data-lang="zh"><p>3,000 名 Google 員工連署，反對為美國國防部開發 AI 軍事影像分析（Project Maven）。Google 最終放棄合約並發布 <em>AI Principles</em>。微軟員工也曾類似反對 HoloLens 軍用合約。<strong>啟示</strong>：技術人有拒絕參與的道德權利。</p></div>
+<div data-lang="en"><p>3,000 Google employees signed a letter opposing AI for the US DoD's Project Maven. Google dropped the contract and published its <em>AI Principles</em>. Microsoft staff similarly resisted HoloLens military contracts. <strong>Lessons</strong>: engineers have a moral right to refuse.</p></div></div>
+
+<div class="workflow-step" data-step="5"><h4>2020 — <span data-zh="Timnit Gebru 被 Google 解僱" data-en="Timnit Gebru fired from Google">「Stochastic Parrots」</span></h4>
+<div data-lang="zh"><p>Google 倫理 AI 主管 Timnit Gebru 共同撰寫論文「<em>On the Dangers of Stochastic Parrots</em>」，警告 LLM 的環境成本、編碼偏見、潛在傷害。Google 要求她撤回論文，她拒絕後被解僱。事件揭露大型科技公司對內部倫理研究的緊張關係。</p></div>
+<div data-lang="en"><p>Google's Ethical AI co-lead Timnit Gebru co-authored "<em>On the Dangers of Stochastic Parrots</em>" warning of LLMs' environmental cost, encoded bias, and potential harms. Google asked her to retract; she refused and was fired. The case exposed Big Tech's tension with internal ethics research.</p></div></div>
+
+<div class="workflow-step" data-step="6"><h4>2020 — <span data-zh="UK A-level 演算法事件" data-en="UK A-level algorithm fiasco">演算法把學生 fail 掉</span></h4>
+<div data-lang="zh"><p>因 COVID 取消大考，英國 Ofqual 用演算法估分。結果<strong>下調 40% 私校學生分數、影響弱勢學生入學</strong>，引發全國抗議。一週後政府撤回演算法，改用教師預測分數。<strong>啟示</strong>：高風險決策的演算法必須 audit、必須可上訴。</p></div>
+<div data-lang="en"><p>With exams cancelled due to COVID, the UK's Ofqual used an algorithm to estimate grades. It <strong>downgraded 40 % of students disproportionately from disadvantaged backgrounds</strong>, sparking nationwide protests. A week later the algorithm was scrapped for teacher predictions. <strong>Lessons</strong>: high-stakes algorithms need audits and appeals.</p></div></div>
+
+<div class="workflow-step" data-step="7"><h4>2023 — <span data-zh="GPT-4 System Card 與 AI 安全研究" data-en="GPT-4 System Card and AI safety">透明度新基準</span></h4>
+<div data-lang="zh"><p>OpenAI 發布 GPT-4 時附 <strong>System Card</strong>（98 頁）詳述 red-teaming、潛在風險、限制，成為新業界標準。<strong>Anthropic Constitutional AI、Model Card、Responsible Scaling Policy</strong>跟進。研究模型偏見與安全成為顯學。</p></div>
+<div data-lang="en"><p>OpenAI shipped GPT-4 with a 98-page <strong>System Card</strong> detailing red-teaming, risks, and limits — setting a new industry standard. Anthropic's <strong>Constitutional AI, Model Cards, Responsible Scaling Policy</strong> followed. Studying model bias and safety became mainstream.</p></div></div>
+
+<div class="workflow-step" data-step="8"><h4>2024 — <span data-zh="EU AI Act 通過" data-en="EU AI Act passes">全球首部 AI 法</span></h4>
+<div data-lang="zh"><p>歐盟 AI Act 於 2024 年 8 月生效，全球首部全面 AI 監管法律。美國加州 2024 SB 1047（AI Safety）雖被否決，但同年加州通過多項 AI 揭露與兒童保護法。台灣《AI 基本法》草案於 2024 公開徵詢中。</p></div>
+<div data-lang="en"><p>The EU AI Act came into force August 2024 — the world's first comprehensive AI law. California's 2024 SB 1047 (AI Safety) was vetoed but the state passed several AI disclosure and child-protection laws the same year. Taiwan's "AI Basic Act" draft entered public consultation in 2024.</p></div></div>
+
+<div class="workflow-step" data-step="9"><h4>2024–2025 — <span data-zh="量子糾錯里程碑" data-en="Quantum error correction milestones">Google Willow & IBM Nighthawk</span></h4>
+<div data-lang="zh"><p>2024 Google <strong>Willow</strong>（105 qubit）首次實證「below threshold」表面碼糾錯——加 qubit 真的能<em>降低</em>邏輯錯誤率。2025 IBM <strong>Nighthawk</strong> 120 qubit + Heron 處理器；PsiQuantum 朝光子百萬 qubit。<strong>後量子密碼遷移</strong>因此成為國家級議題。</p></div>
+<div data-lang="en"><p>2024 Google <strong>Willow</strong> (105 qubits) first demonstrated "below-threshold" surface-code error correction — adding qubits actually <em>reduces</em> the logical error rate. 2025 IBM <strong>Nighthawk</strong>: 120 qubits + Heron processor; PsiQuantum targets photonic million-qubit systems. <strong>Post-quantum cryptography migration</strong> became a national-level agenda.</p></div></div>
+</div>
+</section>
+
+<!-- ===== Section 6: Interactive #2 (AI Ethics Quiz) ===== -->
+<section class="section">
+<div class="section-label" data-zh="互動 #2" data-en="INTERACTIVE #2">EU AI Act 風險分類</div>
+<h2 data-zh="六、互動：「我的 AI 屬於哪個風險級？」" data-en="VI. Interactive: 'What risk tier is my AI?'">六、AI 倫理檢核</h2>
+<div data-lang="zh"><p>下列 5 個情境取自真實案例。每題選一個分類（不可接受 / 高 / 有限 / 最小），看 EU AI Act 解答與你的判斷是否一致。</p></div>
+<div data-lang="en"><p>Five scenarios from real cases. Pick a tier (Unacceptable / High / Limited / Minimal) and compare with the EU AI Act's answer.</p></div>
+
+<div class="interactive-panel">
+<div id="ethicsScenarios"></div>
+<div id="ethicsResult" style="margin-top:14px;padding:12px;border-radius:8px;display:none;font-weight:600;"></div>
+</div>
+</section>
+
+<!-- ===== Section 7: 🧬 For Bioinformaticians ===== -->
+<section class="section">
+<div class="section-label" data-zh="🧬 生資連結" data-en="🧬 FOR BIOINFORMATICIANS">倫理 × 生命科學</div>
+<h2 data-zh="七、生物資訊學家面對的倫理現場" data-en="VII. Ethics Frontlines for Bioinformaticians">七、生資連結點</h2>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;">
+<span class="callout-icon">🧬</span>
+<div>
+<strong data-zh="為什麼生資人特別需要倫理素養" data-en="Why bioinformaticians especially need ethics literacy">為什麼是你？</strong>
+<p data-lang="zh">生資工作直接觸及<strong>個體身分</strong>（基因組）、<strong>家族隱私</strong>（遺傳資訊 50% overlap）、<strong>族裔健康公平</strong>（GWAS 主要來自歐裔人群）。你寫的每一行 pipeline、每一個 AI 模型，都可能影響真實病人的人生。倫理素養不是「人文加分項」，是<strong>專業必修</strong>。</p>
+<p data-lang="en">Bioinformatics directly touches <strong>individual identity</strong> (genomes), <strong>family privacy</strong> (50 % overlap with relatives), and <strong>ethnic health equity</strong> (GWAS data still skew European). Every pipeline line and AI model you ship can change a real patient's life. Ethics literacy isn't a "humanities bonus" — it's a <strong>professional requirement</strong>.</p>
+</div></div>
+
+<div class="card-grid cols-2">
+<div class="card"><div class="card-icon">🧬</div><h4>HeLa 案的當代回響：基因組隱私 <span data-zh="（HeLa & 你）" data-en="(HeLa & you)">HeLa 的延伸</span></h4>
+<div data-lang="zh"><p>2013 年 Lacks family 才獲得 HeLa 基因組存取的完整協議——但 HeLa 序列早已公開十多年。教訓：基因隱私不只「資料安全」，更是<strong>對族群的尊重</strong>。今日相關規範：<strong>GA4GH</strong> Framework for Responsible Sharing、<strong>Indigenous Data Sovereignty</strong>（CARE Principles 2020）、<strong>NIH Genomic Data Sharing Policy</strong>。</p></div>
+<div data-lang="en"><p>The Lacks family didn't get a formal NIH HeLa-genome agreement until 2013 — though the sequence had been public for over a decade. Lesson: genomic privacy is more than "data security"; it's <strong>respect for communities</strong>. Modern frameworks: <strong>GA4GH</strong> Framework for Responsible Sharing, <strong>Indigenous Data Sovereignty</strong> (CARE Principles, 2020), <strong>NIH Genomic Data Sharing Policy</strong>.</p></div></div>
+
+<div class="card"><div class="card-icon">📋</div><h4>GINA、PDPA 與基因保險歧視 <span data-zh="（保險、就業歧視）" data-en="(insurance, employment)">GINA</span></h4>
+<div data-lang="zh"><p>美國 <strong>GINA Act 2008</strong>（Genetic Information Nondiscrimination Act）禁止健康保險與雇主依基因資訊歧視。但<strong>不涵蓋人壽、長照、傷殘保險</strong>。台灣 PDPA 對基因資料保護有限，醫療基因檢測前須充分告知保險使用風險。<strong>2024 美國數個壽險公司因藏匿基因檢測史拒保被起訴</strong>。</p></div>
+<div data-lang="en"><p>The US <strong>GINA Act 2008</strong> bans health insurers and employers from discriminating on genetic information — but <strong>life, long-term care, and disability insurance are exempt</strong>. Taiwan's PDPA gives limited genetic-data protection; clinics must clearly warn patients about insurance implications. <strong>Several US life insurers were sued in 2024 for using undisclosed genetic-test history.</strong></p></div></div>
+
+<div class="card"><div class="card-icon">🎨</div><h4>All of Us 與差異隱私 <span data-zh="（百萬人計畫）" data-en="(million-person program)">All of Us</span></h4>
+<div data-lang="zh"><p>NIH <strong>All of Us</strong>（2018 啟動，2024 已招募 80 萬+ 人）特別注重多元族裔（&gt; 50% 來自代表性不足族群）。資料以三層架構保護：① 公開層加 ε-DP 噪音；② 受控層需 IRB；③ 原始資料絕不出 NIH Researcher Workbench（雲端 enclave）。是<strong>隱私 + 效用 + 包容性</strong>的範本。</p></div>
+<div data-lang="en"><p>NIH's <strong>All of Us</strong> (launched 2018, 800 k+ enrolled by 2024) prioritises diversity (&gt; 50 % from under-represented populations). Three-tier protection: (1) Public Tier uses ε-DP noise; (2) Controlled Tier requires IRB; (3) Raw data never leaves the NIH Researcher Workbench (cloud enclave). A canonical "<strong>privacy + utility + inclusion</strong>" model.</p></div></div>
+
+<div class="card"><div class="card-icon">⚖️</div><h4>AI 偏見與臨床健康公平 <span data-zh="（dermatology / clinical AI bias）" data-en="(dermatology / clinical AI bias)">AI bias</span></h4>
+<div data-lang="zh"><p><strong>2019 Obermeyer et al. (Science)</strong>：美國健康管理演算法用「醫療支出」當「健康需求」代理，<strong>系統性低估</strong>黑人病患疾病嚴重度（因歷史上黑人較難取得醫療）。<strong>Dermatology AI</strong>：訓練資料 90% 來自淺色皮膚，深色皮膚黑色素瘤辨識率明顯較差。<strong>修正方法</strong>：fairness-aware ML、disaggregated evaluation、合成資料擴增。</p></div>
+<div data-lang="en"><p><strong>Obermeyer et al. (Science, 2019)</strong>: a US healthcare algorithm used "spending" as a proxy for "need" — <strong>systematically underestimating</strong> illness severity in Black patients (who historically face access barriers). <strong>Dermatology AI</strong>: 90 % of training data is light-skinned, so dark-skin melanoma recognition lags. <strong>Fixes</strong>: fairness-aware ML, disaggregated evaluation, synthetic-data augmentation.</p></div></div>
+
+<div class="card"><div class="card-icon">🌳</div><h4>生資的碳足跡 <span data-zh="（運算成本 = 碳）" data-en="(compute = carbon)">碳成本</span></h4>
+<div data-lang="zh"><p>訓練 GPT-3 ≈ 552 噸 CO₂；訓練 AlphaFold 2 ≈ 200 噸；UK Biobank 50 萬 WGS analysis ≈ 數百噸。<strong>Strubell et al. 2019 (ACL)</strong> 首次量化 NLP 訓練的環境成本。實務減碳：① 在 carbon-aware region 排程（雲端業者公布 region carbon）；② 使用預訓模型 + LoRA 微調；③ 避免重跑 pipeline，用快取結果。<strong>Green Software Foundation</strong> 提供 SCI (Software Carbon Intensity) 計算規範。</p></div>
+<div data-lang="en"><p>Training GPT-3 ≈ 552 t CO₂; AlphaFold 2 ≈ 200 t; UK Biobank's 500 k WGS analysis ≈ hundreds of tonnes. <strong>Strubell et al. (ACL 2019)</strong> first quantified NLP training's environmental cost. Practical reductions: (1) schedule in carbon-aware regions (vendors publish region carbon intensities); (2) use pretrained models + LoRA fine-tuning; (3) cache pipeline outputs to avoid reruns. The <strong>Green Software Foundation</strong> publishes the SCI (Software Carbon Intensity) spec.</p></div></div>
+
+<div class="card"><div class="card-icon">🔓</div><h4>Open Science vs Patents <span data-zh="（CRISPR 戰、AlphaFold 開放）" data-en="(CRISPR wars, AlphaFold open)">Open vs Closed</span></h4>
+<div data-lang="zh"><p><strong>CRISPR 專利戰</strong>：Broad Institute（Zhang）vs UC Berkeley（Doudna-Charpentier）2012 起持續 10 年，分割價值千億美元的市場。<strong>AlphaFold open</strong>：DeepMind 把 2 億預測結構免費公開、code 開源（Apache 2.0）——同時 OpenAI 走向 closed model + paid API。生資界正在學會在「開放科學」與「商業價值」間取得平衡——<strong>NIH 與 EU Horizon 已要求公費研究 default open</strong>。</p></div>
+<div data-lang="en"><p><strong>CRISPR patent war</strong>: Broad (Zhang) vs UC Berkeley (Doudna-Charpentier) — a decade-long $100 B-market split since 2012. <strong>AlphaFold open</strong>: DeepMind released 200 M predictions free + Apache-2.0 code, while OpenAI moved toward closed weights + paid APIs. Biology is learning to balance open science with commercial value — <strong>NIH and EU Horizon now default publicly-funded research to open access</strong>.</p></div></div>
+</div>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<span data-lang="zh"><strong>你今天就能做的 5 件事：</strong>① 在每個基因組資料分析計畫加上「<strong>IRB 與 DUC 審核</strong>」步驟；② AI 模型發布前做 <strong>disaggregated evaluation</strong>（按性別、族裔、年齡分層評估）；③ 程式碼用 OSS 授權釋出（MIT 或 Apache 2.0）；④ 訓練大模型前估算 <strong>carbon footprint</strong> 並排程在低碳時段；⑤ 對醫療 AI 提供「<strong>解釋與上訴機制</strong>」(GDPR Art. 22)。</span>
+<span data-lang="en"><strong>Five things you can do today:</strong> (1) add <strong>IRB + DUC review</strong> steps to every genomic project; (2) before releasing an AI model, run <strong>disaggregated evaluation</strong> (sex, ethnicity, age strata); (3) license your code openly (MIT or Apache 2.0); (4) estimate <strong>carbon footprint</strong> before big training runs and schedule on low-carbon hours; (5) build <strong>explanation + appeal mechanisms</strong> for clinical AI (GDPR Art. 22).</span>
+</div></div>
+</section>
+
+<!-- ===== Section 8: Decision Tree ===== -->
+<section class="section">
+<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">OSS / EU AI Act / Bias 檢核</div>
+<h2 data-zh="八、決策樹：倫理三大問題" data-en="VIII. Decision Trees: Three Ethics Questions">八、決策樹</h2>
+
+<div class="decision-tree">
+<h4>🌳 <span data-zh="① 我的 AI 系統合 EU AI Act 嗎？" data-en="① Is my AI EU AI Act compliant?">① 我合 EU AI Act 嗎？</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>系統用於社會評分、即時公共空間人臉辨識、操弄性 AI？<span class="dt-arrow">→</span> <strong>Unacceptable（禁止）</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>用於醫療診斷、招募、信用、執法、教育評等？<span class="dt-arrow">→</span> <strong>High-risk</strong>：須做 conformity assessment、CE marking、人為監督、紀錄 10 年。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>聊天機器人或 Deepfake？<span class="dt-arrow">→</span> <strong>Limited risk</strong>：必須明示「AI 生成」。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>垃圾郵件、簡單推薦？<span class="dt-arrow">→</span> <strong>Minimal risk</strong>：自願 Code of Conduct。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>訓練 FLOPs &gt; 10²⁵（前沿 LLM）？<span class="dt-arrow">→</span> <strong>GPAI 規範</strong>：揭露訓練資料摘要、版權、系統性風險。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Social scoring, real-time public face recognition, or manipulative AI? <span class="dt-arrow">→</span> <strong>Unacceptable (banned)</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Medical diagnosis, hiring, credit, law enforcement, education grading? <span class="dt-arrow">→</span> <strong>High-risk</strong>: conformity assessment, CE marking, human oversight, 10-year logs.</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Chatbot or deepfake? <span class="dt-arrow">→</span> <strong>Limited risk</strong>: disclose "AI-generated".</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Spam filter, basic recommender? <span class="dt-arrow">→</span> <strong>Minimal risk</strong>: voluntary Code of Conduct.</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>Training compute &gt; 10²⁵ FLOPs (frontier LLM)? <span class="dt-arrow">→</span> <strong>GPAI rules</strong>: disclose training data summary, copyright, systemic risks.</div></div>
+</div>
+</div>
+
+<div class="decision-tree" style="margin-top:20px;">
+<h4>🌳 <span data-zh="② OSS license 該選哪個？" data-en="② Which OSS license?">② OSS 授權怎麼選？</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>希望<strong>最大化採用</strong>、不在乎是否被閉源整合？<span class="dt-arrow">→</span> <strong>MIT</strong> 或 <strong>BSD-3</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>需要<strong>明確專利條款</strong>（企業導入要求）？<span class="dt-arrow">→</span> <strong>Apache 2.0</strong>（K8s、TensorFlow、AlphaFold 採用）。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>希望<strong>任何衍生作都必須開源</strong>？<span class="dt-arrow">→</span> <strong>GPL v3</strong>（Linux 同等級）。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>連對方用我的程式跑 SaaS 也要開源？<span class="dt-arrow">→</span> <strong>AGPL v3</strong>（MongoDB 舊版、Nextcloud）。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>是<strong>文件、教材、資料集</strong>？<span class="dt-arrow">→</span> <strong>CC-BY-4.0</strong>（需署名）或 <strong>CC0</strong>（完全公眾領域）。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Maximize adoption, ok with closed forks? <span class="dt-arrow">→</span> <strong>MIT</strong> or <strong>BSD-3</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Need an explicit patent grant (enterprise procurement)? <span class="dt-arrow">→</span> <strong>Apache 2.0</strong> (used by K8s, TensorFlow, AlphaFold).</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Want all derivatives to also be open? <span class="dt-arrow">→</span> <strong>GPL v3</strong> (Linux-style).</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Want SaaS use to trigger source release too? <span class="dt-arrow">→</span> <strong>AGPL v3</strong> (old MongoDB, Nextcloud).</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>For docs / training materials / datasets? <span class="dt-arrow">→</span> <strong>CC-BY-4.0</strong> (attribution) or <strong>CC0</strong> (public domain).</div></div>
+</div>
+</div>
+
+<div class="decision-tree" style="margin-top:20px;">
+<h4>🌳 <span data-zh="③ 我的 ML 模型有偏誤嗎？" data-en="③ Is my ML model biased?">③ 我的模型有偏誤嗎？</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">Step 1:</span><div>檢查訓練資料的<strong>族群分布</strong>（性別、族裔、年齡）。GWAS 80% 來自歐裔人群是事實。</div></div>
+<div class="dt-node"><span class="dt-q">Step 2:</span><div>跑 <strong>disaggregated evaluation</strong>：accuracy、F1、PPV 在每個 subgroup 是否一致？</div></div>
+<div class="dt-node"><span class="dt-q">Step 3:</span><div>用公平性指標：<strong>Demographic Parity</strong>、<strong>Equalized Odds</strong>、<strong>Calibration</strong>（注意這三者通常無法同時滿足——Kleinberg 不可能定理）。</div></div>
+<div class="dt-node"><span class="dt-q">Step 4:</span><div>用 XAI 工具：<strong>SHAP</strong>、<strong>LIME</strong>、<strong>Integrated Gradients</strong> 看模型用了哪些特徵。</div></div>
+<div class="dt-node"><span class="dt-q">Step 5:</span><div>修正：① 平衡資料；② <strong>fairlearn</strong>、<strong>AIF360</strong>、<strong>themis-ml</strong>；③ 與受影響社群共同設計 (co-design)。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">Step 1:</span><div>Check training-data <strong>demographics</strong> (sex, ethnicity, age). 80 % of GWAS data is European — that's a fact.</div></div>
+<div class="dt-node"><span class="dt-q">Step 2:</span><div>Run <strong>disaggregated evaluation</strong>: are accuracy, F1, PPV consistent across subgroups?</div></div>
+<div class="dt-node"><span class="dt-q">Step 3:</span><div>Use fairness metrics: <strong>Demographic Parity</strong>, <strong>Equalized Odds</strong>, <strong>Calibration</strong> (note Kleinberg's impossibility theorem — you usually can't satisfy all three).</div></div>
+<div class="dt-node"><span class="dt-q">Step 4:</span><div>Use XAI tools: <strong>SHAP</strong>, <strong>LIME</strong>, <strong>Integrated Gradients</strong> to see which features the model relies on.</div></div>
+<div class="dt-node"><span class="dt-q">Step 5:</span><div>Fix: (1) rebalance data; (2) use <strong>fairlearn</strong>, <strong>AIF360</strong>, or <strong>themis-ml</strong>; (3) co-design with affected communities.</div></div>
+</div>
+</div>
+</section>
+
+<!-- ===== Section 9: Code Tabs ===== -->
+<section class="section">
+<div class="section-label" data-zh="程式碼" data-en="CODE">Python / R / Pseudocode</div>
+<h2 data-zh="九、動手做：fairlearn、SHAP、AI 倫理檢核" data-en="IX. Hands-on: fairlearn, SHAP, AI ethics checklist">九、動手做</h2>
+<div class="code-tabs"><div class="code-tab-btns">
+<button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button>
+<button class="code-tab-btn" onclick="switchTab(this,'r1')">R</button>
+<button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Ethics Checklist</button>
+</div>
+
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># ---- 1) fairlearn: 檢查模型的 demographic parity ----</span>
+<span class="kw">from</span> fairlearn.metrics <span class="kw">import</span> MetricFrame, demographic_parity_difference, equalized_odds_difference
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="comment"># y_true, y_pred 是模型輸出；sensitive 是性別/族裔等敏感屬性</span>
+metrics = {<span class="str">"accuracy"</span>: accuracy_score}
+mf = <span class="func">MetricFrame</span>(metrics=metrics,
+                 y_true=y_true, y_pred=y_pred,
+                 sensitive_features=df[<span class="str">"ethnicity"</span>])
+<span class="func">print</span>(mf.by_group)             <span class="comment"># 每個 subgroup 的 accuracy</span>
+<span class="func">print</span>(<span class="func">demographic_parity_difference</span>(y_true, y_pred,
+                                       sensitive_features=df[<span class="str">"ethnicity"</span>]))
+
+<span class="comment"># ---- 2) 用 fairlearn 演算法 mitigate ----</span>
+<span class="kw">from</span> fairlearn.reductions <span class="kw">import</span> ExponentiatedGradient, DemographicParity
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> GradientBoostingClassifier
+mitigator = <span class="func">ExponentiatedGradient</span>(<span class="func">GradientBoostingClassifier</span>(),
+                                  constraints=<span class="func">DemographicParity</span>())
+mitigator.<span class="func">fit</span>(X_train, y_train, sensitive_features=df_train[<span class="str">"ethnicity"</span>])
+
+<span class="comment"># ---- 3) SHAP: 解釋黑盒模型 ----</span>
+<span class="kw">import</span> shap
+explainer = shap.<span class="func">TreeExplainer</span>(model)
+shap_values = explainer.<span class="func">shap_values</span>(X_test)
+shap.<span class="func">summary_plot</span>(shap_values, X_test)        <span class="comment"># 全域特徵重要度</span>
+shap.<span class="func">force_plot</span>(explainer.expected_value, shap_values[<span class="num">0</span>], X_test.<span class="func">iloc</span>[<span class="num">0</span>])  <span class="comment"># 單一預測</span>
+
+<span class="comment"># ---- 4) 估算訓練的 carbon footprint ----</span>
+<span class="kw">from</span> codecarbon <span class="kw">import</span> EmissionsTracker
+tracker = <span class="func">EmissionsTracker</span>(project_name=<span class="str">"my_alphafold_run"</span>)
+tracker.<span class="func">start</span>()
+<span class="comment"># ... 你的訓練程式 ...</span>
+emissions = tracker.<span class="func">stop</span>()             <span class="comment"># kg CO₂</span>
+<span class="func">print</span>(f<span class="str">"Emitted {emissions:.2f} kg CO₂"</span>)</pre></div>
+
+<div class="code-tab-content" id="r1"><pre><span class="comment"># ---- 1) iml + DALEX：R 端的可解釋 AI ----</span>
+<span class="kw">library</span>(iml); <span class="kw">library</span>(DALEX); <span class="kw">library</span>(ranger)
+
+model <- <span class="func">ranger</span>(y ~ ., data = train, probability = <span class="kw">TRUE</span>)
+explainer <- <span class="func">explain</span>(model, data = test[, -<span class="num">1</span>], y = test$y,
+                     label = <span class="str">"Random Forest"</span>)
+
+<span class="comment"># 變數重要度</span>
+vi <- <span class="func">model_parts</span>(explainer)
+<span class="func">plot</span>(vi)
+
+<span class="comment"># Breakdown explanation 單一預測</span>
+bd <- <span class="func">predict_parts</span>(explainer, new_observation = test[<span class="num">1</span>, ])
+<span class="func">plot</span>(bd)
+
+<span class="comment"># ---- 2) fairness 套件：檢查偏誤 ----</span>
+<span class="kw">library</span>(fairness)
+<span class="func">dem_parity</span>(data = test, outcome = <span class="str">"y"</span>, group = <span class="str">"ethnicity"</span>,
+           probs = predict(model, test)$predictions[, <span class="num">2</span>])
+
+<span class="comment"># ---- 3) Carbon tracking (greenframe) ----</span>
+<span class="comment"># Snakemake 或 nextflow pipeline 可直接接 ecospold/carbon-tracker</span>
+<span class="kw">system</span>(<span class="str">"nextflow run my-pipeline.nf -with-trace -with-report"</span>)
+<span class="comment"># 解析 trace 計算 CPU-hours → kg CO₂（依 region carbon intensity）</span></pre></div>
+
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment"># ====== AI Ethics Checklist (每個 ML 專案啟動時走一遍) ======</span>
+
+<span class="kw">PHASE 1 — Problem Framing</span>
+☐ 我的系統會影響哪些人？包括「不會用它」的人嗎？
+☐ 失敗的後果是？誰承擔？
+☐ 有「不該被解決的問題」嗎（例如預測「再犯率」本身就有偏見）？
+
+<span class="kw">PHASE 2 — Data</span>
+☐ 資料來源是否合法、合乎倫理（IRB / 知情同意 / GDPR 合法基礎）？
+☐ 族群代表性如何？哪些群體被低估？
+☐ 標籤是否包含人類偏見（歷史不平等）？
+☐ 資料保存週期？刪除權？跨境傳輸？
+
+<span class="kw">PHASE 3 — Model</span>
+☐ Train/Val/Test 是否有 leakage？
+☐ 跑了 disaggregated evaluation？每個 subgroup 表現是否一致？
+☐ 估算 carbon footprint？
+☐ 採用了預訓 + 微調以減少資源？
+
+<span class="kw">PHASE 4 — Deployment</span>
+☐ 提供了「解釋」與「上訴」機制（GDPR Art. 22）？
+☐ 監控 model drift、定期重訓？
+☐ 失敗模式有 fail-safe？人為監督點在哪？
+☐ Model Card / System Card 是否公開？
+
+<span class="kw">PHASE 5 — Ongoing</span>
+☐ 與受影響社群有持續對話機制？
+☐ 內部 ethics review 是否獨立於業務壓力？
+☐ 員工是否有「拒絕參與」的渠道（whistleblower 保護）？</pre></div>
+</div>
+</section>
+
+<!-- ===== Section 10: Misconceptions ===== -->
+<section class="section">
+<div class="section-label" data-zh="常見誤解" data-en="MISCONCEPTIONS">陷阱</div>
+<h2 data-zh="十、6 個常見的倫理迷思" data-en="X. Six Common Ethical Myths">十、常見誤解</h2>
+<div class="card-grid cols-2">
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「匿名化資料就安全」" data-en="'Anonymized = safe'">「匿名化就安全」</span></h4>
+<div data-lang="zh"><p>2008 Narayanan 從 Netflix 匿名觀影紀錄重識別個體；2013 MIT 從「匿名」手機定位點即可識別 95% 個體；2018 從基因組 + 親屬 DNA 庫可重識別匿名 GEDmatch 樣本（Golden State Killer 案）。<strong>真正的隱私保護需要 differential privacy 或 secure enclaves</strong>，不是改名字。</p></div>
+<div data-lang="en"><p>2008: Narayanan re-identified Netflix users from anonymized ratings; 2013: MIT showed 95 % of people are identifiable from anonymous mobile-location pings; 2018: the Golden State Killer was caught via genome + a relative's match in "anonymous" GEDmatch. <strong>Real privacy needs differential privacy or secure enclaves</strong>, not renaming.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「OSS 沒授權就免費用」" data-en="'No license = free'">「沒授權就免費」</span></h4>
+<div data-lang="zh"><p>剛好相反——<strong>無授權 = ALL RIGHTS RESERVED</strong>（依預設著作權法）。你看到 GitHub 上的 code 沒有 LICENSE 檔案，<strong>嚴格意義你不能用</strong>。發布 OSS 一定要加 LICENSE 檔，否則沒人能合法使用你的成果。</p></div>
+<div data-lang="en"><p>The opposite — <strong>no license = ALL RIGHTS RESERVED</strong> by default copyright law. Code on GitHub without a LICENSE file? <strong>Technically you can't use it.</strong> Always add a LICENSE — otherwise nobody can legally use your work.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「量子電腦明年就會破解 RSA」" data-en="'Quantum will crack RSA next year'">「量子明年破 RSA」</span></h4>
+<div data-lang="zh"><p>媒體常誇大。<strong>實用破 RSA-2048 估計需要約 2000 萬個 logical qubit</strong>（每個 logical qubit 又需 1000+ physical qubit 糾錯），現實量子電腦離這個還很遠。但<strong>「現在收割未來解密」</strong>使敏感長期資料現在就該轉 PQC。</p></div>
+<div data-lang="en"><p>Media often hype. <strong>Cracking RSA-2048 needs an estimated 20 M logical qubits</strong> (each needing 1000+ physical qubits for error correction) — we're nowhere near. But <strong>"Harvest Now, Decrypt Later"</strong> means sensitive long-retention data should migrate to PQC <em>now</em>.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「我只是工程師，倫理交給法務」" data-en="'Ethics is for lawyers'">「倫理交給法務」</span></h4>
+<div data-lang="zh"><p>法務通常在「事後」介入。工程師才是「設計階段」的決策者。Therac-25 案、Boeing 737 MAX MCAS 案都顯示：等到法務階段，<strong>人已經死了</strong>。倫理是<strong>工程素養</strong>，不是「他們的事」。</p></div>
+<div data-lang="en"><p>Lawyers usually intervene <em>after</em>; engineers decide at <em>design time</em>. Therac-25 and Boeing 737 MAX MCAS show: by the time lawyers arrive, <strong>people are already dead</strong>. Ethics is <strong>engineering literacy</strong>, not "someone else's job".</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「AI 偏見是技術問題，加更多資料就好」" data-en="'Bias = data problem, just add more'">「加資料就修好偏見」</span></h4>
+<div data-lang="zh"><p>偏見根源往往是<strong>歷史不平等</strong>（標籤本身有偏），加同一來源更多資料只會放大。需要的是：① 多元採樣；② 與受影響社群 co-design；③ 重新定義「成功」指標；④ 接受某些情境下「不部署」才是正確答案。</p></div>
+<div data-lang="en"><p>Bias often stems from <strong>historical inequity</strong> (the labels themselves are biased); more same-source data amplifies it. Real fixes: (1) diverse sampling; (2) co-design with affected communities; (3) redefine "success" metrics; (4) accept that "don't deploy" is sometimes the right answer.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「綠色運算只是 CSR 行銷」" data-en="'Green compute = CSR marketing'">「綠色運算只是行銷」</span></h4>
+<div data-lang="zh"><p>2024 全球資料中心耗電已逼近全日本年用電量。Microsoft 為了 AI 訓練電力，<strong>2024 簽下與 Three Mile Island 核電廠的 20 年購電合約</strong>。AWS、Google 也大舉投資核能。這不是 CSR——是<strong>實質運營成本與基礎設施戰略</strong>。</p></div>
+<div data-lang="en"><p>2024 global data-centre power use approaches Japan's annual electricity consumption. Microsoft signed a <strong>20-year PPA with Three Mile Island in 2024</strong> just to feed AI training; AWS and Google are heavily investing in nuclear too. This isn't CSR — it's <strong>real operational cost and infrastructure strategy</strong>.</p></div></div>
+</div>
+</section>
+
+<!-- ===== Section 10.5: Classical Ethics Cases Timeline ===== -->
+<section class="section">
+<div class="section-label" data-zh="經典案例" data-en="LANDMARK CASES">8 個改寫工程倫理的事件</div>
+<h2 data-zh="十之二、8 個改寫工程倫理的歷史事件" data-en="X-bis. Eight Cases That Reshaped Engineering Ethics">十之二、經典倫理案例</h2>
+<table class="comp-table">
+<thead><tr><th data-zh="年份" data-en="Year">年</th><th data-zh="事件" data-en="Event">事件</th><th data-zh="教訓" data-en="Lesson">教訓</th></tr></thead>
+<tbody>
+<tr><td><strong>1951</strong></td><td><strong>HeLa 細胞案</strong></td><td><span data-lang="zh">無同意採集、家族 62 年後才獲協議；現代知情同意 (informed consent) 與基因隱私規範由此孕育</span><span data-lang="en">Tissue taken without consent; family got an agreement 62 years later. Modern informed consent and genomic-privacy frameworks were born here</span></td></tr>
+<tr><td><strong>1985–87</strong></td><td><strong>Therac-25 輻射過量</strong></td><td><span data-lang="zh">軟體 race condition 導致 6 名病患受輻射過量致死/重傷。沒有 hardware interlock、無單獨 QA 軟體。<em>「軟體錯誤可以殺人」</em>從此進入工程倫理</span><span data-lang="en">Software race condition delivered lethal radiation to 6 patients. No hardware interlock, no QA software. <em>"Software bugs can kill"</em> entered engineering ethics permanently</span></td></tr>
+<tr><td><strong>2008–18</strong></td><td><strong>Cambridge Analytica</strong></td><td><span data-lang="zh">5000 萬 Facebook 用戶資料被 Aleksandr Kogan 收集，用於 2016 美國大選與 Brexit 投放。GDPR、CCPA 加速立法；Facebook 罰 50 億美元</span><span data-lang="en">50 M Facebook profiles harvested by Aleksandr Kogan, used to micro-target the 2016 US election and Brexit vote. Accelerated GDPR and CCPA; Facebook fined $5 B</span></td></tr>
+<tr><td><strong>2018</strong></td><td><strong>Google Project Maven 抗議</strong></td><td><span data-lang="zh">3000+ Google 員工聯署反對為 US DoD 開發 AI 影像識別軍事用途。Google 退出合約並發布 AI 原則。員工集體行動成倫理工具</span><span data-lang="en">3,000+ Google employees petitioned against developing military AI image recognition for the US DoD. Google exited the contract and published its AI Principles. Worker collective action emerges as an ethics lever</span></td></tr>
+<tr><td><strong>2020</strong></td><td><strong>UK A-level 演算法事件</strong></td><td><span data-lang="zh">COVID 期間英國以演算法取代考試評分，<strong>系統性低估弱勢學校</strong>學生。學生上街抗議，政府撤回演算法。教訓：演算法決策需公開檢視與上訴管道</span><span data-lang="en">During COVID, the UK used an algorithm to substitute for cancelled exams — it <strong>systematically downgraded students from poorer schools</strong>. Protests led the government to scrap it. Algorithmic decisions need transparency and appeal</span></td></tr>
+<tr><td><strong>2020</strong></td><td><strong>Timnit Gebru 被 Google 解僱</strong></td><td><span data-lang="zh">Google 倫理 AI 共同主管因論文〈Stochastic Parrots〉指 LLM 環境/偏見風險被迫離職。後創辦 DAIR Institute。倫理研究在大公司內部的脆弱性</span><span data-lang="en">Google's Ethical AI co-lead was pushed out after the "Stochastic Parrots" paper exposed LLM environmental & bias risks. She founded the DAIR Institute. Shows how fragile internal-ethics roles can be at big tech</span></td></tr>
+<tr><td><strong>2024</strong></td><td><strong>EU AI Act 通過</strong></td><td><span data-lang="zh">世界首部全面 AI 法律。四級風險分類（Unacceptable/High/Limited/Minimal）+ GPAI 規範。全球 AI 治理模板</span><span data-lang="en">The world's first comprehensive AI law. Four-tier risk classification + GPAI rules. Sets the global template for AI governance</span></td></tr>
+<tr><td><strong>2025–26</strong></td><td><strong>量子糾錯臨界線</strong></td><td><span data-lang="zh">2024 Google Willow 首次「below threshold」；2025 IBM Nighthawk 120 qubit；2026 預期更大躍進。HNDL 模型下，<strong>所有敏感長期資料需立即遷移 PQC</strong>；倫理 = 工程必要</span><span data-lang="en">2024 Google Willow first crossed "below threshold"; 2025 IBM Nighthawk 120 qubits; 2026 expects another leap. Under HNDL, <strong>all sensitive long-retention data must migrate to PQC now</strong>; ethics = engineering necessity</span></td></tr>
+</tbody></table>
+</section>
+
+<!-- ===== Section 11: Quiz ===== -->
 <section class="quiz-section">
-<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<h3>📝 <span data-zh="自我檢測（7 題）" data-en="Self-Check (7 Questions)">自我檢測</span></h3>
 <div class="quiz-q" data-answer="2">
-<p data-lang="zh">1. 關於 GDPR，下列何者「正確」？</p>
-<p data-lang="en">1. Which statement about GDPR is correct?</p>
+<p data-lang="zh">1. 關於 HeLa 細胞案，下列何者「正確」？</p>
+<p data-lang="en">1. About the HeLa cell case, which is correct?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 只規範歐洲公司</span><span data-lang="en">A. Applies only to European companies</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 最高罰金為 1 萬歐元</span><span data-lang="en">B. Max fine is €10,000</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 賦予資料主體「被遺忘權」與「資料可攜權」，違者最高罰全球營收 4%</span><span data-lang="en">C. Grants data subjects "right to be forgotten" and "data portability", fines up to 4% of global revenue</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 與 AI 無關</span><span data-lang="en">D. Unrelated to AI</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Henrietta Lacks 同意了組織採集</span><span data-lang="en">A. Henrietta Lacks consented to tissue collection</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. HeLa 對科學影響很小</span><span data-lang="en">B. HeLa had little scientific impact</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 細胞在無同意下被取走，家族直到 1973 才得知，2013 才有 NIH 完整協議</span><span data-lang="en">C. Cells taken without consent; family only learned in 1973; full NIH agreement only in 2013</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 家族獲得了所有商業利潤分成</span><span data-lang="en">D. The family received all commercial profits</span></div>
 </div><div class="quiz-feedback" id="fb1"></div></div>
 
 <div class="quiz-q" data-answer="1">
-<p data-lang="zh">2. 2024 Google 量子晶片「Willow」最重要的突破是？</p>
-<p data-lang="en">2. The key breakthrough of Google's 2024 Willow quantum chip is?</p>
+<p data-lang="zh">2. 在 EU AI Act 下，「醫療診斷 AI」屬於哪一級？</p>
+<p data-lang="en">2. Under the EU AI Act, "medical diagnostic AI" is which tier?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 第一次成功運行 Bitcoin 挖礦</span><span data-lang="en">A. First to mine Bitcoin</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 首次達到「below threshold」錯誤更正——增加 qubit 反而降低錯誤率</span><span data-lang="en">B. First to achieve "below-threshold" error correction — adding qubits lowers error rate</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 取代了 GPU</span><span data-lang="en">C. Replaced GPUs</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 破解了 RSA-2048</span><span data-lang="en">D. Broke RSA-2048</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Unacceptable（禁止）</span><span data-lang="en">A. Unacceptable (banned)</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. High-risk：須 conformity assessment、CE、人為監督、紀錄 10 年</span><span data-lang="en">B. High-risk: conformity assessment, CE marking, human oversight, 10-yr logs</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Limited risk：只需揭露是 AI</span><span data-lang="en">C. Limited risk: just disclose it's AI</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Minimal risk：完全自願</span><span data-lang="en">D. Minimal risk: fully voluntary</span></div>
 </div><div class="quiz-feedback" id="fb2"></div></div>
 
-<div class="quiz-q" data-answer="0">
-<p data-lang="zh">3. 關於 MIT、Apache 2.0 與 GPL v3 開源授權，下列敘述何者正確？</p>
-<p data-lang="en">3. Which statement about MIT, Apache 2.0, and GPL v3 is correct?</p>
+<div class="quiz-q" data-answer="3">
+<p data-lang="zh">3. 「Project 沒附 LICENSE 檔」意味著什麼？</p>
+<p data-lang="en">3. A project on GitHub with no LICENSE file means what?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. MIT 與 Apache 2.0 是寬鬆授權，可閉源使用；GPL v3 是著作傳染，衍生作品也須以 GPL 開源</span><span data-lang="en">A. MIT and Apache 2.0 are permissive (can be used in closed source); GPL v3 is copyleft (derivatives must also be GPL)</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 三者皆禁止商業使用</span><span data-lang="en">B. All three forbid commercial use</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. GPL 比 MIT 更寬鬆</span><span data-lang="en">C. GPL is more permissive than MIT</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. MIT 授權與專利完全無關，Apache 2.0 反而禁止專利</span><span data-lang="en">D. MIT has nothing to do with patents and Apache 2.0 forbids them</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 完全公眾領域，誰都能用</span><span data-lang="en">A. Public domain, anyone can use</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 自動 MIT License</span><span data-lang="en">B. Auto-MIT</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 自動 Apache 2.0</span><span data-lang="en">C. Auto-Apache 2.0</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. ALL RIGHTS RESERVED——他人嚴格說不能合法使用</span><span data-lang="en">D. ALL RIGHTS RESERVED — others technically can't use it</span></div>
 </div><div class="quiz-feedback" id="fb3"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">4. Obermeyer et al. 2019 (Science) 揭露的偏見根源是？</p>
+<p data-lang="en">4. The bias source uncovered by Obermeyer et al. 2019 (Science) was:</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. CPU 計算錯誤</span><span data-lang="en">A. CPU computation error</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 黑色皮膚的影像不清楚</span><span data-lang="en">B. Darker skin images unclear</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 演算法用「醫療支出」作為「健康需求」代理，導致系統性低估黑人病患的疾病嚴重度</span><span data-lang="en">C. The algorithm used "healthcare spending" as a proxy for "need", systematically underestimating illness severity in Black patients</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 資料量不夠</span><span data-lang="en">D. Not enough data</span></div>
+</div><div class="quiz-feedback" id="fb4"></div></div>
+
+<div class="quiz-q" data-answer="0">
+<p data-lang="zh">5. GDPR 第 22 條（不被自動化決策約束）對 deep learning 的最大挑戰是？</p>
+<p data-lang="en">5. The biggest challenge GDPR Article 22 poses to deep learning is:</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 需要提供「人為審查 + 解釋權」——但黑盒 DL 模型如何「解釋」？因此 SHAP/LIME/Integrated Gradients 等 XAI 工具成為合規必備</span><span data-lang="en">A. Requires "human review + right to explanation" — but how do you "explain" a black-box DL? XAI tools (SHAP, LIME, Integrated Gradients) became compliance-essential</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 完全禁止任何自動化決策</span><span data-lang="en">B. Bans all automated decisions</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 要求所有模型開源</span><span data-lang="en">C. Requires all models be open source</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 限制只能用線性模型</span><span data-lang="en">D. Restricts to linear models only</span></div>
+</div><div class="quiz-feedback" id="fb5"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">6. Therac-25 輻射過量事件最核心的教訓是？</p>
+<p data-lang="en">6. The core lesson of the Therac-25 radiation overdose incident is?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 醫療設備不應數位化</span><span data-lang="en">A. Medical devices shouldn't be digital</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 應全面禁用 X-ray</span><span data-lang="en">B. Ban X-rays entirely</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 軟體 race condition 可致人命；硬體互鎖、獨立 QA 軟體、安全分析是工程倫理必修——「軟體錯誤可以殺人」</span><span data-lang="en">C. Software race conditions can kill; hardware interlocks, independent QA software, and safety analysis are now ethics mandates — "software bugs can kill"</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 病患不該相信醫師</span><span data-lang="en">D. Patients should distrust doctors</span></div>
+</div><div class="quiz-feedback" id="fb6"></div></div>
+
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">7. 2020 UK A-level 演算法評分事件最重要的政策教訓是？</p>
+<p data-lang="en">7. The most important policy lesson of the 2020 UK A-level algorithm grading is?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 不該用 AI</span><span data-lang="en">A. Don't use AI</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 演算法決策需有透明標準與「上訴/人為審查」管道，否則放大歷史不平等。學生抗議推動英國政府撤回演算法</span><span data-lang="en">B. Algorithmic decisions need transparent criteria and an "appeal / human review" channel — otherwise they amplify historical inequity. Student protests forced the UK government to scrap the algorithm</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 應該擴大資料量</span><span data-lang="en">C. Use more data</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 該全面改用人工評分</span><span data-lang="en">D. Switch fully back to humans</span></div>
+</div><div class="quiz-feedback" id="fb7"></div></div>
 </section>
 
+<!-- ===== Section 12: 💭 Discussion ===== -->
+<section class="section" style="background:#fef3c7;border-radius:14px;padding:32px;">
+<div class="section-label">💭 <span data-zh="延伸思考" data-en="DISCUSSION">最後的反思</span></div>
+<h2 data-zh="十一、延伸思考與終章反思" data-en="XI. Discussion & Final Reflection">十一、延伸思考</h2>
+
+<div data-lang="zh"><p>恭喜你走到 16 章的最後！這些問題沒有「標準答案」——它們是邀請你開始一輩子的對話。</p></div>
+<div data-lang="en"><p>Congratulations on reaching the end of 16 chapters! These questions have no "correct answer" — they invite you to start a lifelong conversation.</p></div>
+
+<ol style="margin-left:20px;line-height:1.9;">
+<li data-lang="zh"><strong>AI 創作的著作權歸誰？</strong>2023 美國著作權局裁定「純 AI 生成不享版權」；2024 多國法院仍在審理。當 AI 寫的 code 或產生的圖片獲利豐厚——誰擁有它？訓練資料的作者？開發 AI 的公司？輸入 prompt 的使用者？</li>
+<li data-lang="en"><strong>Who owns AI-generated work?</strong> The US Copyright Office ruled in 2023 that "pure AI output has no copyright"; courts globally are still hearing 2024 cases. When AI-written code or images make millions — who owns it? The training-data authors? The AI company? The prompter?</li>
+
+<li data-lang="zh"><strong>全球 AI 治理可能嗎？</strong>EU AI Act 是區域性的；GPAI 規範對中國模型 (DeepSeek、Qwen) 有效嗎？聯合國 2024 通過首個 AI 決議，但無強制力。如果各國各行其是，會出現「<em>AI 監管套利</em>」（在最寬鬆地區開發）。你認為全球治理的可能路徑是？</li>
+<li data-lang="en"><strong>Is global AI governance possible?</strong> The EU AI Act is regional. Does GPAI regulation reach Chinese models (DeepSeek, Qwen)? The UN passed its first AI resolution in 2024 but it's non-binding. If countries diverge, "AI regulatory arbitrage" emerges. What viable global-governance path do you see?</p></li>
+
+<li data-lang="zh"><strong>「Right to Explanation」會限制 deep learning 嗎？</strong>如果每個臨床 AI 都必須能「解釋為什麼診斷你癌症」，黑盒 DL 必須改為可解釋模型嗎？還是 SHAP / LIME 等事後解釋就夠？這會不會反而讓 AI 部署更保守、進步更慢？</li>
+<li data-lang="en"><strong>Will "right to explanation" cripple deep learning?</strong> If every clinical AI must "explain why you have cancer", do we have to abandon black-box DL for interpretable models? Or are post-hoc SHAP/LIME enough? Could this slow AI deployment overall?</p></li>
+
+<li data-lang="zh"><strong>我願意分享我的全基因組嗎？</strong>個人題：若 NIH All of Us（或台灣國家級生醫資料庫）邀請你貢獻 WGS + 臨床表型，你會嗎？為什麼會 / 不會？這個決定會如何影響你 50 年後的子女？</li>
+<li data-lang="en"><strong>Would I share my own genome?</strong> Personal question: if NIH All of Us (or Taiwan's planned national biobank) invited you to contribute WGS + clinical phenotype, would you? Why or why not? How does this decision affect your children 50 years from now?</p></li>
+
+<li data-lang="zh"><strong>從本課程帶走的一句話：</strong>從計算機歷史的 ENIAC 到本章的 Henrietta Lacks——16 章告訴你的最重要事情是什麼？寫下一句你會記得 10 年的話，分享給未來的自己。</li>
+<li data-lang="en"><strong>One sentence from this course:</strong> From ENIAC in Chapter 1 to Henrietta Lacks here in Chapter 16 — what's the single most important thing you'll take away? Write one sentence you'll still remember in 10 years, and share it with your future self.</li>
+
+<li data-lang="zh"><strong>50 年後計算機看起來會怎樣？</strong>當下我們已看到量子糾錯臨界、神經型晶片 (Intel Loihi, IBM NorthPole)、DNA 儲存（微軟 +華盛頓大學）。50 年後最可能延續至今的技術是什麼？最可能完全消失或改變的是？</li>
+<li data-lang="en"><strong>What will computing look like in 50 years?</strong> We now see quantum error correction at threshold, neuromorphic chips (Intel Loihi, IBM NorthPole), and DNA storage (Microsoft + UW). Which of today's technologies are most likely to still be around in 50 years? Which will vanish or be unrecognizable?</li>
+
+<li data-lang="zh"><strong>對自己的工程實踐立下一個承諾：</strong>挑一個你未來 12 個月會做的<strong>具體</strong>倫理行動——例如「為每個 ML 專案做 disaggregated evaluation」、「公司 OSS 一律加 LICENSE」、「拒絕參與設計不能審計的醫療 AI」。寫下來、告訴一位同事，請對方半年後問你是否做到。</li>
+<li data-lang="en"><strong>Make one engineering-ethics commitment to yourself:</strong> pick a <strong>concrete</strong> action you'll take in the next 12 months — e.g., "run disaggregated evaluation on every ML project", "always add a LICENSE to company OSS", "decline to design clinical AI without auditability". Write it down, tell a colleague, and ask them to check in 6 months from now.</li>
+
+<li data-lang="zh"><strong>強制醫療資料端到端加密 vs AI 輔助診斷的權衡：</strong>有人主張所有 EHR + 基因組必須端到端加密。但這會讓 AI 輔助診斷、跨院 referral、population research 變慢甚至無法執行。<strong>同態加密、聯邦學習、安全多方計算</strong>能不能成為兩全方案？你願犧牲多少效能換隱私？</li>
+<li data-lang="en"><strong>Mandatory E2E encryption vs AI-assisted diagnosis trade-off:</strong> Some argue all EHRs + genomes must be end-to-end encrypted. But this slows AI diagnosis, cross-hospital referral, and population research. Can <strong>homomorphic encryption, federated learning, secure multi-party compute</strong> bridge the gap? How much performance would you sacrifice for privacy?</li>
+</ol>
+
+<div style="margin-top:24px;padding:18px 24px;background:var(--c-surface);border-radius:10px;border-left:4px solid var(--c-accent);">
+<p data-lang="zh" style="margin:0;font-style:italic;color:var(--c-ink);"><strong>🎓 一路至此：</strong>從 Charles Babbage 的差分機到量子糾錯，從邏輯閘到 Transformer——你已具備理解現代計算世界的詞彙與框架。接下來不是「畢業」，是「開始」。歡迎加入這場橫跨工程、生命科學、倫理、社會的長對話。</p>
+<p data-lang="en" style="margin:0;font-style:italic;color:var(--c-ink);"><strong>🎓 You've made it:</strong> from Babbage's Difference Engine to quantum error correction, from logic gates to Transformers — you now have the vocabulary and frameworks to understand the modern computing world. This isn't graduation; it's the start. Welcome to the long conversation across engineering, life science, ethics, and society.</p>
+</div>
+</section>
+
+<!-- ===== Page Nav ===== -->
 <nav class="page-nav">
-<a href="cloud-iot.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 15: 雲端、邊緣與 IoT" data-en="Ch 15: Cloud, Edge &amp; IoT">Ch 15: 雲端、邊緣與 IoT</span></a>
-<a href="references/index.html"><span class="nav-dir" data-zh="參考資料 →" data-en="References →">參考資料 →</span><span class="nav-title" data-zh="參考資料" data-en="References">參考資料</span></a>
+<a href="cloud-iot.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 15: 雲端、邊緣與 IoT" data-en="Ch 15: Cloud, Edge & IoT">Ch 15: 雲端、邊緣與 IoT</span></a>
+<a href="references/index.html"><span class="nav-dir" data-zh="參考資料 →" data-en="References →">參考資料 →</span><span class="nav-title">References</span></a>
 </nav>
 </main>
 <footer class="site-footer">© Charlene — Introduction to Computer Science · Interactive Tutorial</footer>
@@ -253,24 +601,88 @@ gap = <span class="func">demographic_parity_difference</span>(y_te, y_pred, sens
 window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
 function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
 
-// Quantum qubit count growth (physical qubits, public roadmaps)
-const qubitData = [
-  {y:2016, n:'IBM 5Q',          c:5},
-  {y:2017, n:'IBM 16Q',         c:16},
-  {y:2019, n:'Google Sycamore', c:53},
-  {y:2021, n:'IBM Eagle',       c:127},
-  {y:2022, n:'IBM Osprey',      c:433},
-  {y:2023, n:'IBM Condor',      c:1121},
-  {y:2024, n:'Google Willow',   c:105},   // 重點不在數量,是 below-threshold
-  {y:2025, n:'IBM Heron',       c:156},
-  {y:2026, n:'IBM Nighthawk',   c:120}
-];
-new Chart(document.getElementById('qubitChart'),{type:'line',data:{labels:qubitData.map(d=>d.y),datasets:[
-  {label:'Physical qubits (public roadmap)',data:qubitData.map(d=>d.c),
-   borderColor:'rgba(29,78,216,1)',backgroundColor:'rgba(29,78,216,.15)',tension:.25,fill:true,pointRadius:6}
-]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'},tooltip:{callbacks:{label:(c)=>qubitData[c.dataIndex].n+': '+c.raw+' qubits'}}},scales:{y:{type:'logarithmic',min:1,max:2000,title:{display:true,text:'Physical qubits (log scale)'}}}}});
+// ---- Quantum Qubit Timeline Chart ----
+const qYears = [2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026];
+new Chart(document.getElementById('qChart'),{type:'line',data:{labels:qYears,datasets:[
+  {label:'IBM (Superconducting)',data:[5,17,50,53,65,127,433,1121,1386,5000,null],borderColor:'rgb(29,78,216)',backgroundColor:'rgba(29,78,216,.15)',tension:.3,fill:false},
+  {label:'Google (Superconducting)',data:[null,9,72,72,72,null,null,70,105,null,null],borderColor:'rgb(217,119,6)',backgroundColor:'rgba(217,119,6,.15)',tension:.3,fill:false},
+  {label:'IonQ / Quantinuum (Trapped ion)',data:[null,null,11,11,32,56,32,32,56,64,null],borderColor:'rgb(5,150,105)',backgroundColor:'rgba(5,150,105,.15)',tension:.3,fill:false},
+  {label:'Origin Quantum (China)',data:[null,null,null,null,null,24,72,72,72,128,null],borderColor:'rgb(168,85,247)',backgroundColor:'rgba(168,85,247,.15)',tension:.3,fill:false}
+]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'},tooltip:{callbacks:{title:(c)=>'Year '+c[0].label}}},scales:{y:{type:'logarithmic',title:{display:true,text:'Qubits (log scale)'}}}}});
 
-const QF={zh:{q1_y:'GDPR 是世界最嚴格的個資法之一，適用於「處理歐盟資料主體」的所有公司，無論公司在哪。',q1_n:'答案 C。',q2_y:'Willow 首次達到 below threshold——加更多 qubit 反而降低錯誤率，是容錯量子運算的關鍵里程碑。',q2_n:'答案 B。',q3_y:'MIT / Apache 2.0 為寬鬆授權；GPL 為著作傳染（copyleft），衍生作品須一同開源。',q3_n:'答案 A。'},en:{q1_y:'GDPR is among the strictest privacy laws, applies to anyone processing EU-resident data, regardless of company location.',q1_n:'Answer: C.',q2_y:'Willow first achieved below-threshold error correction — adding qubits lowers error rate, a key fault-tolerant milestone.',q2_n:'Answer: B.',q3_y:'MIT / Apache 2.0 are permissive; GPL is copyleft — derivatives must be open source under GPL.',q3_n:'Answer: A.'}};
+// ---- EU AI Act scenario quiz ----
+const scenarios = [
+  {zh:'美國某 hospital 用 AI 自動判讀胸部 X 光肺結節',en:'A US hospital uses AI to auto-detect lung nodules on chest X-rays',ans:'high',exZH:'醫療診斷 = High-risk。需 conformity assessment + CE marking + 人為審查。',exEN:'Medical diagnosis = High-risk. Needs conformity assessment + CE + human oversight.'},
+  {zh:'政府計畫在地鐵站做即時人臉辨識監控',en:'A government plans real-time face recognition in metro stations',ans:'unacceptable',exZH:'即時公共空間人臉辨識 = Unacceptable，原則上禁止。',exEN:'Real-time public-space face recognition = Unacceptable (banned).'},
+  {zh:'網店用簡單推薦系統「買了 A 也買了 B」',en:'An online shop has "people who bought A also bought B" recommender',ans:'minimal',exZH:'低風險推薦 = Minimal risk，自願 Code of Conduct 即可。',exEN:'Low-risk recommender = Minimal risk; voluntary Code of Conduct.'},
+  {zh:'AI 聊天客服未告知用戶它不是真人',en:'An AI customer-service bot doesn\'t disclose it isn\'t human',ans:'limited',exZH:'聊天機器人 = Limited risk，必須明示是 AI。',exEN:'Chatbot = Limited risk; must disclose it\'s AI.'},
+  {zh:'廠商開發人臉表情監測「員工專注度」並影響升遷',en:'A vendor builds facial-emotion AI to monitor "employee focus" and affect promotions',ans:'high',exZH:'就業 + 表情情緒分類 = High-risk（且情緒辨識在工作場所許多情境是 Unacceptable）。',exEN:'Employment + emotion classification = High-risk (and emotion recognition in workplaces is Unacceptable in many cases).'}
+];
+const tiers = {unacceptable:{zh:'不可接受',en:'Unacceptable',color:'#dc2626'},high:{zh:'高',en:'High',color:'#f59e0b'},limited:{zh:'有限',en:'Limited',color:'#0ea5e9'},minimal:{zh:'最小',en:'Minimal',color:'#10b981'}};
+let scoreCount = 0; let answeredCount = 0;
+function renderScenarios(){
+  const wrap = document.getElementById('ethicsScenarios');
+  wrap.innerHTML='';
+  scenarios.forEach((s,i)=>{
+    const card = document.createElement('div');
+    card.style.cssText='background:var(--c-surface);border:1px solid var(--c-border-light);border-radius:10px;padding:14px;margin-bottom:12px;';
+    const q = document.createElement('p');
+    q.style.cssText='font-weight:600;margin-bottom:8px;color:var(--c-ink);';
+    q.innerHTML='<span class="lang-zh">'+(i+1)+'. '+s.zh+'</span><span class="lang-en" style="display:none;">'+(i+1)+'. '+s.en+'</span>';
+    card.appendChild(q);
+    const btnRow = document.createElement('div');
+    btnRow.style.cssText='display:flex;gap:6px;flex-wrap:wrap;';
+    Object.keys(tiers).forEach(t=>{
+      const b = document.createElement('button');
+      b.style.cssText='padding:6px 12px;border-radius:6px;border:1px solid '+tiers[t].color+';background:#fff;color:'+tiers[t].color+';font-weight:600;font-size:.82rem;cursor:pointer;';
+      b.innerHTML='<span class="lang-zh">'+tiers[t].zh+'</span><span class="lang-en" style="display:none;">'+tiers[t].en+'</span>';
+      b.addEventListener('click',()=>{
+        if(card.classList.contains('answered'))return;
+        card.classList.add('answered');
+        const ok = (t===s.ans);
+        if(ok){scoreCount++;b.style.background=tiers[t].color;b.style.color='#fff';}
+        else{b.style.background='#fee2e2';
+          // highlight correct
+          Array.from(btnRow.children).forEach(other=>{if(other.textContent.toLowerCase().includes(tiers[s.ans].en.toLowerCase()) || other.querySelector('.lang-zh').textContent===tiers[s.ans].zh){other.style.background=tiers[s.ans].color;other.style.color='#fff';}});
+        }
+        answeredCount++;
+        const fb = document.createElement('div');
+        fb.style.cssText='margin-top:8px;padding:8px 12px;border-radius:6px;background:'+(ok?'#d1fae5':'#fee2e2')+';color:'+(ok?'#065f46':'#991b1b')+';font-size:.85rem;';
+        fb.innerHTML=(ok?'✅ ':'❌ ')+'<span class="lang-zh">'+s.exZH+'</span><span class="lang-en" style="display:none;">'+s.exEN+'</span>';
+        card.appendChild(fb);
+        if(answeredCount===scenarios.length){
+          const r=document.getElementById('ethicsResult');
+          r.style.display='block';r.style.background='var(--c-accent-light)';r.style.color='var(--c-accent-dark)';
+          r.innerHTML='<span class="lang-zh">🎯 你答對 '+scoreCount+' / '+scenarios.length+' 題！</span><span class="lang-en" style="display:none;">🎯 You got '+scoreCount+' / '+scenarios.length+' correct!</span>';
+        }
+        if(I18n && I18n.apply) I18n.apply();
+      });
+      btnRow.appendChild(b);
+    });
+    card.appendChild(btnRow);
+    wrap.appendChild(card);
+  });
+  if(I18n && I18n.apply) I18n.apply();
+}
+renderScenarios();
+
+// ---- Quiz ----
+const QF={zh:{
+q1_y:'HeLa 案是知情同意與利益共享的標誌性反面教材；2013 年才有 NIH 完整協議。',q1_n:'答案 C。',
+q2_y:'醫療診斷 AI 屬於 High-risk，須做 conformity assessment、CE marking、人為監督、紀錄 10 年。',q2_n:'答案 B。',
+q3_y:'GitHub 沒 LICENSE 預設 ALL RIGHTS RESERVED，他人不能合法用——一定要加 LICENSE 檔。',q3_n:'答案 D。',
+q4_y:'Obermeyer 2019 揭露：用「醫療支出」當「健康需求」代理，導致系統性低估弱勢族群病情。',q4_n:'答案 C。',
+q5_y:'GDPR Art. 22 要求人為審查 + 解釋權；對黑盒 DL 是嚴峻挑戰，因此 SHAP/LIME 等 XAI 成為合規必備。',q5_n:'答案 A。',
+q6_y:'Therac-25 顯示軟體 race condition 可致命；自此 hardware interlock + 獨立 QA 軟體 + 安全分析成為工程倫理必修。「軟體錯誤可以殺人」。',q6_n:'答案 C。',
+q7_y:'UK A-level 演算法評分顯示演算法決策若無透明標準與上訴管道，會放大歷史不平等；學生抗議讓政府撤回。',q7_n:'答案 B。'},
+en:{
+q1_y:'HeLa is a textbook cautionary tale on informed consent and benefit sharing; the full NIH agreement came only in 2013.',q1_n:'Answer: C.',
+q2_y:'Medical diagnostic AI = High-risk: conformity assessment, CE, human oversight, 10-yr logs.',q2_n:'Answer: B.',
+q3_y:'No LICENSE on GitHub = ALL RIGHTS RESERVED by default; others can\'t legally use it — always add a LICENSE.',q3_n:'Answer: D.',
+q4_y:'Obermeyer 2019 showed: using "spending" as a proxy for "need" systematically underestimates illness in under-served groups.',q4_n:'Answer: C.',
+q5_y:'GDPR Art. 22 mandates human review + right to explanation; XAI tools (SHAP/LIME/IG) became compliance-essential for black-box DL.',q5_n:'Answer: A.',
+q6_y:'Therac-25 showed software race conditions can kill; hardware interlocks + independent QA software + safety analysis became engineering ethics mandates. "Software bugs can kill".',q6_n:'Answer: C.',
+q7_y:'The UK A-level case showed algorithmic decisions without transparent criteria and an appeal path amplify historical inequity; student protests forced the government to scrap it.',q7_n:'Answer: B.'}};
 document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
 </script>
 </body></html>

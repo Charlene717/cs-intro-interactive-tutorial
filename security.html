@@ -12,223 +12,468 @@
 <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
 <header class="page-hero"><div class="step-badge">CHAPTER 13 / 16</div>
 <h1 data-zh="資訊安全與密碼學" data-en="Information Security & Cryptography">資訊安全與密碼學</h1>
-<p class="subtitle" data-lang="zh">從 CIA 三要素、AES/RSA、TLS 1.3 到 2026 年 NIST 後量子標準與 Zero Trust——學會在量子威脅時代保護資料。</p>
-<p class="subtitle" data-lang="en">From the CIA triad, AES/RSA, TLS 1.3 to 2026's NIST post-quantum standards and Zero Trust — protect data in the quantum era.</p>
+<p class="subtitle" data-lang="zh">從 Diffie-Hellman 1976 年寫下的革命性論文，到 2024 NIST 後量子標準——50 年的數學如何守護你的銀行、醫療紀錄與基因組。</p>
+<p class="subtitle" data-lang="en">From Diffie-Hellman's 1976 revolution to NIST's 2024 post-quantum standards — 50 years of math that protect your bank, medical records, and genome.</p>
 </header>
 <main class="content-wrap">
 
+<!-- ===== Section 1: Opening Story ===== -->
 <section class="section">
-<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
-<h2 data-zh="為什麼資安比以往任何時候都重要？" data-en="Why does security matter more than ever?">為什麼資安比以往任何時候都重要？</h2>
-<div data-lang="zh"><p>2025 全球資料外洩平均成本已達 <strong>488 萬美元</strong>（IBM Cost of a Breach 報告），勒索軟體攻擊每 11 秒發生一次。資安不是「IT 部門的問題」——它是任何接觸資料的人都必須懂的工程素養。</p>
-<p>資安的核心目標稱為 <strong>CIA 三要素</strong>：</p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>Confidentiality（機密性）</strong>：只有授權對象能讀取——靠加密。</li>
-<li><strong>Integrity（完整性）</strong>：資料未被竄改——靠 hash 與簽章。</li>
-<li><strong>Availability（可用性）</strong>：服務在需要時可用——靠備援與抗 DDoS。</li>
-</ul></div>
-<div data-lang="en"><p>In 2025 the average cost of a data breach hit <strong>USD 4.88 million</strong> (IBM Cost of a Breach report), and a ransomware attack occurs every 11 seconds. Security isn't "the IT team's job" — it's engineering literacy for anyone who touches data.</p>
-<p>The core goals are the <strong>CIA triad</strong>:</p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>Confidentiality</strong>: only authorized parties can read — via encryption.</li>
-<li><strong>Integrity</strong>: data has not been tampered with — via hashes and signatures.</li>
-<li><strong>Availability</strong>: service is reachable when needed — via redundancy and DDoS mitigation.</li>
-</ul></div>
+<div class="section-label" data-zh="開場故事" data-en="OPENING STORY">一段改寫世界的數學</div>
+<h2 data-zh="一、1976 年的一篇論文，讓今天的網路咖啡成為可能" data-en="I. The 1976 Paper That Made Today's Internet Possible">一、1976 年的一篇論文</h2>
+<div data-lang="zh">
+<p>1976 年 11 月，史丹佛大學兩位研究員 <strong>Whitfield Diffie</strong> 與 <strong>Martin Hellman</strong> 在 <em>IEEE Transactions on Information Theory</em> 發表了一篇論文，題目樸實到驚人：「<em>New Directions in Cryptography</em>」。</p>
+<p>在那之前，所有的加密都有一個致命假設——<strong>雙方必須先「面對面」交換一把共同的鑰匙</strong>。二戰時 Enigma 機器靠每天更換的金鑰本；冷戰時期 KGB 與 CIA 互派情報員手提箱送密碼。如果你今天想跟一個從未見過的陌生人安全通訊？不可能。</p>
+<p>Diffie-Hellman 用一個簡單卻天才的數學技巧（模指數運算的單向性）讓兩個陌生人能在公開頻道喊話、結束後卻共享一把只有他們知道的密鑰。竊聽全部對話的 NSA 也算不出來。</p>
+<p>50 年後的今天，你每買一杯網路咖啡（<strong>HTTPS</strong>）、解鎖手機（<strong>Secure Enclave</strong>）、看醫療紀錄、傳 LINE 訊息、刷實聯制——背後跑的都是這個數學。資安不是 IT 部門的工作，它是現代社會的<strong>基礎設施</strong>。</p>
+</div>
+<div data-lang="en">
+<p>In November 1976, two Stanford researchers — <strong>Whitfield Diffie</strong> and <strong>Martin Hellman</strong> — published a paper in <em>IEEE Transactions on Information Theory</em> with a strikingly plain title: "<em>New Directions in Cryptography</em>".</p>
+<p>Before that, every encryption scheme had one fatal assumption: <strong>both parties must meet face-to-face first to share a key</strong>. WWII Enigma rotated daily codebooks; Cold-War KGB/CIA agents flew across continents to deliver briefcases of keys. Want to talk privately with a stranger you've never met? Impossible.</p>
+<p>Diffie-Hellman's brilliant trick (the one-way nature of modular exponentiation) let two strangers shout messages over a public channel and walk away sharing a secret. The NSA could log every byte and still not compute the key.</p>
+<p>Fifty years later, every internet coffee purchase (<strong>HTTPS</strong>), every phone unlock (<strong>Secure Enclave</strong>), every medical record, LINE message, and contact-tracing log runs on this math. Security isn't an IT-team chore; it's the <strong>infrastructure of modern life</strong>.</p>
+</div>
 <div class="callout tip"><span class="callout-icon">💡</span><div>
-<span data-lang="zh"><strong>STRIDE 威脅模型：</strong>微軟提出，涵蓋 Spoofing（偽冒）、Tampering（竄改）、Repudiation（否認）、Information disclosure（洩漏）、Denial of service（阻斷）、Elevation of privilege（提權）——設計系統時逐項自問是最常見的威脅建模手法。</span>
-<span data-lang="en"><strong>STRIDE threat model:</strong> Microsoft's checklist — Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege. Walking through each category during design is the most common threat-modeling technique.</span>
+<span data-lang="zh"><strong>2025 年的代價：</strong>IBM <em>Cost of a Data Breach</em> 報告指出，2025 全球資料外洩事件的平均成本已達 <strong>488 萬美元</strong>，醫療業更高達 1,098 萬。勒索軟體攻擊每 <strong>11 秒</strong>發生一次。「不懂資安」在今天的工程界等同於「不會綁安全帶」。</span>
+<span data-lang="en"><strong>The 2025 price tag:</strong> IBM's <em>Cost of a Data Breach</em> report puts the global average at <strong>USD 4.88 M</strong>, with healthcare at 10.98 M. A ransomware attack occurs every <strong>11 seconds</strong>. "Not knowing security" today is the engineering equivalent of "not knowing how to fasten a seatbelt".</span>
 </div></div>
 </section>
 
+<!-- ===== Section 2: Core Concepts (Beginner) ===== -->
 <section class="section">
-<div class="section-label" data-zh="對稱與非對稱加密" data-en="SYMMETRIC & ASYMMETRIC">加密兩大家族</div>
-<h2 data-zh="一、對稱 vs 非對稱加密" data-en="I. Symmetric vs Asymmetric Cryptography">一、對稱 vs 非對稱加密</h2>
-<table class="comp-table">
-<thead><tr><th data-zh="類別" data-en="Type">類別</th><th data-zh="代表演算法" data-en="Algorithms">代表演算法</th><th data-zh="金鑰" data-en="Keys">金鑰</th><th data-zh="速度" data-en="Speed">速度</th><th data-zh="典型用途" data-en="Use">典型用途</th></tr></thead>
-<tbody>
-<tr><td data-lang="zh">對稱（Symmetric）</td><td data-lang="en">Symmetric</td><td><strong>AES-256</strong>、ChaCha20、3DES</td><td data-lang="zh">同一把金鑰加密/解密</td><td data-lang="en">Same key encrypts/decrypts</td><td data-lang="zh">快（GB/s 等級）</td><td data-lang="en">Fast (GB/s)</td><td data-lang="zh">大量資料加密、磁碟加密</td><td data-lang="en">Bulk data, disk encryption</td></tr>
-<tr><td data-lang="zh">非對稱（Asymmetric）</td><td data-lang="en">Asymmetric</td><td><strong>RSA-2048/4096</strong>、ECC (P-256, Ed25519)、Diffie-Hellman</td><td data-lang="zh">公鑰加密、私鑰解密</td><td data-lang="en">Public key encrypts, private key decrypts</td><td data-lang="zh">慢（MB/s 等級）</td><td data-lang="en">Slow (MB/s)</td><td data-lang="zh">金鑰交換、數位簽章</td><td data-lang="en">Key exchange, digital signatures</td></tr>
-</tbody></table>
+<div class="section-label" data-zh="核心概念" data-en="CORE CONCEPTS">給初學者的入口</div>
+<h2 data-zh="二、CIA 三要素與密碼學三大家族" data-en="II. The CIA Triad and Three Crypto Families">二、CIA 三要素</h2>
+<div data-lang="zh"><p>資安教科書都會從 <strong>CIA 三要素</strong>開始——這是 1980 年代美國國防部首次正式提出的目標，至今仍是業界共識。</p></div>
+<div data-lang="en"><p>Every security textbook starts with the <strong>CIA triad</strong>, first formalized by the US DoD in the 1980s and still the industry consensus.</p></div>
 
-<div data-lang="zh"><p><strong>AES (Advanced Encryption Standard)：</strong>2001 年 NIST 標準化，使用 128/192/256-bit 金鑰、區塊大小固定 128-bit。<strong>AES-256</strong> 至今未被破解，是大多數 VPN、磁碟加密、HTTPS 的底層。</p>
-<p><strong>ChaCha20：</strong>串流密碼 (stream cipher)，由 Daniel Bernstein 設計，在沒有 AES 硬體加速的行動裝置上比 AES 快。Google QUIC / TLS 1.3 將其列為標準。</p>
-<p><strong>RSA vs ECC：</strong>RSA-2048 相當於 ECC-224 的安全強度，但 ECC 金鑰短得多（速度也更快）。<strong>Ed25519</strong> 是 SSH、Tor、Signal 主流。</p>
-<p><strong>Diffie-Hellman 金鑰交換：</strong>兩方在公開頻道交換訊息後得出同一把對稱金鑰，竊聽者卻算不出——TLS 1.3 強制使用 ECDHE（橢圓曲線版）。</p></div>
-<div data-lang="en"><p><strong>AES:</strong> standardized by NIST in 2001, with 128/192/256-bit keys and fixed 128-bit blocks. <strong>AES-256</strong> remains unbroken and underpins most VPNs, disk encryption, and HTTPS.</p>
-<p><strong>ChaCha20:</strong> a stream cipher by Daniel Bernstein. On mobile CPUs without AES-NI it outpaces AES; Google's QUIC and TLS 1.3 adopt it as a standard.</p>
-<p><strong>RSA vs ECC:</strong> RSA-2048 has roughly the same strength as ECC-224, but ECC keys are far smaller and faster. <strong>Ed25519</strong> dominates SSH, Tor, and Signal.</p>
-<p><strong>Diffie-Hellman key exchange:</strong> two parties exchange public values and derive the same secret key; an eavesdropper cannot. TLS 1.3 mandates ECDHE (elliptic-curve variant).</p></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="雜湊與簽章" data-en="HASH & SIGNATURES">Hash 與數位簽章</div>
-<h2 data-zh="二、Hash 函式、簽章與 PKI" data-en="II. Hash Functions, Signatures & PKI">二、Hash 函式、簽章與 PKI</h2>
-<div data-lang="zh"><p><strong>密碼學雜湊函式 (Cryptographic hash)</strong> 將任意長度資料壓縮為固定長度的「指紋」。三大特性：</p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>單向性 (one-way)</strong>：從 hash 反推原文在計算上不可行。</li>
-<li><strong>抗碰撞 (collision-resistant)</strong>：不易找出兩個不同輸入產生相同 hash。</li>
-<li><strong>雪崩效應 (avalanche)</strong>：輸入改 1 個 bit，輸出約有一半 bit 翻轉。</li>
-</ul></div>
-<div data-lang="en"><p>A <strong>cryptographic hash function</strong> compresses arbitrary input into a fixed-size "fingerprint". Three properties:</p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>One-way</strong>: infeasible to invert.</li>
-<li><strong>Collision-resistant</strong>: hard to find two inputs with the same hash.</li>
-<li><strong>Avalanche</strong>: flipping one input bit flips ~half the output bits.</li>
-</ul></div>
-
-<table class="comp-table">
-<thead><tr><th data-zh="演算法" data-en="Algorithm">演算法</th><th data-zh="輸出長度" data-en="Output">輸出長度</th><th data-zh="現況" data-en="Status">現況</th><th data-zh="用途" data-en="Use">用途</th></tr></thead>
-<tbody>
-<tr><td>MD5</td><td>128-bit</td><td data-lang="zh">已破，禁用</td><td data-lang="en">Broken, do not use</td><td data-lang="zh">僅作 checksum</td><td data-lang="en">Checksums only</td></tr>
-<tr><td>SHA-1</td><td>160-bit</td><td data-lang="zh">已破 (Google 2017)</td><td data-lang="en">Broken (Google 2017)</td><td>—</td></tr>
-<tr><td><strong>SHA-256</strong></td><td>256-bit</td><td data-lang="zh">安全</td><td data-lang="en">Secure</td><td data-lang="zh">TLS、Bitcoin、Git</td><td data-lang="en">TLS, Bitcoin, Git</td></tr>
-<tr><td>SHA-3 (Keccak)</td><td>224–512-bit</td><td data-lang="zh">安全（NIST 2015）</td><td data-lang="en">Secure (NIST 2015)</td><td data-lang="zh">後備方案</td><td data-lang="en">Backup standard</td></tr>
-<tr><td><strong>Argon2</strong></td><td data-lang="zh">可調</td><td data-lang="en">Tunable</td><td data-lang="zh">2015 密碼雜湊冠軍</td><td data-lang="en">2015 PHC winner</td><td data-lang="zh">儲存使用者密碼</td><td data-lang="en">Password storage</td></tr>
-</tbody></table>
-
-<div data-lang="zh"><p><strong>數位簽章流程：</strong>① 對訊息算 hash；② 用<strong>私鑰</strong>加密 hash → 簽章；③ 驗證者用<strong>公鑰</strong>解密簽章，與自己算的 hash 比對。能保證來源 + 完整性 + 不可否認。</p>
-<p><strong>PKI / X.509 / Let's Encrypt：</strong>公鑰必須有人「認證」屬於誰。憑證授權機構 (CA) 簽發 <strong>X.509 憑證</strong>，瀏覽器內建根 CA 清單。<strong>Let's Encrypt</strong>（2016 起免費自動化）已簽發超過 50 億張憑證，是 HTTPS 普及的最大功臣。</p></div>
-<div data-lang="en"><p><strong>Digital signature flow:</strong> (1) hash the message; (2) encrypt the hash with your <strong>private key</strong> → signature; (3) verifier decrypts with your <strong>public key</strong> and compares. Provides authenticity + integrity + non-repudiation.</p>
-<p><strong>PKI / X.509 / Let's Encrypt:</strong> public keys need attestation. Certificate Authorities (CAs) issue <strong>X.509 certs</strong>; browsers ship a root-CA list. <strong>Let's Encrypt</strong> (free + automated since 2016) has issued 5 billion+ certs and is the main reason HTTPS is now ubiquitous.</p></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="TLS" data-en="TLS">TLS 1.3 與 HTTPS</div>
-<h2 data-zh="三、TLS 1.3 握手：HTTPS 怎麼運作" data-en="III. TLS 1.3 Handshake: How HTTPS Works">三、TLS 1.3 握手</h2>
-<div class="workflow">
-<div class="workflow-step" data-step="1"><h4>ClientHello</h4>
-<div data-lang="zh"><p>瀏覽器送出支援的密碼套件、隨機數、ECDHE 公鑰份額。</p></div>
-<div data-lang="en"><p>Browser sends supported cipher suites, random, and ECDHE key share.</p></div></div>
-<div class="workflow-step" data-step="2"><h4>ServerHello + Cert</h4>
-<div data-lang="zh"><p>伺服器選一組密碼套件、附上 X.509 憑證鏈、自己的 ECDHE 公鑰份額。雙方各自算出共享密鑰。</p></div>
-<div data-lang="en"><p>Server picks cipher suite, sends X.509 chain and its own ECDHE share. Both sides derive the shared secret.</p></div></div>
-<div class="workflow-step" data-step="3"><h4>Finished</h4>
-<div data-lang="zh"><p>雙方用衍生金鑰加密一條「Finished」訊息驗證對方真的解出來了。TLS 1.3 僅需 <strong>1-RTT</strong>（甚至 0-RTT）就完成。</p></div>
-<div data-lang="en"><p>Both sides exchange encrypted "Finished" messages to prove they derived the same key. TLS 1.3 needs just <strong>1-RTT</strong> (or 0-RTT resumption).</p></div></div>
-<div class="workflow-step" data-step="4"><h4>Application data</h4>
-<div data-lang="zh"><p>之後所有 HTTP 內容皆以對稱加密 (AES-GCM 或 ChaCha20-Poly1305) 保護。</p></div>
-<div data-lang="en"><p>All subsequent HTTP traffic is protected with symmetric AEAD (AES-GCM or ChaCha20-Poly1305).</p></div></div>
-</div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="OWASP" data-en="OWASP">OWASP Top 10 2025</div>
-<h2 data-zh="四、互動：OWASP Top 10 2025 vs 2021" data-en="IV. Interactive: OWASP Top 10 2025 vs 2021">四、OWASP Top 10 2025 排名變化</h2>
-<div data-lang="zh"><p>OWASP Top 10 是「Web 應用最危險的 10 類弱點」清單。2025 版改動重點：<strong>A01 Broken Access Control 仍居首</strong>；<strong>A02 升為 Security Misconfiguration</strong>（原為加密失敗）；<strong>A06 改為 Software Supply Chain Failures</strong>（涵蓋 SolarWinds 級事件）；<strong>A10 新增 Mishandling of Exceptional Conditions</strong>。</p></div>
-<div data-lang="en"><p>OWASP Top 10 lists the most dangerous web-app risks. Key 2025 changes: <strong>A01 Broken Access Control still #1</strong>; <strong>A02 elevated to Security Misconfiguration</strong> (replacing crypto failures); <strong>A06 renamed Software Supply Chain Failures</strong> (covers SolarWinds-class events); <strong>A10 new Mishandling of Exceptional Conditions</strong>.</p></div>
-<div class="interactive-panel">
-<div class="chart-container"><canvas id="owaspChart"></canvas></div>
-<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">資料來源：OWASP Top 10 2025 草案（owasp.org）</span><span data-lang="en">Source: OWASP Top 10 2025 release candidate (owasp.org)</span></p>
+<div class="card-grid cols-3">
+<div class="card"><div class="card-icon">🤐</div><h4>Confidentiality 機密性</h4>
+<div data-lang="zh"><p>只有授權對象能讀到內容。靠<strong>加密 (encryption)</strong>達成。例：你的 LINE 對話只有對方解得開、磁碟加密讓筆電遺失也不外洩。</p></div>
+<div data-lang="en"><p>Only authorized parties can read the content — achieved by <strong>encryption</strong>. Examples: LINE chats only your friend can decode; full-disk encryption keeps your laptop's data safe even if stolen.</p></div></div>
+<div class="card"><div class="card-icon">✅</div><h4>Integrity 完整性</h4>
+<div data-lang="zh"><p>資料未被篡改。靠<strong>雜湊 (hash)</strong>與<strong>數位簽章</strong>達成。例：軟體更新檔附 SHA-256，Git 用 commit hash 偵測竄改。</p></div>
+<div data-lang="en"><p>Data has not been tampered with — achieved by <strong>hashes</strong> and <strong>digital signatures</strong>. Examples: software updates ship a SHA-256; Git uses commit hashes to detect tampering.</p></div></div>
+<div class="card"><div class="card-icon">⚡</div><h4>Availability 可用性</h4>
+<div data-lang="zh"><p>合法使用者需要時服務可用。靠<strong>備援、抗 DDoS、災難復原</strong>達成。例：銀行網銀承諾 99.99% uptime；Cloudflare 緩衝 DDoS 攻擊。</p></div>
+<div data-lang="en"><p>Service is reachable when legitimate users need it — via <strong>redundancy, DDoS mitigation, disaster recovery</strong>. Examples: banks promise 99.99 % uptime; Cloudflare absorbs DDoS storms.</p></div></div>
 </div>
 
-<div class="callout danger"><span class="callout-icon">🚨</span><div>
-<div data-lang="zh"><strong>常見攻擊速覽：</strong>SQL Injection（注入惡意 SQL，用 prepared statement 防）、XSS（注入惡意 JS，用 CSP + 跳脫防）、CSRF（盜用 session，用 SameSite cookie 防）、Phishing（社交工程，用 MFA 與安全鑰匙防）、Ransomware（勒索軟體，定期離線備份）、Supply Chain（投毒套件，用 SBOM + lockfile）。</div>
-<div data-lang="en"><strong>Attack cheat sheet:</strong> SQL Injection (prepared statements), XSS (CSP + escaping), CSRF (SameSite cookies), Phishing (MFA + security keys), Ransomware (offline backups), Supply Chain (SBOM + lockfiles).</div>
-</div></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="後量子" data-en="POST-QUANTUM">後量子密碼學</div>
-<h2 data-zh="五、後量子密碼學 (PQC)" data-en="V. Post-Quantum Cryptography (PQC)">五、後量子密碼學</h2>
-<div data-lang="zh"><p>足夠大的量子電腦可用 <strong>Shor 演算法</strong>於數小時內破解 RSA-2048 與 ECC。NIST 自 2016 啟動 PQC 競賽，2024 年公布前三套標準，<strong>2026 起政府與大型雲端業者陸續部署</strong>：</p></div>
-<div data-lang="en"><p>A large enough quantum computer could use <strong>Shor's algorithm</strong> to break RSA-2048 and ECC in hours. NIST started its PQC competition in 2016 and finalized the first three standards in 2024; <strong>government and hyperscaler deployment begins 2026</strong>:</p></div>
-
+<h3 data-zh="密碼學的三大工具家族" data-en="The three crypto tool families">密碼學的三大工具家族</h3>
 <table class="comp-table">
-<thead><tr><th data-zh="新標準" data-en="Standard">新標準</th><th data-zh="原競賽名" data-en="Competition name">原競賽名</th><th data-zh="類型" data-en="Type">類型</th><th data-zh="用途" data-en="Use">用途</th></tr></thead>
+<thead><tr><th data-zh="家族" data-en="Family">家族</th><th data-zh="代表演算法" data-en="Algorithms">代表演算法</th><th data-zh="金鑰" data-en="Keys">金鑰</th><th data-zh="速度" data-en="Speed">速度</th><th data-zh="典型用途" data-en="Typical use">典型用途</th></tr></thead>
 <tbody>
-<tr><td><strong>ML-KEM</strong> (FIPS 203)</td><td>CRYSTALS-Kyber</td><td data-lang="zh">格基 (Lattice)</td><td data-lang="en">Lattice-based</td><td data-lang="zh">金鑰封裝 (取代 ECDHE)</td><td data-lang="en">Key encapsulation (replaces ECDHE)</td></tr>
-<tr><td><strong>ML-DSA</strong> (FIPS 204)</td><td>CRYSTALS-Dilithium</td><td data-lang="zh">格基</td><td data-lang="en">Lattice-based</td><td data-lang="zh">數位簽章 (取代 RSA/ECDSA)</td><td data-lang="en">Digital signature (replaces RSA/ECDSA)</td></tr>
-<tr><td><strong>SLH-DSA</strong> (FIPS 205)</td><td>SPHINCS+</td><td data-lang="zh">基於 hash</td><td data-lang="en">Hash-based</td><td data-lang="zh">備援簽章（保守選擇）</td><td data-lang="en">Backup signature (conservative)</td></tr>
+<tr><td data-lang="zh">對稱加密</td><td data-lang="en">Symmetric encryption</td><td><strong>AES-256-GCM</strong>、ChaCha20-Poly1305</td><td data-lang="zh">同一把</td><td data-lang="en">Same key</td><td data-lang="zh">⚡⚡⚡ GB/s</td><td data-lang="en">⚡⚡⚡ GB/s</td><td data-lang="zh">大量資料、磁碟、串流</td><td data-lang="en">Bulk data, disk, streaming</td></tr>
+<tr><td data-lang="zh">非對稱加密</td><td data-lang="en">Asymmetric encryption</td><td><strong>RSA-2048</strong>、ECC (X25519, Ed25519)</td><td data-lang="zh">公/私鑰一對</td><td data-lang="en">Public/private pair</td><td data-lang="zh">🐢 MB/s</td><td data-lang="en">🐢 MB/s</td><td data-lang="zh">金鑰交換、簽章</td><td data-lang="en">Key exchange, signatures</td></tr>
+<tr><td data-lang="zh">雜湊函式</td><td data-lang="en">Hash function</td><td><strong>SHA-256</strong>、SHA-3、BLAKE3</td><td data-lang="zh">無金鑰</td><td data-lang="en">No key</td><td data-lang="zh">⚡⚡⚡ GB/s</td><td data-lang="en">⚡⚡⚡ GB/s</td><td data-lang="zh">完整性、密碼儲存、區塊鏈</td><td data-lang="en">Integrity, password storage, blockchain</td></tr>
 </tbody></table>
 
 <div class="callout warn"><span class="callout-icon">⚠️</span><div>
-<div data-lang="zh"><strong>「現在收割、未來解密」(Harvest Now, Decrypt Later)：</strong>攻擊者今天就可以擷取加密流量保存，等未來量子電腦成熟再解密——所以高機敏資料應「現在」就改用 PQC 或混合模式 (X25519+ML-KEM)。</div>
-<div data-lang="en"><strong>Harvest Now, Decrypt Later:</strong> attackers can capture encrypted traffic today and decrypt it once quantum is mature. High-sensitivity data should migrate to PQC or hybrid (X25519+ML-KEM) <em>now</em>.</div>
+<span data-lang="zh"><strong>STRIDE 威脅模型：</strong>微軟 Loren Kohnfelder 1999 年提出，是設計階段最常用的威脅檢核表 — <strong>S</strong>poofing 偽冒、<strong>T</strong>ampering 篡改、<strong>R</strong>epudiation 否認、<strong>I</strong>nformation disclosure 洩漏、<strong>D</strong>enial of service 阻斷、<strong>E</strong>levation of privilege 提權。每設計一個元件都自問六題。</span>
+<span data-lang="en"><strong>STRIDE threat model:</strong> Microsoft's Loren Kohnfelder proposed this in 1999; it remains the most common design-phase checklist — <strong>S</strong>poofing, <strong>T</strong>ampering, <strong>R</strong>epudiation, <strong>I</strong>nformation disclosure, <strong>D</strong>enial of service, <strong>E</strong>levation of privilege. Walk through these six on every component.</span>
 </div></div>
-
-<div data-lang="zh"><p><strong>Zero Trust 架構：</strong>傳統「內網可信、外網不可信」已過時。Zero Trust 原則：<em>never trust, always verify</em>——每個請求都要驗證身分、裝置、上下文。Google BeyondCorp、Cloudflare Access 是代表實作。</p></div>
-<div data-lang="en"><p><strong>Zero Trust architecture:</strong> the old "trust the LAN, distrust the WAN" model is dead. Zero Trust principle: <em>never trust, always verify</em> — every request authenticates identity, device, and context. Google BeyondCorp and Cloudflare Access are reference implementations.</p></div>
 </section>
 
+<!-- ===== Section 3: Interactive #1 (OWASP Chart) ===== -->
 <section class="section">
-<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">該用什麼密碼學？</div>
-<h2 data-zh="六、決策樹：選擇密碼學方案" data-en="VI. Decision Tree: Pick Your Crypto">六、決策樹：選擇密碼學方案</h2>
+<div class="section-label" data-zh="互動 #1" data-en="INTERACTIVE #1">OWASP Top 10 2025</div>
+<h2 data-zh="三、互動：OWASP Top 10 2025 vs 2021 排名變化" data-en="III. Interactive: OWASP Top 10 2025 vs 2021">三、OWASP Top 10 排名動態</h2>
+<div data-lang="zh"><p><strong>OWASP Top 10</strong> 是「全世界最危險的 10 類 Web 應用弱點」排行榜，由 OWASP 基金會每 3–4 年更新一次。2025 版有兩個重大改動：</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>A01 Broken Access Control 連續四屆冠軍</strong>——「權限沒寫好」是業界最常見的 bug。</li>
+<li><strong>A06 改為 Software Supply Chain Failures</strong>——納入 2020 SolarWinds、2021 Log4Shell、2024 XZ Utils backdoor 等供應鏈攻擊。</li>
+<li><strong>A02 升為 Security Misconfiguration</strong>——AWS S3 bucket 公開、Kubernetes 密碼明文寫死，這類「設定錯誤」竄上第二名。</li>
+</ul></div>
+<div data-lang="en"><p><strong>OWASP Top 10</strong> ranks the world's most dangerous web-app risks; the OWASP Foundation refreshes it every 3–4 years. The 2025 edition has two big shifts:</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>A01 Broken Access Control — four-time champion</strong>: "auth wasn't checked correctly" is the industry's #1 bug.</li>
+<li><strong>A06 renamed Software Supply Chain Failures</strong>: now covers SolarWinds (2020), Log4Shell (2021), and the XZ Utils backdoor (2024).</li>
+<li><strong>A02 elevated to Security Misconfiguration</strong>: open S3 buckets, hard-coded Kubernetes secrets — config errors climbed to #2.</li>
+</ul></div>
+<div class="interactive-panel">
+<div class="chart-container"><canvas id="owaspChart"></canvas></div>
+<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">資料來源：OWASP Top 10 2025 草案 + 2021 正式版（owasp.org）</span><span data-lang="en">Source: OWASP Top 10 2025 RC + 2021 final (owasp.org)</span></p>
+</div>
+</section>
+
+<!-- ===== Section 4: Deep Dive (Advanced) ===== -->
+<section class="section">
+<div class="section-label" data-zh="深入剖析" data-en="DEEP DIVE">進階：AES / RSA / ECC / TLS 1.3 內部</div>
+<h2 data-zh="四、進階：AES、RSA、ECC、TLS 1.3 內部原理" data-en="IV. Inside AES, RSA, ECC, and TLS 1.3">四、深入剖析</h2>
+
+<h3>AES-256 — <span data-zh="14 輪替換的不可逆雜技" data-en="14 rounds of irreversible juggling">14 輪替換</span></h3>
+<div data-lang="zh">
+<p><strong>AES (Advanced Encryption Standard)</strong> 由比利時兩位密碼學家 Joan Daemen 與 Vincent Rijmen 設計（原名 Rijndael），1997 年 NIST 公開徵選後於 2001 標準化。AES-256 對 128-bit 資料區塊執行 <strong>14 輪</strong>操作，每輪包括：</p>
+<ol style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>SubBytes</strong>：用 S-Box 查表非線性替換（核心抗差分攻擊）。</li>
+<li><strong>ShiftRows</strong>：行內位元組向左循環移位，破壞對齊。</li>
+<li><strong>MixColumns</strong>：行列在 GF(2⁸) 上做矩陣乘法，達成擴散。</li>
+<li><strong>AddRoundKey</strong>：與輪金鑰 XOR（由主金鑰擴展而來）。</li>
+</ol>
+<p>歷經 25 年無人破解；2010 年起 Intel 推出 <strong>AES-NI</strong> 硬體指令，現代 CPU 每核每秒可加密 5–10 GB。實務一律使用 <strong>AES-GCM</strong>（含完整性驗證）或 <strong>AES-XTS</strong>（磁碟加密）。</p>
+</div>
+<div data-lang="en">
+<p><strong>AES</strong> was designed by Belgian cryptographers Joan Daemen and Vincent Rijmen (originally "Rijndael"), chosen by NIST in 2000 after an open competition and standardized in 2001. AES-256 processes 128-bit blocks through <strong>14 rounds</strong>, each round consisting of:</p>
+<ol style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>SubBytes</strong> — non-linear S-Box substitution (anti-differential).</li>
+<li><strong>ShiftRows</strong> — cyclically shift each row to break alignment.</li>
+<li><strong>MixColumns</strong> — multiply columns in GF(2⁸) for diffusion.</li>
+<li><strong>AddRoundKey</strong> — XOR with the round key derived from the master key.</li>
+</ol>
+<p>Unbroken in 25 years. Intel's <strong>AES-NI</strong> hardware instructions (since 2010) let modern CPUs encrypt 5–10 GB/s per core. Always use <strong>AES-GCM</strong> (authenticated) or <strong>AES-XTS</strong> (disk encryption) in production.</p>
+</div>
+
+<h3>RSA — <span data-zh="質因數分解的單向魔術" data-en="the one-way magic of factoring">質因數分解</span></h3>
+<div data-lang="zh">
+<p>RSA 由 <strong>Rivest, Shamir, Adleman</strong> 1977 在 MIT 提出。原理是：給你兩個大質數 p、q（各 1024 bit），乘起來得 n = p×q 很容易，但只給你 n 要找回 p、q 在計算上極難。</p>
+<p><strong>金鑰生成：</strong>① 選大質數 p, q；② 計算 n = pq, φ(n) = (p−1)(q−1)；③ 選 e（通常 65537）使 gcd(e, φ) = 1；④ 算 d = e<sup>−1</sup> mod φ。<strong>公鑰 = (n, e)、私鑰 = (n, d)。</strong></p>
+<p><strong>加密：</strong>c = m<sup>e</sup> mod n；<strong>解密：</strong>m = c<sup>d</sup> mod n。背後是 Euler 1763 的定理 m<sup>φ(n)</sup> ≡ 1 (mod n)。</p>
+<p>RSA-2048（n 為 2048-bit）今天估計需要 10²⁰ CPU-年破解；但<strong>夠大的量子電腦用 Shor 演算法只需幾小時</strong>——後量子轉換刻不容緩。</p>
+</div>
+<div data-lang="en">
+<p>RSA was introduced by <strong>Rivest, Shamir, Adleman</strong> at MIT in 1977. Premise: given two big primes p, q (1024 bits each), computing n = p × q is easy, but recovering p and q from n is computationally infeasible.</p>
+<p><strong>Key generation:</strong> (1) pick large primes p, q; (2) compute n = pq, φ(n) = (p−1)(q−1); (3) choose e (usually 65537) with gcd(e, φ) = 1; (4) compute d = e<sup>−1</sup> mod φ. <strong>Public key = (n, e); private key = (n, d).</strong></p>
+<p><strong>Encrypt:</strong> c = m<sup>e</sup> mod n. <strong>Decrypt:</strong> m = c<sup>d</sup> mod n. The math rests on Euler's 1763 theorem m<sup>φ(n)</sup> ≡ 1 (mod n).</p>
+<p>RSA-2048 takes ~10²⁰ CPU-years today, but <strong>a large enough quantum computer using Shor's algorithm cracks it in hours</strong> — PQ migration is urgent.</p>
+</div>
+
+<h3>ECC — <span data-zh="為何 256-bit 等於 RSA-3072?" data-en="why 256-bit beats RSA-3072">為何省更多</span></h3>
+<div data-lang="zh"><p><strong>橢圓曲線密碼學 (Elliptic Curve Cryptography)</strong> 把運算搬到橢圓曲線群上，「離散對數問題」更難解。安全強度對照：</p></div>
+<div data-lang="en"><p><strong>Elliptic Curve Cryptography</strong> moves the math to an elliptic-curve group where the discrete-log problem is much harder. Strength comparison:</p></div>
+<table class="comp-table">
+<thead><tr><th data-zh="安全等級" data-en="Security level">安全等級</th><th>RSA</th><th>ECC</th><th data-zh="說明" data-en="Notes">說明</th></tr></thead>
+<tbody>
+<tr><td>80-bit</td><td>1024</td><td>160</td><td data-lang="zh">已不安全</td><td data-lang="en">No longer safe</td></tr>
+<tr><td>128-bit</td><td><strong>3072</strong></td><td><strong>256</strong></td><td data-lang="zh">目前主流（X25519、P-256）</td><td data-lang="en">Today's default (X25519, P-256)</td></tr>
+<tr><td>192-bit</td><td>7680</td><td>384</td><td data-lang="zh">高機敏</td><td data-lang="en">High-sensitivity</td></tr>
+<tr><td>256-bit</td><td>15360</td><td>521</td><td data-lang="zh">頂級防護</td><td data-lang="en">Top-tier</td></tr>
+</tbody></table>
+<div data-lang="zh"><p>ECC 金鑰小 12 倍、簽章速度快 10 倍——這正是行動裝置、IoT、區塊鏈（比特幣用 secp256k1）首選 ECC 的原因。<strong>Ed25519</strong>（Bernstein 2011）目前是 SSH、Tor、Signal 的主流。</p></div>
+<div data-lang="en"><p>ECC keys are 12× smaller and 10× faster to sign — that's why mobile, IoT, and blockchains (Bitcoin uses secp256k1) prefer it. <strong>Ed25519</strong> (Bernstein, 2011) dominates SSH, Tor, and Signal.</p></div>
+
+<h3>TLS 1.3 — <span data-zh="HTTPS 的 1-RTT 革命" data-en="HTTPS's 1-RTT revolution">1-RTT 握手</span></h3>
+<div class="workflow">
+<div class="workflow-step" data-step="1"><h4>ClientHello</h4>
+<div data-lang="zh"><p>瀏覽器送出：支援的密碼套件清單、TLS 版本、隨機數、<strong>ECDHE 公鑰份額</strong>（X25519 預設）。</p></div>
+<div data-lang="en"><p>Browser sends: supported cipher suites, TLS versions, random, and an <strong>ECDHE key share</strong> (X25519 by default).</p></div></div>
+<div class="workflow-step" data-step="2"><h4>ServerHello + Certificate</h4>
+<div data-lang="zh"><p>伺服器選一組密碼套件、附上 <strong>X.509 憑證鏈</strong>（已被 CA 簽名）、自己的 ECDHE 公鑰份額。雙方各自算出共享密鑰 K = a·B = b·A。</p></div>
+<div data-lang="en"><p>Server picks a cipher suite, sends the <strong>X.509 cert chain</strong> (CA-signed), and its own ECDHE share. Both sides derive the same secret K = a·B = b·A.</p></div></div>
+<div class="workflow-step" data-step="3"><h4>Finished (encrypted)</h4>
+<div data-lang="zh"><p>雙方用衍生金鑰加密 Finished 訊息驗證對方真的解出來了。TLS 1.3 砍掉 TLS 1.2 三次往返中的兩次，<strong>僅需 1-RTT</strong>。回訪可達 0-RTT（但 0-RTT 有重放風險）。</p></div>
+<div data-lang="en"><p>Both sides exchange encrypted Finished messages proving they derived the same key. TLS 1.3 collapses TLS 1.2's three round-trips into <strong>1-RTT</strong>; resumption can hit 0-RTT (with replay caveats).</p></div></div>
+<div class="workflow-step" data-step="4"><h4>Application data</h4>
+<div data-lang="zh"><p>之後 HTTP 內容皆用 <strong>AES-256-GCM</strong> 或 <strong>ChaCha20-Poly1305</strong>（AEAD）加密 + 完整性驗證。</p></div>
+<div data-lang="en"><p>All subsequent HTTP traffic is protected with <strong>AES-256-GCM</strong> or <strong>ChaCha20-Poly1305</strong> (AEAD).</p></div></div>
+</div>
+
+<h3>Argon2 — <span data-zh="2015 密碼雜湊冠軍" data-en="2015 PHC winner">為何 SHA-256 存密碼不夠？</span></h3>
+<div data-lang="zh"><p>SHA-256 是「快」雜湊（每秒幾 GB），這對密碼儲存反而是<strong>缺點</strong>——攻擊者拿到 hash 後可每秒嘗試 100 億組密碼。<strong>Argon2id</strong>（Password Hashing Competition 2015 冠軍）刻意設計成「慢」且需要大量 RAM（記憶體硬性），讓 GPU/ASIC 攻擊極度困難。實務建議參數：64 MB RAM、3 iterations、4 threads。</p></div>
+<div data-lang="en"><p>SHA-256 is a <em>fast</em> hash (GB/s) — bad for password storage, because attackers can try 10 billion passwords/second on a GPU. <strong>Argon2id</strong> (2015 PHC winner) is deliberately slow and memory-hard, defeating GPU/ASIC cracking. Recommended params: 64 MB RAM, 3 iterations, 4 threads.</p></div>
+</section>
+
+<!-- ===== Section 5: Historical Cases ===== -->
+<section class="section">
+<div class="section-label" data-zh="歷史故事" data-en="HISTORICAL TIMELINE">資安史上 7 個關鍵時刻</div>
+<h2 data-zh="五、資安史上的關鍵時刻" data-en="V. Pivotal Moments in Security History">五、歷史故事</h2>
+<div class="workflow">
+<div class="workflow-step" data-step="1"><h4>1976 — <span data-zh="Diffie-Hellman 改寫密碼學" data-en="Diffie-Hellman rewrites cryptography">公鑰密碼學誕生</span></h4>
+<div data-lang="zh"><p>Diffie 與 Hellman 在 Stanford 發表「New Directions」，把「先交換鑰匙」這個 2000 年的假設徹底打破。2015 年兩人共同獲頒圖靈獎。</p></div>
+<div data-lang="en"><p>Diffie and Hellman publish "New Directions" at Stanford, demolishing the 2,000-year-old assumption that keys must be pre-shared. They share the 2015 Turing Award for this work.</p></div></div>
+<div class="workflow-step" data-step="2"><h4>1977 — <span data-zh="RSA 一夜誕生" data-en="RSA invented overnight">非對稱加密實作</span></h4>
+<div data-lang="zh"><p>MIT 三位學者 Rivest、Shamir、Adleman 在 1977 年某個逾越節晚餐後，Rivest 通宵推出 RSA 演算法。RSA 公司現估值超 30 億美元。</p></div>
+<div data-lang="en"><p>After a 1977 Passover dinner, MIT's Rivest, Shamir, Adleman crank out the RSA algorithm overnight. RSA Corp is now valued at $3 B+.</p></div></div>
+<div class="workflow-step" data-step="3"><h4>2013 — <span data-zh="Snowden 揭密催生 TLS 1.3" data-en="Snowden revelations accelerate TLS 1.3">大規模監控曝光</span></h4>
+<div data-lang="zh"><p>Edward Snowden 公開 NSA 全球監聽計畫（PRISM、BULLRUN），讓 IETF 加速 TLS 1.3 設計（2018 RFC 8446）：強制 PFS、刪除 RC4/MD5/SHA1，握手只需 1-RTT。</p></div>
+<div data-lang="en"><p>Edward Snowden exposes NSA mass surveillance (PRISM, BULLRUN), pushing IETF to fast-track TLS 1.3 (RFC 8446 in 2018): mandatory PFS, RC4/MD5/SHA1 removed, 1-RTT handshake.</p></div></div>
+<div class="workflow-step" data-step="4"><h4>2014 — <span data-zh="Heartbleed (CVE-2014-0160)" data-en="Heartbleed (CVE-2014-0160)">OpenSSL 大流血</span></h4>
+<div data-lang="zh"><p>OpenSSL 一行 missing bounds check 讓任何人能讀取伺服器記憶體 64 KB——包含 TLS 私鑰、密碼、信用卡。影響全球 17% 的 HTTPS 伺服器，推動 Linux Foundation 成立 Core Infrastructure Initiative。</p></div>
+<div data-lang="en"><p>A missing bounds check in OpenSSL let anyone read 64 KB of server memory — including TLS private keys, passwords, credit cards. Hit 17 % of HTTPS servers worldwide, spurring the Linux Foundation's Core Infrastructure Initiative.</p></div></div>
+<div class="workflow-step" data-step="5"><h4>2017 — <span data-zh="WannaCry 與 EternalBlue" data-en="WannaCry & EternalBlue">史上最大勒索軟體</span></h4>
+<div data-lang="zh"><p>2017 年 5 月，WannaCry 蠕蟲利用 NSA 洩漏的 EternalBlue 漏洞，48 小時內加密 30 萬台電腦，包含英國 NHS、台積電產線。教訓：及時打補丁 + 離線備份。</p></div>
+<div data-lang="en"><p>May 2017: WannaCry, weaponizing the leaked NSA EternalBlue exploit, encrypts 300,000 machines in 48 hours — including UK NHS hospitals and TSMC fabs. Lessons: timely patching + offline backups.</p></div></div>
+<div class="workflow-step" data-step="6"><h4>2020 — <span data-zh="SolarWinds 供應鏈攻擊" data-en="SolarWinds supply-chain attack">供應鏈惡夢</span></h4>
+<div data-lang="zh"><p>俄羅斯駭客（APT29）入侵 SolarWinds Orion 軟體更新流程，植入後門。18,000 個組織（美國國務院、財政部、Microsoft、FireEye）被滲透。從此「軟體物料清單 SBOM」成為合規必備。</p></div>
+<div data-lang="en"><p>Russian APT29 compromises SolarWinds Orion's update pipeline, planting a backdoor. 18,000 orgs infected — US State, Treasury, Microsoft, FireEye. Software Bills of Materials (SBOM) become compliance-mandatory.</p></div></div>
+<div class="workflow-step" data-step="7"><h4>2024 — <span data-zh="NIST 後量子標準正式發布" data-en="NIST PQC standards finalized">FIPS 203/204/205</span></h4>
+<div data-lang="zh"><p>2024 年 8 月 NIST 公布前三套後量子標準：<strong>ML-KEM</strong>（FIPS 203，原 Kyber）、<strong>ML-DSA</strong>（FIPS 204，原 Dilithium）、<strong>SLH-DSA</strong>（FIPS 205，原 SPHINCS+）。Apple iMessage 在 2024 推出 PQ3 協定，Google Chrome 已預設啟用 X25519+ML-KEM 混合。</p></div>
+<div data-lang="en"><p>August 2024: NIST publishes the first three PQC standards — <strong>ML-KEM</strong> (FIPS 203, was Kyber), <strong>ML-DSA</strong> (FIPS 204, was Dilithium), <strong>SLH-DSA</strong> (FIPS 205, was SPHINCS+). Apple iMessage shipped PQ3 in 2024; Chrome enables X25519+ML-KEM hybrid by default.</p></div></div>
+</div>
+</section>
+
+<!-- ===== Section 6: Interactive #2 (TLS Handshake Animation) ===== -->
+<section class="section">
+<div class="section-label" data-zh="互動 #2" data-en="INTERACTIVE #2">TLS 握手動畫</div>
+<h2 data-zh="六、互動：HTTPS 連線動畫" data-en="VI. Interactive: HTTPS Connection Animation">六、HTTPS 握手動畫</h2>
+<div data-lang="zh"><p>點擊「開始連線」觀察瀏覽器與伺服器逐步完成 TLS 1.3 握手——並建立加密通道。</p></div>
+<div data-lang="en"><p>Click "Start" to watch a browser and server complete the TLS 1.3 handshake step by step and establish an encrypted channel.</p></div>
+
+<div class="interactive-panel">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin:20px 0;">
+  <div style="flex:1;text-align:center;">
+    <div style="font-size:2.4rem;">💻</div>
+    <div style="font-weight:600;color:var(--c-accent-dark);" data-zh="瀏覽器 (Client)" data-en="Browser (Client)">瀏覽器</div>
+    <div id="clientState" style="font-size:.8rem;color:var(--c-ink-muted);margin-top:4px;font-family:var(--font-mono);">idle</div>
+  </div>
+  <div style="flex:2;position:relative;">
+    <div id="tlsLog" style="background:var(--c-code-bg);color:var(--c-code-text);font-family:var(--font-mono);font-size:.78rem;padding:14px;border-radius:8px;min-height:200px;max-height:260px;overflow-y:auto;line-height:1.5;"></div>
+  </div>
+  <div style="flex:1;text-align:center;">
+    <div style="font-size:2.4rem;">🖥️</div>
+    <div style="font-weight:600;color:var(--c-accent-dark);" data-zh="伺服器 (Server)" data-en="Server">伺服器</div>
+    <div id="serverState" style="font-size:.8rem;color:var(--c-ink-muted);margin-top:4px;font-family:var(--font-mono);">listening</div>
+  </div>
+</div>
+<button id="tlsBtn" style="background:var(--c-accent);color:#fff;border:none;border-radius:8px;padding:10px 22px;font-weight:600;cursor:pointer;display:block;margin:0 auto;"><span data-zh="🚀 開始 TLS 1.3 握手" data-en="🚀 Start TLS 1.3 handshake">🚀 開始 TLS 1.3 握手</span></button>
+<p style="font-size:.78rem;color:var(--c-ink-muted);text-align:center;margin-top:10px;"><span data-lang="zh">提示：握手只需 1-RTT，比 TLS 1.2 快約 100 ms。</span><span data-lang="en">Note: 1-RTT only — about 100 ms faster than TLS 1.2.</span></p>
+</div>
+</section>
+
+<!-- ===== Section 7: 🧬 For Bioinformaticians ===== -->
+<section class="section">
+<div class="section-label" data-zh="🧬 生資連結" data-en="🧬 FOR BIOINFORMATICIANS">生物資訊學家的關鍵知識</div>
+<h2 data-zh="七、為什麼資安對生物資訊學家特別重要？" data-en="VII. Why Security Matters Especially for Bioinformaticians">七、生資連結點</h2>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;">
+<span class="callout-icon">🧬</span>
+<div>
+<strong data-zh="基因組資料的特殊性" data-en="Why genomic data is different">基因組資料的特殊性</strong>
+<p data-lang="zh">基因組是你<strong>終身不變</strong>的識別碼，比信用卡更敏感——洩漏一次等於洩漏一輩子。而且你的基因與父母、子女、手足有 50% 重疊，洩漏你的等於洩漏家族。再者，臨床全基因組保存週期 50+ 年，今天加密的若用 RSA-2048，未來量子電腦成熟後將全部可被「現在收割、未來解密」。</p>
+<p data-lang="en">A genome is a <strong>lifetime-immutable</strong> identifier — more sensitive than a credit card; leaked once = leaked forever. Plus, your genome overlaps 50 % with parents/children/siblings, so leaking yours leaks your family. Clinical WGS is also retained 50+ years, meaning RSA-2048-encrypted records today are vulnerable to "Harvest Now, Decrypt Later" once quantum is mature.</p>
+</div></div>
+
+<div class="card-grid cols-2">
+<div class="card"><div class="card-icon">🔐</div><h4 data-zh="HIPAA / GDPR / dbGaP 控制存取" data-en="HIPAA / GDPR / dbGaP controlled access">HIPAA / GDPR / dbGaP</h4>
+<div data-lang="zh"><p>美國 <strong>HIPAA</strong>（1996）與歐盟 <strong>GDPR</strong>（2018）皆把基因組列為「特殊類別」個資。NIH <strong>dbGaP</strong> (database of Genotypes and Phenotypes) 對 controlled-access dataset（如 TCGA、UK Biobank）要求填寫 Data Use Certification (DUC)、IRB 核可、6 個月複審。<strong>違規重罰</strong>：2025 年某學術中心因 USB 遺失 5000 筆 WGS 被罰 1,300 萬美元。</p></div>
+<div data-lang="en"><p>The US <strong>HIPAA</strong> (1996) and EU <strong>GDPR</strong> (2018) classify genomes as "special category" data. NIH's <strong>dbGaP</strong> controlled-access (TCGA, UK Biobank) requires a Data Use Certification (DUC), IRB approval, and 6-month renewals. <strong>Penalties bite</strong>: in 2025 one US academic centre paid $13 M for losing 5,000 WGS records on a USB.</p></div></div>
+
+<div class="card"><div class="card-icon">🎯</div><h4 data-zh="Homer Attack：從 allele 頻率反推個體" data-en="Homer Attack: re-identify individuals from allele frequencies">Homer 攻擊</h4>
+<div data-lang="zh"><p>2008 年 Nils Homer 在 <em>PLOS Genetics</em> 證明：只要有受害者個人的 SNP 陣列 + 公開 GWAS 的 allele frequency 摘要統計，就能<strong>判斷他是否在 case 或 control 群</strong>（隱含疾病狀態）。NIH 因此<strong>立刻將所有 GWAS summary statistics 從公開區下架</strong>，至今仍是 controlled-access。差異隱私 (differential privacy) 後來成為解法。</p></div>
+<div data-lang="en"><p>In 2008 Nils Homer showed in <em>PLOS Genetics</em> that an attacker holding a victim's SNP array + a publicly released GWAS summary can <strong>tell whether the victim is in cases or controls</strong> (implying disease status). NIH <strong>pulled all GWAS summary stats from public access</strong> overnight — they remain controlled-access today. Differential privacy emerged as the fix.</p></div></div>
+
+<div class="card"><div class="card-icon">🌐</div><h4 data-zh="Federated Learning：跨醫院訓練不共享原始資料" data-en="Federated Learning: cross-hospital training without sharing raw data">聯邦學習</h4>
+<div data-lang="zh"><p>NVIDIA <strong>FLARE</strong>、Owkin、Google TFF 等框架讓多家醫院在<strong>原始資料不離院</strong>的前提下共同訓練 AI 模型：每家本地訓練、僅把模型梯度加密上傳，中央彙整後下發新權重。2024 EXAM (COVID prediction) 與 2024 BraTS 腦瘤分割競賽都採用此模式。</p></div>
+<div data-lang="en"><p>NVIDIA <strong>FLARE</strong>, Owkin, and Google TFF let multiple hospitals jointly train an AI model <strong>without raw data leaving the premises</strong>: each site trains locally and uploads only encrypted gradients; the central server aggregates and sends new weights back. The 2024 EXAM COVID predictor and 2024 BraTS brain-tumor challenge used this pattern.</p></div></div>
+
+<div class="card"><div class="card-icon">📊</div><h4 data-zh="Differential Privacy：All of Us 計畫" data-en="Differential Privacy: the All of Us program">差異隱私</h4>
+<div data-lang="zh"><p>NIH <strong>All of Us</strong>（目標招募 100 萬美國人 WGS）在公開查詢介面加入 Laplace 噪音，數學保證單一個體加入或退出查詢結果<strong>幾乎無法被偵測</strong>。2020 美國人口普查也用 ε-DP 取代傳統 swapping。生資人查詢資料時看到的彙總數字會有微幅誤差，這是隱私換來的代價。</p></div>
+<div data-lang="en"><p>NIH <strong>All of Us</strong> (recruiting 1 M Americans for WGS) injects Laplace noise into public query results so any single individual joining/leaving is <strong>statistically undetectable</strong>. The 2020 US Census switched to ε-DP from old-school swapping. Bioinformaticians see tiny errors in aggregate counts — that's the privacy tax.</p></div></div>
+
+<div class="card"><div class="card-icon">🔮</div><h4 data-zh="後量子遷移：基因組存 50 年的迫切性" data-en="PQ migration: 50-year retention crisis">後量子轉換</h4>
+<div data-lang="zh"><p>臨床 WGS 依 FDA / 衛福部法規須保存 25–50 年。若你今天用 RSA-2048 加密儲存，假設 2035 年量子電腦能跑 Shor on 2048-bit，<strong>所有今天的記錄將被回溯解密</strong>。NIH 已要求新 grant 提交 PQ 遷移計畫；Cloud Provider 自 2025 起在 KMS 預設加上 ML-KEM。</p></div>
+<div data-lang="en"><p>Clinical WGS retention is 25–50 years per FDA/regional regulators. RSA-2048-encrypted records today are toast once quantum can run Shor on 2048 bits (~2035 est.) — <strong>everything you stored becomes retroactively decryptable</strong>. NIH now requires PQ migration plans in new grants; cloud KMS services have rolled out ML-KEM defaults in 2025.</p></div></div>
+
+<div class="card"><div class="card-icon">⚖️</div><h4 data-zh="TCGA controlled-access 與 DUC 流程" data-en="TCGA controlled-access & DUC workflow">TCGA 申請流程</h4>
+<div data-lang="zh"><p><strong>Step 1</strong>：在 dbGaP 註冊 eRA Commons 帳號。<strong>Step 2</strong>：機構簽署 Data Use Certification（PI + Signing Official + IT Director）。<strong>Step 3</strong>：審查約 2–4 週。<strong>Step 4</strong>：批准後僅能在 institutional firewall 內分析、禁止重新識別、禁止下載到雲端（除非 GDC Cloud Pilot 白名單）。違反 = 永久禁用 + 機構黑名單。</p></div>
+<div data-lang="en"><p><strong>Step 1</strong>: register an eRA Commons account in dbGaP. <strong>Step 2</strong>: institution signs a Data Use Certification (PI + Signing Official + IT Director). <strong>Step 3</strong>: 2–4 weeks of review. <strong>Step 4</strong>: once approved, analysis only inside the institutional firewall, no re-identification, no cloud download (except GDC Cloud Pilot whitelist). Violation = permanent ban + institutional blacklist.</p></div></div>
+</div>
+</section>
+
+<!-- ===== Section 8: Decision Tree ===== -->
+<section class="section">
+<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">該用什麼密碼學</div>
+<h2 data-zh="八、決策樹：選擇密碼學方案" data-en="VIII. Decision Tree: Pick Your Crypto">八、決策樹</h2>
 <div class="decision-tree">
 <h4>🌳 <span data-zh="我該用什麼密碼學方案？" data-en="Which crypto primitive do I need?">我該用什麼密碼學方案？</span></h4>
 <div data-lang="zh">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>只想驗證資料完整性（不加密）？<span class="dt-arrow">→</span> 用 <strong>SHA-256</strong> 或 <strong>HMAC-SHA256</strong>。</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>儲存使用者密碼？<span class="dt-arrow">→</span> 用 <strong>Argon2id</strong>（次選 bcrypt），<strong>絕不</strong>用 MD5/SHA1。</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>加密大量資料（檔案/磁碟/串流）？<span class="dt-arrow">→</span> 用對稱 <strong>AES-256-GCM</strong> 或 <strong>ChaCha20-Poly1305</strong>。</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>兩端共享金鑰？<span class="dt-arrow">→</span> 用 <strong>ECDHE (X25519)</strong>；高機敏資料改為 <strong>X25519 + ML-KEM 混合</strong>。</div></div>
-<div class="dt-node"><span class="dt-q">Q5:</span><div>簽章與身分驗證？<span class="dt-arrow">→</span> <strong>Ed25519</strong>（現在）或 <strong>ML-DSA</strong>（後量子）。</div></div>
+<div class="dt-node"><span class="dt-q">Q1:</span><div>只想驗證資料完整性（不需加密）？<span class="dt-arrow">→</span> 用 <strong>SHA-256</strong>（單純檢核）或 <strong>HMAC-SHA256</strong>（防止竄改 + 驗證來源）。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>儲存使用者密碼？<span class="dt-arrow">→</span> 用 <strong>Argon2id</strong>（首選）或 bcrypt；<strong>絕對不要</strong>用 MD5、SHA1、SHA256-直接、PBKDF2-僅 1k 輪。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>加密大量資料（檔案、磁碟、串流）？<span class="dt-arrow">→</span> 對稱 <strong>AES-256-GCM</strong>（伺服器有 AES-NI）或 <strong>ChaCha20-Poly1305</strong>（行動裝置/IoT）。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>兩端建立共享金鑰？<span class="dt-arrow">→</span> <strong>ECDHE (X25519)</strong>；高機敏資料改為 <strong>X25519 + ML-KEM 混合</strong>（Chrome 預設）。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>簽章與身分驗證？<span class="dt-arrow">→</span> <strong>Ed25519</strong>（現在）或 <strong>ML-DSA</strong>（後量子）；憑證用 X.509 + Let's Encrypt 自動續簽。</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>保存基因組或臨床資料 25+ 年？<span class="dt-arrow">→</span> 立即啟用 <strong>混合 PQC</strong>，重要私鑰用 <strong>HSM</strong>（如 AWS CloudHSM、YubiHSM）；定期密鑰輪替。</div></div>
 </div>
 <div data-lang="en">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>Just verify integrity (no encryption)? <span class="dt-arrow">→</span> Use <strong>SHA-256</strong> or <strong>HMAC-SHA256</strong>.</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>Storing user passwords? <span class="dt-arrow">→</span> Use <strong>Argon2id</strong> (or bcrypt); <strong>never</strong> MD5/SHA1.</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>Encrypting bulk data (files/disks/streams)? <span class="dt-arrow">→</span> Symmetric <strong>AES-256-GCM</strong> or <strong>ChaCha20-Poly1305</strong>.</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>Establish a shared key? <span class="dt-arrow">→</span> <strong>ECDHE (X25519)</strong>; for sensitive data add <strong>ML-KEM hybrid</strong>.</div></div>
-<div class="dt-node"><span class="dt-q">Q5:</span><div>Signatures & authentication? <span class="dt-arrow">→</span> <strong>Ed25519</strong> (today) or <strong>ML-DSA</strong> (post-quantum).</div></div>
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Just verify integrity (no encryption)? <span class="dt-arrow">→</span> Plain <strong>SHA-256</strong> for checksums, <strong>HMAC-SHA256</strong> when you also need authenticity.</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Storing user passwords? <span class="dt-arrow">→</span> <strong>Argon2id</strong> first, bcrypt as fallback. <strong>Never</strong> MD5, SHA1, plain SHA256, or low-iteration PBKDF2.</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Encrypting bulk data (files/disks/streams)? <span class="dt-arrow">→</span> <strong>AES-256-GCM</strong> (server with AES-NI) or <strong>ChaCha20-Poly1305</strong> (mobile/IoT).</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Establish a shared key? <span class="dt-arrow">→</span> <strong>ECDHE (X25519)</strong>; for sensitive data add <strong>ML-KEM hybrid</strong> (Chrome default).</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>Signatures & identity? <span class="dt-arrow">→</span> <strong>Ed25519</strong> today, <strong>ML-DSA</strong> for PQ; X.509 certs auto-renewed via Let's Encrypt.</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>Retaining genome/clinical data 25+ years? <span class="dt-arrow">→</span> Switch to <strong>hybrid PQC now</strong>; store critical private keys in an <strong>HSM</strong> (AWS CloudHSM, YubiHSM); rotate regularly.</div></div>
 </div>
 </div>
 </section>
 
+<!-- ===== Section 9: Code Tabs (Python / R / Pseudocode) ===== -->
 <section class="section">
-<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
-<h2 data-zh="七、Python 動手做：AES + RSA + SHA-256" data-en="VII. Hands-on Python: AES + RSA + SHA-256">七、動手做</h2>
-<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
-<div class="code-tab-content active" id="py1"><pre><span class="comment"># pip install cryptography</span>
+<div class="section-label" data-zh="程式碼" data-en="CODE">Python / R / Pseudocode</div>
+<h2 data-zh="九、動手做：AES + RSA + 密碼雜湊" data-en="IX. Hands-on: AES + RSA + Password Hashing">九、動手做</h2>
+<div class="code-tabs"><div class="code-tab-btns">
+<button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button>
+<button class="code-tab-btn" onclick="switchTab(this,'r1')">R</button>
+<button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button>
+</div>
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># pip install cryptography argon2-cffi</span>
 <span class="kw">from</span> cryptography.hazmat.primitives.ciphers.aead <span class="kw">import</span> AESGCM
-<span class="kw">from</span> cryptography.hazmat.primitives.asymmetric <span class="kw">import</span> rsa, padding
-<span class="kw">from</span> cryptography.hazmat.primitives <span class="kw">import</span> hashes
+<span class="kw">from</span> cryptography.hazmat.primitives.asymmetric <span class="kw">import</span> rsa, padding, ed25519
+<span class="kw">from</span> cryptography.hazmat.primitives <span class="kw">import</span> hashes, serialization
+<span class="kw">from</span> argon2 <span class="kw">import</span> PasswordHasher
 <span class="kw">import</span> os, hashlib
 
-<span class="comment"># 1) AES-256-GCM 對稱加密 / Symmetric encryption</span>
+<span class="comment"># ---- 1) AES-256-GCM 對稱加密 ----</span>
 key   = AESGCM.<span class="func">generate_key</span>(bit_length=<span class="num">256</span>)
-nonce = os.<span class="func">urandom</span>(<span class="num">12</span>)                          <span class="comment"># GCM 推薦 96-bit nonce</span>
+nonce = os.<span class="func">urandom</span>(<span class="num">12</span>)                  <span class="comment"># GCM 推薦 96-bit nonce, 不可重複</span>
 aes   = <span class="func">AESGCM</span>(key)
-ct    = aes.<span class="func">encrypt</span>(nonce, <span class="str">b"Top secret"</span>, <span class="kw">None</span>)
-pt    = aes.<span class="func">decrypt</span>(nonce, ct, <span class="kw">None</span>)        <span class="comment"># b'Top secret'</span>
+ct    = aes.<span class="func">encrypt</span>(nonce, <span class="str">b"TP53 c.215C>G"</span>, <span class="kw">None</span>)
+pt    = aes.<span class="func">decrypt</span>(nonce, ct, <span class="kw">None</span>)
 
-<span class="comment"># 2) RSA 簽章 / RSA signature</span>
-priv = rsa.<span class="func">generate_private_key</span>(public_exponent=<span class="num">65537</span>, key_size=<span class="num">2048</span>)
-msg  = <span class="str">b"transfer $100 to Alice"</span>
-sig  = priv.<span class="func">sign</span>(msg, padding.<span class="func">PSS</span>(mgf=padding.<span class="func">MGF1</span>(hashes.<span class="func">SHA256</span>()),
-                                  salt_length=padding.PSS.MAX_LENGTH),
-                 hashes.<span class="func">SHA256</span>())
-priv.<span class="func">public_key</span>().<span class="func">verify</span>(sig, msg, padding.<span class="func">PSS</span>(mgf=padding.<span class="func">MGF1</span>(hashes.<span class="func">SHA256</span>()),
-                                          salt_length=padding.PSS.MAX_LENGTH),
-                            hashes.<span class="func">SHA256</span>())          <span class="comment"># 不丟例外 = 驗證通過</span>
+<span class="comment"># ---- 2) Ed25519 簽章 (比 RSA 快 10x) ----</span>
+priv = ed25519.Ed25519PrivateKey.<span class="func">generate</span>()
+pub  = priv.<span class="func">public_key</span>()
+msg  = <span class="str">b"variant_report.vcf SHA256=abc123..."</span>
+sig  = priv.<span class="func">sign</span>(msg)
+pub.<span class="func">verify</span>(sig, msg)                <span class="comment"># 不丟例外即驗證通過</span>
 
-<span class="comment"># 3) SHA-256 雪崩效應演示 / Avalanche effect</span>
-<span class="func">print</span>(hashlib.<span class="func">sha256</span>(<span class="str">b"hello"</span>).<span class="func">hexdigest</span>())
-<span class="func">print</span>(hashlib.<span class="func">sha256</span>(<span class="str">b"Hello"</span>).<span class="func">hexdigest</span>())   <span class="comment"># 兩個 hash 完全不同！</span></pre></div>
-<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// SHA-256 高階流程 / High-level SHA-256 flow</span>
-<span class="kw">function</span> <span class="func">SHA256</span>(message):
-    message = <span class="func">Pad</span>(message)                   <span class="comment">// 填補到 512-bit 倍數</span>
-    H = [h0, h1, ..., h7]                  <span class="comment">// 8 個 32-bit 初始值</span>
-    <span class="kw">for each</span> 512-bit block <span class="kw">in</span> message:
-        W = <span class="func">ExpandToWords</span>(block, <span class="num">64</span>)        <span class="comment">// 展開為 64 個字</span>
-        (a..h) = H
-        <span class="kw">for</span> t = <span class="num">0</span> <span class="kw">to</span> <span class="num">63</span>:
-            T1 = h + Σ1(e) + Ch(e,f,g) + K[t] + W[t]
-            T2 = Σ0(a) + Maj(a,b,c)
-            h = g; g = f; f = e; e = d + T1
-            d = c; c = b; b = a; a = T1 + T2
-        H = H + (a..h)                     <span class="comment">// 累加，模 2^32</span>
-    <span class="kw">return</span> concat(H)                       <span class="comment">// 256-bit digest</span></pre></div>
+<span class="comment"># ---- 3) 密碼儲存 Argon2id ----</span>
+ph    = <span class="func">PasswordHasher</span>(memory_cost=<span class="num">65536</span>, time_cost=<span class="num">3</span>, parallelism=<span class="num">4</span>)
+stored = ph.<span class="func">hash</span>(<span class="str">"correct horse battery staple"</span>)
+ph.<span class="func">verify</span>(stored, <span class="str">"correct horse battery staple"</span>)   <span class="comment"># OK</span>
+
+<span class="comment"># ---- 4) SHA-256 雪崩效應 ----</span>
+<span class="func">print</span>(hashlib.<span class="func">sha256</span>(<span class="str">b"BRCA1 c.5266dup"</span>).<span class="func">hexdigest</span>())
+<span class="func">print</span>(hashlib.<span class="func">sha256</span>(<span class="str">b"BRCA1 c.5267dup"</span>).<span class="func">hexdigest</span>())  <span class="comment"># 完全不同</span></pre></div>
+
+<div class="code-tab-content" id="r1"><pre><span class="comment"># install.packages(c("openssl","digest","sodium"))</span>
+<span class="kw">library</span>(openssl); <span class="kw">library</span>(digest); <span class="kw">library</span>(sodium)
+
+<span class="comment"># 1) AES-256-GCM 對稱加密</span>
+key   <- <span class="func">rand_bytes</span>(<span class="num">32</span>)             <span class="comment"># 32 bytes = 256 bit</span>
+nonce <- <span class="func">rand_bytes</span>(<span class="num">12</span>)
+ct    <- sodium::<span class="func">data_encrypt</span>(<span class="func">charToRaw</span>(<span class="str">"TP53 c.215C>G"</span>), key, nonce)
+pt    <- sodium::<span class="func">data_decrypt</span>(ct, key, nonce)
+
+<span class="comment"># 2) Ed25519 簽章</span>
+priv <- sodium::<span class="func">sig_keygen</span>()
+pub  <- sodium::<span class="func">sig_pubkey</span>(priv)
+msg  <- <span class="func">charToRaw</span>(<span class="str">"variant_report.vcf"</span>)
+sig  <- sodium::<span class="func">sig_sign</span>(msg, priv)
+sodium::<span class="func">sig_verify</span>(msg, sig, pub)
+
+<span class="comment"># 3) SHA-256 與檔案完整性</span>
+digest::<span class="func">digest</span>(<span class="str">"BRCA1 c.5266dup"</span>, algo = <span class="str">"sha256"</span>)
+openssl::<span class="func">sha256</span>(<span class="func">file</span>(<span class="str">"sample.vcf.gz"</span>))
+
+<span class="comment"># 4) RSA 公私鑰</span>
+key <- openssl::<span class="func">rsa_keygen</span>(<span class="num">2048</span>)
+openssl::<span class="func">write_pem</span>(key, <span class="str">"priv.pem"</span>, password = <span class="str">"strong-passphrase"</span>)</pre></div>
+
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// ---------- TLS 1.3 1-RTT 握手 ----------</span>
+<span class="kw">function</span> <span class="func">TLS13_Handshake</span>(client, server):
+    <span class="comment">// === Flight 1 (Client → Server) ===</span>
+    client.r_c = <span class="func">RAND</span>(32)
+    (a, A)     = <span class="func">X25519_KeyGen</span>()              <span class="comment">// ECDHE 份額</span>
+    suites     = [TLS_AES_256_GCM_SHA384, ...]
+    client → server: <span class="func">ClientHello</span>(r_c, A, suites)
+
+    <span class="comment">// === Flight 2 (Server → Client) ===</span>
+    server.r_s = <span class="func">RAND</span>(32)
+    (b, B)     = <span class="func">X25519_KeyGen</span>()
+    secret_K   = <span class="func">X25519</span>(b, A)                  <span class="comment">// 共享密鑰</span>
+    cert       = server.<span class="func">load_X509_chain</span>()
+    sig        = server.<span class="func">sign</span>(<span class="func">hash</span>(transcript), priv_key)
+    server → client: <span class="func">ServerHello</span>(r_s, B), cert, sig, <span class="func">Finished</span>
+
+    <span class="comment">// === Client verifies ===</span>
+    client.secret_K = <span class="func">X25519</span>(a, B)             <span class="comment">// 同樣得到 K</span>
+    <span class="kw">if</span> !<span class="func">verify_cert</span>(cert) <span class="kw">or</span> !<span class="func">verify_sig</span>(sig): <span class="kw">abort</span>
+    client → server: <span class="func">Finished</span>
+
+    <span class="comment">// === 之後皆用 AES-GCM(K) 加密 HTTP ===</span>
+    <span class="kw">return</span> AEAD_session(K)
+
+<span class="comment">// ---------- 雙因素 password verification ----------</span>
+<span class="kw">function</span> <span class="func">Login</span>(user, pwd, totp):
+    record = db.<span class="func">find</span>(user)
+    <span class="kw">if</span> !<span class="func">Argon2_verify</span>(record.hash, pwd): <span class="kw">return</span> FAIL
+    <span class="kw">if</span> !<span class="func">TOTP_verify</span>(record.secret, totp, window=1): <span class="kw">return</span> FAIL
+    <span class="kw">return</span> SUCCESS</pre></div>
 </div>
 </section>
 
+<!-- ===== Section 10: Misconceptions ===== -->
+<section class="section">
+<div class="section-label" data-zh="常見誤解" data-en="MISCONCEPTIONS">陷阱與迷思</div>
+<h2 data-zh="十、新手常見的 7 個誤解" data-en="X. Seven Common Misconceptions">十、常見誤解</h2>
+<div class="card-grid cols-2">
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「Base64 是加密」" data-en="'Base64 is encryption'">「Base64 是加密」</span></h4>
+<div data-lang="zh"><p>Base64 只是<strong>編碼</strong>（把二進位轉成可印字元），任何人都能直接還原。常被誤用於「藏密碼」，毫無安全性。加密的最低標準是對稱密鑰 + AEAD。</p></div>
+<div data-lang="en"><p>Base64 is just <strong>encoding</strong> (binary → printable chars), trivially reversible. People often misuse it to "hide passwords" — that's zero security. Minimum bar for encryption: symmetric key + AEAD.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「MD5 還能用啦」" data-en="'MD5 is good enough'">「MD5 還能用啦」</span></h4>
+<div data-lang="zh"><p>MD5 自 2004 年王小雲教授發現碰撞攻擊後正式退役；2008 年荷蘭/瑞士團隊用 MD5 碰撞偽造 CA 憑證。只有<strong>非安全用途</strong>（如非加密的去重 checksum）才可繼續使用。</p></div>
+<div data-lang="en"><p>MD5 was retired in 2004 after Prof. Xiaoyun Wang found collisions; in 2008 a Dutch/Swiss team forged a CA cert using MD5. Only safe for <strong>non-security checksums</strong> (e.g., dedupe).</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「自己 roll 加密更安全」" data-en="'Roll your own crypto'">「自己 roll 加密更安全」</span></h4>
+<div data-lang="zh"><p>密碼學最痛的教訓：「<em>Don't roll your own crypto</em>」。即使是專業密碼學家也常出錯（Heartbleed 是 OpenSSL 內部 bug）。用<strong>經審計的標準庫</strong>：cryptography (Python)、openssl/sodium (R)、libsodium、Tink。</p></div>
+<div data-lang="en"><p>Crypto's most painful lesson: "<em>Don't roll your own crypto</em>". Even expert cryptographers slip up (Heartbleed was inside OpenSSL itself). Use <strong>audited standard libraries</strong>: cryptography (Python), openssl/sodium (R), libsodium, Tink.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「沒 HTTPS 也沒差」" data-en="'HTTP-only is fine'">「沒 HTTPS 也沒差」</span></h4>
+<div data-lang="zh"><p>HTTP 明文傳輸——任何同 Wi-Fi 的人能讀取你的 cookie 並冒充你登入。2018 後 Chrome 把 HTTP 標示為「不安全」；2025 全球 HTTPS 普及率達 96%。<strong>Let's Encrypt 免費</strong>，沒理由不啟用。</p></div>
+<div data-lang="en"><p>HTTP is plaintext — anyone on the same Wi-Fi can steal cookies and impersonate you. Since 2018 Chrome marks HTTP as "Not Secure"; 96 % of 2025 traffic is HTTPS. <strong>Let's Encrypt is free</strong> — no excuse.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「VPN = 100% 匿名」" data-en="'VPN = anonymous'">「VPN = 100% 匿名」</span></h4>
+<div data-lang="zh"><p>VPN 只是把信任從 ISP 轉給 VPN 提供商，<strong>對方仍能看到所有流量</strong>。商用 VPN 在強制請求下會交出日誌（2017 PureVPN 案）。真匿名需要 <strong>Tor</strong>，但流量分析仍有風險。</p></div>
+<div data-lang="en"><p>A VPN merely shifts trust from your ISP to the VPN provider — they still see all your traffic. Under subpoena they hand over logs (PureVPN 2017 case). True anonymity requires <strong>Tor</strong>, though traffic analysis can still bite.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「加密就完全安全」" data-en="'Encryption = safe forever'">「加密了就萬無一失」</span></h4>
+<div data-lang="zh"><p>加密保護「資料在傳輸/儲存中」，但<strong>不防</strong>：① 端點被入侵（鍵盤側錄）；② 內部人員濫權；③ 量子電腦未來破解；④ side-channel 攻擊（時序、功耗）。資安是<strong>縱深防禦</strong> (defense in depth)，加密只是其中一層。</p></div>
+<div data-lang="en"><p>Encryption protects "data at rest / in transit" but <strong>doesn't stop</strong>: (1) endpoint compromise (keylogger); (2) insider abuse; (3) future quantum attack; (4) side-channels (timing, power). Security is <strong>defense in depth</strong> — encryption is just one layer.</p></div></div>
+</div>
+</section>
+
+<!-- ===== Section 10.5: Privacy-Preserving Computation (ZKP / HE / SMC) ===== -->
+<section class="section">
+<div class="section-label" data-zh="進階補充" data-en="ADVANCED ADD-ON">隱私保護計算三劍客</div>
+<h2 data-zh="十、進階補充：ZKP / HE / SMC——把「計算」與「資料」分開" data-en="X-bis. Advanced: ZKP / HE / SMC — Decouple Compute from Data">十之二、隱私保護計算</h2>
+<div data-lang="zh"><p>傳統加密保護「靜態」與「傳輸中」資料，但<strong>運算時必須先解密</strong>——這是基因組多中心研究最大的痛點。三個來自 1970-90 年代的數學工具終於在 2020 後成熟，讓「不解密就能算」變為可能：</p></div>
+<div data-lang="en"><p>Classical encryption protects data <em>at rest</em> and <em>in transit</em>, but you must <strong>decrypt before computing</strong> — the biggest pain point for multi-center genomics. Three mathematical tools from the 1970s–90s finally matured after 2020 to enable "compute without decrypting":</p></div>
+
+<div class="card-grid cols-3">
+<div class="card"><div class="card-icon">🔐</div><h4>ZKP <span style="font-weight:400;color:var(--c-ink-muted);">Zero-Knowledge Proof</span></h4>
+<div data-lang="zh"><p><strong>1985 Goldwasser-Micali-Rackoff</strong> 提出。讓 Prover 對 Verifier 證明「我知道 X」<strong>卻不洩漏 X</strong>。2020 後 zk-SNARKs / zk-STARKs 落地 Zcash、StarkNet、Polygon zkEVM。生資用例：證明「我的 BRCA1 變異符合臨床指引收案條件」，不必交出完整 VCF。</p></div>
+<div data-lang="en"><p><strong>1985 Goldwasser-Micali-Rackoff</strong>. A Prover proves "I know X" to a Verifier <strong>without revealing X</strong>. zk-SNARKs / zk-STARKs power Zcash, StarkNet, Polygon zkEVM. Genomic use: prove "my BRCA1 variant matches the trial inclusion criteria" without surrendering the full VCF.</p></div></div>
+
+<div class="card"><div class="card-icon">🧮</div><h4>HE <span style="font-weight:400;color:var(--c-ink-muted);">Homomorphic Encryption</span></h4>
+<div data-lang="zh"><p><strong>2009 Gentry</strong> 第一個 FHE (Fully Homomorphic)。允許直接在密文上做加法、乘法。<strong>Microsoft SEAL、IBM HElib、OpenFHE、Lattigo</strong> 為主流庫；常用 CKKS / BFV / BGV scheme。代價：運算慢 1000–10⁶×。已實用於 iDASH 競賽 GWAS 隱私運算、Apple iOS Live Caller ID Lookup。</p></div>
+<div data-lang="en"><p><strong>2009 Gentry</strong> built the first FHE. Add/multiply directly on ciphertexts. <strong>Microsoft SEAL, IBM HElib, OpenFHE, Lattigo</strong> are the main libraries (CKKS/BFV/BGV schemes). Cost: 1000–10⁶× slowdown. Already practical for iDASH GWAS challenges and Apple's iOS Live Caller ID Lookup.</p></div></div>
+
+<div class="card"><div class="card-icon">🤝</div><h4>SMC / MPC <span style="font-weight:400;color:var(--c-ink-muted);">Secure Multi-Party Compute</span></h4>
+<div data-lang="zh"><p><strong>1982 Yao 百萬富翁問題</strong>起源。N 方各持私有輸入，共同計算 f(x₁..xₙ)，<strong>誰也不知道對方的輸入</strong>。Google Private Join-and-Compute、Meta Crypten 為代表。生資用例：跨醫院合算 GWAS 但原始基因型從不離院；瑞士 MedCo (2018) + UK Sano Genetics 已部署。</p></div>
+<div data-lang="en"><p><strong>1982 Yao's Millionaires' Problem</strong>. N parties hold private inputs and jointly compute f(x₁..xₙ) — <strong>no one sees the others' input</strong>. Google Private Join-and-Compute, Meta Crypten lead the field. Genomic use: cross-hospital GWAS where raw genotypes never leave; Swiss MedCo (2018) + UK Sano Genetics deployed.</p></div></div>
+</div>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<span data-lang="zh"><strong>後量子演算法細節（2024 NIST 標準）：</strong> ① <strong>ML-KEM (FIPS 203)</strong>——前身 CRYSTALS-Kyber，Module-Lattice 結構，金鑰交換主力，公鑰 800 bytes、密文 768 bytes（Kyber-512）；② <strong>ML-DSA (FIPS 204)</strong>——前身 CRYSTALS-Dilithium，數位簽章，簽章 ~2.4 KB；③ <strong>SLH-DSA (FIPS 205)</strong>——前身 SPHINCS+，Hash-based 簽章，<strong>不依賴任何「困難問題」假設</strong>（最保守選項），代價是簽章 17–49 KB；④ <strong>Falcon</strong> 預計 2025 標準化（NTRU lattice，簽章小但實作難）。Chrome 135 (2025) 已預設 X25519MLKEM768 混合金鑰交換。</span>
+<span data-lang="en"><strong>PQC algorithm details (2024 NIST standards):</strong> (1) <strong>ML-KEM (FIPS 203)</strong> — formerly CRYSTALS-Kyber, Module-Lattice; main KEM; 800 B public key + 768 B ciphertext (Kyber-512). (2) <strong>ML-DSA (FIPS 204)</strong> — formerly CRYSTALS-Dilithium; ~2.4 KB signatures. (3) <strong>SLH-DSA (FIPS 205)</strong> — formerly SPHINCS+; Hash-based, <strong>relies on no "hardness assumption"</strong> (most conservative), at the cost of 17–49 KB signatures. (4) <strong>Falcon</strong> coming 2025 (NTRU lattice; small sigs but tricky implementation). Chrome 135 (2025) defaults to X25519MLKEM768 hybrid key exchange.</span>
+</div></div>
+</section>
+
+<!-- ===== Section 10.7: Major Incidents Timeline ===== -->
+<section class="section">
+<div class="section-label" data-zh="歷史案例" data-en="HISTORICAL CASES">21 世紀資安血淚史</div>
+<h2 data-zh="十之三、五個改變產業的資安事件（2017–2025）" data-en="X-ter. Five Incidents That Reshaped the Industry (2017–2025)">十之三、經典案例</h2>
+<table class="comp-table">
+<thead><tr><th data-zh="年份" data-en="Year">年</th><th data-zh="事件" data-en="Event">事件</th><th data-zh="根因" data-en="Root cause">根因</th><th data-zh="產業學到什麼" data-en="Lesson">教訓</th></tr></thead>
+<tbody>
+<tr><td><strong>2017</strong></td><td><strong>WannaCry</strong> <span data-lang="zh">勒索蠕蟲</span><span data-lang="en">ransomware worm</span></td><td><span data-lang="zh">NSA EternalBlue exploit 外洩 + 未修補 Windows SMB</span><span data-lang="en">Leaked NSA EternalBlue + unpatched Windows SMB</span></td><td><span data-lang="zh">英國 NHS 1.5 萬支裝置癱瘓；自動修補與離線備份成醫療強制標準</span><span data-lang="en">UK NHS lost 15 k devices; auto-patching + offline backups became hospital mandate</span></td></tr>
+<tr><td><strong>2020</strong></td><td><strong>SolarWinds</strong> <span data-lang="zh">供應鏈攻擊</span><span data-lang="en">supply-chain</span></td><td><span data-lang="zh">SUNBURST 後門植入合法 Orion 更新檔；俄 APT29</span><span data-lang="en">SUNBURST backdoor in signed Orion update; Russian APT29</span></td><td><span data-lang="zh">SBOM、SLSA framework、Sigstore 興起；2022 拜登 EO 14028 強制聯邦採購 SBOM</span><span data-lang="en">Birth of SBOM, SLSA, Sigstore; 2022 EO 14028 mandates SBOM for US fed procurement</span></td></tr>
+<tr><td><strong>2021</strong></td><td><strong>Log4Shell</strong> CVE-2021-44228</td><td><span data-lang="zh">log4j JNDI lookup 任意 RCE，CVSS 10.0</span><span data-lang="en">log4j JNDI lookup → RCE; CVSS 10.0</span></td><td><span data-lang="zh">85% Java 部署受影響；OSS 維護資源化議題引發 White House summit</span><span data-lang="en">85 % of Java deployments hit; sparked the White House OSS funding summit</span></td></tr>
+<tr><td><strong>2024 Mar</strong></td><td><strong>XZ Utils backdoor</strong></td><td><span data-lang="zh">維護者「Jia Tan」3 年社交工程後植入 sshd 後門；Andres Freund 偵測延遲毫秒級</span><span data-lang="en">Maintainer "Jia Tan" spent 3 yrs grooming, planted sshd backdoor; Andres Freund spotted ms-level latency</span></td><td><span data-lang="zh">OSS 維護者倦怠成國安議題；Linux 發行版重新審查所有 single-maintainer 套件</span><span data-lang="en">OSS maintainer burnout = national security; distros re-auditing every single-maintainer package</span></td></tr>
+<tr><td><strong>2024 Jul</strong></td><td><strong>CrowdStrike Falcon</strong> <span data-lang="zh">全球藍屏</span><span data-lang="en">global BSOD</span></td><td><span data-lang="zh">Channel File 291 內含未驗證指標；EDR kernel driver crash</span><span data-lang="en">Channel File 291 had unvalidated pointer; EDR kernel-driver crash</span></td><td><span data-lang="zh">8.5M 台 Windows 機台死機，估計損失 100 億美元；漸進式部署 (canary) 與 ring deployment 變剛需</span><span data-lang="en">8.5 M Windows machines down; ~$10 B in damages; canary/ring deployment now mandatory</span></td></tr>
+<tr><td><strong>2025</strong></td><td><strong>23andMe data breach 後續</strong></td><td><span data-lang="zh">2023 credential stuffing 攻擊未啟用 2FA 帳號；2025 公司破產，6.9M 用戶基因組進入司法拍賣</span><span data-lang="en">2023 credential stuffing on non-2FA accounts; 2025 bankruptcy auctioned 6.9 M genomes</span></td><td><span data-lang="zh">「公司倒閉後基因組歸誰？」成 GINA 修法熱點；多州禁止 DTC 公司轉售基因組資料</span><span data-lang="en">"Who owns genomes when the company dies?" — sparked GINA amendments; states ban DTC genome resale</span></td></tr>
+</tbody></table>
+</section>
+
+<!-- ===== Section 11: Quiz ===== -->
 <section class="quiz-section">
-<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<h3>📝 <span data-zh="自我檢測（7 題）" data-en="Self-Check (7 Questions)">自我檢測</span></h3>
 <div class="quiz-q" data-answer="2">
 <p data-lang="zh">1. 關於 AES 與 RSA，下列何者「正確」？</p>
 <p data-lang="en">1. Which statement about AES and RSA is correct?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. AES 是非對稱加密，RSA 是對稱加密</span><span data-lang="en">A. AES is asymmetric, RSA is symmetric</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. AES 與 RSA 速度差不多</span><span data-lang="en">B. AES and RSA are roughly the same speed</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. AES 是對稱加密（一把金鑰），快；RSA 是非對稱（公私鑰），慢，通常用來交換 AES 金鑰</span><span data-lang="en">C. AES is symmetric (one key), fast; RSA is asymmetric (pub/priv), slow, often used to exchange AES keys</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. RSA 通常用於大量資料加密</span><span data-lang="en">D. RSA is typically used for bulk data encryption</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. AES 是非對稱、RSA 是對稱</span><span data-lang="en">A. AES is asymmetric, RSA is symmetric</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. AES 與 RSA 速度差不多</span><span data-lang="en">B. They have similar speeds</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. AES 是對稱（快），RSA 是非對稱（慢），實務上 RSA 常用來交換 AES 金鑰</span><span data-lang="en">C. AES is symmetric (fast); RSA is asymmetric (slow); RSA often exchanges AES keys</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. RSA 通常用於大量資料加密</span><span data-lang="en">D. RSA is used for bulk encryption</span></div>
 </div><div class="quiz-feedback" id="fb1"></div></div>
 
 <div class="quiz-q" data-answer="0">
@@ -236,13 +481,13 @@ priv.<span class="func">public_key</span>().<span class="func">verify</span>(sig
 <p data-lang="en">2. The #1 OWASP Top 10 2025 risk is?</p>
 <div class="quiz-options">
 <div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Broken Access Control（存取控制失效）</span><span data-lang="en">A. Broken Access Control</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Cross-Site Scripting (XSS)</span><span data-lang="en">B. Cross-Site Scripting (XSS)</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Cross-Site Scripting (XSS)</span><span data-lang="en">B. XSS</span></div>
 <div class="quiz-opt" data-idx="2"><span data-lang="zh">C. SQL Injection</span><span data-lang="en">C. SQL Injection</span></div>
 <div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Cryptographic Failures</span><span data-lang="en">D. Cryptographic Failures</span></div>
 </div><div class="quiz-feedback" id="fb2"></div></div>
 
 <div class="quiz-q" data-answer="1">
-<p data-lang="zh">3. NIST FIPS 203 標準的 ML-KEM 對應的競賽舊名是？</p>
+<p data-lang="zh">3. NIST FIPS 203（ML-KEM）對應的競賽舊名是？</p>
 <p data-lang="en">3. The pre-standardization name of NIST FIPS 203 (ML-KEM) was?</p>
 <div class="quiz-options">
 <div class="quiz-opt" data-idx="0"><span data-lang="zh">A. CRYSTALS-Dilithium</span><span data-lang="en">A. CRYSTALS-Dilithium</span></div>
@@ -250,11 +495,80 @@ priv.<span class="func">public_key</span>().<span class="func">verify</span>(sig
 <div class="quiz-opt" data-idx="2"><span data-lang="zh">C. SPHINCS+</span><span data-lang="en">C. SPHINCS+</span></div>
 <div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Falcon</span><span data-lang="en">D. Falcon</span></div>
 </div><div class="quiz-feedback" id="fb3"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">4. 為什麼「Homer attack」對基因組隱私是里程碑事件？</p>
+<p data-lang="en">4. Why is the "Homer attack" a landmark in genomic privacy?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 它證明 SHA-256 可被碰撞</span><span data-lang="en">A. It showed SHA-256 collisions</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 它讓 NIH 公開所有 GWAS 原始資料</span><span data-lang="en">B. It made NIH release all raw GWAS data</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 它證明從 GWAS allele frequency 摘要統計就能推斷個體是否在 case 群，迫使 NIH 將摘要統計移為 controlled-access</span><span data-lang="en">C. It proved one can infer case/control status from GWAS allele-frequency summaries, forcing NIH to move summaries to controlled-access</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 它是首例 ransomware 攻擊</span><span data-lang="en">D. It was the first ransomware</span></div>
+</div><div class="quiz-feedback" id="fb4"></div></div>
+
+<div class="quiz-q" data-answer="3">
+<p data-lang="zh">5. 為何臨床基因組資料應「現在」就遷移至後量子密碼？</p>
+<p data-lang="en">5. Why should clinical genomic data migrate to PQC <em>now</em>?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. PQC 速度比 RSA 快很多</span><span data-lang="en">A. PQC is much faster than RSA</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 法規明令禁止 RSA</span><span data-lang="en">B. Regulations forbid RSA</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 量子電腦已可破解 RSA-2048</span><span data-lang="en">C. Quantum computers already crack RSA-2048</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 基因組保存 25–50 年；現在用 RSA 加密的資料在 Harvest-Now-Decrypt-Later 模型下，未來會被解密</span><span data-lang="en">D. Genomes are retained 25–50 years; today's RSA-encrypted data falls to "Harvest Now, Decrypt Later" once quantum matures</span></div>
+</div><div class="quiz-feedback" id="fb5"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">6. 三大隱私保護計算工具中，「能在密文上直接做加減乘除」的是？</p>
+<p data-lang="en">6. Among the three privacy-preserving computation tools, which one "computes directly on ciphertext"?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. ZKP (Zero-Knowledge Proof)</span><span data-lang="en">A. ZKP</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. SMC / MPC (Secure Multi-Party Compute)</span><span data-lang="en">B. SMC / MPC</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. HE (Homomorphic Encryption)</span><span data-lang="en">C. HE (Homomorphic Encryption)</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. TLS 1.3</span><span data-lang="en">D. TLS 1.3</span></div>
+</div><div class="quiz-feedback" id="fb6"></div></div>
+
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">7. 2024 年 XZ Utils 後門事件最大的「結構性」教訓是？</p>
+<p data-lang="en">7. The biggest "structural" lesson of the 2024 XZ Utils backdoor was?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. SSH 不夠安全，應全面改用 Telnet</span><span data-lang="en">A. SSH is insecure; switch to Telnet</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 單一維護者的關鍵 OSS 套件已成國安級風險；產業需資助維護人力與多人共審</span><span data-lang="en">B. Single-maintainer critical OSS packages are now a national-security risk; industry must fund maintainers and require multi-eyes review</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. C 語言應全面棄用</span><span data-lang="en">C. Abandon C entirely</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Linux 應改用 Windows kernel</span><span data-lang="en">D. Linux should use the Windows kernel</span></div>
+</div><div class="quiz-feedback" id="fb7"></div></div>
 </section>
 
+<!-- ===== Section 12: 💭 Discussion ===== -->
+<section class="section" style="background:#fef3c7;border-radius:14px;padding:32px;">
+<div class="section-label">💭 <span data-zh="延伸思考" data-en="DISCUSSION">延伸思考</span></div>
+<h2 data-zh="十一、延伸思考與討論題" data-en="XI. Discussion & Reflection">十一、延伸思考</h2>
+<ol style="margin-left:20px;line-height:1.9;">
+<li data-lang="zh"><strong>量子威脅時間表：</strong>Google Willow（2024，105 qubit）已實現「below threshold」糾錯。你認為量子電腦真的會在 2030 年前打破 RSA-2048 嗎？我們是該全速衝刺 PQC，還是再觀察？</li>
+<li data-lang="en"><strong>Quantum timeline:</strong> Google Willow (2024, 105 qubits) achieved "below-threshold" error correction. Do you believe a quantum computer will break RSA-2048 before 2030? Should we sprint to PQC or wait?</li>
+
+<li data-lang="zh"><strong>區塊鏈與「被遺忘權」：</strong>歐盟 GDPR 賦予個人「被遺忘權」（要求刪除個資），但區塊鏈設計上「不可變」。如果你的全基因組摘要寫進某個醫療區塊鏈，可以刪除嗎？兩者如何共存？</strong></li>
+<li data-lang="en"><strong>Blockchain vs Right-to-be-Forgotten:</strong> GDPR grants individuals the right to erasure, but blockchains are immutable by design. If your genome summary is committed to a medical blockchain, can it be deleted? How do these coexist?</li>
+
+<li data-lang="zh"><strong>「Harvest Now, Decrypt Later」的倫理：</strong>如果你今天在臨床機構工作，知道現有加密 30 年後將不安全，但更換密鑰需要新基礎建設與經費。你會如何說服管理階層投資？</li>
+<li data-lang="en"><strong>The HNDL ethics question:</strong> if you work at a hospital today knowing current encryption will be broken in 30 years, but migration costs infrastructure dollars, how do you make the business case to leadership?</li>
+
+<li data-lang="zh"><strong>個人實踐：</strong>你目前用了密碼管理器（1Password / Bitwarden）嗎？所有重要帳號都開了 2FA（最好是 hardware key 如 YubiKey）嗎？如果沒有，這週就行動。</li>
+<li data-lang="en"><strong>Personal practice:</strong> Do you use a password manager (1Password / Bitwarden)? Is 2FA (ideally hardware keys like YubiKey) enabled on all critical accounts? If not — do it this week.</li>
+
+<li data-lang="zh"><strong>強制醫療資料端到端加密？</strong>有人主張所有電子病歷 (EHR) 與基因組必須端到端加密，連雲端服務商都不能讀。但這會讓 AI 輔助診斷、跨院 referral 變慢甚至無法執行。你會支持立法強制嗎？</li>
+<li data-lang="en"><strong>Mandate E2E encryption for medical data?</strong> Some argue all EHRs and genomes must be end-to-end encrypted so even cloud providers can't read them. But this slows AI-assisted diagnosis and cross-hospital referrals. Would you legislate it?</li>
+
+<li data-lang="zh"><strong>「AI 處理我的基因組」你願意嗎？</strong>OpenAI/Claude/Gemini 都已開放 API。如果你把自己的 WGS upload 給 ChatGPT 詢問風險，會發生什麼？條款裡的「不用於訓練」承諾你信嗎？2024 年 OpenAI 已被多次質疑日誌留存。</li>
+<li data-lang="en"><strong>Would you let an AI read your genome?</strong> OpenAI/Claude/Gemini all expose APIs. If you uploaded your WGS to ChatGPT for risk advice, what happens? Do you trust the "won't be used for training" clause? OpenAI was repeatedly questioned about log retention in 2024.</li>
+
+<li data-lang="zh"><strong>SBOM 與 Sigstore 落地：</strong>你的實驗室 Snakemake / Nextflow pipeline 有產出 SBOM 嗎？如果某個 R package 突然下架或被植入後門，你 24 小時內能列出所有受影響的分析嗎？這是 NIH 2025 新規的要求。</strong></li>
+<li data-lang="en"><strong>SBOM & Sigstore in practice:</strong> Does your Snakemake / Nextflow pipeline emit an SBOM? If one R package is pulled or backdoored, can you list every affected analysis within 24 h? That's the new NIH 2025 expectation.</li>
+</ol>
+</section>
+
+<!-- ===== Page Nav ===== -->
 <nav class="page-nav">
 <a href="software-eng.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 12: 軟體工程" data-en="Ch 12: Software Engineering">Ch 12: 軟體工程</span></a>
-<a href="ai-ml.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 14: 人工智慧與機器學習" data-en="Ch 14: Artificial Intelligence &amp; Machine Learning">Ch 14: 人工智慧與機器學習</span></a>
+<a href="ai-ml.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 14: 人工智慧與機器學習" data-en="Ch 14: AI & Machine Learning">Ch 14: 人工智慧與機器學習</span></a>
 </nav>
 </main>
 <footer class="site-footer">© Charlene — Introduction to Computer Science · Interactive Tutorial</footer>
@@ -263,16 +577,54 @@ priv.<span class="func">public_key</span>().<span class="func">verify</span>(sig
 window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
 function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
 
-// OWASP Top 10 2025 vs 2021 ranking
+// ---- OWASP Top 10 2025 vs 2021 ----
 const owaspLabels = ['Broken Access Control','Security Misconfiguration','Injection','Insecure Design','Cryptographic Failures','Software Supply Chain Failures','Auth & Identification Failures','SSRF','Vulnerable Components','Mishandling of Exceptional Conditions'];
 const rank2025 = [1,2,3,4,5,6,7,8,9,10];
-const rank2021 = [1,5,3,4,2,6,7,10,6,null]; // null = 新項目
+const rank2021 = [1,5,3,4,2,6,7,10,6,null];
 new Chart(document.getElementById('owaspChart'),{type:'bar',data:{labels:owaspLabels,datasets:[
   {label:'2025 Rank',data:rank2025,backgroundColor:'rgba(29,78,216,.75)'},
   {label:'2021 Rank',data:rank2021,backgroundColor:'rgba(217,119,6,.75)'}
 ]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'},tooltip:{callbacks:{label:(c)=>c.dataset.label+': #'+(c.raw||'NEW')}}},scales:{x:{reverse:true,min:0,max:11,ticks:{stepSize:1},title:{display:true,text:'Rank (1 = worst)'}}}}});
 
-const QF={zh:{q1_y:'AES 是對稱加密：快、適合大量資料；RSA 是非對稱：慢但解決金鑰交換問題。',q1_n:'答案 C。',q2_y:'A01 Broken Access Control 從 2021 年起就是 #1，2025 維持冠軍。',q2_n:'答案 A。',q3_y:'ML-KEM = CRYSTALS-Kyber，是 NIST PQC 競賽的金鑰封裝獲勝者。',q3_n:'答案 B。'},en:{q1_y:'AES is symmetric (fast, bulk data); RSA is asymmetric (slow but solves key exchange).',q1_n:'Answer: C.',q2_y:'A01 Broken Access Control has been #1 since 2021 and remains so in 2025.',q2_n:'Answer: A.',q3_y:'ML-KEM = CRYSTALS-Kyber, the winning KEM scheme from the NIST PQC competition.',q3_n:'Answer: B.'}};
+// ---- TLS 1.3 Handshake Animation ----
+const tlsSteps = [
+  {who:'client',cs:'sending ClientHello',ss:'listening',log:'→ ClientHello: cipher_suites=[AES_256_GCM_SHA384, CHACHA20_POLY1305_SHA256], key_share=X25519(A)'},
+  {who:'server',cs:'waiting',ss:'computing K',log:'  Server: pick AES_256_GCM_SHA384; derive K = X25519(b, A)'},
+  {who:'server',cs:'waiting',ss:'sending ServerHello + Cert',log:'← ServerHello: key_share=X25519(B), Certificate (X.509 chain), CertificateVerify (Ed25519 sig)'},
+  {who:'client',cs:'verifying cert',ss:'waiting',log:'  Client: K = X25519(a, B); verify cert chain → Let\'s Encrypt; verify Ed25519 sig OK'},
+  {who:'client',cs:'sending Finished',ss:'waiting',log:'→ Finished (encrypted with K)'},
+  {who:'server',cs:'waiting',ss:'sending Finished',log:'← Finished (encrypted with K)'},
+  {who:'both',cs:'CONNECTED (AES-GCM)',ss:'CONNECTED (AES-GCM)',log:'✅ Handshake complete — 1-RTT. All HTTP traffic now AES-256-GCM.'}
+];
+let tlsIdx=0;const tlsBtn=document.getElementById('tlsBtn');const tlsLog=document.getElementById('tlsLog');
+tlsBtn.addEventListener('click',()=>{
+  if(tlsIdx===0)tlsLog.innerHTML='';
+  if(tlsIdx>=tlsSteps.length){tlsIdx=0;tlsLog.innerHTML='';document.getElementById('clientState').textContent='idle';document.getElementById('serverState').textContent='listening';return;}
+  const s=tlsSteps[tlsIdx];
+  if(s.who==='client'||s.who==='both')document.getElementById('clientState').textContent=s.cs;
+  if(s.who==='server'||s.who==='both')document.getElementById('serverState').textContent=s.ss;
+  const line=document.createElement('div');line.textContent=s.log;line.style.opacity=0;tlsLog.appendChild(line);setTimeout(()=>line.style.opacity=1,50);
+  tlsLog.scrollTop=tlsLog.scrollHeight;tlsIdx++;
+  if(tlsIdx>=tlsSteps.length){tlsBtn.querySelector('span').textContent=(I18n.get()==='zh'?'🔄 重來':'🔄 Reset');}else{tlsBtn.querySelector('span').textContent=(I18n.get()==='zh'?'▶️ 下一步':'▶️ Next');}
+});
+
+// ---- Quiz ----
+const QF={zh:{
+q1_y:'AES 對稱、快；RSA 非對稱、慢。實務常組合：RSA/ECDHE 換金鑰，AES 加密大量資料。',q1_n:'答案 C。',
+q2_y:'A01 Broken Access Control 自 2021 起連續四屆 #1。',q2_n:'答案 A。',
+q3_y:'ML-KEM = CRYSTALS-Kyber，NIST PQC 競賽 KEM 組獲勝者。',q3_n:'答案 B。',
+q4_y:'2008 Homer 在 PLOS Genetics 證明從 allele frequency 即可推斷個體是否在 case 群，NIH 立刻移除公開 GWAS 摘要。',q4_n:'答案 C。',
+q5_y:'基因組保存 25–50 年，HNDL 模型下今天的 RSA 加密未來會被解密——所以「現在」就要混合 PQC。',q5_n:'答案 D。',
+q6_y:'HE (Homomorphic Encryption) 允許直接在密文上做加減乘除，2009 Gentry 首創 FHE；ZKP 證明知識、SMC 多方計算。',q6_n:'答案 C。',
+q7_y:'XZ 後門揭示「單一維護者的關鍵 OSS = 國安風險」；產業需資助 OSS 維護人力並導入多人共審。',q7_n:'答案 B。'},
+en:{
+q1_y:'AES = symmetric (fast); RSA = asymmetric (slow). Typical mix: RSA/ECDHE for key exchange, AES for bulk data.',q1_n:'Answer: C.',
+q2_y:'A01 Broken Access Control has been #1 for four straight editions since 2021.',q2_n:'Answer: A.',
+q3_y:'ML-KEM = CRYSTALS-Kyber, the NIST PQC KEM winner.',q3_n:'Answer: B.',
+q4_y:'In 2008 Homer (PLOS Genetics) showed allele-frequency summaries can leak case/control membership; NIH yanked public summaries immediately.',q4_n:'Answer: C.',
+q5_y:'Genomes are retained 25–50 yrs; under Harvest-Now-Decrypt-Later, today\'s RSA is decryptable in the future — hybrid PQC must start now.',q5_n:'Answer: D.',
+q6_y:'HE (Homomorphic Encryption) lets you compute directly on ciphertexts — Gentry built the first FHE in 2009. ZKP proves knowledge; SMC distributes the compute.',q6_n:'Answer: C.',
+q7_y:'XZ revealed that single-maintainer critical OSS = national-security risk; industry must fund maintainers and require multi-eyes review.',q7_n:'Answer: B.'}};
 document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
 </script>
 </body></html>

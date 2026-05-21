@@ -12,235 +12,664 @@
 <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
 <header class="page-hero"><div class="step-badge">CHAPTER 12 / 16</div>
 <h1 data-zh="軟體工程" data-en="Software Engineering">軟體工程</h1>
-<p class="subtitle" data-lang="zh">寫程式 ≠ 寫軟體。軟體工程是「在有限資源下，交付能維運的系統」。本章帶你看 SDLC、Git、測試、CI/CD 與 2026 主流實踐。</p>
-<p class="subtitle" data-lang="en">Programming is not engineering. Software engineering is "delivering maintainable systems under finite resources." This chapter walks through SDLC, Git, testing, CI/CD, and 2026 best practices.</p>
+<p class="subtitle" data-lang="zh">1968 年 NATO 在 Garmisch 召開的會議首次提出「軟體危機」與「軟體工程」——專案延遲、預算超支、品質低落。2026 年 Crowdstrike 一個小小設定更新讓 850 萬台 Windows 當機。56 年過去，軟體工程仍是技術業最艱難的學科之一。</p>
+<p class="subtitle" data-lang="en">In 1968 at Garmisch, NATO coined "software crisis" and "software engineering" — projects late, over budget, low quality. In 2026, a tiny Crowdstrike config update bricked 8.5M Windows machines. 56 years on, software engineering remains one of tech's hardest disciplines.</p>
 </header>
 <main class="content-wrap">
 
 <section class="section">
-<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
-<h2 data-zh="寫程式 vs 寫軟體" data-en="Coding vs Engineering">寫程式 vs 寫軟體</h2>
-<div data-lang="zh"><p>「能跑」的程式很容易；「能跑五年、十個工程師可以接手、每週可安全部署」的軟體很難。<strong>軟體工程</strong>處理規模、變化、團隊與時間維度下的挑戰：需求變動、人員流失、技術債、安全漏洞、效能瓶頸。</p>
-<p>Google 把軟體工程定義為「<em>programming integrated over time</em>」——程式設計加上時間維度的積分。</p></div>
-<div data-lang="en"><p>"It runs" is easy; "runs for five years, hand-off-able to ten engineers, safely deployable every week" is hard. <strong>Software engineering</strong> tackles scale, change, team, and time: shifting requirements, churn, tech debt, security holes, perf bottlenecks.</p>
-<p>Google defines software engineering as "<em>programming integrated over time</em>" — programming plus the time dimension.</p></div>
-<div class="callout tip"><span class="callout-icon">💡</span><div>
-<span data-lang="zh"><strong>核心觀念：</strong>軟體成本中「寫程式」只佔 20%，其餘 80% 是維護——找 bug、重構、回應需求變動。所以「可讀性、可測試性、可維運性」遠重於「炫技」。</span>
-<span data-lang="en"><strong>Core idea:</strong> Only ~20% of software cost is writing code; ~80% is maintenance — fixing bugs, refactoring, responding to changes. Readability, testability, and operability beat cleverness.</span>
-</div></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="生命週期" data-en="SDLC">SDLC 六階段</div>
-<h2 data-zh="一、軟體開發生命週期 (SDLC)" data-en="I. Software Development Life Cycle (SDLC)">一、SDLC 六階段</h2>
-<div class="workflow">
-<div class="workflow-step" data-step="1"><h4>Requirements</h4>
-<div data-lang="zh"><p>蒐集需求、定義使用者故事、寫驗收條件。錯誤的需求是專案失敗的頭號原因。</p></div>
-<div data-lang="en"><p>Gather needs, write user stories, define acceptance criteria. Wrong requirements are the #1 cause of project failure.</p></div></div>
-<div class="workflow-step" data-step="2"><h4>Design</h4>
-<div data-lang="zh"><p>系統架構、API 介面、資料模型、技術選型。產出 design doc / RFC 並做設計審查。</p></div>
-<div data-lang="en"><p>System architecture, API surfaces, data model, tech choices. Produce design docs / RFCs and review them.</p></div></div>
-<div class="workflow-step" data-step="3"><h4>Implementation</h4>
-<div data-lang="zh"><p>真正寫程式碼。配合 code review、linter、formatter 維持品質。</p></div>
-<div data-lang="en"><p>Actually write code. Use code review, linters, formatters to keep quality.</p></div></div>
-<div class="workflow-step" data-step="4"><h4>Testing</h4>
-<div data-lang="zh"><p>單元測試、整合測試、E2E 測試、效能測試、安全測試。CI 自動跑。</p></div>
-<div data-lang="en"><p>Unit, integration, E2E, performance, and security tests — all automated in CI.</p></div></div>
-<div class="workflow-step" data-step="5"><h4>Deployment</h4>
-<div data-lang="zh"><p>容器化、CD 流水線、藍綠 / 金絲雀部署，配合可觀測性 (logs / metrics / traces)。</p></div>
-<div data-lang="en"><p>Containerize, run a CD pipeline, blue-green / canary release with full observability (logs / metrics / traces).</p></div></div>
-<div class="workflow-step" data-step="6"><h4>Maintenance</h4>
-<div data-lang="zh"><p>監控 SLA、修 bug、處理事故、重構、退役舊系統——也是工程師花最多時間的階段。</p></div>
-<div data-lang="en"><p>Monitor SLAs, fix bugs, run incidents, refactor, decommission old systems — where engineers spend the most time.</p></div></div>
-</div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="開發方法" data-en="METHODOLOGY">Waterfall vs Agile vs DevOps</div>
-<h2 data-zh="二、Waterfall vs Agile vs DevOps" data-en="II. Waterfall vs Agile vs DevOps">二、三大開發方法</h2>
-<table class="comp-table">
-<thead><tr><th data-zh="面向" data-en="Aspect">面向</th><th>Waterfall</th><th>Agile (Scrum/Kanban)</th><th>DevOps</th></tr></thead>
-<tbody>
-<tr><td data-lang="zh">節奏</td><td data-lang="en">Cadence</td><td data-lang="zh">線性、一次交付</td><td data-lang="en">Linear, single delivery</td><td data-lang="zh">2 週 sprint</td><td data-lang="en">2-week sprints</td><td data-lang="zh">每日多次部署</td><td data-lang="en">Multiple deploys/day</td></tr>
-<tr><td data-lang="zh">回饋</td><td data-lang="en">Feedback</td><td data-lang="zh">最後階段</td><td data-lang="en">End of project</td><td data-lang="zh">每個 sprint</td><td data-lang="en">Every sprint</td><td data-lang="zh">即時、監控驅動</td><td data-lang="en">Real-time, monitoring-driven</td></tr>
-<tr><td data-lang="zh">文件</td><td data-lang="en">Docs</td><td data-lang="zh">前期重</td><td data-lang="en">Heavy up-front</td><td data-lang="zh">輕量 (working software)</td><td data-lang="en">Lightweight (working software)</td><td data-lang="zh">Infra as Code</td><td data-lang="en">Infrastructure as Code</td></tr>
-<tr><td data-lang="zh">適合場景</td><td data-lang="en">Best for</td><td data-lang="zh">需求穩定、合約嚴格 (政府、航太)</td><td data-lang="en">Stable reqs, strict contracts (gov, aerospace)</td><td data-lang="zh">需求變動快 (Web / App)</td><td data-lang="en">Fast-changing reqs (web/app)</td><td data-lang="zh">SaaS、雲原生</td><td data-lang="en">SaaS, cloud-native</td></tr>
-</tbody></table>
-<div class="callout warn"><span class="callout-icon">⚠️</span><div>
-<div data-lang="zh"><strong>2026 業界主流：Agile + DevOps + Platform Engineering。</strong>大公司用 monorepo + internal developer platform，讓開發者自助部署，平均 lead time 從幾週降到幾小時。</div>
-<div data-lang="en"><strong>2026 industry default: Agile + DevOps + Platform Engineering.</strong> Big tech uses monorepos with internal developer platforms; lead time drops from weeks to hours.</div>
-</div></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="版本控制" data-en="VERSION CONTROL">Git 與分支</div>
-<h2 data-zh="三、Git：分散式版本控制" data-en="III. Git: Distributed Version Control">三、Git 與分支模型</h2>
-<div data-lang="zh"><p>Git (Linus Torvalds, 2005) 是當今絕對主流的版本控制系統。每個 commit 都有 SHA-1 hash，Repo 是一張 commit DAG（有向無環圖）。</p>
-<p>核心概念：<strong>commit</strong>（快照）、<strong>branch</strong>（分支指標）、<strong>merge</strong>（合併，保留歷史）、<strong>rebase</strong>（線性化歷史，但會改寫 SHA）、<strong>pull request / merge request</strong>（review 流程）。</p></div>
-<div data-lang="en"><p>Git (Linus Torvalds, 2005) dominates today's version control. Each commit is a SHA-1 hash; a repo is a DAG of commits.</p>
-<p>Core terms: <strong>commit</strong> (snapshot), <strong>branch</strong> (a moving pointer), <strong>merge</strong> (preserves history), <strong>rebase</strong> (linearizes history, rewrites SHAs), <strong>pull request / merge request</strong> (review workflow).</p></div>
-<div class="interactive-panel">
-<div style="font-family:var(--font-mono);font-size:.9rem;line-height:1.8;color:var(--c-ink);background:rgba(29,78,216,.05);padding:18px;border-radius:8px;">
-<div style="color:var(--c-accent-dark);font-weight:700;margin-bottom:8px;">GitHub Flow (simplified)</div>
-<div>main &nbsp;● ──── ● ──── ● ──────── ● ──── ● ────► <span style="color:var(--c-ink-muted);">production</span></div>
-<div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\\ ────────── ↗ <span style="color:#16a34a;">[merge PR]</span></div>
-<div>feature &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;● ── ● ── ●</div>
-<div style="margin-top:8px;color:var(--c-ink-muted);font-size:.8rem;">↑ <span data-lang="zh">每個 feature 都從 main 分支出，做完開 PR 合回。</span><span data-lang="en">Each feature branches off main; open a PR to merge back.</span></div>
-</div>
-</div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="測試" data-en="TESTING">測試金字塔</div>
-<h2 data-zh="四、測試金字塔與 TDD" data-en="IV. The Testing Pyramid & TDD">四、測試金字塔</h2>
-<div class="card-grid cols-3">
-<div class="card"><h4>🧪 Unit Test (底層)</h4><div data-lang="zh"><p>測試單一函式 / 類別。<strong>快、多、穩定</strong>。占整體測試的 70%。用 pytest / Jest / JUnit。</p></div><div data-lang="en"><p>Test a single function/class. <strong>Fast, many, stable.</strong> ~70% of all tests. Tools: pytest, Jest, JUnit.</p></div></div>
-<div class="card"><h4>🔌 Integration Test</h4><div data-lang="zh"><p>測試多個模組互動，例如 API + DB。約占 20%，較慢但比 E2E 穩定。</p></div><div data-lang="en"><p>Test multiple modules together (e.g. API + DB). ~20%; slower than units but more stable than E2E.</p></div></div>
-<div class="card"><h4>🌐 E2E (頂端)</h4><div data-lang="zh"><p>模擬使用者實際操作整個系統，例如 Selenium / Playwright / Cypress。<strong>慢、少、易碎</strong>，僅占 10%。</p></div><div data-lang="en"><p>Simulate real user flows end to end (Selenium / Playwright / Cypress). <strong>Slow, few, flaky</strong> — ~10%.</p></div></div>
-</div>
-<div data-lang="zh"><p style="margin-top:12px;"><strong>TDD（測試驅動開發）：</strong>① 先寫一個會失敗的測試 → ② 寫剛好能通過的程式 → ③ 重構。Red → Green → Refactor 循環。</p></div>
-<div data-lang="en"><p style="margin-top:12px;"><strong>TDD (Test-Driven Development):</strong> (1) write a failing test → (2) write just enough code to pass → (3) refactor. The Red → Green → Refactor cycle.</p></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="CI/CD 與品質" data-en="CI/CD & QUALITY">CI/CD、SOLID、文件</div>
-<h2 data-zh="五、CI/CD、SOLID 原則、文件化" data-en="V. CI/CD, SOLID, Documentation">五、CI/CD 與程式品質</h2>
-<div data-lang="zh"><p><strong>CI (Continuous Integration)：</strong>每次 push 自動跑測試 + lint + build。GitHub Actions、GitLab CI、Jenkins、CircleCI 是主流工具。</p>
-<p><strong>CD (Continuous Delivery / Deployment)：</strong>通過所有檢查後自動部署到 staging / production。<strong>2026 業界目標：commit → production &lt; 30 分鐘。</strong></p>
-<p><strong>SOLID 原則（OOP 設計五大原則）：</strong></p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>S</strong>ingle Responsibility — 一個類別只做一件事</li>
-<li><strong>O</strong>pen/Closed — 對擴展開放，對修改封閉</li>
-<li><strong>L</strong>iskov Substitution — 子類能完全替代父類</li>
-<li><strong>I</strong>nterface Segregation — 介面分離，別塞太大</li>
-<li><strong>D</strong>ependency Inversion — 依賴抽象、不依賴具體</li>
-</ul>
-<p><strong>文件化：</strong>README、docstring、ADR (Architecture Decision Record)、API 規格 (OpenAPI / Swagger / GraphQL schema)。「<em>程式碼說 how，文件說 why</em>」。</p></div>
-<div data-lang="en"><p><strong>CI (Continuous Integration):</strong> on every push, run tests + lint + build automatically. GitHub Actions, GitLab CI, Jenkins, CircleCI are common.</p>
-<p><strong>CD (Continuous Delivery / Deployment):</strong> auto-deploy to staging / production once checks pass. <strong>2026 target: commit → production in under 30 minutes.</strong></p>
-<p><strong>SOLID — five OOP design principles:</strong></p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>S</strong>ingle Responsibility — one class, one reason to change</li>
-<li><strong>O</strong>pen/Closed — open to extension, closed to modification</li>
-<li><strong>L</strong>iskov Substitution — subtypes replace base types cleanly</li>
-<li><strong>I</strong>nterface Segregation — many small interfaces, not one fat one</li>
-<li><strong>D</strong>ependency Inversion — depend on abstractions, not concretions</li>
-</ul>
-<p><strong>Documentation:</strong> README, docstrings, ADRs (Architecture Decision Records), API specs (OpenAPI / Swagger / GraphQL schemas). "<em>Code says how; docs say why.</em>"</p></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">Merge vs Rebase</div>
-<h2 data-zh="六、決策：Merge 還是 Rebase？" data-en="VI. Decision: Merge or Rebase?">六、Merge vs Rebase</h2>
-<div class="decision-tree">
-<h4>🌳 <span data-zh="Git 工作流選擇樹" data-en="Git workflow picker">Git 工作流選擇樹</span></h4>
+<div class="section-label" data-zh="開場" data-en="OPENING">56 年的軟體危機</div>
+<h2 data-zh="從 Garmisch 1968 到 Crowdstrike 2024" data-en="From Garmisch 1968 to Crowdstrike 2024">從 Garmisch 1968 到 Crowdstrike 2024</h2>
 <div data-lang="zh">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>分支已 push 到遠端，多人協作？<span class="dt-arrow">→ 是 →</span> 用 <strong>merge</strong>，<strong>絕對不要</strong> rebase 共享分支（會改寫歷史影響他人）。</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>只是自己的 feature branch、想在 PR 前整理 commit？<span class="dt-arrow">→ 是 →</span> <strong>interactive rebase</strong> (<code>git rebase -i</code>) 可 squash / reorder commits，讓歷史乾淨。</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>要把 main 的最新修改同步到 feature？<span class="dt-arrow">→</span> <strong>rebase onto main</strong> 較常見（線性歷史）；或 <code>git merge main</code> 也行。</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>TDD 還是先寫程式再測？<span class="dt-arrow">→</span> 高風險邏輯、明確規格 → <strong>TDD</strong>；探索性 / prototype → 先寫程式再補測試，但 PR 前必須有測試。</div></div>
+<p>1968 年 10 月，58 位電腦科學家在德國 Garmisch 召開 <strong>NATO Software Engineering Conference</strong>。會中 <strong>Edsger Dijkstra</strong> 首次提出「軟體危機 (software crisis)」一詞——當時 IBM OS/360 專案延遲 3 年、超支 5 倍、bug 上萬個。會議結論：軟體開發需要像「橋樑工程」一樣的紀律——於是 <strong>「Software Engineering」</strong> 一詞誕生。</p>
+<p><strong>56 年後的 2024 年 7 月 19 日</strong>：資安公司 <strong>CrowdStrike</strong> 推送一個小小的 Falcon sensor 設定檔更新，因為一個 <strong>沒做完整測試</strong> 的 null pointer，全球 <strong>850 萬台 Windows 機器</strong> 同時藍屏。航班停飛、銀行癱瘓、醫院手術延期、911 服務中斷。<strong>單次經濟損失估計 100 億美金</strong>，是史上最嚴重的單一軟體故障。</p>
+<p>1968 → 2024，技術已突飛猛進——但軟體危機從未消失。<strong>這正是軟體工程存在的理由</strong>：版本控制、測試、CI/CD、code review、漸進式部署 (canary)——每一項都是用血淚換來的紀律。</p>
+<p>這一章不只教你 Git 怎麼用，更要回答：為什麼 nf-core 對 bioinformatics pipeline 訂出 30 條規範？Bioconductor 為何要 R CMD check？Snakemake 與 Nextflow 為何能在你的論文被引用？</p>
 </div>
 <div data-lang="en">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>Branch already pushed and shared? <span class="dt-arrow">→ Yes →</span> Use <strong>merge</strong>. <strong>Never</strong> rebase shared branches (rewriting history breaks teammates).</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>Only your local feature branch, cleaning up before PR? <span class="dt-arrow">→ Yes →</span> <strong>Interactive rebase</strong> (<code>git rebase -i</code>) to squash / reorder commits.</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>Sync latest main into feature? <span class="dt-arrow">→</span> <strong>Rebase onto main</strong> is common (linear history); <code>git merge main</code> also works.</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>TDD or code-first? <span class="dt-arrow">→</span> Risky logic, clear spec → <strong>TDD</strong>; exploratory / prototype → code first, but tests required before PR.</div></div>
+<p>October 1968 — 58 computer scientists met at the <strong>NATO Software Engineering Conference</strong> in Garmisch, Germany. <strong>Edsger Dijkstra</strong> coined "software crisis" there: IBM OS/360 was 3 years late, 5× over budget, with tens of thousands of bugs. The conclusion: software development needed bridge-engineering discipline — and <strong>"software engineering"</strong> was born as a term.</p>
+<p><strong>July 19, 2024 — 56 years later:</strong> security firm <strong>CrowdStrike</strong> pushed a small Falcon sensor config update. A <strong>poorly-tested null pointer</strong> bluescreened <strong>8.5 million Windows machines</strong> worldwide. Flights grounded, banks frozen, hospital surgeries delayed, 911 outages. <strong>Estimated $10 billion economic loss</strong> — the worst single software failure in history.</p>
+<p>1968 → 2024 — technology has exploded, but the software crisis never went away. <strong>That's exactly why software engineering exists</strong>: version control, tests, CI/CD, code review, canary deploys — each is a discipline paid for in blood.</p>
+<p>This chapter teaches more than "how to use Git." It answers: why does nf-core have 30 rules for bioinformatics pipelines? Why does Bioconductor require R CMD check? Why do Snakemake and Nextflow show up in your paper citations?</p>
+</div>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<span data-lang="zh"><strong>核心觀念：</strong>軟體工程 ≠ 寫程式。寫程式是「讓電腦做事」；軟體工程是「<strong>讓一個 5 人團隊在 3 年後仍能維護這份程式碼</strong>」。版本控制、測試、文件、CI/CD 都是為了「未來的你」與「同事」而存在。</span>
+<span data-lang="en"><strong>Core idea:</strong> Software engineering ≠ programming. Programming is "make the computer do something"; software engineering is "<strong>make sure a 5-person team can still maintain this code 3 years later</strong>." Version control, tests, docs, CI/CD all exist for your future self and your teammates.</span>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="核心概念" data-en="CORE CONCEPTS">核心：SDLC 與三大方法論</div>
+<h2 data-zh="一、初學者必懂：SDLC、Waterfall、Agile、DevOps" data-en="I. Core: SDLC, Waterfall, Agile, DevOps">一、SDLC 與三大方法論</h2>
+<div data-lang="zh"><p><strong>SDLC (Software Development Life Cycle)</strong> 是任何專案都會經歷的六個階段：</p></div>
+<div data-lang="en"><p><strong>SDLC (Software Development Life Cycle)</strong>: every project goes through six phases:</p></div>
+
+<div class="workflow">
+<div class="workflow-step" data-step="1"><h4 data-zh="需求 Requirements" data-en="Requirements">需求 Requirements</h4>
+<div data-lang="zh"><p>使用者要什麼？業務目標？非功能性需求 (效能、安全)？</p></div>
+<div data-lang="en"><p>What do users need? Business goals? Non-functional reqs (perf, security)?</p></div></div>
+<div class="workflow-step" data-step="2"><h4 data-zh="設計 Design" data-en="Design">設計 Design</h4>
+<div data-lang="zh"><p>架構 (monolith / microservices)？資料庫 schema？API？</p></div>
+<div data-lang="en"><p>Architecture (monolith / microservices)? DB schema? APIs?</p></div></div>
+<div class="workflow-step" data-step="3"><h4 data-zh="實作 Implementation" data-en="Implementation">實作 Implementation</h4>
+<div data-lang="zh"><p>寫程式碼。code review、pair programming。</p></div>
+<div data-lang="en"><p>Write code. Code review, pair programming.</p></div></div>
+<div class="workflow-step" data-step="4"><h4 data-zh="測試 Testing" data-en="Testing">測試 Testing</h4>
+<div data-lang="zh"><p>Unit test → Integration test → E2E test。CI/CD 自動跑。</p></div>
+<div data-lang="en"><p>Unit → Integration → E2E. Run on CI/CD.</p></div></div>
+<div class="workflow-step" data-step="5"><h4 data-zh="部署 Deployment" data-en="Deployment">部署 Deployment</h4>
+<div data-lang="zh"><p>Canary → Blue-green → Full rollout。容器化、IaC。</p></div>
+<div data-lang="en"><p>Canary → Blue-green → Full rollout. Containers, IaC.</p></div></div>
+<div class="workflow-step" data-step="6"><h4 data-zh="維護 Maintenance" data-en="Maintenance">維護 Maintenance</h4>
+<div data-lang="zh"><p>Bug fix、performance、security patch、依賴升級。</p></div>
+<div data-lang="en"><p>Bug fixes, perf, security patches, dependency upgrades.</p></div></div>
+</div>
+
+<table class="comp-table">
+<thead><tr><th data-zh="方法論" data-en="Methodology">方法論</th><th data-zh="特點" data-en="Trait">特點</th><th data-zh="代價" data-en="Cost">代價</th><th data-zh="適合" data-en="Best for">適合</th></tr></thead>
+<tbody>
+<tr><td><strong>Waterfall (1970)</strong></td><td data-zh="嚴格分階段、每階段做完才進下一段" data-en="Strict phases, no return">嚴格分階段</td><td data-zh="後期變更成本極高" data-en="Change cost spikes late">後期變更貴</td><td data-zh="需求穩定、合約制" data-en="Stable reqs, contract work">需求穩定</td></tr>
+<tr><td><strong>Agile (2001)</strong></td><td data-zh="2 週 sprint、可隨時改變需求" data-en="2-week sprints, embrace change">2 週 sprint</td><td data-zh="需頻繁協作與溝通" data-en="Heavy comms">溝通成本</td><td data-zh="網際網路產品、新創" data-en="Internet products, startups">產品迭代</td></tr>
+<tr><td><strong>DevOps (2009)</strong></td><td data-zh="Dev + Ops 整合，CI/CD 自動化" data-en="Dev + Ops + CI/CD automation">CI/CD 自動化</td><td data-zh="初期建置複雜" data-en="High initial setup">建置複雜</td><td data-zh="高頻部署、雲端服務" data-en="High-freq deploys, SaaS">雲端服務</td></tr>
+<tr><td><strong>SRE (2003 Google)</strong></td><td data-zh="用工程方法管理運維、SLO/SLI/error budget" data-en="Engineering ops; SLO/SLI/error budget">SLO/SLI</td><td data-zh="需大量資料 + 工具" data-en="Heavy tooling">資料密集</td><td data-zh="大型分散式系統" data-en="Large distributed systems">大規模系統</td></tr>
+</tbody></table>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動 #1" data-en="INTERACTIVE #1">變更成本曲線</div>
+<h2 data-zh="二、互動 #1：Waterfall vs Agile vs DevOps「變更成本」" data-en="II. Interactive #1: Cost-of-Change Curves">二、互動 #1：變更成本曲線</h2>
+<div data-lang="zh"><p>下圖顯示三種方法論在「專案不同階段做出變更」的相對成本。<strong>Waterfall 後期改一個需求可能比初期貴 100×</strong>；Agile 設計就是「擁抱變更」；DevOps 加上自動化測試與部署，把變更成本壓到全程都低。</p></div>
+<div data-lang="en"><p>Below: relative cost of changing requirements at different project phases. <strong>A late-stage change in Waterfall costs up to 100× more than early</strong>; Agile is designed to "embrace change"; DevOps adds automation to flatten the cost curve.</p></div>
+<div class="interactive-panel">
+<div class="chart-container" style="height:380px;"><canvas id="costChart"></canvas></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="深入剖析" data-en="DEEP DIVE">Git, TDD, SOLID</div>
+<h2 data-zh="三、深入剖析：Git 內部、TDD、SOLID" data-en="III. Deep Dive: Git Internals, TDD, SOLID">三、深入剖析：Git, TDD, SOLID</h2>
+
+<h3 data-zh="3.1 Git 內部四種物件" data-en="3.1 Git's Four Object Types">3.1 Git 內部的四種物件</h3>
+<div data-lang="zh"><p>Git 不是「diff 工具」，它是<strong>內容定址 (content-addressable) 的物件資料庫</strong>，所有東西用 SHA-1 (新版 SHA-256) 雜湊定址。四種物件：</p>
+<ul style="margin-left:20px;line-height:1.8;">
+<li><strong>blob</strong>：檔案內容（無檔名！）。同內容只存一份。</li>
+<li><strong>tree</strong>：目錄結構（名稱 + 權限 + blob/tree 指標）。</li>
+<li><strong>commit</strong>：時間 + 作者 + 訊息 + tree pointer + parent commit pointer。</li>
+<li><strong>tag</strong>：給某 commit 一個「人類友善」名稱。</li>
+</ul>
+<p>所以 Git 的「歷史」本質是一個 <strong>DAG (Directed Acyclic Graph) of commits</strong>——這正是 Ch 11 學的圖結構！branch 只是「指向某 commit 的可變指標」。</p></div>
+<div data-lang="en"><p>Git is not a "diff tool" — it's a <strong>content-addressable object database</strong>, where everything is keyed by SHA-1 (now SHA-256). Four object types:</p>
+<ul style="margin-left:20px;line-height:1.8;">
+<li><strong>blob</strong>: file content (no filename!). Same content stored once.</li>
+<li><strong>tree</strong>: directory (names + permissions + pointers to blobs/trees).</li>
+<li><strong>commit</strong>: time + author + message + tree pointer + parent commit pointer.</li>
+<li><strong>tag</strong>: human-friendly name for a commit.</li>
+</ul>
+<p>So Git history is essentially a <strong>DAG (Directed Acyclic Graph) of commits</strong> — exactly the graph structure from Ch 11! A branch is just a "mutable pointer to a commit."</p></div>
+
+<h3 data-zh="3.2 Merge vs Rebase：歷史的兩種對待" data-en="3.2 Merge vs Rebase: Two Histories">3.2 Merge vs Rebase：兩種歷史哲學</h3>
+<div data-lang="zh"><p><strong>Merge</strong>：建立一個新的「merge commit」連結兩條分支，<strong>保留完整歷史</strong>。優點：真實；缺點：歷史像盤義大利麵。</p>
+<p><strong>Rebase</strong>：把你的 commit「搬到」目標 branch 的最新點之後，<strong>歷史變直線</strong>。優點：乾淨；缺點：<strong>不可對 public branch 做 rebase</strong>（會改寫他人 commit）。</p>
+<p><strong>原則：</strong>個人 feature branch → rebase；共享 branch → merge。</p></div>
+<div data-lang="en"><p><strong>Merge</strong>: creates a "merge commit" linking two branches, <strong>preserving full history</strong>. Pro: true; con: history looks like spaghetti.</p>
+<p><strong>Rebase</strong>: replays your commits on top of the target branch's tip, <strong>making history linear</strong>. Pro: clean; con: <strong>never rebase a public branch</strong> (rewrites others' commits).</p>
+<p><strong>Rule:</strong> personal feature branch → rebase; shared branch → merge.</p></div>
+
+<h3 data-zh="3.3 測試金字塔" data-en="3.3 The Testing Pyramid">3.3 測試金字塔</h3>
+<div data-lang="zh"><p>Mike Cohn (2009) 的「測試金字塔」：</p>
+<ul style="margin-left:20px;line-height:1.8;">
+<li>底層（70%）：<strong>Unit tests</strong>——測單一函式、毫秒級、ms-level。</li>
+<li>中層（20%）：<strong>Integration tests</strong>——多個模組互動、秒級。</li>
+<li>頂層（10%）：<strong>E2E tests</strong>——完整流程（瀏覽器點擊）、分鐘級。</li>
+</ul>
+<p>反模式：<strong>「ice cream cone」</strong>——上多下少，導致測試慢、修起來貴。<strong>TDD (Test-Driven Development)</strong>：先寫 failing test → 寫最少程式碼讓它過 → refactor。</p></div>
+<div data-lang="en"><p>Mike Cohn (2009)'s testing pyramid:</p>
+<ul style="margin-left:20px;line-height:1.8;">
+<li>Base (70%): <strong>Unit tests</strong> — single functions, milliseconds.</li>
+<li>Middle (20%): <strong>Integration tests</strong> — multi-module, seconds.</li>
+<li>Top (10%): <strong>E2E tests</strong> — full flow (browser clicks), minutes.</li>
+</ul>
+<p>Anti-pattern: <strong>"ice cream cone"</strong> — heavy at top, slow and expensive. <strong>TDD (Test-Driven Development)</strong>: write failing test → write minimum code to pass → refactor.</p></div>
+
+<h3 data-zh="3.4 SOLID 五大原則" data-en="3.4 The SOLID Principles">3.4 SOLID 五大原則</h3>
+<div data-lang="zh"><p>Robert C. Martin (Uncle Bob) 2000 年提出，OOP 設計的五大圭臬：</p>
+<ul style="margin-left:20px;line-height:1.8;">
+<li><strong>S</strong>ingle Responsibility — 一個 class 只做一件事。</li>
+<li><strong>O</strong>pen/Closed — 對擴充開放、對修改封閉。</li>
+<li><strong>L</strong>iskov Substitution — 子類能完全替代父類。</li>
+<li><strong>I</strong>nterface Segregation — 介面要小而專。</li>
+<li><strong>D</strong>ependency Inversion — 依賴抽象，不依賴具體。</li>
+</ul></div>
+<div data-lang="en"><p>Robert C. Martin (Uncle Bob) coined SOLID in 2000 — five OOP design pillars:</p>
+<ul style="margin-left:20px;line-height:1.8;">
+<li><strong>S</strong>ingle Responsibility — one class, one reason to change.</li>
+<li><strong>O</strong>pen/Closed — open to extension, closed to modification.</li>
+<li><strong>L</strong>iskov Substitution — subclasses must substitute for parents.</li>
+<li><strong>I</strong>nterface Segregation — small, focused interfaces.</li>
+<li><strong>D</strong>ependency Inversion — depend on abstractions, not concretions.</li>
+</ul></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="歷史故事" data-en="HISTORY">六個改變產業的故事</div>
+<h2 data-zh="四、六個改變軟體業的歷史故事" data-en="IV. Six Histories That Reshaped Software">四、六個改變軟體業的故事</h2>
+<div class="card-grid cols-2">
+<div class="card"><h4>① Garmisch 1968 — 軟體危機誕生</h4>
+<div data-lang="zh"><p>NATO 召開首屆軟體工程會議。IBM OS/360 是「燃燒中的反例」——延遲 3 年、上千 bug。<strong>Fred Brooks</strong> 後來寫 <em>The Mythical Man-Month</em> (1975)，提出「加更多人到落後專案只會更慢」(Brooks's Law)、「沒有銀彈 (No Silver Bullet)」——這兩條至今 100% 成立。</p></div>
+<div data-lang="en"><p>NATO held the first software engineering conference. IBM OS/360 was the "burning counter-example" — 3 years late, thousands of bugs. <strong>Fred Brooks</strong> later wrote <em>The Mythical Man-Month</em> (1975), giving us "adding people to a late project makes it later" (Brooks's Law) and "No Silver Bullet" — both 100% still true today.</p></div></div>
+
+<div class="card"><h4>② Agile Manifesto (2001) — 17 人在雪山</h4>
+<div data-lang="zh"><p>2001 年 2 月，17 位軟體界人物（Martin Fowler、Kent Beck、Ward Cunningham、Robert Martin...）在 Utah Snowbird 度假村開會，寫下 4 條核心價值與 12 條原則。<strong>Agile Manifesto</strong> 從此改變產業。它的核心：<strong>「個人與互動」優於「流程與工具」</strong>。</p></div>
+<div data-lang="en"><p>February 2001, 17 luminaries (Martin Fowler, Kent Beck, Ward Cunningham, Robert Martin...) met at Snowbird, Utah, and wrote 4 core values + 12 principles. The <strong>Agile Manifesto</strong> reshaped the industry. Core: <strong>"individuals and interactions" over "processes and tools."</strong></p></div></div>
+
+<div class="card"><h4>③ Git (2005) — 兩週寫成</h4>
+<div data-lang="zh"><p>2005 年 4 月，Linux kernel 與商業 SCM <strong>BitKeeper</strong> 鬧翻。Linus Torvalds 在 <strong>兩週內</strong> 寫出 Git，從此 Linux 用 Git 至今。設計核心：① 分散式（每人都有完整 history）、② 內容定址、③ 快（C 寫的）。<strong>2026 年 Git 是 95%+ 開源專案的版本控制標準</strong>。</p></div>
+<div data-lang="en"><p>April 2005 — fight between Linux kernel and commercial SCM <strong>BitKeeper</strong>. Linus Torvalds wrote Git in <strong>two weeks</strong>; Linux has used it ever since. Design: (1) distributed (every clone has full history), (2) content-addressable, (3) fast (C). <strong>By 2026 Git is the version control standard for 95%+ of open-source.</strong></p></div></div>
+
+<div class="card"><h4>④ GitHub (2008) — 開源民主化</h4>
+<div data-lang="zh"><p><strong>Tom Preston-Werner、Chris Wanstrath、PJ Hyett</strong> 三人在舊金山創業，把 Git 變成「社交平台」。Pull Request、Issue tracker、forking culture——把開源從「論壇 + email patch」變成 click-to-contribute。<strong>2018 年 Microsoft 以 75 億美金收購</strong>。2026 年有超過 1.2 億開發者。</p></div>
+<div data-lang="en"><p><strong>Tom Preston-Werner, Chris Wanstrath, PJ Hyett</strong> founded GitHub in SF, turning Git into a social platform. Pull Requests, Issue trackers, forking culture — open source went from "forum + email patch" to click-to-contribute. <strong>Microsoft acquired it for $7.5B in 2018</strong>. 120M+ developers by 2026.</p></div></div>
+
+<div class="card"><h4>⑤ Heartbleed (2014) — 兩年沒人發現</h4>
+<div data-lang="zh"><p>2014 年 4 月，Google 與 Codenomicon 同時發現 OpenSSL 一個 <strong>2 年前 commit</strong> 的 bug——攻擊者能讀任意 64 KB 記憶體，包括 password、private key。影響全球 17% HTTPS 網站。<strong>教訓</strong>：① 開源 ≠ 安全 (沒人 review)、② 加入 fuzz testing、③ OSS-Fuzz 計畫誕生。</p></div>
+<div data-lang="en"><p>April 2014, Google + Codenomicon simultaneously discovered an OpenSSL bug committed <strong>2 years earlier</strong> — attackers could read arbitrary 64 KB of memory, including passwords and private keys. Affected 17% of HTTPS sites worldwide. <strong>Lessons</strong>: (1) open source ≠ secure (nobody was reviewing), (2) add fuzz testing, (3) the OSS-Fuzz project was born.</p></div></div>
+
+<div class="card"><h4>⑥ Crowdstrike (2024) — 一個 null pointer 850 萬台</h4>
+<div data-lang="zh"><p>2024-07-19 凌晨，CrowdStrike Falcon Sensor 推送「Channel File 291」更新到全球所有客戶。<strong>因 staged rollout 缺失 + null pointer 未測試</strong>，850 萬台 Windows 同時 BSOD。航空、銀行、醫療癱瘓 8 小時。<strong>教訓</strong>：① canary rollout 是命；② kernel-mode 軟體須極嚴測試；③ 一個 bug 可能等於 100 億美金。</p></div>
+<div data-lang="en"><p>July 19, 2024 — CrowdStrike Falcon Sensor pushed "Channel File 291" globally. <strong>No staged rollout + untested null pointer</strong> bluescreened 8.5 million Windows machines. Airlines, banks, hospitals frozen for 8 hours. <strong>Lessons</strong>: (1) canary rollouts save lives; (2) kernel-mode code needs extreme testing; (3) one bug can equal $10 billion.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動 #2" data-en="INTERACTIVE #2">Git 分支視覺化</div>
+<h2 data-zh="五、互動 #2：Git 分支圖視覺化" data-en="V. Interactive #2: Git Branch Graph Visualization">五、互動 #2：Git 分支視覺化</h2>
+<div data-lang="zh"><p>點選按鈕模擬 Git 操作：每次 commit 加一個圓圈，branch / merge / rebase 會改變圖的形狀。<strong>觀察 merge 與 rebase 對歷史的不同影響</strong>。</p></div>
+<div data-lang="en"><p>Click buttons to simulate Git ops. Each commit adds a circle; branch / merge / rebase reshape the graph. <strong>Notice how merge and rebase differ.</strong></p></div>
+<div class="interactive-panel">
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+<button id="gitCommit" style="padding:8px 14px;background:var(--c-accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">+ Commit</button>
+<button id="gitBranch" style="padding:8px 14px;background:var(--c-highlight);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">🌿 Branch (feature)</button>
+<button id="gitCheckout" style="padding:8px 14px;background:#6b7280;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">⇆ Switch main/feature</button>
+<button id="gitMerge" style="padding:8px 14px;background:#0891b2;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">🔀 Merge feature→main</button>
+<button id="gitRebase" style="padding:8px 14px;background:#7c3aed;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">↻ Rebase feature on main</button>
+<button id="gitReset" style="padding:8px 14px;background:#dc2626;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">🔄 Reset</button>
+</div>
+<svg id="gitSvg" width="100%" height="260" style="background:var(--c-surface-alt);border-radius:8px;"></svg>
+<div id="gitLog" style="margin-top:10px;padding:10px 14px;background:var(--c-code-bg);color:var(--c-code-text);border-radius:8px;font-family:var(--font-mono);font-size:.85rem;min-height:24px;"></div>
+<div style="margin-top:8px;display:flex;gap:18px;font-size:.85rem;">
+  <span><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#1B365D;vertical-align:middle;"></span> main</span>
+  <span><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#4A7C59;vertical-align:middle;"></span> feature</span>
+  <span><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#0891b2;vertical-align:middle;"></span> merge commit</span>
+</div>
+</div>
+</section>
+
+<section class="section" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-radius:14px;padding:32px;">
+<div class="section-label" style="color:#16a34a;">🧬 <span data-zh="生物資訊連結" data-en="BIOINFORMATICS LINK">給生物資訊學家</span></div>
+<h2 data-zh="六、🧬 生物資訊連結：可重現研究的軟體工程實踐" data-en="VI. 🧬 Bio Link: Software Engineering for Reproducible Research">六、🧬 生資連結：可重現研究的軟體工程</h2>
+
+<div data-lang="zh">
+<p><strong>2026 年的 bioinformatics，可重現性 (reproducibility) 已是論文發表的硬性要求</strong>。許多頂級期刊（Nature 系列、Cell、Bioinformatics）要求 (1) 程式碼公開、(2) 容器化或環境凍結、(3) 工作流程明確。這些都是軟體工程的核心。</p>
+
+<h3>1. Bioconductor 套件開發規範</h3>
+<p><strong>Bioconductor</strong> 對提交的 R 套件要求極嚴：① <strong>R CMD check</strong> 必須通過、無 error/warning；② 必須附 <strong>vignette</strong>（含跑得通的範例）；③ 必須有 <strong>unit tests</strong> (testthat)；④ <strong>S4 class</strong> 強型別優於 S3；⑤ 每 6 個月隨 R 升級。<strong>結果</strong>：Bioconductor 2,200+ 套件比 CRAN 更穩定可信。</p>
+
+<h3>2. nf-core 規範 (Nextflow pipeline)</h3>
+<p><strong>nf-core</strong> 是 Nextflow pipeline 的共通規範 + 100+ 認證 pipeline (rnaseq, sarek, atacseq...)。要求：① <strong>schema</strong> (nextflow_schema.json) 描述參數；② <strong>test config</strong> 用小資料集跑 CI；③ <strong>GitHub Actions</strong> 每 PR 自動 lint + test；④ Conda + Docker + Singularity 三選一容器；⑤ <strong>DOI 自動產生</strong> via Zenodo。</p>
+
+<h3>3. Snakemake 與軟體工程整合</h3>
+<p>Snakemake (Köster 2012, 2021 Bioinformatics update) 把 workflow 寫成 Python 語法。整合：① <strong>DAG</strong> 自動推導依賴；② <strong>Conda env per rule</strong> (隔離依賴)；③ <strong>Singularity</strong> 容器；④ <strong>--report</strong> 自動產 HTML report；⑤ <strong>--cluster</strong> 一鍵跑 SLURM/PBS。</p>
+
+<h3>4. Git LFS 與大檔處理</h3>
+<p>FASTQ、BAM、CRAM 不能直接 commit 進 Git（單檔可能 GB 級，Git 會崩潰）。<strong>Git LFS (Large File Storage)</strong>：把大檔存在外部，Git 只記 pointer。但更好的做法：<strong>用 DVC 或 nf-core 慣例——資料留在 S3/iRODS/SRA，pipeline 才在 Git</strong>。</p>
+
+<h3>5. GitHub Actions 跑 bioinformatics CI</h3>
+<p>每個 commit 自動：① <code>pytest</code> 或 <code>testthat</code> 跑 unit tests；② <code>nextflow run -profile test</code> 跑 mini pipeline；③ <code>R CMD check</code> 檢查 Bioconductor 規範；④ <strong>linting</strong> (snakefmt / Black / lintr)；⑤ build Docker image push 到 ghcr.io。每月可省 100+ 小時手動測試。</p>
+
+<h3>6. BioContainers 與 Bioconda</h3>
+<p><strong>Bioconda</strong> 收錄 8,000+ bioinformatics 套件，每個套件 <strong>自動產生 Docker image</strong> 推到 <strong>BioContainers</strong> 與 <strong>quay.io</strong>。一行 <code>conda install -c bioconda samtools</code> 或 <code>docker pull biocontainers/samtools</code> 就能用——這是現代生資工具的事實標準。</p>
+
+<h3>7. FAIR 原則 + 資料管理計畫</h3>
+<p>2016 年 Wilkinson et al. (Nature Sci Data) 提出 <strong>FAIR</strong>：<strong>F</strong>indable, <strong>A</strong>ccessible, <strong>I</strong>nteroperable, <strong>R</strong>eusable。2023 年 NIH 推行 <strong>DMS Policy</strong>，所有 grant 申請必須有資料管理計畫。<strong>2026 起 NSF、Wellcome Trust、EU Horizon 全面跟進</strong>——這是軟體工程進入「公共政策」。</p>
+
+<h3>8. nf-core / Snakemake workflows / Galaxy 三足鼎立</h3>
+<p><strong>Nextflow + nf-core</strong>：生產環境、雲端、跨機構協作首選。<strong>Snakemake</strong>：個別實驗室、Python 學者社群。<strong>Galaxy</strong>：web UI、教學與無 CLI 經驗使用者。<strong>共同特徵</strong>：DAG-based workflow + reproducibility + container 整合。</p>
+</div>
+
+<div data-lang="en">
+<p><strong>By 2026, reproducibility is a publication requirement in bioinformatics.</strong> Top journals (Nature family, Cell, Bioinformatics) require (1) public code, (2) containerization or environment pinning, (3) explicit workflows. All software-engineering essentials.</p>
+
+<h3>1. Bioconductor package development</h3>
+<p><strong>Bioconductor</strong> rules for R packages: (1) <strong>R CMD check</strong> must pass with no errors/warnings; (2) ships a <strong>vignette</strong> with runnable examples; (3) <strong>unit tests</strong> (testthat); (4) prefer <strong>S4 classes</strong> over S3; (5) re-released every 6 months with R. <strong>Result</strong>: 2,200+ packages more stable and trustworthy than CRAN.</p>
+
+<h3>2. nf-core (Nextflow pipelines)</h3>
+<p><strong>nf-core</strong> = Nextflow pipeline conventions + 100+ certified pipelines (rnaseq, sarek, atacseq...). Requires: (1) <strong>schema</strong> (nextflow_schema.json); (2) <strong>test config</strong> with tiny CI data; (3) <strong>GitHub Actions</strong> lint+test every PR; (4) Conda + Docker + Singularity options; (5) <strong>DOI auto-generated</strong> via Zenodo.</p>
+
+<h3>3. Snakemake + software engineering</h3>
+<p>Snakemake (Köster 2012, 2021 Bioinformatics update) writes workflows in Python syntax. Features: (1) <strong>DAG</strong> auto-derived; (2) <strong>Conda env per rule</strong>; (3) <strong>Singularity</strong> support; (4) <strong>--report</strong> auto-HTML; (5) <strong>--cluster</strong> one-line SLURM/PBS submission.</p>
+
+<h3>4. Git LFS &amp; large files</h3>
+<p>FASTQ, BAM, CRAM cannot be committed to Git directly (multi-GB files crash Git). <strong>Git LFS</strong>: stores big files externally, Git keeps pointers. Even better: <strong>use DVC or the nf-core convention — data stays in S3/iRODS/SRA, only the pipeline lives in Git</strong>.</p>
+
+<h3>5. GitHub Actions for bioinformatics CI</h3>
+<p>Each commit auto-runs: (1) <code>pytest</code> or <code>testthat</code> unit tests; (2) <code>nextflow run -profile test</code> mini pipeline; (3) <code>R CMD check</code> for Bioconductor; (4) <strong>linting</strong> (snakefmt / Black / lintr); (5) build Docker image push to ghcr.io. Saves 100+ hours/month of manual testing.</p>
+
+<h3>6. BioContainers &amp; Bioconda</h3>
+<p><strong>Bioconda</strong> hosts 8,000+ bio packages; each <strong>auto-builds a Docker image</strong> pushed to <strong>BioContainers</strong> + <strong>quay.io</strong>. One-liner <code>conda install -c bioconda samtools</code> or <code>docker pull biocontainers/samtools</code> — the de facto standard for modern bio tooling.</p>
+
+<h3>7. FAIR principles + data management</h3>
+<p>Wilkinson et al. 2016 (Nature Sci Data) coined <strong>FAIR</strong>: <strong>F</strong>indable, <strong>A</strong>ccessible, <strong>I</strong>nteroperable, <strong>R</strong>eusable. In 2023 NIH adopted the <strong>DMS Policy</strong> — every grant needs a data management plan. <strong>NSF, Wellcome, EU Horizon followed by 2026</strong> — software engineering became public policy.</p>
+
+<h3>8. Three workflow ecosystems</h3>
+<p><strong>Nextflow + nf-core</strong>: production, cloud, multi-institution. <strong>Snakemake</strong>: individual labs, Python community. <strong>Galaxy</strong>: web UI, education, CLI-free users. <strong>Common</strong>: DAG-based + reproducible + containerized.</p>
+</div>
+
+<div class="callout" style="background:#fff;border-left:4px solid #16a34a;margin-top:18px;">
+<span class="callout-icon">🎯</span><div>
+<div data-lang="zh"><strong>給生資新人的最低軟體工程清單：</strong>① 用 Git + GitHub (不是私人雲端硬碟)；② 寫 <code>requirements.txt</code> 或 <code>environment.yml</code> 凍結環境；③ 對主函式至少寫 3 個 <code>pytest</code> 或 <code>testthat</code>；④ pipeline 用 Snakemake / Nextflow 不要寫 shell 大雜燴；⑤ 用 Docker 或 Singularity 容器；⑥ 在 README 寫清楚怎麼重現。<strong>這 6 條是發 Nature 子刊的入場券</strong>。</div>
+<div data-lang="en"><strong>Minimum software-engineering checklist for bio newcomers:</strong> (1) Git + GitHub (not personal cloud drives); (2) pin environment with <code>requirements.txt</code> or <code>environment.yml</code>; (3) at least 3 <code>pytest</code> or <code>testthat</code> tests for core functions; (4) pipelines in Snakemake / Nextflow, not shell spaghetti; (5) containerize with Docker or Singularity; (6) reproducibility instructions in the README. <strong>These 6 are your admission ticket to Nature-family journals.</strong></div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="決策樹" data-en="DECISION TREE">SWE 實務指引</div>
+<h2 data-zh="七、🌳 決策樹：常見軟體工程選擇" data-en="VII. 🌳 Common Engineering Decisions">七、🌳 常見決策</h2>
+<div class="decision-tree">
+<h4>🌳 <span data-zh="軟體工程選擇樹" data-en="SWE Decision Picker">軟體工程選擇樹</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Merge 還是 Rebase？<span class="dt-arrow">→</span> 個人 feature branch 整理歷史 → <strong>rebase</strong>；合併到共享 main → <strong>merge</strong>。<strong>絕不對 public branch 做 rebase</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>TDD 適合 bioinformatics 嗎？<span class="dt-arrow">→</span> 對核心邏輯（parser、變異 caller、統計函式）<strong>非常適合</strong>；對 EDA / 探索式分析<strong>不必</strong>。混合最好。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>該用 Nextflow 還是 Snakemake？<span class="dt-arrow">→</span> 大團隊、雲端、跨機構 → <strong>Nextflow + nf-core</strong>；單一實驗室、Python 偏好 → <strong>Snakemake</strong>；web UI 教學 → <strong>Galaxy</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>該用 Docker 還是 Singularity / Apptainer？<span class="dt-arrow">→</span> Cloud / 個人開發 → <strong>Docker</strong>；HPC cluster (無 root) → <strong>Singularity / Apptainer</strong>。Bioconda 兩者都支援。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>該寫 monolith 還是 microservices？<span class="dt-arrow">→</span> 起步 → <strong>monolith</strong>（簡單）；&gt;100 萬行或 &gt;30 人 → 考慮拆 microservices。<strong>過早 microservices 是萬惡之源。</strong></div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>新功能 — 直接寫還是先 PR？<span class="dt-arrow">→</span> 任何 &gt; 50 行的改動都應該有 PR + review。bug fix 也一樣。</div></div>
+<div class="dt-node"><span class="dt-q">Q7:</span><div>CI 失敗怎麼辦？<span class="dt-arrow">→</span> <strong>絕不 force merge</strong>。修到綠了再 merge。CI 紅了卻 merge 是團隊地獄的開始。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Merge or Rebase? <span class="dt-arrow">→</span> Tidying personal feature branch → <strong>rebase</strong>; merging into shared main → <strong>merge</strong>. <strong>Never rebase a public branch.</strong></div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Is TDD right for bioinformatics? <span class="dt-arrow">→</span> For core logic (parsers, variant callers, stats), <strong>yes</strong>; for EDA / exploration, <strong>no</strong>. Mix the two.</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Nextflow or Snakemake? <span class="dt-arrow">→</span> Big team / cloud / multi-org → <strong>Nextflow + nf-core</strong>; single lab / Python preference → <strong>Snakemake</strong>; web UI / teaching → <strong>Galaxy</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Docker or Singularity/Apptainer? <span class="dt-arrow">→</span> Cloud / personal → <strong>Docker</strong>; HPC (no root) → <strong>Singularity / Apptainer</strong>. Bioconda supports both.</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>Monolith or microservices? <span class="dt-arrow">→</span> Start with <strong>monolith</strong> (simple); &gt;1M LOC or &gt;30 people → consider microservices. <strong>Premature microservices is the root of all evil.</strong></div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>New feature — push directly or PR first? <span class="dt-arrow">→</span> Any change &gt;50 lines → PR + review. Same for bugfixes.</div></div>
+<div class="dt-node"><span class="dt-q">Q7:</span><div>CI failing — what now? <span class="dt-arrow">→</span> <strong>Never force-merge.</strong> Fix until green. Merging a red CI is the start of team hell.</div></div>
 </div>
 </div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
-<h2 data-zh="七、實作：pytest 單元測試 / Git 工作流偽碼" data-en="VII. Hands-on: pytest unit test / Git workflow pseudocode">七、pytest 與 Git 工作流</h2>
-<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python (pytest)</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode (Git)</button></div>
-<div class="code-tab-content active" id="py1"><pre><span class="comment"># calc.py — 受測模組 / module under test</span>
-<span class="kw">def</span> <span class="func">add</span>(a: <span class="kw">int</span>, b: <span class="kw">int</span>) -> <span class="kw">int</span>:
-    <span class="kw">return</span> a + b
+<div class="section-label" data-zh="程式碼" data-en="CODE">Python · R · Pseudocode</div>
+<h2 data-zh="八、動手寫：reverse complement 測試（三語）" data-en="VIII. Hands-on: reverse complement test (3 langs)">八、動手寫：測試 reverse complement</h2>
+<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python (pytest)</button><button class="code-tab-btn" onclick="switchTab(this,'r1')">R (testthat)</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode (Git workflow)</button></div>
 
-<span class="kw">def</span> <span class="func">divide</span>(a: <span class="kw">float</span>, b: <span class="kw">float</span>) -> <span class="kw">float</span>:
-    <span class="kw">if</span> b == <span class="num">0</span>:
-        <span class="kw">raise</span> <span class="func">ValueError</span>(<span class="str">"divisor must not be zero"</span>)
-    <span class="kw">return</span> a / b
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># bio_utils.py</span>
+<span class="kw">def</span> <span class="func">reverse_complement</span>(seq: <span class="kw">str</span>) -> <span class="kw">str</span>:
+    <span class="str">"""Return reverse-complement of a DNA string."""</span>
+    comp = <span class="func">str</span>.<span class="func">maketrans</span>(<span class="str">'ACGTacgt'</span>, <span class="str">'TGCAtgca'</span>)
+    <span class="kw">return</span> seq.<span class="func">translate</span>(comp)[::-<span class="num">1</span>]
 
-
-<span class="comment"># test_calc.py — pytest 測試 / pytest tests</span>
+<span class="comment"># tests/test_bio_utils.py — pytest 慣例</span>
 <span class="kw">import</span> pytest
-<span class="kw">from</span> calc <span class="kw">import</span> add, divide
+<span class="kw">from</span> bio_utils <span class="kw">import</span> reverse_complement <span class="kw">as</span> rc
 
-<span class="kw">def</span> <span class="func">test_add_basic</span>():
-    <span class="kw">assert</span> <span class="func">add</span>(<span class="num">2</span>, <span class="num">3</span>) == <span class="num">5</span>
+<span class="kw">def</span> <span class="func">test_basic</span>():
+    <span class="kw">assert</span> <span class="func">rc</span>(<span class="str">"ATCG"</span>) == <span class="str">"CGAT"</span>
 
-<span class="comment"># 用 parametrize 一次測多組 / table-driven tests</span>
-@pytest.mark.<span class="func">parametrize</span>(<span class="str">"a, b, expected"</span>, [
-    (<span class="num">10</span>, <span class="num">2</span>, <span class="num">5</span>),
-    (-<span class="num">6</span>, <span class="num">3</span>, -<span class="num">2</span>),
-    (<span class="num">1</span>, <span class="num">4</span>, <span class="num">0.25</span>),
+<span class="kw">def</span> <span class="func">test_empty</span>():
+    <span class="kw">assert</span> <span class="func">rc</span>(<span class="str">""</span>) == <span class="str">""</span>
+
+<span class="kw">def</span> <span class="func">test_lowercase</span>():
+    <span class="kw">assert</span> <span class="func">rc</span>(<span class="str">"atcg"</span>) == <span class="str">"cgat"</span>
+
+@pytest.<span class="func">mark</span>.<span class="func">parametrize</span>(<span class="str">"seq, expected"</span>, [
+    (<span class="str">"AAAA"</span>, <span class="str">"TTTT"</span>),
+    (<span class="str">"ATATATAT"</span>, <span class="str">"ATATATAT"</span>),     <span class="comment"># palindrome</span>
+    (<span class="str">"GATTACA"</span>, <span class="str">"TGTAATC"</span>),
 ])
-<span class="kw">def</span> <span class="func">test_divide_cases</span>(a, b, expected):
-    <span class="kw">assert</span> <span class="func">divide</span>(a, b) == expected
+<span class="kw">def</span> <span class="func">test_param</span>(seq, expected):
+    <span class="kw">assert</span> <span class="func">rc</span>(seq) == expected
 
-<span class="kw">def</span> <span class="func">test_divide_by_zero_raises</span>():
-    <span class="kw">with</span> pytest.<span class="func">raises</span>(<span class="func">ValueError</span>):
-        <span class="func">divide</span>(<span class="num">1</span>, <span class="num">0</span>)
+<span class="kw">def</span> <span class="func">test_invalid_chars</span>():
+    <span class="kw">with</span> pytest.<span class="func">raises</span>(<span class="kw">ValueError</span>):
+        <span class="func">rc</span>(<span class="str">"ATCGXYZ"</span>)    <span class="comment"># 假設 production 版會驗證</span>
 
-<span class="comment"># 執行：pytest -v  /  Run with: pytest -v</span></pre></div>
-<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// 典型 GitHub Flow / Typical GitHub Flow</span>
-<span class="func">git checkout</span> main
-<span class="func">git pull</span>                          <span class="comment">// 拉最新</span>
-<span class="func">git checkout -b</span> feature/login    <span class="comment">// 開新分支</span>
+<span class="comment"># 跑：pytest -v</span>
+<span class="comment"># CI：.github/workflows/test.yml 自動跑</span></pre></div>
 
-<span class="comment">// 寫程式 + 寫測試 / Code + tests</span>
-<span class="kw">while</span> work_remaining:
-    <span class="func">edit</span> files
-    <span class="func">pytest</span>                       <span class="comment">// 在本地跑測試</span>
-    <span class="func">git add</span> .
-    <span class="func">git commit -m</span> <span class="str">"feat: add login form"</span>
+<div class="code-tab-content" id="r1"><pre><span class="comment"># R/bio_utils.R</span>
+reverse_complement <- function(seq) {
+  comp_table <- <span class="func">c</span>(A=<span class="str">"T"</span>, T=<span class="str">"A"</span>, C=<span class="str">"G"</span>, G=<span class="str">"C"</span>,
+                  a=<span class="str">"t"</span>, t=<span class="str">"a"</span>, c=<span class="str">"g"</span>, g=<span class="str">"c"</span>)
+  chars <- <span class="func">strsplit</span>(seq, <span class="str">""</span>)[[1]]
+  <span class="kw">if</span> (<span class="func">any</span>(!chars %in% <span class="func">names</span>(comp_table) & chars != <span class="str">""</span>))
+    <span class="func">stop</span>(<span class="str">"Invalid DNA character"</span>)
+  <span class="func">paste</span>(<span class="func">rev</span>(comp_table[chars]), collapse = <span class="str">""</span>)
+}
 
-<span class="func">git push origin</span> feature/login
-<span class="func">open</span> Pull Request <span class="kw">on</span> GitHub
-<span class="comment">// → CI 跑測試、lint、build → 同事 review →</span>
-<span class="kw">if</span> approved <span class="kw">and</span> CI_green:
-    <span class="func">squash and merge</span>            <span class="comment">// 合回 main</span>
-    CD pipeline <span class="kw">→</span> staging <span class="kw">→</span> production</pre></div>
+<span class="comment"># tests/testthat/test-bio_utils.R</span>
+library(testthat)
+<span class="func">source</span>(<span class="str">"../../R/bio_utils.R"</span>)
+
+<span class="func">test_that</span>(<span class="str">"reverse_complement: basic"</span>, {
+  <span class="func">expect_equal</span>(<span class="func">reverse_complement</span>(<span class="str">"ATCG"</span>), <span class="str">"CGAT"</span>)
+})
+
+<span class="func">test_that</span>(<span class="str">"reverse_complement: empty"</span>, {
+  <span class="func">expect_equal</span>(<span class="func">reverse_complement</span>(<span class="str">""</span>), <span class="str">""</span>)
+})
+
+<span class="func">test_that</span>(<span class="str">"reverse_complement: palindrome"</span>, {
+  <span class="func">expect_equal</span>(<span class="func">reverse_complement</span>(<span class="str">"ATATATAT"</span>), <span class="str">"ATATATAT"</span>)
+})
+
+<span class="func">test_that</span>(<span class="str">"reverse_complement: errors on invalid"</span>, {
+  <span class="func">expect_error</span>(<span class="func">reverse_complement</span>(<span class="str">"ATCGXYZ"</span>),
+               <span class="str">"Invalid DNA character"</span>)
+})
+
+<span class="comment"># 跑：testthat::test_dir("tests/testthat")</span>
+<span class="comment"># 或：devtools::test() — Bioconductor 標準</span></pre></div>
+
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// Git 日常工作流程（GitHub Flow）/ Daily Git workflow (GitHub Flow)</span>
+
+<span class="comment">// 1. 拉最新 main / Pull latest main</span>
+git checkout main
+git pull origin main
+
+<span class="comment">// 2. 開 feature branch / Branch off</span>
+git checkout -b feature/add-fastq-qc
+
+<span class="comment">// 3. 寫程式 + 寫測試 / Code + tests</span>
+<span class="comment">//    edit files</span>
+git add .
+git commit -m <span class="str">"feat: add FASTQ quality filter (closes #42)"</span>
+
+<span class="comment">// 4. push 到 origin 開 PR / Push and open PR</span>
+git push origin feature/add-fastq-qc
+<span class="comment">//    在 GitHub 開 Pull Request → 觸發 CI</span>
+
+<span class="comment">// 5. CI 綠了，request review</span>
+<span class="comment">//    reviewer 留言 → 改 → push 新 commit</span>
+git add .
+git commit -m <span class="str">"refactor: address review comments"</span>
+git push
+
+<span class="comment">// 6. 合併前先 rebase 整理 / Tidy with rebase before merge</span>
+git rebase -i main
+<span class="comment">//    squash / reword commits</span>
+git push --force-with-lease
+
+<span class="comment">// 7. Merge via GitHub UI（squash or rebase merge）</span>
+<span class="comment">//    main 變綠 → 部署</span>
+
+<span class="comment">// 8. 刪除 branch / Clean up</span>
+git checkout main
+git pull
+git branch -d feature/add-fastq-qc</pre></div>
 </div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="案例研究" data-en="CASE STUDY">nf-core 的軟體工程治理</div>
+<h2 data-zh="八-B、案例：nf-core 如何把 100+ pipeline 的軟體工程系統化" data-en="VIII-B. Case Study: nf-core's Systematic Engineering for 100+ Pipelines">八-B、nf-core 治理案例</h2>
+<div data-lang="zh"><p>nf-core (Ewels et al. 2020 Nature Biotechnology) 是 bioinformatics 史上最成功的開源治理案例——3000+ 貢獻者、100+ certified pipeline、用於數千個論文。讓我們拆解它如何把這一切「軟體工程化」：</p>
+<ol style="margin-left:20px;line-height:1.85;">
+<li><strong>① Cookiecutter Template</strong>：一個指令 <code>nf-core create</code> 就生出完整 pipeline skeleton——包含 main.nf、modules、subworkflows、tests、docs、CI 設定。<strong>確保所有 pipeline 結構一致</strong>。</li>
+<li><strong>② DSL2 Modules (Reusable)</strong>：每個 tool (e.g., FASTQC, BWA, STAR) 都是獨立 module，可在多個 pipeline 重用。<strong>2026 共有 1,200+ modules</strong> 在 nf-core/modules repo。新 pipeline 只需「組裝樂高」。</li>
+<li><strong>③ nf-core lint</strong>：自動檢查 30+ 規範：版本號、CHANGELOG、conda yaml、docker image、test config、必要 metadata。<strong>未通過 lint 無法上 PR review</strong>。</li>
+<li><strong>④ GitHub Actions Matrix CI</strong>：每 PR 觸發在 Ubuntu / macOS 上跑 mini 測試資料集，分別用 Conda / Docker / Singularity 三種容器。<strong>失敗就阻擋 merge</strong>。</li>
+<li><strong>⑤ Bot 自動化</strong>：nf-core-bot 自動標 issue、自動關 stale PR、自動 release tag、自動推 Zenodo DOI——大幅減少 maintainer 負擔。</li>
+<li><strong>⑥ Schema-driven UI</strong>：<code>nextflow_schema.json</code> 描述所有參數，自動產生 Web UI、CLI help、文件——一份來源、多處輸出（single source of truth）。</li>
+<li><strong>⑦ Test Data Hub</strong>：nf-core/test-datasets repo 集中所有 pipeline 用的小型測試資料（每檔 &lt;100 MB），保證 CI 跑得動。</li>
+<li><strong>⑧ Slack + 月度 hackathon</strong>：3000+ 人 Slack 即時溝通；每月有跨機構 hackathon。<strong>社群治理跟程式碼一樣重要</strong>。</li>
+<li><strong>⑨ Code of Conduct + 領導小組</strong>：避免大型專案常見的 toxic 風氣與 BDFL 偏差。Phil Ewels 領頭但有 4 人 Core Team 投票決策。</li>
+</ol>
+<p><strong>對比典型學術 pipeline</strong>：研究生寫一個 shell script 串十個工具，畢業後沒人維護——版本固定 2020、依賴失效、README 過時。<strong>nf-core 把這種「拋棄式 pipeline」轉成「可持續基礎設施」</strong>。</p>
+<p><strong>更深的啟示</strong>：nf-core 證明<strong>軟體工程不只是技術，更是社群治理</strong>。同樣的觀念也適用於 Bioconductor（每 6 個月 release + R CMD check）、scverse（multi-language interop）、Galaxy Training Network（200+ 教材的同行審查）。<strong>2026 一個 bioinformatics 研究團隊的「軟體成熟度」高低，已成為審查與資助的關鍵指標</strong>。</p></div>
+<div data-lang="en"><p>nf-core (Ewels et al. 2020 Nature Biotechnology) is bioinformatics' most successful open-source governance case — 3,000+ contributors, 100+ certified pipelines, used in thousands of papers. Let's dissect how it engineered all this:</p>
+<ol style="margin-left:20px;line-height:1.85;">
+<li><strong>① Cookiecutter template</strong>: one command, <code>nf-core create</code>, scaffolds a full pipeline — main.nf, modules, subworkflows, tests, docs, CI configs. <strong>Ensures structural consistency across pipelines.</strong></li>
+<li><strong>② DSL2 Modules (Reusable)</strong>: each tool (FASTQC, BWA, STAR, …) is an independent module reusable across pipelines. <strong>By 2026, 1,200+ modules</strong> live in nf-core/modules. New pipelines just "assemble Lego."</li>
+<li><strong>③ nf-core lint</strong>: auto-checks 30+ standards: version numbers, CHANGELOG, conda yaml, docker image, test configs, required metadata. <strong>Failing lint blocks PR review.</strong></li>
+<li><strong>④ GitHub Actions Matrix CI</strong>: every PR runs mini test datasets on Ubuntu / macOS with Conda / Docker / Singularity. <strong>Failure blocks merge.</strong></li>
+<li><strong>⑤ Bot automation</strong>: nf-core-bot auto-labels issues, closes stale PRs, tags releases, pushes Zenodo DOIs — slashes maintainer load.</li>
+<li><strong>⑥ Schema-driven UI</strong>: <code>nextflow_schema.json</code> describes all parameters; the Web UI, CLI help, and docs auto-generate from it — one source of truth, multiple outputs.</li>
+<li><strong>⑦ Test Data Hub</strong>: nf-core/test-datasets centralizes tiny test data (&lt;100 MB each) so CI stays fast.</li>
+<li><strong>⑧ Slack + monthly hackathons</strong>: 3,000+ on Slack for real-time talk; monthly cross-institution hackathons. <strong>Community governance matters as much as code.</strong></li>
+<li><strong>⑨ Code of Conduct + leadership team</strong>: avoids the toxic culture and BDFL pitfalls of large projects. Phil Ewels leads, but a 4-person Core Team votes.</li>
+</ol>
+<p><strong>Contrast with typical academic pipelines:</strong> a grad student writes a shell script chaining 10 tools, graduates, and nobody maintains it — version pinned to 2020, deps broken, README stale. <strong>nf-core turns "throwaway pipelines" into "sustainable infrastructure."</strong></p>
+<p><strong>Deeper takeaway:</strong> nf-core proves that <strong>software engineering is not just tech — it's community governance</strong>. The same idea drives Bioconductor (6-month release + R CMD check), scverse (multi-language interop), Galaxy Training Network (peer-reviewed 200+ tutorials). <strong>By 2026, a bioinformatics group's "software maturity" has become a key criterion for grant review and journal acceptance.</strong></p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="常見誤解" data-en="MISCONCEPTIONS">常見誤解</div>
+<h2 data-zh="九、常見誤解與陷阱" data-en="IX. Common Misconceptions">九、常見誤解</h2>
+<div class="card-grid cols-2">
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ 「Agile = 不寫文件」</h4>
+<div data-lang="zh"><p>Agile Manifesto 寫的是「working software over comprehensive documentation」——是 <strong>「重視」working software 「優於」過度文件</strong>，不是「不要文件」。Agile 仍需要 user story、acceptance criteria、API docs、README。<strong>沒文件的 Agile 是混亂，不是敏捷。</strong></p></div>
+<div data-lang="en"><p>The Agile Manifesto says "working software over comprehensive documentation" — <strong>"valuing" working software "over"</strong> excessive docs, not "no docs." Agile still needs user stories, acceptance criteria, API docs, READMEs. <strong>No-docs Agile is chaos, not agility.</strong></p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ 「TDD 浪費時間」</h4>
+<div data-lang="zh"><p>研究 (Bissi 2016 metaanalysis) 顯示 TDD <strong>前期增加 15-35% 開發時間，但 bug 減少 40-90%</strong>。整體 maintainence 成本下降。<strong>bioinformatics 對「正確性」要求極高（一個比對 bug 影響百篇論文），TDD ROI 特別高</strong>。</p></div>
+<div data-lang="en"><p>Studies (Bissi 2016 meta-analysis) show TDD <strong>adds 15-35% upfront development time but reduces bugs by 40-90%</strong>. Total maintenance cost drops. <strong>Bioinformatics is correctness-critical (one alignment bug can affect 100+ papers) — TDD ROI is especially high.</strong></p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ 「CI/CD 只用於 web」</h4>
+<div data-lang="zh"><p>Bioinformatics 完全可用！<strong>nf-core</strong> 100+ pipeline 都跑 GitHub Actions CI；<strong>Bioconductor</strong> 每天對 2,200 套件跑 R CMD check；<strong>Galaxy Training Network</strong> 自動測 200+ tutorials。<strong>2026 沒有 CI 的論文程式碼，難以被信任</strong>。</p></div>
+<div data-lang="en"><p>Bioinformatics uses it everywhere! <strong>nf-core</strong> runs 100+ pipelines on GitHub Actions; <strong>Bioconductor</strong> runs R CMD check on 2,200 packages daily; <strong>Galaxy Training Network</strong> auto-tests 200+ tutorials. <strong>By 2026, paper code without CI is hard to trust.</strong></p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ 「Git push --force 沒問題」</h4>
+<div data-lang="zh"><p><strong>對 public branch 用 <code>--force</code> 是團隊大忌</strong>。會改寫他人 commit、丟失他人工作。安全版本：<strong><code>--force-with-lease</code></strong>——只在「沒有他人更新」時才允許。已被 force push 的 commit 仍可用 <code>git reflog</code> 找回（90 天內）。</p></div>
+<div data-lang="en"><p><strong>Force-pushing public branches is team poison</strong> — rewrites others' commits, loses their work. Safer: <strong><code>--force-with-lease</code></strong> — only allowed when nobody else has pushed. Lost commits can still be recovered via <code>git reflog</code> (within 90 days).</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="進階主題 A" data-en="ADVANCED A">SOLID 五原則展開</div>
+<h2 data-zh="九-A、進階：SOLID 五原則細部範例（OOP 設計的聖經）" data-en="IX-A. Advanced: SOLID Principles Deep Dive (OOP Design Bible)">九-A、SOLID 五原則細節</h2>
+<div data-lang="zh"><p>SOLID 是 Robert C. Martin (Uncle Bob) 2000 年濃縮 50 年 OOP 經驗的五條規則。許多人背得出來，但少有人能正確應用。</p></div>
+<div data-lang="en"><p>SOLID is Robert C. Martin (Uncle Bob)'s 2000 distillation of 50 years of OOP experience. Many can recite them; few apply them correctly.</p></div>
+<div class="card-grid cols-2">
+<div class="card"><h4>S — Single Responsibility</h4>
+<div data-lang="zh"><p><strong>「一個類別只有一個改變的理由」</strong>。違反範例：<code>User</code> class 同時負責驗證密碼、發 email、寫 DB——任一需求變動都要改它。改善：拆 <code>UserValidator</code>、<code>EmailService</code>、<code>UserRepository</code>。<br/><strong>生資對應</strong>：別把 「parse BAM」、「計算覆蓋率」、「畫圖」 寫在同一個 Python 類別裡。</p></div>
+<div data-lang="en"><p><strong>"A class should have only one reason to change."</strong> Anti-example: a <code>User</code> class that handles password validation, email sending, and DB writes — any of those evolving forces edits. Fix: split into <code>UserValidator</code>, <code>EmailService</code>, <code>UserRepository</code>.<br/><strong>Bio</strong>: don't put "parse BAM," "compute coverage," and "plot" in one Python class.</p></div></div>
+<div class="card"><h4>O — Open/Closed</h4>
+<div data-lang="zh"><p><strong>「對擴充開放、對修改封閉」</strong>。新增功能應該<strong>不修改既有程式碼</strong>，而是加新類別/外掛。如 <code>Aligner</code> 介面 + <code>BWAAligner</code> / <code>BowtieAligner</code> / <code>STARAligner</code>——新增 minimap2 不需動既有 code，只加 <code>Minimap2Aligner</code>。<strong>生資對應</strong>：Snakemake 的 rule、Nextflow 的 process 都符合此原則。</p></div>
+<div data-lang="en"><p><strong>"Open to extension, closed to modification."</strong> New behavior should arrive as a <strong>new class/plugin</strong>, not as edits to existing code. E.g., <code>Aligner</code> interface + <code>BWAAligner</code> / <code>BowtieAligner</code> / <code>STARAligner</code> — adding minimap2 means a new <code>Minimap2Aligner</code>, not edits elsewhere. <strong>Bio</strong>: Snakemake rules and Nextflow processes embody this.</p></div></div>
+<div class="card"><h4>L — Liskov Substitution</h4>
+<div data-lang="zh"><p><strong>子類必須能完全替代父類</strong>。Barbara Liskov 1987 提出，1994 被 Martin 列入 SOLID。違反範例：<code>Penguin extends Bird</code> 但 penguin.fly() 不能跑——應該重新設計 hierarchy。<strong>正方形繼承長方形是經典 LSP 違反範例</strong>。<br/><strong>生資對應</strong>：<code>RNAseqAligner extends DNAAligner</code> 若強制要 splice junction 處理，反而破壞 DNA 版的呼叫端。</p></div>
+<div data-lang="en"><p><strong>Subclasses must be substitutable for their parents.</strong> Barbara Liskov 1987 (Martin added it to SOLID in 1994). Anti-example: <code>Penguin extends Bird</code> but <code>penguin.fly()</code> can't run — redesign the hierarchy. <strong>Square inheriting from Rectangle is the classic LSP violation.</strong><br/><strong>Bio</strong>: <code>RNAseqAligner extends DNAAligner</code> that forces splice-junction handling can break callers expecting DNA semantics.</p></div></div>
+<div class="card"><h4>I — Interface Segregation</h4>
+<div data-lang="zh"><p><strong>客戶端不應被迫依賴它不用的方法</strong>——介面要小而專。違反範例：一個 <code>BioFile</code> interface 同時定義 <code>readFastq()</code>、<code>readBam()</code>、<code>readVcf()</code>——FASTQ-only 的 class 也被迫實作另外兩個。改善：拆 <code>FastqReader</code>、<code>BamReader</code>、<code>VcfReader</code> 三個 interface。<strong>Bioconductor 的 S4 class hierarchy 多元繼承</strong>就遵守此原則。</p></div>
+<div data-lang="en"><p><strong>Clients shouldn't depend on methods they don't use</strong> — keep interfaces small and focused. Anti-example: a <code>BioFile</code> interface declaring <code>readFastq()</code>, <code>readBam()</code>, <code>readVcf()</code> — a FASTQ-only class is forced to implement the others. Fix: split into <code>FastqReader</code>, <code>BamReader</code>, <code>VcfReader</code>. <strong>Bioconductor's S4 multi-inheritance</strong> follows this principle.</p></div></div>
+<div class="card"><h4>D — Dependency Inversion</h4>
+<div data-lang="zh"><p><strong>高層模組不該依賴低層，兩者都依賴抽象</strong>。具體寫法：<strong>依賴注入 (DI)</strong>。例：你的 variant caller 邏輯不該硬編 <code>open("input.bam")</code>——而是接收一個 <code>BamReader</code> 物件當參數。測試時可注入 mock。<strong>生資對應</strong>：Snakemake 的 input/output 路徑都是參數而非硬編；nf-core 的 channel 也是 DI 的實踐。</p></div>
+<div data-lang="en"><p><strong>High-level modules shouldn't depend on low-level ones; both depend on abstractions.</strong> Concretely: <strong>dependency injection (DI)</strong>. Don't hardcode <code>open("input.bam")</code> in your variant caller — receive a <code>BamReader</code> as a parameter. Tests can inject mocks. <strong>Bio</strong>: Snakemake's parameterized input/output paths and nf-core's channels are DI in practice.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="進階主題 B" data-en="ADVANCED B">Clean / Hexagonal / Onion 架構</div>
+<h2 data-zh="九-B、進階：三大「乾淨架構」流派" data-en="IX-B. Advanced: Three Schools of Clean Architecture">九-B、Clean / Hexagonal / Onion 架構</h2>
+<div data-lang="zh"><p>2010 之後 enterprise software 流行「分層架構」三大流派——本質都是 SOLID 的進階形：</p></div>
+<div data-lang="en"><p>Post-2010, three "layered architecture" schools dominate enterprise software — all advanced forms of SOLID:</p></div>
+<div class="card-grid cols-3">
+<div class="card"><h4>① Hexagonal (2005, Cockburn)</h4>
+<div data-lang="zh"><p><strong>Alistair Cockburn</strong> 提出「ports &amp; adapters」：核心商業邏輯放中央，<strong>port</strong> 是抽象介面，<strong>adapter</strong> 連接外界（DB、UI、API、檔案）。換 DB 從 MySQL 到 PostgreSQL 只改 adapter，核心不動。<strong>生資對應</strong>：Snakemake / Nextflow 把 「規則邏輯」 與 「實際 IO」 分離，正是 hexagonal 精神。</p></div>
+<div data-lang="en"><p><strong>Alistair Cockburn</strong>'s "ports &amp; adapters": business logic at the core; <strong>ports</strong> are abstract interfaces; <strong>adapters</strong> connect the outside world (DB, UI, API, files). Switching MySQL→PostgreSQL only changes the adapter; the core is untouched. <strong>Bio</strong>: Snakemake/Nextflow separating "rule logic" from "actual IO" is hexagonal in spirit.</p></div></div>
+<div class="card"><h4>② Onion (2008, Palermo)</h4>
+<div data-lang="zh"><p><strong>Jeffrey Palermo</strong> 的「洋蔥架構」：最內層是 domain entity（純資料）、外層 domain service、再外 application、最外 infrastructure。<strong>依賴只能由外往內</strong>，內核完全不知道 framework 存在。優：testability 極高；缺：boilerplate 多。</p></div>
+<div data-lang="en"><p><strong>Jeffrey Palermo</strong>'s "Onion": innermost = domain entities (pure data), then domain services, then application, then infrastructure. <strong>Dependencies only point inward</strong>; the core has no idea a framework exists. Pro: extreme testability. Con: heavy boilerplate.</p></div></div>
+<div class="card"><h4>③ Clean (2017, Martin)</h4>
+<div data-lang="zh"><p>Uncle Bob 在 <em>Clean Architecture</em> 一書中綜合 hexagonal + onion，提出四個同心圓：<strong>Entities → Use Cases → Interface Adapters → Frameworks &amp; Drivers</strong>。<strong>Dependency Rule：依賴只能向內</strong>。Spring Boot、ASP.NET Core、Phoenix Framework 的「典範 codebase」多採用。</p></div>
+<div data-lang="en"><p>Uncle Bob's <em>Clean Architecture</em> book combines hexagonal + onion into four concentric rings: <strong>Entities → Use Cases → Interface Adapters → Frameworks &amp; Drivers</strong>. <strong>Dependency Rule: dependencies point inward only.</strong> Many "exemplary codebases" for Spring Boot, ASP.NET Core, Phoenix Framework adopt it.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="進階主題 C" data-en="ADVANCED C">Twelve-Factor App</div>
+<h2 data-zh="九-C、進階：Twelve-Factor App（雲端原生 12 條軍規）" data-en="IX-C. Advanced: Twelve-Factor App (Cloud-Native Discipline)">九-C、Twelve-Factor App</h2>
+<div data-lang="zh"><p>2011 年 Heroku 共同創辦人 <strong>Adam Wiggins</strong> 發表 <strong>12factor.net</strong>，定義雲端原生 SaaS 應用該遵守的 12 條：</p>
+<ol style="margin-left:20px;line-height:1.85;">
+<li><strong>Codebase</strong>：一個 codebase 對應多個 deploy（Git 倉庫 single source of truth）。</li>
+<li><strong>Dependencies</strong>：明確宣告（requirements.txt / package.json），不依賴系統內建。</li>
+<li><strong>Config</strong>：環境變數注入；<strong>絕不把 DB 密碼 commit 進 Git</strong>。</li>
+<li><strong>Backing services</strong>：DB、cache、queue 都當作 attached resource，可隨時換。</li>
+<li><strong>Build, release, run</strong>：三階段明確分離；release 不可變。</li>
+<li><strong>Processes</strong>：stateless；session 放外部（Redis / DB）。</li>
+<li><strong>Port binding</strong>：應用自帶 web server，不依賴 Apache/Nginx。</li>
+<li><strong>Concurrency</strong>：用 process model 水平擴展，而非 thread。</li>
+<li><strong>Disposability</strong>：fast startup &amp; graceful shutdown，方便彈性擴縮。</li>
+<li><strong>Dev/prod parity</strong>：開發、staging、production 環境差異最小。</li>
+<li><strong>Logs</strong>：當成事件 stream 寫到 stdout；不要寫檔案。</li>
+<li><strong>Admin processes</strong>：管理任務（DB migration、報表）跟主程式一起 release。</li>
+</ol>
+<p><strong>對生資 pipeline 的啟示</strong>：① 把 reference genome 路徑、線程數、記憶體設定全當 env var，不寫死 ② 用 <code>environment.yml</code> 或 <code>requirements.txt</code> 鎖版本 ③ Snakemake / Nextflow 的 process 應該 stateless，可重跑 ④ log 寫 stdout 讓 cluster scheduler 收集——這 4 點就是「Twelve-Factor for Bioinformatics」。</p></div>
+<div data-lang="en"><p>2011 — Heroku co-founder <strong>Adam Wiggins</strong> published <strong>12factor.net</strong>, defining 12 rules for cloud-native SaaS:</p>
+<ol style="margin-left:20px;line-height:1.85;">
+<li><strong>Codebase</strong>: one codebase, many deploys (Git as single source of truth).</li>
+<li><strong>Dependencies</strong>: explicit (requirements.txt / package.json), no implicit system packages.</li>
+<li><strong>Config</strong>: env vars; <strong>never commit DB passwords to Git</strong>.</li>
+<li><strong>Backing services</strong>: DB, cache, queue as attached resources, swappable.</li>
+<li><strong>Build, release, run</strong>: cleanly separated; releases are immutable.</li>
+<li><strong>Processes</strong>: stateless; session in external store (Redis/DB).</li>
+<li><strong>Port binding</strong>: app ships its own web server; no Apache/Nginx dependency.</li>
+<li><strong>Concurrency</strong>: scale out via process model, not threads.</li>
+<li><strong>Disposability</strong>: fast startup &amp; graceful shutdown for elastic scaling.</li>
+<li><strong>Dev/prod parity</strong>: minimize differences between dev, staging, prod.</li>
+<li><strong>Logs</strong>: event streams to stdout; never write to files.</li>
+<li><strong>Admin processes</strong>: management tasks (DB migration, reports) ship with the main app.</li>
+</ol>
+<p><strong>Bioinformatics implications</strong>: (1) genome path, thread count, memory all as env vars, not hardcoded; (2) lock versions in <code>environment.yml</code> / <code>requirements.txt</code>; (3) Snakemake/Nextflow processes stateless and re-runnable; (4) log to stdout so cluster schedulers collect them — that's "Twelve-Factor for Bioinformatics" in four points.</p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="進階主題 D" data-en="ADVANCED D">可觀測性三柱</div>
+<h2 data-zh="九-D、進階：可觀測性 (Observability) 三柱" data-en="IX-D. Advanced: Three Pillars of Observability">九-D、可觀測性三柱</h2>
+<div data-lang="zh"><p>2017 後 SRE 圈普遍採用 「三柱」 框架：</p></div>
+<div data-lang="en"><p>Since 2017 the SRE community has adopted a "three-pillars" framework:</p></div>
+<div class="card-grid cols-3">
+<div class="card"><h4>① Metrics 指標</h4>
+<div data-lang="zh"><p>數值型時序資料：CPU 使用率、HTTP latency、queue 長度。<strong>Prometheus + Grafana</strong> 是事實標準。<strong>四個黃金訊號 (Four Golden Signals)</strong>：Latency、Traffic、Errors、Saturation。<strong>生資對應</strong>：cluster job 的 CPU/RAM/IO 監控、Snakemake/Nextflow 的 trace 報告。</p></div>
+<div data-lang="en"><p>Numeric time-series: CPU usage, HTTP latency, queue depth. <strong>Prometheus + Grafana</strong> is the standard. <strong>Four Golden Signals</strong>: Latency, Traffic, Errors, Saturation. <strong>Bio</strong>: cluster job CPU/RAM/IO monitoring, Snakemake/Nextflow trace reports.</p></div></div>
+<div class="card"><h4>② Logs 日誌</h4>
+<div data-lang="zh"><p>離散事件文字記錄。<strong>結構化 (JSON) log</strong> 比 plain text 好搜尋。ELK (Elasticsearch + Logstash + Kibana)、Loki + Grafana、Datadog 都是主流。<strong>生資對應</strong>：BWA / GATK / Snakemake 的 stderr log；務必加 timestamp 與 step name。</p></div>
+<div data-lang="en"><p>Discrete textual events. <strong>Structured (JSON) logs</strong> beat plain text for search. ELK (Elasticsearch + Logstash + Kibana), Loki + Grafana, Datadog dominate. <strong>Bio</strong>: BWA / GATK / Snakemake stderr logs — always add timestamps and step names.</p></div></div>
+<div class="card"><h4>③ Traces 追蹤</h4>
+<div data-lang="zh"><p>分散式請求在多個微服務間的完整路徑。<strong>OpenTelemetry (2019 CNCF)</strong> 是現代標準，Jaeger / Zipkin / Tempo 是 backend。一個 HTTP request 變成 200 條 span 在不同 service 間流動。<strong>生資對應</strong>：multi-step pipeline 的 DAG trace（每個 rule 的 start/end time），Nextflow 的 trace.txt + report.html。</p></div>
+<div data-lang="en"><p>End-to-end path of a distributed request through services. <strong>OpenTelemetry (2019 CNCF)</strong> is the standard; Jaeger / Zipkin / Tempo are backends. One HTTP request fans out into 200 spans across services. <strong>Bio</strong>: multi-step pipeline DAG traces (start/end per rule); Nextflow's trace.txt + report.html.</p></div></div>
+</div>
+<div class="callout" style="background:#fff;border-left:4px solid var(--c-accent);margin-top:14px;"><span class="callout-icon">🎯</span><div>
+<div data-lang="zh"><strong>SRE 三大關鍵指標：</strong><br>
+① <strong>SLI (Service Level Indicator)</strong>：實際測量值（例：99% 請求 &lt; 200ms）。<br>
+② <strong>SLO (Service Level Objective)</strong>：目標（例：99.9% uptime）。<br>
+③ <strong>Error Budget</strong>：1 − SLO（例：0.1% 失敗額度），用光就要凍結 feature release。<br>
+這三條來自 Google SRE Book (2016)，現在是 Netflix、AWS、Meta、Stripe 通用語言。</div>
+<div data-lang="en"><strong>SRE's three key metrics:</strong><br>
+(1) <strong>SLI</strong> (Service Level Indicator): actual measurement (e.g., 99% requests &lt; 200ms).<br>
+(2) <strong>SLO</strong> (Service Level Objective): target (e.g., 99.9% uptime).<br>
+(3) <strong>Error Budget</strong>: 1 − SLO (e.g., 0.1% failure quota); burn it and feature releases freeze.<br>
+From Google SRE Book (2016); now the lingua franca at Netflix, AWS, Meta, Stripe.</div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="進階主題 E" data-en="ADVANCED E">Conway's Law & DDD</div>
+<h2 data-zh="九-E、進階：Conway 定律與領域驅動設計 (DDD)" data-en="IX-E. Advanced: Conway's Law &amp; Domain-Driven Design">九-E、Conway 定律與 DDD</h2>
+<div data-lang="zh"><p><strong>Conway 定律 (1967)</strong>：「系統的架構，會反映設計它的組織的溝通結構。」<br/>
+即：3 個團隊做的 compiler 一定有 3 個 pass；2 個團隊做的網站，前後端就會分離。Netflix、Spotify、Meta 都刻意把組織拆成「<strong>逆 Conway 操作</strong>」——先設計理想架構，再依此組織團隊。</p>
+<p><strong>對生資的啟示</strong>：① 若同一論文有 wet lab + dry lab，pipeline 介面常會反映兩方溝通 ② Bioconductor 套件之間的依賴 = R 套件作者社群的合作網絡；③ nf-core 之所以模組化得這麼好，是因為它<strong>先有跨機構社群，才有 pipeline 標準</strong>。</p>
+<p><strong>Domain-Driven Design (DDD, Eric Evans 2003)</strong>：複雜業務系統的設計法。核心觀念：</p>
+<ul style="margin-left:20px;line-height:1.9;">
+<li><strong>Ubiquitous Language</strong>：開發者跟領域專家用同一套詞彙。如生資的「peak」、「motif」、「splice junction」要在程式碼中與生物學家認知一致，不要叫 <code>x1</code>。</li>
+<li><strong>Bounded Context</strong>：每個子領域有自己的模型。<strong>「Sample」</strong> 在 wet-lab 是 「tube」，在 LIMS 是 「accession ID」，在 RNA-seq pipeline 是 「FASTQ pair」——三個 bounded context。</li>
+<li><strong>Aggregate Root</strong>：複雜物件的唯一入口。如 <code>Experiment</code> 是 root，包含多個 <code>Sample</code>、<code>Library</code>、<code>SequencingRun</code>。</li>
+<li><strong>Event Sourcing</strong>：不存 state，存 event 序列。生資 ELN (Electronic Lab Notebook) 適用此模式。</li>
+</ul>
+<p>DDD 看似抽象，但 <strong>對於設計 LIMS、ELN、複雜 multi-omics 平台不可或缺</strong>。Benchling、LabKey、SciNote 都受 DDD 啟發。</p></div>
+<div data-lang="en"><p><strong>Conway's Law (1967)</strong>: "The architecture of a system mirrors the communication structure of the organization that built it."<br/>
+A 3-team compiler ends up with 3 passes; a 2-team website ends up front-end/back-end split. Netflix, Spotify, Meta intentionally apply "<strong>inverse Conway</strong>" — design the ideal architecture first, then organize teams around it.</p>
+<p><strong>Bioinformatics implications</strong>: (1) wet-lab + dry-lab papers have pipeline interfaces that mirror cross-team communication; (2) Bioconductor inter-package dependencies = the R-package author community's collaboration network; (3) nf-core is so modular because <strong>the cross-institutional community came first, then the pipeline standard</strong>.</p>
+<p><strong>Domain-Driven Design (DDD, Eric Evans 2003)</strong> — design for complex business systems. Core ideas:</p>
+<ul style="margin-left:20px;line-height:1.9;">
+<li><strong>Ubiquitous Language</strong>: developers and domain experts share vocabulary. In bio, "peak," "motif," "splice junction" must match biologist usage — don't name them <code>x1</code>.</li>
+<li><strong>Bounded Context</strong>: each subdomain has its own model. <strong>"Sample"</strong> = tube in wet lab, accession ID in LIMS, FASTQ pair in RNA-seq pipeline — three bounded contexts.</li>
+<li><strong>Aggregate Root</strong>: unique entry to a complex object. <code>Experiment</code> as root contains many <code>Sample</code>, <code>Library</code>, <code>SequencingRun</code>.</li>
+<li><strong>Event Sourcing</strong>: store events, not state. Great fit for ELN (Electronic Lab Notebook).</li>
+</ul>
+<p>DDD looks abstract but <strong>is essential for designing LIMS, ELN, and complex multi-omics platforms</strong>. Benchling, LabKey, SciNote are all DDD-inspired.</p></div>
 </section>
 
 <section class="quiz-section">
-<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<h3>📝 <span data-zh="自我檢測（5 題）" data-en="Self-Check (5 questions)">自我檢測</span></h3>
+
 <div class="quiz-q" data-answer="1">
-<p data-lang="zh">1. 關於 Git <code>merge</code> 與 <code>rebase</code>，下列何者正確？</p>
-<p data-lang="en">1. Which statement about Git <code>merge</code> vs <code>rebase</code> is correct?</p>
+<p data-lang="zh">1. Git 的內部設計核心是？</p>
+<p data-lang="en">1. The core of Git's internal design is?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. rebase 永遠優於 merge，無例外</span><span data-lang="en">A. Rebase is always better than merge — no exceptions</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. merge 保留分歧歷史；rebase 將 commit 重新套用到目標分支，產生線性歷史，但會改寫 SHA</span><span data-lang="en">B. Merge preserves branching history; rebase replays commits onto a target branch for a linear history but rewrites SHAs</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. rebase 不會改寫 commit hash</span><span data-lang="en">C. Rebase does not rewrite commit hashes</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. merge 與 rebase 完全沒差別</span><span data-lang="en">D. Merge and rebase are identical</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 線性 diff 歷史</span><span data-lang="en">A. Linear diff history</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 內容定址的物件資料庫（blob/tree/commit/tag），commits 形成 DAG</span><span data-lang="en">B. Content-addressable object database (blob/tree/commit/tag) with commits forming a DAG</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 中央式版本鎖定</span><span data-lang="en">C. Centralized version locking</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. SQL 資料庫</span><span data-lang="en">D. A SQL database</span></div>
 </div><div class="quiz-feedback" id="fb1"></div></div>
 
-<div class="quiz-q" data-answer="0">
-<p data-lang="zh">2. SDLC 的典型階段順序是？</p>
-<p data-lang="en">2. The typical SDLC stage order is?</p>
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">2. 測試金字塔的「底層」是？</p>
+<p data-lang="en">2. The "base" of the testing pyramid is?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Requirements → Design → Implementation → Testing → Deployment → Maintenance</span><span data-lang="en">A. Requirements → Design → Implementation → Testing → Deployment → Maintenance</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Implementation → Requirements → Design → Deployment → Testing → Maintenance</span><span data-lang="en">B. Implementation → Requirements → Design → Deployment → Testing → Maintenance</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Testing → Deployment → Requirements → Design → Implementation → Maintenance</span><span data-lang="en">C. Testing → Deployment → Requirements → Design → Implementation → Maintenance</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Design → Implementation → Requirements → Testing → Deployment → Maintenance</span><span data-lang="en">D. Design → Implementation → Requirements → Testing → Deployment → Maintenance</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. E2E tests</span><span data-lang="en">A. E2E tests</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Manual QA</span><span data-lang="en">B. Manual QA</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Unit tests（量多、毫秒級）</span><span data-lang="en">C. Unit tests (many, millisecond-class)</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Performance tests</span><span data-lang="en">D. Performance tests</span></div>
 </div><div class="quiz-feedback" id="fb2"></div></div>
 
-<div class="quiz-q" data-answer="2">
-<p data-lang="zh">3. CI/CD 的主要目的「不」包括下列哪項？</p>
-<p data-lang="en">3. Which is NOT a primary purpose of CI/CD?</p>
+<div class="quiz-q" data-answer="3">
+<p data-lang="zh">3. Bioconductor 對 R 套件的審核要求「不」包含下列哪項？</p>
+<p data-lang="en">3. Bioconductor R package review does NOT require which?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 自動執行測試與品質檢查，及早發現問題</span><span data-lang="en">A. Automate tests and quality checks to catch problems early</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 縮短 commit → production 的交付時間</span><span data-lang="en">B. Shorten commit-to-production lead time</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 取代資料庫，讓專案不再需要儲存資料</span><span data-lang="en">C. Replace databases so projects no longer need data storage</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 透過自動化部署降低人為失誤</span><span data-lang="en">D. Reduce human error via automated deployment</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. R CMD check 通過</span><span data-lang="en">A. R CMD check passes</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. vignette + unit tests</span><span data-lang="en">B. vignette + unit tests</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 每 6 個月隨 R release</span><span data-lang="en">C. Re-released every 6 months with R</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 必須用 Java 撰寫</span><span data-lang="en">D. Must be written in Java</span></div>
 </div><div class="quiz-feedback" id="fb3"></div></div>
+
+<div class="quiz-q" data-answer="0">
+<p data-lang="zh">4. 關於 Git merge vs rebase，下列何者最正確？</p>
+<p data-lang="en">4. Regarding Git merge vs rebase, which is most accurate?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Merge 保留完整歷史；Rebase 讓歷史變直線；絕不對 public branch 做 rebase</span><span data-lang="en">A. Merge preserves full history; rebase linearizes; never rebase a public branch</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Rebase 永遠比 Merge 好</span><span data-lang="en">B. Rebase is always better than merge</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 兩者完全等價</span><span data-lang="en">C. They are fully equivalent</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Merge 會刪除歷史</span><span data-lang="en">D. Merge deletes history</span></div>
+</div><div class="quiz-feedback" id="fb4"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">5. 一個生物資訊實驗室發表論文，使用 nf-core/rnaseq pipeline。下列何者是「nf-core 規範」的關鍵特徵？</p>
+<p data-lang="en">5. A bioinformatics lab uses nf-core/rnaseq for a paper. Which is a key nf-core feature?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 只能用 Excel 跑</span><span data-lang="en">A. Excel-only</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 不需要容器化</span><span data-lang="en">B. No containerization needed</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 有 schema 描述參數、GitHub Actions CI、Conda/Docker/Singularity 容器、自動 DOI</span><span data-lang="en">C. Parameter schema, GitHub Actions CI, Conda/Docker/Singularity containers, auto DOI</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 沒有版本控制</span><span data-lang="en">D. No version control</span></div>
+</div><div class="quiz-feedback" id="fb5"></div></div>
+</section>
+
+<section class="section" style="background:#fef3c7;border-radius:14px;padding:32px;">
+<div class="section-label" style="color:#b45309;">💭 <span data-zh="延伸思考" data-en="DISCUSSION">延伸思考</span></div>
+<h2 data-zh="十、延伸思考與討論" data-en="X. Discussion &amp; Reflection">十、延伸思考</h2>
+<ol style="margin-left:20px;line-height:1.9;color:var(--c-ink);">
+<li data-lang="zh"><strong>LLM (Copilot / Claude Code / Cursor) 改寫了軟體工程的什麼？</strong>程式碼生成速度提高 3-10×，但 code review、架構設計、debug、測試的負擔反而增加。<strong>「Vibe coding」是真的趨勢嗎？</strong>還是只是初期生產力提升、長期維護災難？2025 GitHub 調查顯示 41% 開發者「審 AI 程式比寫還累」。</li>
+<li data-lang="en"><strong>What did LLMs (Copilot / Claude Code / Cursor) rewrite about software engineering?</strong> Code generation is 3-10× faster, but code review, architecture, debugging, and testing get heavier. <strong>Is "vibe coding" a real trend?</strong> Or short-term productivity, long-term disaster? GitHub's 2025 survey: 41% of devs say "reviewing AI code is harder than writing it."</li>
+<li data-lang="zh"><strong>為何 bioinformatics 的可重現性比一般 SE 更難？</strong>① 資料量大（TB-PB）難以 commit；② 工具版本即使一個小數點都會改變結果；③ 隨機種子未固定；④ Cluster 環境異質；⑤ 演算法本身有隨機性。<strong>FAIR + 容器化 + workflow 三劍客是目前最佳解</strong>，但仍遠不夠。</li>
+<li data-lang="en"><strong>Why is reproducibility harder in bioinformatics than typical SE?</strong> (1) Massive data (TB-PB) hard to commit; (2) tool version differences alter results; (3) random seeds not pinned; (4) heterogeneous clusters; (5) inherent algorithmic randomness. <strong>FAIR + containers + workflow are the best current answer</strong>, but far from sufficient.</li>
+<li data-lang="zh"><strong>Crowdstrike 2024 之後，kernel-mode 軟體應該如何設計？</strong>EU 與美國立法要求 staged rollout、強制 sandboxing、kernel API 限制。微軟 2025 開始限制 EDR 廠商存取 kernel。<strong>這是否會降低安全產品的有效性？</strong>還是它本來就不該寫在 kernel？</li>
+<li data-lang="en"><strong>After Crowdstrike 2024, how should kernel-mode software be designed?</strong> EU and US laws now mandate staged rollouts, sandboxing, kernel-API limits. Microsoft from 2025 restricts EDR vendors' kernel access. <strong>Does this weaken security products?</strong> Or were they never supposed to live in the kernel anyway?</li>
+</ol>
 </section>
 
 <nav class="page-nav">
 <a href="data-structures.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 11: 資料結構" data-en="Ch 11: Data Structures">Ch 11: 資料結構</span></a>
-<a href="security.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 13: 資訊安全與密碼學" data-en="Ch 13: Information Security &amp; Cryptography">Ch 13: 資訊安全與密碼學</span></a>
+<a href="security.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 13: 資訊安全" data-en="Ch 13: Information Security">Ch 13: 資訊安全</span></a>
 </nav>
 </main>
 <footer class="site-footer">© Charlene — Introduction to Computer Science · Interactive Tutorial</footer>
@@ -249,11 +678,119 @@
 window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
 function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
 
-// Bar chart: testing pyramid distribution
-new Chart(document.createElement('canvas'),{type:'bar',data:{labels:['Unit','Integration','E2E'],datasets:[{label:'%',data:[70,20,10],backgroundColor:['rgba(29,78,216,.75)','rgba(217,119,6,.75)','rgba(220,38,38,.75)']}]},options:{responsive:false}});
+// Cost of Change chart (relative cost vs project phase)
+const phases=['Req','Design','Code','Test','Deploy','Maintain'];
+new Chart(document.getElementById('costChart'),{type:'line',data:{labels:phases,datasets:[
+ {label:'Waterfall',data:[1,3,10,30,60,100],borderColor:'#dc2626',backgroundColor:'rgba(220,38,38,.12)',tension:.3,fill:false},
+ {label:'Agile',data:[1,2,3,5,8,15],borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.12)',tension:.3,fill:false},
+ {label:'DevOps',data:[1,1.5,2,2.5,3,5],borderColor:'#16a34a',backgroundColor:'rgba(22,163,74,.12)',tension:.3,fill:false}
+]},options:{responsive:true,maintainAspectRatio:false,plugins:{title:{display:true,text:'Relative Cost of Change (early=1)'}},scales:{y:{type:'logarithmic',title:{display:true,text:'Relative cost (log)'}}}}});
+
+// Git branch graph (simple SVG)
+let gitState={commits:[],main:'main',cur:'main',nextX:60};
+const COL_W=70,Y_MAIN=80,Y_FEAT=170;
+function gitAdd(branch,parents,type){
+  const id='c'+gitState.commits.length;
+  const c={id,branch,parents:parents.slice(),type,x:gitState.nextX,y:branch==='feature'?Y_FEAT:Y_MAIN};
+  gitState.commits.push(c);
+  gitState.nextX+=COL_W;
+  drawGit();
+  return c;
+}
+function drawGit(){
+  const svg=document.getElementById('gitSvg');
+  svg.setAttribute('viewBox','0 0 '+Math.max(800,gitState.nextX+40)+' 260');
+  let html='<line x1="20" y1="'+Y_MAIN+'" x2="100%" y2="'+Y_MAIN+'" stroke="#cbd5e1" stroke-width="1" />';
+  html+='<text x="6" y="'+(Y_MAIN+4)+'" font-size="12" fill="#1B365D" font-weight="700">main</text>';
+  html+='<text x="6" y="'+(Y_FEAT+4)+'" font-size="12" fill="#4A7C59" font-weight="700">feat</text>';
+  // edges
+  gitState.commits.forEach(c=>{
+    c.parents.forEach(pid=>{
+      const p=gitState.commits.find(x=>x.id===pid);
+      if(p){
+        html+='<line x1="'+p.x+'" y1="'+p.y+'" x2="'+c.x+'" y2="'+c.y+'" stroke="'+(c.type==='merge'?'#0891b2':(c.branch==='feature'?'#4A7C59':'#1B365D'))+'" stroke-width="2" />';
+      }
+    });
+  });
+  // nodes
+  gitState.commits.forEach(c=>{
+    let col=c.branch==='feature'?'#4A7C59':'#1B365D';
+    if(c.type==='merge')col='#0891b2';
+    html+='<circle cx="'+c.x+'" cy="'+c.y+'" r="11" fill="'+col+'" stroke="#fff" stroke-width="2"/>';
+    html+='<text x="'+c.x+'" y="'+(c.y+4)+'" font-size="10" fill="#fff" text-anchor="middle" font-weight="700">'+c.id.slice(1)+'</text>';
+  });
+  // HEAD marker
+  const last=gitState.commits.filter(c=>c.branch===gitState.cur).slice(-1)[0];
+  if(last){
+    html+='<text x="'+last.x+'" y="'+(last.y-18)+'" font-size="11" fill="#dc2626" font-weight="700" text-anchor="middle">HEAD ('+gitState.cur+')</text>';
+  }
+  svg.innerHTML=html;
+}
+function gitLog(msg){document.getElementById('gitLog').textContent='[ '+new Date().toLocaleTimeString()+' ] '+msg;}
+function lastCommitOn(branch){return gitState.commits.filter(c=>c.branch===branch).slice(-1)[0];}
+document.getElementById('gitCommit').addEventListener('click',()=>{
+  const last=lastCommitOn(gitState.cur);
+  gitAdd(gitState.cur,last?[last.id]:[],'normal');
+  gitLog('git commit on '+gitState.cur);
+});
+document.getElementById('gitBranch').addEventListener('click',()=>{
+  if(gitState.commits.some(c=>c.branch==='feature')){gitLog('feature branch already exists. Use Switch.');return;}
+  const last=lastCommitOn('main');
+  if(!last){gitLog('No commits yet — commit on main first');return;}
+  gitState.cur='feature';
+  // first feature commit is a new commit branching from main's HEAD
+  const c=gitAdd('feature',[last.id],'normal');
+  gitLog('git checkout -b feature  (branched from '+last.id+')');
+});
+document.getElementById('gitCheckout').addEventListener('click',()=>{
+  gitState.cur=(gitState.cur==='main')?'feature':'main';
+  drawGit();
+  gitLog('git checkout '+gitState.cur);
+});
+document.getElementById('gitMerge').addEventListener('click',()=>{
+  const lm=lastCommitOn('main'),lf=lastCommitOn('feature');
+  if(!lm||!lf){gitLog('Need commits on both main & feature');return;}
+  gitState.cur='main';
+  gitAdd('main',[lm.id,lf.id],'merge');
+  gitLog('git checkout main && git merge feature  → merge commit (keeps full history)');
+});
+document.getElementById('gitRebase').addEventListener('click',()=>{
+  const featureCommits=gitState.commits.filter(c=>c.branch==='feature');
+  const lm=lastCommitOn('main');
+  if(!featureCommits.length||!lm){gitLog('Need feature commits + main commits');return;}
+  // remove feature commits and re-add atop main
+  gitState.commits=gitState.commits.filter(c=>c.branch!=='feature');
+  let parent=lm.id;
+  featureCommits.forEach((fc)=>{
+    const nc=gitAdd('feature',[parent],'normal');
+    parent=nc.id;
+  });
+  gitLog('git rebase main  →  feature replayed atop main (linear history; rewrites commits!)');
+});
+document.getElementById('gitReset').addEventListener('click',()=>{
+  gitState={commits:[],main:'main',cur:'main',nextX:60};
+  drawGit();
+  gitLog('Reset graph');
+});
+// initial commits
+gitAdd('main',[],'normal');
+gitAdd('main',['c0'],'normal');
+gitLog('Started with 2 commits on main');
 
 // Quiz feedback
-const QF={zh:{q1_y:'merge 留下分歧、rebase 線性化但改寫 SHA——所以共享分支不能 rebase。',q1_n:'答案 B。',q2_y:'這是教科書順序，實務上 Agile 會迭代多次但每個 sprint 仍走相同步驟。',q2_n:'答案 A。',q3_y:'CI/CD 是自動化測試+部署，跟資料庫毫無關係。',q3_n:'答案 C。'},en:{q1_y:'Merge preserves divergence; rebase linearizes but rewrites SHAs — never on shared branches.',q1_n:'Answer: B.',q2_y:'Textbook order; Agile iterates many times but each sprint still walks these steps.',q2_n:'Answer: A.',q3_y:'CI/CD automates test+deploy and has nothing to do with replacing databases.',q3_n:'Answer: C.'}};
+const QF={zh:{
+q1_y:'Git 用 SHA-1/SHA-256 雜湊定址，4 種物件 blob/tree/commit/tag。commits 形成 DAG。',q1_n:'答案 B。',
+q2_y:'Unit tests 是金字塔底層：量多、快、便宜。E2E 在頂層（少而慢）。',q2_n:'答案 C。',
+q3_y:'Bioconductor 是 R 套件 repository——不要求 Java。其他三項都是必要條件。',q3_n:'答案 D。',
+q4_y:'Merge 保留分支歷史；Rebase 把 commits 重放成直線；對 public branch 做 rebase 會改寫他人 commit，是團隊禁忌。',q4_n:'答案 A。',
+q5_y:'nf-core 規範要求 schema、自動化 CI、容器化、DOI — 這是可重現研究的標竿。',q5_n:'答案 C。'
+},en:{
+q1_y:"Git uses SHA-1/SHA-256 addressing with 4 object types (blob/tree/commit/tag); commits form a DAG.",q1_n:'Answer: B.',
+q2_y:'Unit tests are the base: many, fast, cheap. E2E sits at the top (few, slow).',q2_n:'Answer: C.',
+q3_y:'Bioconductor is for R — not Java. The other three are required.',q3_n:'Answer: D.',
+q4_y:'Merge preserves branch history; rebase replays commits as a line; rebasing a public branch rewrites others\' commits — a team taboo.',q4_n:'Answer: A.',
+q5_y:'nf-core requires schema, automated CI, containerization, DOI — the gold standard for reproducible research.',q5_n:'Answer: C.'
+}};
 document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
 </script>
 </body></html>

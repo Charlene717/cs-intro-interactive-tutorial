@@ -11,63 +11,65 @@
 <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
 <header class="page-hero"><div class="step-badge">CHAPTER 3 / 16</div>
 <h1 data-zh="數位邏輯與布林代數" data-en="Digital Logic & Boolean Algebra">數位邏輯與布林代數</h1>
-<p class="subtitle" data-lang="zh">為什麼電腦能「思考」？因為所有運算——加減乘除、判斷比較、AI 推論——都可分解為 AND、OR、NOT 三個基本邏輯閘的組合。</p>
-<p class="subtitle" data-lang="en">Why can computers "think"? Because every operation — arithmetic, comparison, even AI inference — can be decomposed into combinations of AND, OR, NOT gates.</p>
+<p class="subtitle" data-lang="zh">22 歲的 Claude Shannon 證明：所有運算——包括 AI 推論、bedtools intersect、SQL 查詢——都能拆解為 AND、OR、NOT 三個閘的組合。這是「20 世紀最重要的碩士論文」。</p>
+<p class="subtitle" data-lang="en">A 22-year-old Claude Shannon proved that every operation — AI inference, bedtools intersect, SQL queries — can be decomposed into AND, OR, NOT. The thesis behind it is "the most important master's thesis of the 20th century."</p>
 </header>
 <main class="content-wrap">
 
 <section class="section">
-<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
-<h2 data-zh="從電子開關到邏輯思維" data-en="From Switches to Logic">從電子開關到邏輯思維</h2>
-<div data-lang="zh"><p>1854 年，英國數學家 <strong>George Boole</strong> 在《思維法則的研究》中以 0/1（False/True）建立「布林代數」，將推理變成代數運算。八十多年後，<strong>Claude Shannon 在 1937 年 MIT 碩士論文</strong>中證明：可以用電子開關（繼電器、後來的電晶體）實作任何布林表達式——這篇論文常被譽為「20 世紀最重要的碩士論文」。</p>
-<p>今天的 CPU 裡有數百億顆電晶體，全部都在做同一件事：執行 AND、OR、NOT。把它們堆疊組合，就能造出加法器、比較器、記憶單元，最終構成整台電腦。</p></div>
-<div data-lang="en"><p>In 1854, English mathematician <strong>George Boole</strong> founded "Boolean algebra" in <em>An Investigation of the Laws of Thought</em>, turning reasoning into algebra over 0/1 (False/True). Eighty-three years later, <strong>Claude Shannon's 1937 MIT master's thesis</strong> proved that electronic switches (relays, later transistors) can implement any Boolean expression — often called "the most important master's thesis of the 20th century."</p>
-<p>Today's CPUs pack tens of billions of transistors, all doing the same thing: AND, OR, NOT. Stack them and you get adders, comparators, memory cells — an entire computer.</p></div>
+<div class="section-label" data-zh="開場故事" data-en="OPENING STORY">1937 年的一頁紙</div>
+<h2 data-zh="一、20 世紀最重要的碩士論文" data-en="I. The Most Important Master's Thesis of the 20th Century">一、Shannon 1937：一頁紙改變世界</h2>
+<div data-lang="zh"><p>1937 年夏天，22 歲的 <strong>Claude Shannon</strong> 在 MIT 完成了一份 72 頁的碩士論文：《A Symbolic Analysis of Relay and Switching Circuits》。論文的核心觀念簡單到令人錯愕——他發現 80 年前 George Boole 寫的<strong>布林代數</strong>（純抽象的 0/1 邏輯），可以<strong>直接對應</strong>電話交換機裡的繼電器電路。</p>
+<p>這意味著什麼？意味著<strong>所有邏輯運算</strong>都可以用電線、開關來實作。意味著 1+1、True AND False、染色體區間 intersect、ChatGPT 的注意力機制——本質上都是同一件事：在電路中傳遞 0 與 1。</p>
+<p>Howard Gardner 後來寫道：「這也許是 20 世紀最重要、也是最有名的碩士論文。」沒有 Shannon 的這 72 頁紙，就沒有今天的數位電腦。順帶一提，11 年後 Shannon 又單槍匹馬發明了<strong>資訊理論</strong>——還有第一個下西洋棋的電腦程式，與一個會雜耍的機械手臂。</p></div>
+<div data-lang="en"><p>Summer 1937. A 22-year-old <strong>Claude Shannon</strong> finished a 72-page master's thesis at MIT: <em>A Symbolic Analysis of Relay and Switching Circuits</em>. The idea was almost embarrassingly simple — <strong>Boolean algebra</strong>, written 80 years earlier by George Boole as pure 0/1 logic, <strong>maps directly</strong> onto telephone-relay switching circuits.</p>
+<p>What did this mean? Every logical operation could be implemented with wires and switches. 1+1, True AND False, chromosome-interval intersection, ChatGPT's attention mechanism — all the same thing at heart: pushing 0s and 1s through circuits.</p>
+<p>Howard Gardner later called it "possibly the most important — and famous — master's thesis of the 20th century." Without those 72 pages, no digital computer would exist. Side note: 11 years later, Shannon single-handedly invented <strong>information theory</strong> — plus the first chess program and a juggling robot.</p></div>
 <div class="callout tip"><span class="callout-icon">💡</span><div>
-<span data-lang="zh"><strong>核心觀念：</strong>邏輯閘是「輸入 0/1 → 輸出 0/1」的最小單元。每個閘的行為由<strong>真值表 (truth table)</strong> 完整定義，與電路實作無關。</span>
-<span data-lang="en"><strong>Core idea:</strong> A logic gate is the smallest unit mapping 0/1 inputs to a 0/1 output. Its behavior is fully defined by a <strong>truth table</strong>, independent of physical implementation.</span>
+<span data-lang="zh"><strong>核心觀念：</strong>邏輯閘是「輸入 0/1 → 輸出 0/1」的最小運算單元。每個閘的行為由<strong>真值表 (truth table)</strong> 完整定義，與實作媒介無關（繼電器、真空管、電晶體、量子位元皆可）。</span>
+<span data-lang="en"><strong>Core idea:</strong> A logic gate is the smallest operation: 0/1 inputs → 0/1 output. Its behavior is fully captured by a <strong>truth table</strong>, independent of medium (relay, vacuum tube, transistor, qubit — all valid).</span>
 </div></div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="七大邏輯閘" data-en="SEVEN GATES">七大邏輯閘</div>
-<h2 data-zh="一、七個基本邏輯閘" data-en="I. The Seven Basic Gates">一、七個基本邏輯閘</h2>
+<div class="section-label" data-zh="七大基本閘" data-en="SEVEN GATES">七個邏輯閘</div>
+<h2 data-zh="二、初學者必背：七個基本邏輯閘" data-en="II. Beginner Essentials: The Seven Basic Gates">二、七個基本邏輯閘</h2>
 <table class="comp-table">
-<thead><tr><th data-zh="閘" data-en="Gate">閘</th><th data-zh="符號" data-en="Symbol">符號</th><th data-zh="真值表 (A,B → Y)" data-en="Truth Table">真值表</th><th data-zh="說明" data-en="Description">說明</th></tr></thead>
+<thead><tr><th data-zh="閘" data-en="Gate">閘</th><th data-zh="符號" data-en="Symbol">符號</th><th data-zh="真值表 (A,B → Y)" data-en="Truth Table">真值表</th><th data-zh="生活對照" data-en="Everyday analogy">生活對照</th></tr></thead>
 <tbody>
-<tr><td><strong>AND</strong></td><td><code>A·B</code> 或 <code>A&amp;B</code></td><td>00→0, 01→0, 10→0, 11→1</td><td data-lang="zh">兩者皆 1 才輸出 1（邏輯且）</td><td data-lang="en">Output 1 iff both inputs are 1</td></tr>
-<tr><td><strong>OR</strong></td><td><code>A+B</code> 或 <code>A|B</code></td><td>00→0, 01→1, 10→1, 11→1</td><td data-lang="zh">至少一個 1 就輸出 1（邏輯或）</td><td data-lang="en">Output 1 if at least one input is 1</td></tr>
-<tr><td><strong>NOT</strong></td><td><code>¬A</code> 或 <code>~A</code></td><td>0→1, 1→0</td><td data-lang="zh">反相（唯一單輸入閘）</td><td data-lang="en">Inverter (the only 1-input gate)</td></tr>
+<tr><td><strong>AND</strong></td><td><code>A·B</code> 或 <code>A&amp;B</code></td><td>00→0, 01→0, 10→0, 11→1</td><td data-lang="zh">門禁：刷卡 AND 指紋 → 開門</td><td data-lang="en">Door lock: card AND fingerprint → open</td></tr>
+<tr><td><strong>OR</strong></td><td><code>A+B</code> 或 <code>A|B</code></td><td>00→0, 01→1, 10→1, 11→1</td><td data-lang="zh">通知：email OR SMS OR push</td><td data-lang="en">Notify: email OR SMS OR push</td></tr>
+<tr><td><strong>NOT</strong></td><td><code>¬A</code> 或 <code>~A</code></td><td>0→1, 1→0</td><td data-lang="zh">開關反轉；唯一單輸入閘</td><td data-lang="en">Inverter; the only 1-input gate</td></tr>
 <tr><td><strong>NAND</strong></td><td><code>¬(A·B)</code></td><td>00→1, 01→1, 10→1, 11→0</td><td data-lang="zh">AND 反相；<strong>萬用閘</strong></td><td data-lang="en">NOT AND; <strong>universal gate</strong></td></tr>
 <tr><td><strong>NOR</strong></td><td><code>¬(A+B)</code></td><td>00→1, 01→0, 10→0, 11→0</td><td data-lang="zh">OR 反相；亦為萬用閘</td><td data-lang="en">NOT OR; also universal</td></tr>
-<tr><td><strong>XOR</strong></td><td><code>A⊕B</code></td><td>00→0, 01→1, 10→1, 11→0</td><td data-lang="zh">兩者不同才輸出 1（奇偶/加法核心）</td><td data-lang="en">Output 1 iff inputs differ (parity/adder core)</td></tr>
-<tr><td><strong>XNOR</strong></td><td><code>¬(A⊕B)</code></td><td>00→1, 01→0, 10→0, 11→1</td><td data-lang="zh">XOR 反相；相等檢測</td><td data-lang="en">NOT XOR; equality detector</td></tr>
+<tr><td><strong>XOR</strong></td><td><code>A⊕B</code></td><td>00→0, 01→1, 10→1, 11→0</td><td data-lang="zh">奇偶校驗、加密；加法器核心</td><td data-lang="en">Parity, encryption; adder core</td></tr>
+<tr><td><strong>XNOR</strong></td><td><code>¬(A⊕B)</code></td><td>00→1, 01→0, 10→0, 11→1</td><td data-lang="zh">相等檢測；密碼比對</td><td data-lang="en">Equality detector; password match</td></tr>
 </tbody></table>
 
 <div class="callout tip"><span class="callout-icon">💡</span><div>
-<div data-lang="zh"><strong>NAND 萬用性：</strong>任何布林函數都能只用 NAND 閘實作。例如 <code>NOT A = A NAND A</code>、<code>A AND B = NOT(A NAND B)</code>。這就是為何商用 IC 工廠最常製造的就是 NAND 閘陣列。</div>
-<div data-lang="en"><strong>NAND universality:</strong> Any Boolean function can be built using only NAND gates — e.g., <code>NOT A = A NAND A</code>, <code>A AND B = NOT(A NAND B)</code>. That's why NAND-gate arrays are the most mass-produced IC building blocks.</div>
+<div data-lang="zh"><strong>NAND 萬用性：</strong>任何布林函數都能<strong>只用 NAND</strong> 閘實作。例如 <code>NOT A = A NAND A</code>、<code>A AND B = NOT(A NAND B)</code>、<code>A OR B = (NOT A) NAND (NOT B)</code>。這就是為何商用 IC 工廠最常製造的就是 NAND 閘陣列——SSD 中的 NAND flash 也是同名來源（單元結構像 NAND 閘）。</div>
+<div data-lang="en"><strong>NAND universality:</strong> Any Boolean function can be built using only NAND. E.g., <code>NOT A = A NAND A</code>, <code>A AND B = NOT(A NAND B)</code>, <code>A OR B = (NOT A) NAND (NOT B)</code>. That's why NAND-gate arrays are the most mass-produced IC building blocks — and why SSD "NAND flash" got its name (cell structure resembles a NAND gate).</div>
 </div></div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="互動真值表" data-en="INTERACTIVE TRUTH TABLE">互動真值表</div>
-<h2 data-zh="二、互動：點擊 A、B 觀察所有閘的輸出" data-en="II. Interactive: Toggle A, B and watch all gate outputs">二、互動真值表</h2>
+<div class="section-label" data-zh="互動 #1" data-en="INTERACTIVE #1">真值表即時演示</div>
+<h2 data-zh="三、互動 ①：點擊 A、B，看所有閘即時輸出" data-en="III. Interactive ①: Toggle A, B — Live Gate Outputs">三、互動 ①：真值表演示</h2>
 <div class="interactive-panel">
 <div style="display:flex;justify-content:center;gap:30px;flex-wrap:wrap;margin-bottom:18px;">
   <button id="toggleA" class="gate-toggle" style="padding:14px 26px;font-size:1.1rem;font-family:var(--font-mono);font-weight:700;cursor:pointer;border:2px solid var(--c-accent);background:var(--c-accent);color:#fff;border-radius:8px;">A = 1</button>
   <button id="toggleB" class="gate-toggle" style="padding:14px 26px;font-size:1.1rem;font-family:var(--font-mono);font-weight:700;cursor:pointer;border:2px solid var(--c-accent);background:#fff;color:var(--c-accent);border-radius:8px;">B = 0</button>
 </div>
 <div id="gateGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-top:8px;"></div>
-<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:14px;"><span data-lang="zh">按下按鈕切換 0/1，所有閘的輸出會即時更新（綠色=1，灰色=0）</span><span data-lang="en">Click buttons to toggle 0/1 — all gate outputs update live (green=1, gray=0)</span></p>
+<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:14px;"><span data-lang="zh">按下按鈕切換 0/1，所有閘的輸出即時更新（綠色=1，灰色=0）</span><span data-lang="en">Click buttons to toggle 0/1 — all gate outputs update live (green=1, gray=0)</span></p>
 </div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="布林代數" data-en="BOOLEAN ALGEBRA">布林代數定律</div>
-<h2 data-zh="三、布林代數五大定律" data-en="III. Five Laws of Boolean Algebra">三、布林代數五大定律</h2>
-<div data-lang="zh"><p>布林代數的化簡規則讓我們可以把複雜的邏輯式減化為更少的閘——這是<strong>邏輯閘合成 (logic synthesis)</strong> 的基礎，省晶片面積、降功耗。</p></div>
-<div data-lang="en"><p>Boolean simplification reduces complex expressions to fewer gates — the foundation of <strong>logic synthesis</strong>, saving die area and power.</p></div>
+<div class="section-label" data-zh="深入剖析" data-en="DEEP DIVE">布林代數五大定律</div>
+<h2 data-zh="四、進階：布林代數五大定律 + 化簡" data-en="IV. Advanced: Five Laws + Karnaugh Simplification">四、布林代數五大定律</h2>
+<div data-lang="zh"><p>布林代數的化簡規則讓我們可以把複雜的邏輯式減化為更少的閘——這是<strong>邏輯閘合成 (logic synthesis)</strong> 的基礎，省晶片面積、降功耗。EDA 軟體 (Synopsys Design Compiler、Cadence Genus) 每天為全球晶片廠完成這項工作。</p></div>
+<div data-lang="en"><p>Boolean simplification reduces complex expressions to fewer gates — the foundation of <strong>logic synthesis</strong>, saving die area and power. EDA tools (Synopsys Design Compiler, Cadence Genus) do this daily for every chip in the world.</p></div>
 <table class="comp-table">
 <thead><tr><th data-zh="定律" data-en="Law">定律</th><th data-zh="AND 形式" data-en="AND form">AND</th><th data-zh="OR 形式" data-en="OR form">OR</th></tr></thead>
 <tbody>
@@ -78,23 +80,28 @@
 <tr><td data-lang="zh">De Morgan 定律</td><td data-lang="en">De Morgan's</td><td>¬(A·B) = ¬A + ¬B</td><td>¬(A+B) = ¬A · ¬B</td></tr>
 </tbody></table>
 
+<div data-lang="zh"><p><strong>De Morgan 證明（直觀版）：</strong>「A 與 B 都不開」等同於「A 沒開 或 B 沒開」嗎？不對——「都不開」應該是「A 沒開 且 B 沒開」。「A 與 B 不都開」（即 ¬(A·B)）才等同於「A 沒開 或 B 沒開」（¬A + ¬B）。把它寫成真值表逐行驗證即可。</p>
+<p><strong>Karnaugh map 化簡：</strong>把真值表畫成 2D 表格（橫軸 A、縱軸 B），合併相鄰的「1」變成更大的方塊，就能找出最簡布林式。對於 4 變數以下非常實用，5+ 變數則交給 Quine-McCluskey 演算法或 EDA 工具。</p></div>
+<div data-lang="en"><p><strong>De Morgan intuition:</strong> Is "neither A nor B is on" the same as "A is off OR B is off"? No — "neither" means "A is off AND B is off." It's "NOT both A and B on" (¬(A·B)) that equals "A is off OR B is off" (¬A + ¬B). Verify line by line in a truth table.</p>
+<p><strong>Karnaugh maps:</strong> draw the truth table as a 2D grid (A horizontal, B vertical), merge adjacent 1s into larger rectangles, and read off the simplest expression. Great for ≤4 variables; for ≥5 use the Quine-McCluskey algorithm or EDA tools.</p></div>
+
 <div class="callout warn"><span class="callout-icon">⚠️</span><div>
-<div data-lang="zh"><strong>De Morgan 在程式中也常出現：</strong>條件 <code>!(a &amp;&amp; b)</code> 等同於 <code>!a || !b</code>。重構巢狀 if 語句時非常實用。</div>
-<div data-lang="en"><strong>De Morgan in code too:</strong> <code>!(a &amp;&amp; b)</code> equals <code>!a || !b</code>. Indispensable when refactoring nested if-statements.</div>
+<div data-lang="zh"><strong>De Morgan 在程式中也常出現：</strong>條件 <code>!(a &amp;&amp; b)</code> 等同於 <code>!a || !b</code>。重構巢狀 if 語句時非常實用。<br><strong>SQL 應用：</strong><code>WHERE NOT (age &lt; 18 AND gender = 'M')</code> 等同於 <code>WHERE age &gt;= 18 OR gender != 'M'</code>——後者通常 query planner 跑得更快。</div>
+<div data-lang="en"><strong>De Morgan in code:</strong> <code>!(a &amp;&amp; b)</code> equals <code>!a || !b</code>. Indispensable for refactoring nested ifs.<br><strong>SQL example:</strong> <code>WHERE NOT (age &lt; 18 AND gender = 'M')</code> = <code>WHERE age &gt;= 18 OR gender != 'M'</code> — the latter often runs faster in query planners.</div>
 </div></div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="加法器" data-en="ADDERS">半加器與全加器</div>
-<h2 data-zh="四、從閘到加法器：XOR + AND 即可實現算術" data-en="IV. Gates to Adders: Arithmetic from XOR + AND">四、半加器與全加器</h2>
-<div data-lang="zh"><p>單個位元的加法只有四種輸入組合，仔細看會發現：</p>
+<div class="section-label" data-zh="加法器" data-en="ADDERS">半加器 → 全加器 → 32-bit</div>
+<h2 data-zh="五、從閘到加法器：算術就是邏輯" data-en="V. From Gates to Adders: Arithmetic Is Logic">五、加法器：算術就是邏輯</h2>
+<div data-lang="zh"><p>單個位元加法只有四種輸入組合：</p>
 <ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
 <li>0+0 = 0（和=0，進位=0）</li>
 <li>0+1 = 1（和=1，進位=0）</li>
 <li>1+0 = 1（和=1，進位=0）</li>
 <li>1+1 = 10（和=0，進位=1）</li>
 </ul>
-<p><strong>和 (Sum) = A XOR B；進位 (Carry) = A AND B</strong>——這就是<strong>半加器 (Half Adder)</strong>。把兩個半加器再加一個 OR 閘串接，就能處理「上一位的進位」，成為<strong>全加器 (Full Adder)</strong>。把 32 個全加器串聯，便是 32-bit 整數加法器，CPU 裡的 ALU 核心。</p></div>
+<p><strong>和 (Sum) = A XOR B；進位 (Carry) = A AND B</strong>——這就是<strong>半加器 (Half Adder)</strong>。把兩個半加器加一個 OR 閘串接，就能處理「上一位的進位」，成為<strong>全加器 (Full Adder)</strong>。把 32 個全加器串聯，便是 32-bit 整數加法器——CPU 裡的 ALU 核心。每天你電腦做的每一次加法都走過這條路徑。</p></div>
 <div data-lang="en"><p>Adding one bit at a time has only four cases:</p>
 <ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
 <li>0+0 = 0 (sum=0, carry=0)</li>
@@ -102,7 +109,7 @@
 <li>1+0 = 1 (sum=1, carry=0)</li>
 <li>1+1 = 10 (sum=0, carry=1)</li>
 </ul>
-<p><strong>Sum = A XOR B; Carry = A AND B</strong> — that's a <strong>half adder</strong>. Chain two half adders plus an OR gate to handle an incoming carry → <strong>full adder</strong>. Cascade 32 full adders and you have a 32-bit integer adder — the heart of every ALU.</p></div>
+<p><strong>Sum = A XOR B; Carry = A AND B</strong> — a <strong>half adder</strong>. Chain two half adders + an OR gate for a <strong>full adder</strong> (handles carry-in). Cascade 32 full adders → 32-bit integer adder — the heart of every ALU. Every add your computer performs walks this path.</p></div>
 
 <table class="comp-table">
 <thead><tr><th>A</th><th>B</th><th>Cin</th><th data-zh="和 Sum" data-en="Sum">Sum</th><th data-zh="進位 Cout" data-en="Cout">Cout</th></tr></thead>
@@ -119,36 +126,80 @@
 </section>
 
 <section class="section">
+<div class="section-label" data-zh="歷史故事" data-en="LEGENDARY">三個有趣故事</div>
+<h2 data-zh="六、三個有趣的歷史故事" data-en="VI. Three Fun Stories">六、三個有趣故事</h2>
+<div class="card-grid cols-2">
+<div class="card"><h4>📚 <span data-zh="Boole：被當成哲學書" data-en="Boole: Mistaken for Philosophy">Boole 1854：被當哲學書</span></h4><div data-lang="zh"><p>1854 年 George Boole 出版《思維法則的研究 (An Investigation of the Laws of Thought)》，建立布林代數。當時的書商把它放在<strong>哲學區</strong>——因為「思維法則」聽起來太抽象，沒人想到它會在 80 年後驅動每一台計算機。Boole 1864 年因為被妻子用冷水「治療」感冒而病逝，享年 49 歲。妻子的「水療法」哲學至今被認為是 19 世紀醫學奇譚。</p></div><div data-lang="en"><p>In 1854, George Boole published <em>An Investigation of the Laws of Thought</em>, founding Boolean algebra. Booksellers shelved it under <strong>philosophy</strong> — "Laws of Thought" sounded too abstract for anyone to imagine it would drive every computer 80 years later. Boole died at 49 in 1864 after his wife "cured" his cold by dousing him with cold water — a Victorian medical curiosity.</p></div></div>
+<div class="card"><h4>🤹 <span data-zh="Shannon：雜耍 + 西洋棋 + 老鼠迷宮" data-en="Shannon: Juggling + Chess + Mouse Maze">Shannon 的怪嗜好</span></h4><div data-lang="zh"><p>Shannon 1937 寫完碩士論文，1948 寫資訊理論《A Mathematical Theory of Communication》。但他下班後愛做的事是：① 設計能解開 Rubik's Cube 的機器人；② 寫第一個下西洋棋的電腦程式 (1950)；③ 造能自動跑出迷宮的機械老鼠 "Theseus"；④ 在 MIT 走廊裡<strong>騎著單輪車雜耍</strong>。同事說：「Shannon 是史上唯一會邊騎單輪車邊雜耍邊推導定理的人。」</p></div><div data-lang="en"><p>Shannon wrote his thesis in 1937 and <em>A Mathematical Theory of Communication</em> in 1948. After hours he: (1) built a Rubik's-Cube solving robot; (2) wrote the first computer chess program (1950); (3) built "Theseus," a mechanical mouse that solved mazes; (4) rode a unicycle while juggling in the MIT corridors. Colleagues said: "Shannon was the only person to derive theorems while unicycling and juggling at the same time."</p></div></div>
+<div class="card"><h4>🔌 <span data-zh="Intel 4004：2,300 個 NAND" data-en="Intel 4004: 2,300 NANDs">Intel 4004 (1971)</span></h4><div data-lang="zh"><p>1971 年 Intel 4004——史上第一顆商用微處理器——含 2,300 個電晶體，組成約 <strong>數百顆等效 NAND 閘</strong>，剛好夠造一台計算機。設計者 Federico Faggin 用<strong>矽閘 (silicon gate)</strong> 技術，4 位元、108 KHz。2025 年 NVIDIA Blackwell 有 <strong>2080 億顆</strong>電晶體——是 4004 的 9000 萬倍。但本質上，它們做的事一樣：傳遞 0 和 1。</p></div><div data-lang="en"><p>The 1971 Intel 4004 — the first commercial microprocessor — packed 2,300 transistors forming a few hundred NAND-equivalent gates: just enough for a calculator. Federico Faggin's silicon-gate design ran 4 bits at 108 kHz. In 2025, NVIDIA Blackwell has <strong>208 billion</strong> transistors — 90 million times more. But fundamentally, both push 0s and 1s through gates.</p></div></div>
+<div class="card"><h4>🧪 <span data-zh="量子閘 ≠ 古典閘" data-en="Quantum Gates ≠ Classical">量子閘的差異</span></h4><div data-lang="zh"><p>古典邏輯閘是「不可逆」的：知道輸出 Y 無法反推 (A, B)，因為兩個輸入位元被合併成一個輸出。<strong>量子閘必須可逆</strong>——例如 <strong>Hadamard 閘</strong> 把 \|0⟩ 變成 (\|0⟩+\|1⟩)/√2 的疊加態，<strong>CNOT 閘</strong> 製造糾纏。Toffoli 閘 (CCNOT) 是「可逆古典 NAND」——但需要 3 個輸入 3 個輸出。所有古典電路理論上都能轉換為可逆量子電路。</p></div><div data-lang="en"><p>Classical gates are <strong>irreversible</strong>: given output Y, you can't recover (A, B) because two input bits merge into one output. <strong>Quantum gates must be reversible</strong> — e.g., the <strong>Hadamard gate</strong> turns \|0⟩ into the superposition (\|0⟩+\|1⟩)/√2; the <strong>CNOT gate</strong> creates entanglement. The Toffoli (CCNOT) is a "reversible classical NAND" — but needs 3 inputs and 3 outputs. Every classical circuit can in principle be made reversible.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動 #2" data-en="INTERACTIVE #2">4-bit 加法器</div>
+<h2 data-zh="七、互動 ②：4-bit 漣波進位加法器" data-en="VII. Interactive ②: 4-bit Ripple-Carry Adder">七、互動 ②：4-bit 加法器</h2>
+<div data-lang="zh"><p>下方視覺化呈現一個 <strong>4-bit ripple-carry adder</strong>：四個全加器串聯，前一位的進位 (Cout) 接到下一位的進位輸入 (Cin)。試著設定 A 和 B 的值，觀察進位如何<strong>從低位「漣波」傳到高位</strong>——這也是為何超過 16-bit 時，現代 CPU 改用 <strong>carry-lookahead adder</strong>（並行計算進位）的原因。</p></div>
+<div data-lang="en"><p>Below is a <strong>4-bit ripple-carry adder</strong>: four full adders chained, each one's Cout feeding the next one's Cin. Set A and B, then watch the carry <strong>ripple from LSB to MSB</strong> — this is why beyond 16 bits, modern CPUs switch to <strong>carry-lookahead adders</strong> (which compute carries in parallel).</p></div>
+<div class="interactive-panel">
+<div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;margin-bottom:18px;">
+  <div><label style="font-weight:600;display:block;margin-bottom:4px;">A (0–15)</label><input type="number" id="adderA" value="13" min="0" max="15" style="width:80px;padding:8px;font-family:var(--font-mono);font-size:1rem;border:1.5px solid var(--c-border);border-radius:6px;"></div>
+  <div><label style="font-weight:600;display:block;margin-bottom:4px;">B (0–15)</label><input type="number" id="adderB" value="6" min="0" max="15" style="width:80px;padding:8px;font-family:var(--font-mono);font-size:1rem;border:1.5px solid var(--c-border);border-radius:6px;"></div>
+</div>
+<div id="adderViz" style="font-family:var(--font-mono);font-size:.9rem;background:var(--c-surface-alt);padding:18px;border-radius:8px;overflow-x:auto;"></div>
+<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:10px;"><span data-lang="zh">每個位元用半加器計算 Sum = A XOR B XOR Cin、Cout = (A·B) + (Cin·(A XOR B))。注意進位是怎麼一步步「漣波」過去的。</span><span data-lang="en">Each bit: Sum = A XOR B XOR Cin, Cout = (A·B) + (Cin·(A XOR B)). Watch the carry ripple bit by bit.</span></p>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="生資連結" data-en="BIOINFO LINK">給生資人</div>
+<h2 data-zh="八、🧬 生資連結：bedtools、SQL、SAM flag、布林網路" data-en="VIII. 🧬 Bioinformatics Link: bedtools, SQL, SAM Flags, Boolean Networks">八、🧬 給生物資訊學家</h2>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;"><span class="callout-icon">🧬</span><div>
+<strong data-zh="給生物資訊學家：你每天都在做布林運算" data-en="For Bioinformaticians: You Do Boolean Algebra Daily">給生物資訊學家：你每天都在做布林運算</strong>
+<p data-lang="zh">你每次寫 <code>bedtools intersect</code>、<code>SELECT WHERE</code>、檢查 SAM flag，都是在做布林代數。理解 AND/OR/NOT 與 De Morgan 定律能讓你寫出更快、更正確的生資管線。</p>
+<p data-lang="en">Every <code>bedtools intersect</code>, <code>SELECT WHERE</code>, and SAM-flag check you write is Boolean algebra. Understanding AND/OR/NOT + De Morgan makes your pipelines faster and more correct.</p>
+</div></div>
+
+<div class="card-grid cols-2">
+<div class="card"><h4>🧬 <span data-zh="bedtools：基因組區間的布林運算" data-en="bedtools: Genome Interval Boolean Ops">bedtools 是布林運算</span></h4><div data-lang="zh"><p>把基因組想成「染色體 + 區間」的集合：</p><ul style="margin:6px 0 10px 18px;font-size:.92rem;line-height:1.7;"><li><code>bedtools intersect -a A.bed -b B.bed</code> = <strong>A AND B</strong>（兩者重疊區）</li><li><code>bedtools subtract -a A.bed -b B.bed</code> = <strong>A AND NOT B</strong>（A 扣除 B）</li><li><code>cat A.bed B.bed | sort | bedtools merge</code> = <strong>A OR B</strong>（聯集）</li><li><code>bedtools intersect -v -a A.bed -b B.bed</code> = <strong>A AND NOT B</strong>（與 -v 相同效果）</li></ul><p>這就是為何 Quinlan 2010 (Bioinformatics) 的 bedtools 成為生資基礎工具——它把布林代數搬到基因組座標上。</p></div><div data-lang="en"><p>Treat the genome as a set of (chromosome, interval) pairs:</p><ul style="margin:6px 0 10px 18px;font-size:.92rem;line-height:1.7;"><li><code>bedtools intersect -a A.bed -b B.bed</code> = <strong>A AND B</strong> (overlap)</li><li><code>bedtools subtract -a A.bed -b B.bed</code> = <strong>A AND NOT B</strong></li><li><code>cat A.bed B.bed | sort | bedtools merge</code> = <strong>A OR B</strong> (union)</li><li><code>bedtools intersect -v</code> implements the NOT-B mask</li></ul><p>That's why Quinlan 2010 (Bioinformatics) made bedtools a cornerstone — it lifts Boolean algebra to genome coordinates.</p></div></div>
+<div class="card"><h4>🚩 <span data-zh="SAM flag：bitwise 布林" data-en="SAM Flag: Bitwise Boolean">SAM flag：bitwise 布林</span></h4><div data-lang="zh"><p>SAM/BAM 的第 2 欄 FLAG 是<strong>布林位元組合</strong>：</p><ul style="margin:6px 0 10px 18px;font-size:.9rem;line-height:1.7;font-family:var(--font-mono);"><li>0x1 (1)  = paired</li><li>0x4 (4)  = unmapped</li><li>0x10 (16) = reverse strand</li><li>0x100 (256) = secondary</li><li>0x400 (1024) = duplicate</li></ul><p>判斷一條 read 是「成功對應的正向唯一比對」：<code>(flag &amp; 0x4) == 0 AND (flag &amp; 0x10) == 0 AND (flag &amp; 0x100) == 0</code>。<code>samtools view -F 0x904</code> 用 <strong>F</strong>ilter（NOT）一次排除 unmapped + secondary + duplicate。</p></div><div data-lang="en"><p>The SAM/BAM FLAG (column 2) is a <strong>bitwise Boolean combo</strong>:</p><ul style="margin:6px 0 10px 18px;font-size:.9rem;line-height:1.7;font-family:var(--font-mono);"><li>0x1 (1)  = paired</li><li>0x4 (4)  = unmapped</li><li>0x10 (16) = reverse strand</li><li>0x100 (256) = secondary</li><li>0x400 (1024) = duplicate</li></ul><p>To select "primary forward-mapped reads": <code>(flag &amp; 0x4) == 0 AND (flag &amp; 0x10) == 0 AND (flag &amp; 0x100) == 0</code>. The handy <code>samtools view -F 0x904</code> uses <strong>F</strong>ilter (NOT) to exclude unmapped + secondary + duplicates in one shot.</p></div></div>
+<div class="card"><h4>🧮 <span data-zh="SQL WHERE = 布林表達式" data-en="SQL WHERE = Boolean Expression">SQL WHERE = 布林</span></h4><div data-lang="zh"><p>查 TCGA：<code>WHERE age &gt; 50 AND (cancer_type = 'lung' OR cancer_type = 'breast') AND NOT (smoker = 'unknown')</code>。<strong>每個 AND/OR/NOT 都是邏輯閘</strong>。Query planner 會根據布林代數定律（特別是 De Morgan 與分配律）重組你的查詢，以最少 disk I/O 跑出結果。明白這點，你就能寫出 planner 友善的查詢。</p></div><div data-lang="en"><p>Query TCGA: <code>WHERE age &gt; 50 AND (cancer_type = 'lung' OR cancer_type = 'breast') AND NOT (smoker = 'unknown')</code>. <strong>Every AND/OR/NOT is a logic gate.</strong> The query planner reorders these using Boolean laws (especially De Morgan and distributive) to minimize disk I/O. Knowing this helps you write planner-friendly queries.</p></div></div>
+<div class="card"><h4>🕸️ <span data-zh="布林網路：基因調控建模" data-en="Boolean Networks: GRN Modeling">布林網路：GRN 建模</span></h4><div data-lang="zh"><p>Stuart Kauffman 1969 提出用<strong>布林網路</strong>建模基因調控網路 (GRN)：每個基因為一個節點 (ON/OFF)，連結代表調控，狀態根據鄰居的布林函數更新。簡單卻能重現細胞分化、振盪、穩態。今天 BoolNet (R 套件，Mussel 2010 Bioinformatics)、CellNOpt、PyBoolNet 都基於此。AlphaFold 雖更先進，但布林網路在「定性建模」與小型 GRN 解釋上仍是首選。</p></div><div data-lang="en"><p>Stuart Kauffman in 1969 proposed <strong>Boolean networks</strong> for gene regulatory networks (GRN): each gene = a node (ON/OFF), edges = regulation, states updated via Boolean functions of neighbors. Simple, yet reproduces differentiation, oscillation, and steady states. Modern tools BoolNet (Mussel 2010 Bioinformatics), CellNOpt, PyBoolNet all build on this. AlphaFold is more advanced, but Boolean networks remain the go-to for qualitative modeling of small GRNs.</p></div></div>
+</div>
+</section>
+
+<section class="section">
 <div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">情境選閘</div>
-<h2 data-zh="五、什麼情境用什麼閘？" data-en="V. Which Gate for Which Scenario?">五、情境選閘</h2>
+<h2 data-zh="九、決策樹：什麼情境用什麼閘？" data-en="IX. Decision Tree: Which Gate for Which Scenario?">九、情境選閘</h2>
 <div class="decision-tree">
 <h4>🌳 <span data-zh="邏輯閘選用決策樹" data-en="Gate Selection Decision Tree">邏輯閘選用決策樹</span></h4>
 <div data-lang="zh">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>「所有條件都需成立」<span class="dt-arrow">→</span> 用 <strong>AND</strong>（例：權限檢查必須 login &amp;&amp; admin &amp;&amp; 2FA）。</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>「任一條件成立即可」<span class="dt-arrow">→</span> 用 <strong>OR</strong>（例：通知發送：email OR SMS OR push）。</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>「兩者不同才有反應」<span class="dt-arrow">→</span> 用 <strong>XOR</strong>（例：奇偶校驗、加密 one-time pad、差異檢測）。</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>「兩者相等才放行」<span class="dt-arrow">→</span> 用 <strong>XNOR</strong>（例：密碼比對、相等性檢測）。</div></div>
-<div class="dt-node"><span class="dt-q">Q5:</span><div>「想用最少種類閘做所有事」<span class="dt-arrow">→</span> 全用 <strong>NAND</strong> 或全用 <strong>NOR</strong>（晶圓廠最愛）。</div></div>
+<div class="dt-node"><span class="dt-q">Q1:</span><div>「所有條件都需成立」<span class="dt-arrow">→</span> 用 <strong>AND</strong>（門禁：刷卡 &amp;&amp; 指紋 &amp;&amp; 2FA；SAM filter primary mapped read）。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>「任一條件成立即可」<span class="dt-arrow">→</span> 用 <strong>OR</strong>（通知：email OR SMS OR push；select cancer_type = 'lung' OR 'breast'）。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>「兩者不同才有反應」<span class="dt-arrow">→</span> 用 <strong>XOR</strong>（奇偶校驗、one-time pad 加密、diff 偵測、SNP 與參考差異）。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>「兩者相等才放行」<span class="dt-arrow">→</span> 用 <strong>XNOR</strong>（密碼比對、HMAC 相等性檢測）。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>「想用最少種類閘做所有事」<span class="dt-arrow">→</span> 全用 <strong>NAND</strong> 或全用 <strong>NOR</strong>（IC 晶圓廠最愛）。</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>「需要可逆運算（量子）」<span class="dt-arrow">→</span> 用 <strong>Toffoli / Fredkin / Hadamard / CNOT</strong>。</div></div>
 </div>
 <div data-lang="en">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>"All conditions must hold" <span class="dt-arrow">→</span> use <strong>AND</strong> (e.g., permission = login &amp;&amp; admin &amp;&amp; 2FA).</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>"Any one condition suffices" <span class="dt-arrow">→</span> use <strong>OR</strong> (e.g., notify via email OR SMS OR push).</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>"Trigger when they differ" <span class="dt-arrow">→</span> use <strong>XOR</strong> (parity check, OTP encryption, diff detection).</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>"Pass only when equal" <span class="dt-arrow">→</span> use <strong>XNOR</strong> (password compare, equality test).</div></div>
+<div class="dt-node"><span class="dt-q">Q1:</span><div>"All conditions must hold" <span class="dt-arrow">→</span> <strong>AND</strong> (door lock: card &amp;&amp; fingerprint &amp;&amp; 2FA; SAM filter for primary mapped).</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>"Any one condition" <span class="dt-arrow">→</span> <strong>OR</strong> (notify via email OR SMS OR push; cancer_type = 'lung' OR 'breast').</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>"Trigger when they differ" <span class="dt-arrow">→</span> <strong>XOR</strong> (parity, OTP encryption, diff detection, SNP vs reference).</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>"Pass only when equal" <span class="dt-arrow">→</span> <strong>XNOR</strong> (password compare, HMAC equality).</div></div>
 <div class="dt-node"><span class="dt-q">Q5:</span><div>"Use the fewest gate types" <span class="dt-arrow">→</span> only <strong>NAND</strong> or only <strong>NOR</strong> (fab favorite).</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>"Need reversible ops (quantum)" <span class="dt-arrow">→</span> <strong>Toffoli / Fredkin / Hadamard / CNOT</strong>.</div></div>
 </div>
 </div>
-
-<div class="callout danger"><span class="callout-icon">🚨</span><div>
-<div data-lang="zh"><strong>常見錯誤：</strong>把短路求值 (<code>&amp;&amp;</code>) 與位元 AND (<code>&amp;</code>) 混用！前者只回傳 true/false 且會短路；後者對所有位元逐一運算且兩邊都會求值。<code>if (ptr &amp;&amp; ptr-&gt;x)</code> 是安全的，<code>if (ptr &amp; ptr-&gt;x)</code> 會 segfault。</div>
-<div data-lang="en"><strong>Common bug:</strong> Confusing short-circuit <code>&amp;&amp;</code> with bitwise <code>&amp;</code>. The former returns true/false and short-circuits; the latter operates per-bit and evaluates both sides. <code>if (ptr &amp;&amp; ptr-&gt;x)</code> is safe; <code>if (ptr &amp; ptr-&gt;x)</code> segfaults.</div>
-</div></div>
 </section>
 
 <section class="section">
 <div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
-<h2 data-zh="六、Python 位元運算與半加器" data-en="VI. Python Bitwise Ops & Half Adder">六、動手試</h2>
-<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
+<h2 data-zh="十、Python + R + 偽程式碼：位元運算與半加器" data-en="X. Python + R + Pseudocode: Bitwise & Half Adder">十、動手試</h2>
+<div class="code-tabs"><div class="code-tab-btns">
+<button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button>
+<button class="code-tab-btn" onclick="switchTab(this,'r1')">R</button>
+<button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
 <div class="code-tab-content active" id="py1"><pre><span class="comment"># 位元運算子 / Bitwise operators: &amp; | ^ ~ &lt;&lt; &gt;&gt;</span>
 a, b = <span class="num">0b1100</span>, <span class="num">0b1010</span>     <span class="comment"># 12, 10</span>
 <span class="func">print</span>(<span class="func">bin</span>(a &amp; b))    <span class="comment"># 0b1000 (AND)</span>
@@ -158,9 +209,7 @@ a, b = <span class="num">0b1100</span>, <span class="num">0b1010</span>     <spa
 
 <span class="comment"># 半加器 / Half adder</span>
 <span class="kw">def</span> <span class="func">half_adder</span>(a, b):
-    sum_bit = a ^ b           <span class="comment"># XOR</span>
-    carry   = a &amp; b           <span class="comment"># AND</span>
-    <span class="kw">return</span> sum_bit, carry
+    <span class="kw">return</span> a ^ b, a &amp; b      <span class="comment"># (sum, carry)</span>
 
 <span class="comment"># 全加器 / Full adder (a + b + cin)</span>
 <span class="kw">def</span> <span class="func">full_adder</span>(a, b, cin):
@@ -170,10 +219,33 @@ a, b = <span class="num">0b1100</span>, <span class="num">0b1010</span>     <spa
 
 <span class="func">print</span>(<span class="func">full_adder</span>(<span class="num">1</span>, <span class="num">1</span>, <span class="num">1</span>))  <span class="comment"># (1, 1)  → 1+1+1 = 3 = 0b11</span>
 
+<span class="comment"># SAM flag 範例 / SAM flag example</span>
+flag = <span class="num">0x99</span>                       <span class="comment"># paired + proper_pair + mate_reverse + first_in_pair</span>
+<span class="func">print</span>(<span class="kw">bool</span>(flag &amp; <span class="num">0x1</span>))   <span class="comment"># paired? True</span>
+<span class="func">print</span>(<span class="kw">bool</span>(flag &amp; <span class="num">0x4</span>))   <span class="comment"># unmapped? False</span>
+
 <span class="comment"># De Morgan 驗證 / Verify De Morgan's law</span>
 <span class="kw">for</span> a <span class="kw">in</span> (<span class="num">0</span>,<span class="num">1</span>):
     <span class="kw">for</span> b <span class="kw">in</span> (<span class="num">0</span>,<span class="num">1</span>):
         <span class="kw">assert</span> (~(a &amp; b) &amp; <span class="num">1</span>) == ((~a &amp; <span class="num">1</span>) | (~b &amp; <span class="num">1</span>))</pre></div>
+<div class="code-tab-content" id="r1"><pre><span class="comment"># R 位元運算 / R bitwise operations</span>
+a &lt;- <span class="num">12L</span>; b &lt;- <span class="num">10L</span>
+<span class="func">bitwAnd</span>(a, b)         <span class="comment"># 8</span>
+<span class="func">bitwOr</span>(a, b)          <span class="comment"># 14</span>
+<span class="func">bitwXor</span>(a, b)         <span class="comment"># 6</span>
+<span class="func">bitwNot</span>(a)            <span class="comment"># -13 (two's complement on 32-bit)</span>
+<span class="func">bitwShiftL</span>(a, <span class="num">2</span>)      <span class="comment"># 48</span>
+
+<span class="comment"># 半加器 / Half adder in R</span>
+half_adder &lt;- <span class="kw">function</span>(a, b) {
+  <span class="func">list</span>(sum = <span class="func">bitwXor</span>(a, b), carry = <span class="func">bitwAnd</span>(a, b))
+}
+<span class="func">half_adder</span>(<span class="num">1L</span>, <span class="num">1L</span>)        <span class="comment"># sum=0 carry=1</span>
+
+<span class="comment"># SAM flag 篩選 (Rsamtools) / Filter by SAM flag</span>
+<span class="kw">library</span>(Rsamtools)
+param &lt;- <span class="func">ScanBamParam</span>(flag = <span class="func">scanBamFlag</span>(isUnmappedQuery=FALSE, isDuplicate=FALSE))
+<span class="comment"># 等同 SQL: WHERE NOT unmapped AND NOT duplicate</span></pre></div>
 <div class="code-tab-content" id="pseudo1"><pre><span class="comment">// 半加器 / Half Adder</span>
 <span class="kw">function</span> <span class="func">HalfAdder</span>(A, B):
     Sum   = A XOR B
@@ -186,18 +258,58 @@ a, b = <span class="num">0b1100</span>, <span class="num">0b1010</span>     <spa
     (S2, C2) = <span class="func">HalfAdder</span>(S1, Cin)
     <span class="kw">return</span> (S2, C1 OR C2)
 
-<span class="comment">// 32-bit 加法器 / 32-bit ripple-carry adder</span>
+<span class="comment">// 32-bit ripple-carry adder</span>
 <span class="kw">function</span> <span class="func">Add32</span>(A[<span class="num">0</span>..<span class="num">31</span>], B[<span class="num">0</span>..<span class="num">31</span>]):
     <span class="kw">let</span> carry = <span class="num">0</span>
     <span class="kw">let</span> result = <span class="kw">new</span> bit[<span class="num">32</span>]
     <span class="kw">for</span> i <span class="kw">from</span> <span class="num">0</span> <span class="kw">to</span> <span class="num">31</span>:
         (result[i], carry) = <span class="func">FullAdder</span>(A[i], B[i], carry)
+    <span class="kw">return</span> result
+
+<span class="comment">// bedtools intersect 概念 / bedtools intersect concept</span>
+<span class="kw">function</span> <span class="func">IntervalAnd</span>(intervalsA, intervalsB):
+    <span class="kw">let</span> result = empty
+    <span class="kw">for</span> each a <span class="kw">in</span> intervalsA:
+        <span class="kw">for</span> each b <span class="kw">in</span> intervalsB:
+            <span class="kw">if</span> a.chr == b.chr AND a.end &gt;= b.start AND b.end &gt;= a.start:
+                add (max(a.start, b.start), min(a.end, b.end)) to result
     <span class="kw">return</span> result</pre></div>
 </div>
 </section>
 
+<section class="section">
+<div class="section-label" data-zh="常見誤解" data-en="MISCONCEPTIONS">五個常見誤解</div>
+<h2 data-zh="十一、常見誤解與陷阱" data-en="XI. Common Misconceptions">十一、常見誤解</h2>
+
+<div class="callout danger"><span class="callout-icon">🚨</span><div>
+<div data-lang="zh"><strong>誤解 #1：「OR 是排他的」</strong>——錯。一般 OR 是 <strong>inclusive OR</strong>：「至少一個為真」即輸出 1，包括兩者都真。<strong>exclusive OR 是 XOR</strong>。日常英文「coffee or tea」可能是 inclusive 或 exclusive，要靠上下文猜；但布林代數明確區分。</div>
+<div data-lang="en"><strong>Myth #1:</strong> "OR is exclusive." Wrong. Boolean OR is <strong>inclusive</strong>: output 1 if at least one input is 1, including both. <strong>Exclusive-or is XOR.</strong> Natural English "coffee or tea" is ambiguous; Boolean is precise.</div>
+</div></div>
+
+<div class="callout danger"><span class="callout-icon">🚨</span><div>
+<div data-lang="zh"><strong>誤解 #2：「&amp;&amp; 與 &amp; 一樣」</strong>——危險！<strong>&amp;&amp; 是邏輯（短路求值）</strong>：回傳 true/false，左邊為假就<strong>不再求值</strong>右邊；<strong>&amp; 是位元 AND</strong>：對每個位元逐一運算且<strong>兩邊都會求值</strong>。<code>if (ptr &amp;&amp; ptr-&gt;x)</code> 安全，<code>if (ptr &amp; ptr-&gt;x)</code> 會 segfault。</div>
+<div data-lang="en"><strong>Myth #2:</strong> "&amp;&amp; equals &amp;." Dangerous! <strong>&amp;&amp; is logical (short-circuit)</strong>: returns true/false, skips RHS if LHS is false. <strong>&amp; is bitwise</strong>: per-bit, evaluates both sides. <code>if (ptr &amp;&amp; ptr-&gt;x)</code> safe; <code>if (ptr &amp; ptr-&gt;x)</code> segfaults.</div>
+</div></div>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>誤解 #3：「NAND 是新發明的閘」</strong>——錯。NAND 在 1937 Shannon 論文中就已隱含。它與 NOR 是「萬用閘」的事實，1913 年 Henry Sheffer 已用 <strong>Sheffer stroke</strong> (∣) 證明過——其實是邏輯學家先發現，工程師後實用化。</div>
+<div data-lang="en"><strong>Myth #3:</strong> "NAND is a new gate." Wrong. NAND is implicit in Shannon's 1937 thesis. Its universality was already proven in 1913 by Henry Sheffer (the "Sheffer stroke" ∣). Logicians discovered it before engineers used it.</div>
+</div></div>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>誤解 #4：「De Morgan 只有一條規則」</strong>——錯。De Morgan 有<strong>兩條對偶規則</strong>：① ¬(A·B) = ¬A + ¬B；② ¬(A+B) = ¬A · ¬B。記憶口訣：「外面的 NOT 鑽進去時，AND 變 OR、OR 變 AND」。</div>
+<div data-lang="en"><strong>Myth #4:</strong> "De Morgan is one rule." Wrong. There are <strong>two dual rules</strong>: (1) ¬(A·B) = ¬A + ¬B; (2) ¬(A+B) = ¬A · ¬B. Mnemonic: when NOT goes inside, AND ↔ OR.</div>
+</div></div>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>誤解 #5：「ripple-carry 加法器跟 carry-lookahead 一樣快」</strong>——錯。32-bit ripple-carry 需 32 個閘延遲（O(n)）；carry-lookahead 用查表預先計算進位，僅 O(log n)。現代 CPU 使用 Kogge-Stone 或 Brent-Kung 等並行進位演算法，64-bit 加法只需約 6 級閘延遲。</div>
+<div data-lang="en"><strong>Myth #5:</strong> "Ripple-carry adders are as fast as carry-lookahead." Wrong. 32-bit ripple-carry needs 32 gate delays (O(n)); carry-lookahead precomputes carries in O(log n). Modern CPUs use Kogge-Stone or Brent-Kung parallel-carry — 64-bit add takes ~6 gate delays.</div>
+</div></div>
+</section>
+
 <section class="quiz-section">
-<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<h3>📝 <span data-zh="自我檢測（5 題）" data-en="Self-Check (5 Questions)">自我檢測</span></h3>
+
 <div class="quiz-q" data-answer="2">
 <p data-lang="zh">1. 為什麼 NAND 被稱為「萬用閘 (universal gate)」？</p>
 <p data-lang="en">1. Why is NAND called a "universal gate"?</p>
@@ -227,6 +339,43 @@ a, b = <span class="num">0b1100</span>, <span class="num">0b1010</span>     <spa
 <div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Sum = OR, Carry = NOT</span><span data-lang="en">C. Sum = OR, Carry = NOT</span></div>
 <div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Sum = NAND, Carry = NOR</span><span data-lang="en">D. Sum = NAND, Carry = NOR</span></div>
 </div><div class="quiz-feedback" id="fb3"></div></div>
+
+<div class="quiz-q" data-answer="3">
+<p data-lang="zh">4. <code>bedtools intersect -a A.bed -b B.bed</code> 在集合論上相當於什麼布林運算？</p>
+<p data-lang="en">4. <code>bedtools intersect -a A.bed -b B.bed</code> corresponds to which Boolean operation on sets?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. A OR B</span><span data-lang="en">A. A OR B</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. A XOR B</span><span data-lang="en">B. A XOR B</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. A AND NOT B</span><span data-lang="en">C. A AND NOT B</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. A AND B</span><span data-lang="en">D. A AND B</span></div>
+</div><div class="quiz-feedback" id="fb4"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">5. SAM flag 0x4 表示「unmapped」，0x100 表示「secondary alignment」。要過濾掉這兩種 read，在 samtools 中用？</p>
+<p data-lang="en">5. SAM flag 0x4 means "unmapped," 0x100 means "secondary." To exclude both in samtools, use?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. -f 0x4 -f 0x100</span><span data-lang="en">A. -f 0x4 -f 0x100</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. -F 0x4 -F 0x100（兩個 -F）</span><span data-lang="en">B. -F 0x4 -F 0x100 (two -F)</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. -F 0x104（用 OR 合併 flag 後一次過濾）</span><span data-lang="en">C. -F 0x104 (OR-combine flags into one filter)</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. -F 0x4 AND 0x100</span><span data-lang="en">D. -F 0x4 AND 0x100</span></div>
+</div><div class="quiz-feedback" id="fb5"></div></div>
+</section>
+
+<section class="section" style="background:#fef3c7;border-radius:14px;padding:32px;">
+<div class="section-label">💭 <span data-zh="延伸思考" data-en="DISCUSSION">延伸思考</span></div>
+<h2 data-zh="十二、延伸思考與討論" data-en="XII. Discussion & Reflection">十二、延伸思考</h2>
+<ol style="margin-left:20px;line-height:1.9;color:var(--c-ink);">
+<li data-lang="zh"><strong>為何 NAND/NOR 可單獨組成所有閘？</strong> 試證明 NAND 的功能完整性 (functional completeness)，並推導 NOR 的對偶證明。</li>
+<li data-lang="en"><strong>Why are NAND/NOR functionally complete?</strong> Prove NAND's completeness and derive the dual proof for NOR.</li>
+<li data-lang="zh"><strong>量子閘 (Hadamard, CNOT) 與古典閘的根本差別？</strong> 為何古典閘可不可逆，量子閘卻必須可逆？這對演算法設計帶來什麼新可能（Shor 演算法、Grover 演算法）？</li>
+<li data-lang="en"><strong>How do quantum gates (Hadamard, CNOT) fundamentally differ from classical?</strong> Why must quantum gates be reversible? What does this enable (Shor's, Grover's algorithm)?</li>
+<li data-lang="zh"><strong>布林網路為何能建模 GRN？</strong> 真實基因不只有 ON/OFF（mRNA、蛋白質有濃度）。Boolean 抽象的優缺點是什麼？何時該用 ODE / 隨機模型補充？</li>
+<li data-lang="en"><strong>Why do Boolean networks model GRNs?</strong> Real genes aren't strictly ON/OFF (concentrations matter). What are the trade-offs? When should ODEs / stochastic models complement?</li>
+<li data-lang="zh"><strong>SAM flag 為何用 bitwise 而非 boolean array？</strong> 1 個 uint16 vs. 16 個 bool 變數，記憶體與快取效率差多少？</li>
+<li data-lang="en"><strong>Why does SAM use bitwise FLAG rather than a boolean array?</strong> One uint16 vs. 16 booleans — what are the memory and cache trade-offs?</li>
+<li data-lang="zh"><strong>如果你要設計一個生資新格式（如 GFF4），會把布林屬性怎麼編碼？</strong> 沿用 SAM bitwise flag 還是 JSON-like？各有優劣？</li>
+<li data-lang="en"><strong>If you design a new bio format (say GFF4), how would you encode booleans?</strong> SAM-style bitwise flag or JSON-style? Pros and cons?</li>
+</ol>
 </section>
 
 <nav class="page-nav">
@@ -267,8 +416,51 @@ btnA.onclick=()=>{A=A?0:1;updateBtn(btnA,A,'A');renderGates();};
 btnB.onclick=()=>{B=B?0:1;updateBtn(btnB,B,'B');renderGates();};
 updateBtn(btnA,A,'A');updateBtn(btnB,B,'B');renderGates();
 
-// Quiz
-const QF={zh:{q1_y:'NAND 與 NOR 都是萬用閘，僅用一種就能合成所有布林函數。',q1_n:'答案 C。',q2_y:'De Morgan：「非的乘 = 非的加」、「非的加 = 非的乘」。',q2_n:'答案 B。',q3_y:'Sum=XOR、Carry=AND；XOR 處理「不同」，AND 才有進位。',q3_n:'答案 A。'},en:{q1_y:'NAND (and NOR) are universal — alone they can synthesize any Boolean function.',q1_n:'Answer: C.',q2_y:"De Morgan: NOT of AND = OR of NOTs, and NOT of OR = AND of NOTs.",q2_n:'Answer: B.',q3_y:'Sum=XOR, Carry=AND. XOR catches differences; AND signals a carry.',q3_n:'Answer: A.'}};
-document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
+// 4-bit ripple-carry adder visualization
+function renderAdder(){
+  let a=Math.max(0,Math.min(15,parseInt(document.getElementById('adderA').value)||0));
+  let b=Math.max(0,Math.min(15,parseInt(document.getElementById('adderB').value)||0));
+  const aBits=[(a>>3)&1,(a>>2)&1,(a>>1)&1,a&1];
+  const bBits=[(b>>3)&1,(b>>2)&1,(b>>1)&1,b&1];
+  let carry=0;const sumBits=[0,0,0,0];const carryOut=[0,0,0,0];
+  for(let i=3;i>=0;i--){
+    const ai=aBits[i],bi=bBits[i];
+    const s=ai^bi^carry;
+    const c=(ai&bi)|(carry&(ai^bi));
+    sumBits[i]=s;carryOut[i]=c;carry=c;
+  }
+  const result=(carryOut[0]<<4)|(sumBits[0]<<3)|(sumBits[1]<<2)|(sumBits[2]<<1)|sumBits[3];
+  function bitSpan(v,color){return '<span style="display:inline-block;width:24px;height:24px;line-height:24px;text-align:center;background:'+(v?color:'#e5e7eb')+';color:'+(v?'#fff':'#9ca3af')+';font-weight:700;border-radius:3px;margin:1px;">'+v+'</span>';}
+  let html='<div style="display:grid;grid-template-columns:auto repeat(4,28px) auto;gap:4px 8px;align-items:center;justify-content:center;">';
+  html+='<div style="text-align:right;color:var(--c-ink-muted);font-size:.78rem;">bit:</div>';
+  html+='<div style="text-align:center;color:var(--c-ink-muted);font-size:.78rem;">3</div><div style="text-align:center;color:var(--c-ink-muted);font-size:.78rem;">2</div><div style="text-align:center;color:var(--c-ink-muted);font-size:.78rem;">1</div><div style="text-align:center;color:var(--c-ink-muted);font-size:.78rem;">0</div><div></div>';
+  html+='<div style="text-align:right;font-weight:700;">A = '+a+'</div>'+aBits.map(v=>bitSpan(v,'#1B365D')).join('')+'<div></div>';
+  html+='<div style="text-align:right;font-weight:700;">B = '+b+'</div>'+bBits.map(v=>bitSpan(v,'#1B365D')).join('')+'<div></div>';
+  html+='<div style="text-align:right;color:#dc2626;font-weight:700;">Carry →</div>'+carryOut.map(v=>bitSpan(v,'#dc2626')).join('')+'<div></div>';
+  html+='<div style="grid-column:1/-1;border-top:1px dashed var(--c-border);margin:4px 0;"></div>';
+  html+='<div style="text-align:right;font-weight:700;color:#16a34a;">Sum = '+(result&0xF)+'</div>'+sumBits.map(v=>bitSpan(v,'#16a34a')).join('')+'<div style="color:var(--c-ink-muted);font-size:.78rem;">'+(carryOut[0]?'(carry out!)':'')+'</div>';
+  html+='</div>';
+  html+='<div style="text-align:center;margin-top:14px;font-weight:700;color:var(--c-accent-dark);font-size:1.05rem;">'+a+' + '+b+' = '+(a+b)+(a+b>15?' (overflow! 5-bit = '+result.toString(2).padStart(5,'0')+')':'')+'</div>';
+  document.getElementById('adderViz').innerHTML=html;
+}
+document.getElementById('adderA').addEventListener('input',renderAdder);
+document.getElementById('adderB').addEventListener('input',renderAdder);
+renderAdder();
+
+// Quiz handler
+const QF={zh:{
+q1_y:'NAND 與 NOR 都是 universal gate，僅用其一就能合成任何布林函數。',q1_n:'答案 C。',
+q2_y:'De Morgan：非的乘 = 非的加，非的加 = 非的乘。',q2_n:'答案 B。',
+q3_y:'Sum = A XOR B; Carry = A AND B。',q3_n:'答案 A。',
+q4_y:'intersect = 集合 AND（交集）。',q4_n:'答案 D。',
+q5_y:'samtools -F 用 NOT 排除指定的 flag 位元；0x904 = 0x4 OR 0x100 OR 0x800。',q5_n:'答案 C。'
+},en:{
+q1_y:'NAND (and NOR) are universal — either alone synthesizes any Boolean function.',q1_n:'Answer: C.',
+q2_y:'De Morgan: NOT of AND = OR of NOTs; NOT of OR = AND of NOTs.',q2_n:'Answer: B.',
+q3_y:'Sum = A XOR B; Carry = A AND B.',q3_n:'Answer: A.',
+q4_y:'intersect = set AND; returns the overlap of A and B.',q4_n:'Answer: D.',
+q5_y:'samtools -F uses NOT to exclude listed flag bits; 0x904 = 0x4 OR 0x100 OR 0x800.',q5_n:'Answer: C.'
+}};
+document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=(window.I18n&&I18n.get&&I18n.get())||'zh';fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
 </script>
 </body></html>

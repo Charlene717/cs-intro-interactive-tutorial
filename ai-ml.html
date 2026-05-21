@@ -12,213 +12,555 @@
 <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
 <header class="page-hero"><div class="step-badge">CHAPTER 14 / 16</div>
 <h1 data-zh="人工智慧與機器學習" data-en="Artificial Intelligence & Machine Learning">人工智慧與機器學習</h1>
-<p class="subtitle" data-lang="zh">從 ML 三大典範、神經網路、Transformer 到 2026 年的 GPT-5、Claude 4.7、Gemini 3——理解當代 AI 的關鍵概念與選型決策。</p>
-<p class="subtitle" data-lang="en">From the three ML paradigms, neural nets, Transformers, to 2026's GPT-5, Claude 4.7, and Gemini 3 — grasp the key ideas and selection trade-offs of modern AI.</p>
+<p class="subtitle" data-lang="zh">從 1958 年 Perceptron 兩度寒冬，到 2024 AlphaFold 3 預測蛋白質-DNA-小分子複合體——七十年神經網路的曲折翻身，與它正在改寫的生命科學。</p>
+<p class="subtitle" data-lang="en">From the 1958 Perceptron through two AI winters to 2024's AlphaFold 3 predicting protein-DNA-ligand complexes — seven decades of neural networks, and how they're rewriting life science.</p>
 </header>
 <main class="content-wrap">
 
+<!-- ===== Section 1: Opening ===== -->
 <section class="section">
-<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
-<h2 data-zh="AI、ML、DL 到底是什麼關係？" data-en="AI vs ML vs DL — what is what?">AI、ML、DL 到底是什麼關係？</h2>
-<div data-lang="zh"><p>三者像三個同心圓：</p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>AI（人工智慧）</strong>：最大圈。任何模仿人類智能的系統——包括早期 1980 年代手寫規則的「專家系統」。</li>
-<li><strong>ML（機器學習）</strong>：中圈。從<em>資料</em>中自動學出規則，不靠人類撰寫 if-else。</li>
-<li><strong>DL（深度學習）</strong>：最內圈。使用多層神經網路的 ML。2012 年 ImageNet 之後成為主流。</li>
-</ul>
-<p>2026 的「<strong>基礎模型 (Foundation Models)</strong>」如 GPT-5、Claude Opus 4.7 是 DL 的最新型態：以兆級 token 訓練的超大 Transformer，可用一個模型處理寫程式、寫文章、看圖、推理。</p></div>
-<div data-lang="en"><p>Think of three nested circles:</p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>AI</strong>: the outer circle — any system that mimics human intelligence, including 1980s hand-coded expert systems.</li>
-<li><strong>ML</strong>: the middle — systems that learn rules from <em>data</em> instead of explicit if-else.</li>
-<li><strong>DL</strong>: the inner — ML using multi-layer neural networks. Dominant since ImageNet 2012.</li>
-</ul>
-<p>2026's <strong>foundation models</strong> (GPT-5, Claude Opus 4.7) are the latest DL form: enormous Transformers trained on trillions of tokens, one model handling code, text, images, and reasoning.</p></div>
-<div class="callout tip"><span class="callout-icon">💡</span><div>
-<span data-lang="zh"><strong>核心觀念：</strong>ML 的本質是「最佳化問題」——定義損失函數，再用梯度下降之類的演算法調整參數讓損失最小。神經網路只是「參數很多、可微分」的彈性函數族。</span>
-<span data-lang="en"><strong>Core idea:</strong> ML is really an <em>optimization problem</em> — define a loss, then nudge parameters (via gradient descent etc.) to minimize it. Neural nets are simply a flexible, differentiable function family with lots of parameters.</span>
-</div></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="ML 典範" data-en="ML PARADIGMS">三大典範</div>
-<h2 data-zh="一、ML 三大學習典範" data-en="I. Three Learning Paradigms">一、ML 三大學習典範</h2>
-<table class="comp-table">
-<thead><tr><th data-zh="典範" data-en="Paradigm">典範</th><th data-zh="資料形式" data-en="Data">資料形式</th><th data-zh="代表任務" data-en="Tasks">代表任務</th><th data-zh="代表演算法" data-en="Algorithms">代表演算法</th></tr></thead>
-<tbody>
-<tr><td data-lang="zh"><strong>監督式</strong></td><td data-lang="en"><strong>Supervised</strong></td><td data-lang="zh">(x, y) 對：有標籤</td><td data-lang="en">(x, y) pairs with labels</td><td data-lang="zh">分類、回歸</td><td data-lang="en">Classification, regression</td><td>Linear/Logistic Regression、Decision Tree、Random Forest、SVM、CNN</td></tr>
-<tr><td data-lang="zh"><strong>非監督式</strong></td><td data-lang="en"><strong>Unsupervised</strong></td><td data-lang="zh">只有 x，無標籤</td><td data-lang="en">x only, no labels</td><td data-lang="zh">聚類、降維、異常偵測</td><td data-lang="en">Clustering, dim. reduction, anomaly detection</td><td>K-Means、DBSCAN、PCA、t-SNE、Autoencoder</td></tr>
-<tr><td data-lang="zh"><strong>強化學習</strong></td><td data-lang="en"><strong>Reinforcement</strong></td><td data-lang="zh">透過環境互動、獎勵訊號</td><td data-lang="en">Agent ↔ environment with reward</td><td data-lang="zh">下棋、機器人、自駕車</td><td data-lang="en">Game play, robotics, autonomy</td><td>Q-Learning、DQN、PPO、AlphaZero</td></tr>
-</tbody></table>
-
-<div data-lang="zh"><p><strong>監督式經典演算法快覽：</strong></p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>Linear/Logistic Regression</strong>：用一條線（或機率轉換）預測連續值或二元類別。</li>
-<li><strong>Decision Tree / Random Forest</strong>：以「if-else 規則樹」分類，Random Forest 用多棵投票降低過擬合。</li>
-<li><strong>SVM</strong>：找一個邊界把兩類分得最開（最大邊界）。</li>
-<li><strong>K-Means / PCA</strong>（非監督）：K-Means 自動找 K 群中心；PCA 把高維資料投影到主要變化方向。</li>
-</ul></div>
-<div data-lang="en"><p><strong>Classic algorithm cheat sheet:</strong></p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>Linear/Logistic Regression</strong>: fit a line (or sigmoid) to predict continuous or binary outcomes.</li>
-<li><strong>Decision Tree / Random Forest</strong>: if-else rule trees; Random Forest votes across many trees to curb overfitting.</li>
-<li><strong>SVM</strong>: find the boundary that separates classes with maximum margin.</li>
-<li><strong>K-Means / PCA</strong> (unsupervised): K-Means clusters around K centroids; PCA projects onto directions of largest variance.</li>
-</ul></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="神經網路" data-en="NEURAL NETWORKS">神經網路</div>
-<h2 data-zh="二、神經網路與深度學習" data-en="II. Neural Networks & Deep Learning">二、神經網路與深度學習</h2>
-<div data-lang="zh"><p>單一<strong>神經元 (neuron)</strong> 計算 <code>y = activation(Σwᵢxᵢ + b)</code>，疊很多層就是<strong>神經網路</strong>。訓練 = 用<strong>反向傳播 (backpropagation)</strong> + <strong>梯度下降</strong>調整 w、b 讓損失最小。</p>
-<p><strong>激活函數：</strong></p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>ReLU</strong>：<code>max(0, x)</code>，最常用，簡單、避免梯度消失。</li>
-<li><strong>Sigmoid</strong>：把輸出壓到 (0, 1)，適合二元機率。</li>
-<li><strong>Softmax</strong>：把向量轉成「合為 1」的機率分佈，適合多元分類。</li>
-</ul></div>
-<div data-lang="en"><p>A single <strong>neuron</strong> computes <code>y = activation(Σwᵢxᵢ + b)</code>; stacked layers form a <strong>neural network</strong>. Training = <strong>backpropagation</strong> + <strong>gradient descent</strong> adjusting w, b to minimize loss.</p>
-<p><strong>Activation functions:</strong></p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>ReLU</strong>: <code>max(0, x)</code>; the workhorse, mitigates vanishing gradients.</li>
-<li><strong>Sigmoid</strong>: squashes to (0, 1); for binary probabilities.</li>
-<li><strong>Softmax</strong>: turns a vector into a sum-to-one distribution; for multi-class.</li>
-</ul></div>
-
-<table class="comp-table">
-<thead><tr><th data-zh="架構" data-en="Architecture">架構</th><th data-zh="擅長" data-en="Good for">擅長</th><th data-zh="代表模型" data-en="Examples">代表模型</th></tr></thead>
-<tbody>
-<tr><td><strong>CNN</strong> (Convolutional NN)</td><td data-lang="zh">影像、時頻譜</td><td data-lang="en">Images, spectrograms</td><td>ResNet、EfficientNet、ViT 前身</td></tr>
-<tr><td><strong>RNN / LSTM / GRU</strong></td><td data-lang="zh">序列資料</td><td data-lang="en">Sequences</td><td data-lang="zh">早期 NMT、語音辨識</td><td data-lang="en">Early NMT, speech</td></tr>
-<tr><td><strong>Transformer (2017)</strong> ⭐</td><td data-lang="zh">幾乎任何序列／多模態</td><td data-lang="en">Any sequence / multi-modal</td><td>BERT、GPT、Claude、Gemini、Llama</td></tr>
-<tr><td><strong>Diffusion</strong></td><td data-lang="zh">生成式影像/影片</td><td data-lang="en">Image / video generation</td><td>Stable Diffusion、DALL·E 3、Sora</td></tr>
-</tbody></table>
-
-<div class="callout tip"><span class="callout-icon">💡</span><div>
-<div data-lang="zh"><strong>Transformer 的關鍵：注意力機制 (Self-Attention)。</strong>讓序列中每個 token 直接「看」到其他所有 token，並計算彼此重要性 (Q·Kᵀ)。摒棄 RNN 的順序計算瓶頸，可大規模並行化於 GPU——這是 2017 年「Attention Is All You Need」論文點燃 LLM 革命的核心。</div>
-<div data-lang="en"><strong>Transformer's secret: self-attention.</strong> Every token attends to every other token via Q·Kᵀ scores. No more sequential RNN bottleneck — fully parallel on GPUs. This is the spark from the 2017 "Attention Is All You Need" paper that ignited the LLM revolution.</div>
-</div></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="基礎模型" data-en="FOUNDATION MODELS">2026 LLM 戰場</div>
-<h2 data-zh="三、互動：2026 主流 LLM benchmark 比較" data-en="III. Interactive: 2026 LLM Benchmark Comparison">三、互動：2026 LLM benchmark 比較</h2>
-<div data-lang="zh"><p>2026 年商用 LLM 已進入「混合專家 (Mixture-of-Experts, MoE) + 長思考 (test-time reasoning)」時代：<strong>GPT-5 / 5.5</strong>（OpenAI）、<strong>Claude Opus 4.6 / 4.7</strong>（Anthropic）、<strong>Gemini 3.x</strong>（Google）、<strong>Llama 4</strong>（Meta，仍開源）四強鼎立。常用 benchmark 包括 <strong>MMLU</strong>（學科綜合）、<strong>GPQA Diamond</strong>（博士級科學）、<strong>SWE-bench Verified</strong>（軟體工程）、<strong>LMArena Elo</strong>（人類偏好）。</p></div>
-<div data-lang="en"><p>By 2026 commercial LLMs have entered the era of <strong>Mixture-of-Experts (MoE) + test-time reasoning</strong>: <strong>GPT-5 / 5.5</strong> (OpenAI), <strong>Claude Opus 4.6 / 4.7</strong> (Anthropic), <strong>Gemini 3.x</strong> (Google), and <strong>Llama 4</strong> (Meta, still open-weights). Common benchmarks: <strong>MMLU</strong> (general knowledge), <strong>GPQA Diamond</strong> (PhD-level science), <strong>SWE-bench Verified</strong> (software), <strong>LMArena Elo</strong> (human preference).</p></div>
-<div class="interactive-panel">
-<div class="chart-container"><canvas id="llmChart"></canvas></div>
-<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">資料來源：各廠商公開發布與 LMArena leaderboard，2026-05 概略值；實際隨版本變動。</span><span data-lang="en">Sources: vendor releases and LMArena leaderboard, approx. values as of 2026-05; numbers shift with each version.</span></p>
-</div>
-
-<div data-lang="zh"><p><strong>主要應用里程碑：</strong>AlphaFold（2020 蛋白質結構預測，2024 諾貝爾化學獎）、AlphaGo（2016 圍棋擊敗世界冠軍）、Stable Diffusion（2022 開源生成圖像）、ChatGPT（2022 公開 LLM）、Tesla FSD v13（2025 端對端自駕）。</p></div>
-<div data-lang="en"><p><strong>Landmark applications:</strong> AlphaFold (2020 protein structure, 2024 Nobel in Chemistry), AlphaGo (2016 beat Go world champion), Stable Diffusion (2022 open image gen), ChatGPT (2022 public LLM), Tesla FSD v13 (2025 end-to-end autonomy).</p></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">該用哪種 AI？</div>
-<h2 data-zh="四、決策樹：傳統 ML、DL 還是 LLM？" data-en="IV. Decision Tree: Classic ML, DL, or LLM?">四、傳統 ML、DL 還是 LLM？</h2>
-<div class="decision-tree">
-<h4>🌳 <span data-zh="該用哪種 AI 方法？" data-en="Which AI approach should I use?">該用哪種 AI 方法？</span></h4>
+<div class="section-label" data-zh="開場故事" data-en="OPENING STORY">AlphaFold 的奇蹟</div>
+<h2 data-zh="一、把 50 年的蛋白質摺疊問題變成「點幾下鍵盤」" data-en="I. 50 Years of Protein Folding, Solved in a Few Clicks">一、AlphaFold 的奇蹟</h2>
 <div data-lang="zh">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>資料 &lt; 10k 筆且為表格 (CSV)？<span class="dt-arrow">→</span> 用 <strong>Random Forest / XGBoost</strong>（傳統 ML），通常勝過深度學習。</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>影像／語音／長序列且有大量資料？<span class="dt-arrow">→</span> 用 <strong>CNN / Transformer</strong>（深度學習）。</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>需要「理解自然語言、寫程式、推理」？<span class="dt-arrow">→</span> 用 <strong>LLM API</strong>（Claude / GPT / Gemini）或開源 <strong>Llama 4</strong>。</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>需要在私有資料上「客製化」LLM？依資料量／預算遞增：① <strong>Prompt engineering</strong>（最便宜，零訓練）→ ② <strong>RAG</strong>（檢索 + 提示）→ ③ <strong>LoRA fine-tune</strong>（10k 筆等級）→ ④ <strong>Full fine-tune</strong>（百萬筆以上）。</div></div>
-<div class="dt-node"><span class="dt-q">Q5:</span><div>要不要訓練自己的模型？除非有 8×H100 等級 GPU 與資料工程團隊，否則建議先用 API。</div></div>
+<p>1972 年諾貝爾化學獎得主 Christian Anfinsen 在頒獎演說中提出「Anfinsen's dogma」——蛋白質的胺基酸序列<strong>完全決定</strong>它的 3D 結構。聽起來像個應該很快被破解的數學問題。</p>
+<p>結果，這個問題折磨了結構生物學家整整 50 年。每年的 <strong>CASP 競賽</strong>（Critical Assessment of Structure Prediction）就像蛋白質界的奧運，從 1994 開始每兩年舉辦一次。傳統演算法（同源建模、能量最小化）能在簡單蛋白質達到 30–60 GDT_TS，碰到沒有同源結構的就崩潰。</p>
+<p>2020 年 12 月，CASP14 的結果震驚全場：DeepMind 的 <strong>AlphaFold 2</strong> 平均達到 <strong>92.4 GDT_TS</strong>——相當於實驗解析結構的精度。期刊 <em>Nature</em> 標題寫道：「<em>It will change everything</em>」。2022 年釋出 2 億個蛋白質結構預測庫；2024 年 <strong>AlphaFold 3</strong> 把蛋白質-DNA-RNA-小分子-離子的<strong>複合體</strong>一起預測，發表於 <em>Nature</em>（Abramson et al. 2024）。Demis Hassabis 與 John Jumper 因此榮獲 2024 諾貝爾化學獎。</p>
+<p>AI 已從「未來」變成「現在式」——它不只是寫詩聊天的玩具，是<strong>科學研究的基礎工具</strong>。</p>
 </div>
 <div data-lang="en">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>Tabular data, &lt; 10k rows? <span class="dt-arrow">→</span> Use <strong>Random Forest / XGBoost</strong> — classic ML usually beats DL here.</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>Images / audio / long sequences with lots of data? <span class="dt-arrow">→</span> <strong>CNN / Transformer</strong> (deep learning).</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>Need natural language understanding, code, or reasoning? <span class="dt-arrow">→</span> Use an <strong>LLM API</strong> (Claude / GPT / Gemini) or open-weights <strong>Llama 4</strong>.</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>Customize an LLM on private data? Increasing cost: (1) <strong>Prompt engineering</strong> (free) → (2) <strong>RAG</strong> (retrieval + prompt) → (3) <strong>LoRA fine-tune</strong> (~10k samples) → (4) <strong>Full fine-tune</strong> (millions).</div></div>
-<div class="dt-node"><span class="dt-q">Q5:</span><div>Should I train my own model? Unless you have 8×H100 and a data team — start with an API.</div></div>
+<p>In his 1972 Nobel lecture, Christian Anfinsen proposed "Anfinsen's dogma" — a protein's amino-acid sequence <strong>fully determines</strong> its 3D structure. Sounds like a tidy math problem.</p>
+<p>That problem tormented structural biologists for 50 years. The biennial <strong>CASP</strong> (Critical Assessment of Structure Prediction) competition, running since 1994, is the protein Olympics. Traditional methods (homology modeling, energy minimization) reached 30–60 GDT_TS on easy targets and broke down on novel folds.</p>
+<p>In December 2020, CASP14 produced a shockwave: DeepMind's <strong>AlphaFold 2</strong> averaged <strong>92.4 GDT_TS</strong> — experimental accuracy. <em>Nature</em>'s headline: "<em>It will change everything</em>". By 2022 they had released 200 million predicted structures; in 2024 <strong>AlphaFold 3</strong> (Abramson et al., <em>Nature</em>) extended to protein-DNA-RNA-ligand-ion <strong>complexes</strong>. Demis Hassabis and John Jumper won the 2024 Nobel Prize in Chemistry.</p>
+<p>AI has shifted from "future" to "present tense" — no longer a chatbot toy but a <strong>fundamental research tool</strong>.</p>
 </div>
-</div>
-
-<div class="callout danger"><span class="callout-icon">🚨</span><div>
-<div data-lang="zh"><strong>AI 風險清單：</strong>① <strong>幻覺 (hallucination)</strong>——LLM 會自信地編造事實；② <strong>偏誤 (bias)</strong>——訓練資料中的社會偏見會被放大；③ <strong>隱私</strong>——可能洩漏訓練資料；④ <strong>智財權</strong>——生成內容是否侵權仍在訴訟；⑤ <strong>能源</strong>——訓練 GPT-4 估計耗電 1300 MWh；⑥ <strong>就業衝擊</strong>——程式設計、客服、設計、法務首當其衝。</div>
-<div data-lang="en"><strong>AI risks:</strong> (1) <strong>hallucination</strong> — LLMs confidently invent facts; (2) <strong>bias</strong> amplified from training data; (3) <strong>privacy</strong> — training data may leak; (4) <strong>IP</strong> — generated-content copyright still in litigation; (5) <strong>energy</strong> — GPT-4 training ~1,300 MWh; (6) <strong>jobs</strong> — coding, support, design, legal hit first.</div>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<span data-lang="zh"><strong>AI、ML、DL、LLM 是什麼關係？</strong>AI（人工智慧）是最廣的概念；ML（機器學習）是 AI 的一個子集，「讓電腦從資料學習」；DL（深度學習）是 ML 的子集，「用多層神經網路」；LLM（大型語言模型）是 DL 在文字領域的特例。<strong>AI ⊃ ML ⊃ DL ⊃ LLM</strong>。</span>
+<span data-lang="en"><strong>AI vs ML vs DL vs LLM:</strong> AI is the broadest concept; ML is a subset of AI ("learn from data"); DL is a subset of ML ("multi-layer neural networks"); LLMs are a DL specialty for text. <strong>AI ⊃ ML ⊃ DL ⊃ LLM</strong>.</span>
 </div></div>
 </section>
 
+<!-- ===== Section 2: Core Concepts ===== -->
 <section class="section">
-<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
-<h2 data-zh="五、scikit-learn 分類範例" data-en="V. scikit-learn Classification Example">五、scikit-learn 分類</h2>
-<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
-<div class="code-tab-content active" id="py1"><pre><span class="comment"># 鳶尾花分類：scikit-learn 入門 / Iris classification with sklearn</span>
+<div class="section-label" data-zh="核心概念" data-en="CORE CONCEPTS">給初學者的入口</div>
+<h2 data-zh="二、機器學習三大典範 + Train/Val/Test Split" data-en="II. Three ML Paradigms + Train/Val/Test Split">二、三大典範</h2>
+
+<div class="card-grid cols-3">
+<div class="card"><div class="card-icon">🎯</div><h4 data-zh="監督式學習 Supervised" data-en="Supervised Learning">監督式學習</h4>
+<div data-lang="zh"><p>給模型「題目 + 答案」對。最常見：<strong>分類</strong>（垃圾郵件 / 非垃圾）、<strong>回歸</strong>（預測房價）。經典演算法：線性回歸、邏輯回歸、SVM、隨機森林、XGBoost、神經網路。</p></div>
+<div data-lang="en"><p>Model sees (input, label) pairs. Most common: <strong>classification</strong> (spam / not) and <strong>regression</strong> (house prices). Classic algorithms: linear/logistic regression, SVM, Random Forest, XGBoost, neural nets.</p></div></div>
+
+<div class="card"><div class="card-icon">🔍</div><h4 data-zh="非監督學習 Unsupervised" data-en="Unsupervised Learning">非監督學習</h4>
+<div data-lang="zh"><p>只有「題目」，沒有「答案」。任務是<strong>發現結構</strong>：分群 (k-means、DBSCAN、Leiden)、降維 (PCA、t-SNE、UMAP)、異常偵測。scRNA-seq 細胞分群就是典型應用。</p></div>
+<div data-lang="en"><p>Only inputs, no labels — discover <strong>structure</strong>: clustering (k-means, DBSCAN, Leiden), dim-reduction (PCA, t-SNE, UMAP), anomaly detection. Cell clustering in scRNA-seq is a flagship use case.</p></div></div>
+
+<div class="card"><div class="card-icon">🎮</div><h4 data-zh="強化學習 Reinforcement" data-en="Reinforcement Learning">強化學習</h4>
+<div data-lang="zh"><p>agent 在環境中行動，靠<strong>獎勵訊號</strong>學會最佳策略。DeepMind AlphaGo（2016 擊敗李世乭）、AlphaZero（2017 自學圍棋/西洋棋/將棋）、ChatGPT 的 <strong>RLHF</strong>（從人類偏好學習）皆屬此類。</p></div>
+<div data-lang="en"><p>An agent acts in an environment and learns via <strong>reward signals</strong>. DeepMind AlphaGo (beat Lee Sedol 2016), AlphaZero (self-taught Go/chess/shogi 2017), and ChatGPT's <strong>RLHF</strong> (learning from human preferences) all fall here.</p></div></div>
+</div>
+
+<h3 data-zh="關鍵概念：Train / Validation / Test Split" data-en="Key concept: Train / Validation / Test Split">Train / Val / Test Split</h3>
+<div data-lang="zh"><p>把資料分三份是 ML 的<strong>第一誡命</strong>：</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>Training set (60–70%)</strong>：模型實際學習的資料。</li>
+<li><strong>Validation set (15–20%)</strong>：調超參數（學習率、層數、L2 強度）；模型「看得到但不用來學」。</li>
+<li><strong>Test set (15–20%)</strong>：最後一刻才碰，模擬「真實世界從未見過的資料」。<strong>絕不能用 test set 調超參</strong>——那叫「資料外洩 (data leakage)」，會嚴重高估模型表現。</li>
+</ul>
+<p>更嚴謹的做法是 <strong>k-fold cross-validation</strong>（k=5 或 10），尤其在資料量不大時。</p></div>
+<div data-lang="en"><p>Splitting data is ML's <strong>first commandment</strong>:</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>Training (60–70 %)</strong>: data the model actually learns from.</li>
+<li><strong>Validation (15–20 %)</strong>: tune hyperparameters (lr, layers, L2); model "sees but doesn't learn from".</li>
+<li><strong>Test (15–20 %)</strong>: touched only at the end — proxy for "unseen real-world data". <strong>Never tune on the test set</strong> — that's "data leakage" and inflates reported accuracy.</li>
+</ul>
+<p>For small data, use <strong>k-fold cross-validation</strong> (k = 5 or 10).</p></div>
+
+<table class="comp-table">
+<thead><tr><th data-zh="常見演算法" data-en="Algorithm">常見演算法</th><th data-zh="類型" data-en="Type">類型</th><th data-zh="優勢" data-en="Strength">優勢</th><th data-zh="弱點" data-en="Weakness">弱點</th></tr></thead>
+<tbody>
+<tr><td data-lang="zh">線性 / 邏輯回歸</td><td data-lang="en">Linear / Logistic regression</td><td data-lang="zh">監督</td><td data-lang="en">Supervised</td><td data-lang="zh">可解釋、快、係數有意義</td><td data-lang="en">Interpretable, fast, meaningful coefs</td><td data-lang="zh">只能線性關係</td><td data-lang="en">Linear only</td></tr>
+<tr><td data-lang="zh">隨機森林 / XGBoost</td><td data-lang="en">Random Forest / XGBoost</td><td data-lang="zh">監督</td><td data-lang="en">Supervised</td><td data-lang="zh">表格資料王者、抗 overfit</td><td data-lang="en">Tabular data king, overfit-resistant</td><td data-lang="zh">影像/文字不適合</td><td data-lang="en">Bad for images/text</td></tr>
+<tr><td data-lang="zh">k-means / DBSCAN / Leiden</td><td data-lang="en">k-means / DBSCAN / Leiden</td><td data-lang="zh">非監督</td><td data-lang="en">Unsupervised</td><td data-lang="zh">分群、scRNA-seq 必備</td><td data-lang="en">Clustering, scRNA-seq staple</td><td data-lang="zh">需指定 k 或解析度</td><td data-lang="en">Need to pick k or resolution</td></tr>
+<tr><td>PCA / t-SNE / UMAP</td><td data-lang="zh">非監督</td><td data-lang="en">Unsupervised</td><td data-lang="zh">降維、視覺化</td><td data-lang="en">Dim-reduction, viz</td><td data-lang="zh">t-SNE 慢、UMAP 可能扭曲全域結構</td><td data-lang="en">t-SNE slow; UMAP may distort global</td></tr>
+<tr><td>CNN / RNN / Transformer</td><td data-lang="zh">深度學習</td><td data-lang="en">Deep learning</td><td data-lang="zh">影像、語言、序列</td><td data-lang="en">Images, language, sequences</td><td data-lang="zh">需大量資料 + GPU</td><td data-lang="en">Needs big data + GPU</td></tr>
+</tbody></table>
+</section>
+
+<!-- ===== Section 3: Interactive #1 (LLM Benchmarks) ===== -->
+<section class="section">
+<div class="section-label" data-zh="互動 #1" data-en="INTERACTIVE #1">2026 LLM 競賽</div>
+<h2 data-zh="三、互動：2026 主流 LLM 表現比較" data-en="III. Interactive: 2026 Frontier LLM Comparison">三、LLM 競技場</h2>
+<div data-lang="zh"><p>2025–2026 年是 LLM 軍備競賽白熱化的一年。OpenAI、Anthropic、Google、Meta 各家旗艦在 MMLU（廣域知識）、GPQA（博士級科學）、SWE-bench Verified（軟體工程）、LMArena Elo（人類盲測）上互相超越。</p>
+<p>下圖比較四家代表模型（資料截至 2026 年 5 月）。注意：<strong>單一基準分數已不再足以代表能力</strong>——OpenAI 的 o-series 與 Anthropic 的 Extended Thinking、Google 的 Deep Think 都是「test-time compute」典範——花更多算力推理會明顯提升難題表現。</p></div>
+<div data-lang="en"><p>2025–2026 saw the LLM arms race go thermonuclear. OpenAI, Anthropic, Google, Meta flagships leapfrog on MMLU (broad knowledge), GPQA (PhD-level science), SWE-bench Verified (software engineering), and LMArena Elo (human blind tests).</p>
+<p>The chart compares four frontier models (as of May 2026). Note: <strong>any single benchmark no longer captures capability</strong> — OpenAI's o-series, Anthropic's Extended Thinking, and Google's Deep Think exemplify "test-time compute" where more inference compute markedly lifts hard-problem scores.</p></div>
+<div class="interactive-panel">
+<div class="chart-container"><canvas id="llmChart"></canvas></div>
+<p style="font-size:.78rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">資料來源：各家發布頁、LMArena（May 2026）。分數可能因評估版本與 prompt 而異。</span><span data-lang="en">Sources: vendor pages, LMArena (May 2026). Scores vary by eval version and prompts.</span></p>
+</div>
+</section>
+
+<!-- ===== Section 4: Deep Dive ===== -->
+<section class="section">
+<div class="section-label" data-zh="深入剖析" data-en="DEEP DIVE">進階：神經網路 / Transformer / MoE</div>
+<h2 data-zh="四、進階：從感知器到 Transformer" data-en="IV. From Perceptron to Transformer">四、深入剖析</h2>
+
+<h3 data-zh="神經元的數學" data-en="A neuron in math">一顆神經元的數學</h3>
+<div data-lang="zh"><p>一個神經元做的事：把輸入 <code>x</code> 與權重 <code>w</code> 內積、加上 bias <code>b</code>，再丟進「<strong>激活函數</strong>」。最常用的激活函數：</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>Sigmoid</strong> σ(x) = 1/(1+e<sup>−x</sup>)：輸出 (0, 1)；早期 NN 主流，但易梯度消失。</li>
+<li><strong>tanh</strong>：輸出 (−1, 1)；類似 sigmoid 但對稱於 0。</li>
+<li><strong>ReLU</strong> = max(0, x)：2010 年後深度學習標配，計算極快、解決梯度消失。</li>
+<li><strong>GELU / SwiGLU</strong>：Transformer 主流，平滑版的 ReLU。</li>
+</ul>
+<p><strong>反向傳播 (Backpropagation)</strong>：1986 Rumelhart、Hinton、Williams 在 <em>Nature</em> 重新發表。本質是<strong>鏈式法則</strong>：把 loss 對最後一層權重的偏導，從後往前一層層傳播回去。配合 <strong>SGD / Adam / AdamW</strong> 等優化器更新權重。</p></div>
+<div data-lang="en"><p>One neuron: dot-product input <code>x</code> with weights <code>w</code>, add bias <code>b</code>, feed through an <strong>activation</strong>:</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>Sigmoid</strong> σ(x) = 1/(1+e<sup>−x</sup>): output (0,1); early NN staple but vanishing-gradient prone.</li>
+<li><strong>tanh</strong>: output (−1, 1); symmetric around 0.</li>
+<li><strong>ReLU</strong> = max(0, x): post-2010 deep-learning default — blazing fast, fixes vanishing gradients.</li>
+<li><strong>GELU / SwiGLU</strong>: Transformer mainstays, smooth variants of ReLU.</li>
+</ul>
+<p><strong>Backpropagation</strong> (Rumelhart, Hinton, Williams in <em>Nature</em>, 1986): really just the <strong>chain rule</strong> — propagate the loss's gradient backward through the network, then update weights with <strong>SGD / Adam / AdamW</strong>.</p></div>
+
+<h3 data-zh="三大網路架構家族" data-en="Three network families">三大網路架構</h3>
+<div class="card-grid cols-3">
+<div class="card"><div class="card-icon">🖼️</div><h4>CNN <span data-zh="（影像）" data-en="(images)">（影像）</span></h4>
+<div data-lang="zh"><p>1989 LeCun 為郵局郵遞區號辨識設計 LeNet-5。「卷積」= 同一組濾波器掃過整張圖，擷取局部特徵（邊緣、紋理）。2012 AlexNet 在 ImageNet 大勝啟動深度學習革命。應用：醫學影像、自駕車視覺、CryoEM 重建。</p></div>
+<div data-lang="en"><p>LeCun designed LeNet-5 in 1989 for US Postal ZIP-code reading. A "convolution" applies the same filter across the image to extract local features (edges, textures). AlexNet's 2012 ImageNet win kicked off the deep-learning revolution. Uses: medical imaging, self-driving vision, CryoEM reconstruction.</p></div></div>
+
+<div class="card"><div class="card-icon">📜</div><h4>RNN / LSTM <span data-zh="（序列）" data-en="(sequences)">（序列）</span></h4>
+<div data-lang="zh"><p>Recurrent NN 把前一個時步的輸出當下一步的輸入，處理變長序列。<strong>LSTM</strong>（Hochreiter-Schmidhuber 1997）用 gate 機制解決長距依賴。直到 2017 仍是 NLP / 語音主流，現多被 Transformer 取代但仍用於即時串流。</p></div>
+<div data-lang="en"><p>RNNs feed each time-step's output as input to the next. <strong>LSTM</strong> (Hochreiter & Schmidhuber, 1997) added gating to handle long-range dependencies. Dominated NLP/speech until 2017; mostly replaced by Transformers but still used in real-time streams.</p></div></div>
+
+<div class="card"><div class="card-icon">🎯</div><h4>Transformer <span data-zh="（萬能）" data-en="(universal)">（萬能）</span></h4>
+<div data-lang="zh"><p>2017 Vaswani et al. <em>「Attention is All You Need」</em>。核心是 <strong>self-attention</strong>：每個 token 都能直接「看到」序列中任何位置（不像 RNN 只能一格一格傳）。並行性極佳，吃 GPU 吃得飽。今天的 GPT、Claude、Gemini、AlphaFold、ESMFold 全是 Transformer 變體。</p></div>
+<div data-lang="en"><p>Vaswani et al. 2017, <em>"Attention is All You Need"</em>. The core is <strong>self-attention</strong>: every token sees every other position directly (unlike RNNs' chain). Massively parallel and GPU-friendly. Every modern LLM (GPT, Claude, Gemini) and biology FM (AlphaFold, ESMFold) is a Transformer variant.</p></div></div>
+</div>
+
+<h3 data-zh="兩大「失敗」與兩大「解法」" data-en="Two failures, two fixes">兩大失敗與解法</h3>
+<table class="comp-table">
+<thead><tr><th data-zh="現象" data-en="Phenomenon">現象</th><th data-zh="症狀" data-en="Symptom">症狀</th><th data-zh="解法" data-en="Fix">解法</th></tr></thead>
+<tbody>
+<tr><td data-lang="zh"><strong>Overfitting</strong> 過擬合</td><td data-lang="en"><strong>Overfitting</strong></td><td data-lang="zh">訓練 acc 99%，測試 acc 60%</td><td data-lang="en">Train acc 99 %, test acc 60 %</td><td data-lang="zh">增加資料、Dropout、L2 weight decay、early stopping、data augmentation</td><td data-lang="en">More data, Dropout, L2, early stopping, augmentation</td></tr>
+<tr><td data-lang="zh"><strong>Underfitting</strong> 欠擬合</td><td data-lang="en"><strong>Underfitting</strong></td><td data-lang="zh">train acc 與 test acc 都低</td><td data-lang="en">Train and test both low</td><td data-lang="zh">增加層數/參數、訓練更久、改善特徵</td><td data-lang="en">More layers/params, train longer, better features</td></tr>
+<tr><td data-lang="zh"><strong>Class imbalance</strong> 類別失衡</td><td data-lang="en"><strong>Class imbalance</strong></td><td data-lang="zh">95% 多數類，AUC 看似不錯</td><td data-lang="en">95 % majority, AUC looks OK</td><td data-lang="zh">改用 F1 / PR-AUC、SMOTE / class weights、focal loss</td><td data-lang="en">F1 / PR-AUC, SMOTE / class weights, focal loss</td></tr>
+<tr><td data-lang="zh"><strong>Data leakage</strong> 資料外洩</td><td data-lang="en"><strong>Data leakage</strong></td><td data-lang="zh">論文 acc 99%，部署後崩盤</td><td data-lang="en">Paper says 99 %, production tanks</td><td data-lang="zh">嚴格 train/test 隔離、按時間或病人分割、leakage audit</td><td data-lang="en">Strict train/test isolation, split by time or patient, leakage audit</td></tr>
+</tbody></table>
+
+<h3 data-zh="2025 新興技巧" data-en="2025 frontier tricks">2025 新興技巧</h3>
+<div data-lang="zh"><ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>MoE (Mixture of Experts)</strong>：模型有 100B 參數但每次只啟動 17B「專家」。Mixtral、DeepSeek-V3、GPT-4 都用此架構降低推理成本。</li>
+<li><strong>量化 (Quantization)</strong>：把 FP16 權重壓到 INT8、INT4，記憶體與速度可省 2–4 倍，精度幾乎不掉。<code>llama.cpp</code>、<code>GPTQ</code>、<code>AWQ</code> 是工具代表。</li>
+<li><strong>RLHF (Reinforcement Learning from Human Feedback)</strong>：用人類偏好訓練 reward model，再用 PPO 微調 LLM。ChatGPT 之所以「聽話」的核心技術。2024 起 <strong>DPO</strong> (Direct Preference Optimization) 簡化此流程。</li>
+<li><strong>RAG (Retrieval-Augmented Generation)</strong>：LLM + 向量資料庫（Pinecone、Weaviate、pgvector），讓模型查私有知識回答，減少幻覺。</li>
+<li><strong>Agent / 工具呼叫</strong>：LLM 自主呼叫工具（Python interpreter、檢索、shell）解決多步驟任務。Claude Code、Devin、AutoGPT 是代表。</li>
+</ul></div>
+<div data-lang="en"><ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
+<li><strong>MoE</strong>: 100 B-param model but only 17 B "experts" active per token. Mixtral, DeepSeek-V3, GPT-4 use this to slash inference cost.</li>
+<li><strong>Quantization</strong>: squeeze FP16 weights to INT8/INT4 — 2–4× memory & speed gain with little accuracy loss. <code>llama.cpp</code>, GPTQ, AWQ are workhorses.</li>
+<li><strong>RLHF</strong>: train a reward model on human preferences, then PPO-fine-tune the LLM. The reason ChatGPT "behaves". <strong>DPO</strong> (2024) simplifies this pipeline.</li>
+<li><strong>RAG</strong>: LLM + vector DB (Pinecone, Weaviate, pgvector) — model retrieves from private knowledge to ground answers, cutting hallucination.</li>
+<li><strong>Agents / tool use</strong>: LLMs autonomously call tools (Python, retrieval, shell) for multi-step tasks. Claude Code, Devin, AutoGPT exemplify.</li>
+</ul></div>
+</section>
+
+<!-- ===== Section 5: Historical timeline ===== -->
+<section class="section">
+<div class="section-label" data-zh="歷史故事" data-en="HISTORICAL TIMELINE">AI 七十年</div>
+<h2 data-zh="五、AI 七十年的兩次寒冬與三次復甦" data-en="V. Seven Decades, Two Winters, Three Springs">五、歷史故事</h2>
+<div class="workflow">
+<div class="workflow-step" data-step="1"><h4>1958 — <span data-zh="Perceptron 誕生" data-en="The Perceptron is born">第一個「人工神經元」</span></h4>
+<div data-lang="zh"><p>Frank Rosenblatt 在 Cornell 用 IBM 704 打造 Perceptron——可學習權重的線性分類器。《紐約時報》當時聲稱「未來能走、能說、能複製自己」。事實上它連 XOR 都學不會。</p></div>
+<div data-lang="en"><p>Frank Rosenblatt at Cornell builds the Perceptron on an IBM 704 — a linear classifier with learnable weights. The <em>New York Times</em> claims it will soon "walk, talk, and reproduce itself". In reality it can't even learn XOR.</p></div></div>
+
+<div class="workflow-step" data-step="2"><h4>1969 — <span data-zh="第一次 AI 寒冬" data-en="First AI Winter">Minsky 的致命一書</span></h4>
+<div data-lang="zh"><p>Marvin Minsky 與 Seymour Papert 出版《Perceptrons》，數學證明單層感知器無法解 XOR——美國政府幾乎抽掉所有 AI 經費，<strong>NN 沉寂 17 年</strong>。</p></div>
+<div data-lang="en"><p>Minsky and Papert publish <em>Perceptrons</em>, proving single-layer networks can't solve XOR. The US government pulls AI funding; <strong>NNs lie dormant for 17 years</strong>.</p></div></div>
+
+<div class="workflow-step" data-step="3"><h4>1986 — <span data-zh="反向傳播復興" data-en="Backprop revival">Rumelhart-Hinton 解封</span></h4>
+<div data-lang="zh"><p>Rumelhart、Hinton、Williams 在 <em>Nature</em> 發表「Learning representations by back-propagating errors」，證明多層 NN 用反向傳播可解 XOR——但 1990 年代 SVM 與 kernel methods 興起後 NN 又陷低潮。</p></div>
+<div data-lang="en"><p>Rumelhart, Hinton, Williams publish "Learning representations by back-propagating errors" in <em>Nature</em>, showing multi-layer NNs with backprop can solve XOR. But the 1990s SVM/kernel boom relegates NNs again.</p></div></div>
+
+<div class="workflow-step" data-step="4"><h4>2012 — <span data-zh="AlexNet 引爆深度學習" data-en="AlexNet ignites deep learning">ImageNet 大勝</span></h4>
+<div data-lang="zh"><p>Krizhevsky、Sutskever、Hinton 用 2 顆 GTX 580 GPU 訓 8 層 CNN，<strong>ImageNet 錯誤率從 26.2% → 15.3%</strong>，第二名遠落後 10 個百分點。GPU + 大資料 + CNN 三位一體點燃深度學習。</p></div>
+<div data-lang="en"><p>Krizhevsky, Sutskever, Hinton train an 8-layer CNN on two GTX 580 GPUs — <strong>ImageNet error 26.2 % → 15.3 %</strong>, 10 points ahead of second place. GPUs + big data + CNNs trigger the deep-learning revolution.</p></div></div>
+
+<div class="workflow-step" data-step="5"><h4>2017 — <span data-zh="Transformer 横空出世" data-en="Transformer arrives">"Attention is All You Need"</span></h4>
+<div data-lang="zh"><p>Google 八位作者發表 Transformer 架構，捨棄 RNN 的循環、純靠 self-attention。三年內取代了幾乎所有 NLP 模型，並成為一切現代 LLM 的骨幹。</p></div>
+<div data-lang="en"><p>Eight Google authors publish the Transformer — pure self-attention, no recurrence. Replaces almost all NLP models within three years and becomes the backbone of every modern LLM.</p></div></div>
+
+<div class="workflow-step" data-step="6"><h4>2020 — <span data-zh="AlphaFold 2 & GPT-3" data-en="AlphaFold 2 & GPT-3">深度學習震撼生科</span></h4>
+<div data-lang="zh"><p>11 月 GPT-3（175 B 參數）展示 few-shot 學習；12 月 CASP14 AlphaFold 2 達到實驗精度——兩個「scaling law 奏效」的代表案例。</p></div>
+<div data-lang="en"><p>November: GPT-3 (175 B params) shows few-shot learning. December: AlphaFold 2 reaches experimental accuracy at CASP14. Two flagship cases of scaling laws working.</p></div></div>
+
+<div class="workflow-step" data-step="7"><h4>2022.11 — <span data-zh="ChatGPT 火爆" data-en="ChatGPT goes viral">五天破百萬用戶</span></h4>
+<div data-lang="zh"><p>OpenAI 發布 ChatGPT，五天內破百萬用戶、兩個月破億——AI 從研究室走進大眾客廳。微軟隨後投資 100 億美元，Google 緊急宣布 Gemini 計畫。</p></div>
+<div data-lang="en"><p>OpenAI launches ChatGPT: 1 M users in 5 days, 100 M in 2 months. AI leaps from lab to living room. Microsoft invests $10 B; Google scrambles to ship Gemini.</p></div></div>
+
+<div class="workflow-step" data-step="8"><h4>2024 — <span data-zh="AlphaFold 3、o1 reasoning" data-en="AlphaFold 3, o1 reasoning">Test-time compute</span></h4>
+<div data-lang="zh"><p>5 月 AlphaFold 3 預測蛋白-DNA-小分子複合體；9 月 OpenAI o1 證明「推理時花更多算力」（chain-of-thought）可顯著提升數學/科學表現——AI 進入「思考」時代。</p></div>
+<div data-lang="en"><p>May: AlphaFold 3 predicts protein-DNA-ligand complexes. September: OpenAI o1 shows test-time chain-of-thought compute markedly lifts math/science performance — AI enters the "reasoning" era.</p></div></div>
+
+<div class="workflow-step" data-step="9"><h4>2025–2026 — <span data-zh="代理 AI 與多模態" data-en="Agents & multimodal">Opus 4.7、GPT-5.5、Gemini 3</span></h4>
+<div data-lang="zh"><p>2025 起進入「代理 AI (agentic AI)」階段：Claude Opus 4.7、GPT-5.5、Gemini 3 Pro 能長時間自主執行多步驟任務（程式碼倉庫重構、論文閱讀整理、實驗規劃）。SWE-bench Verified 突破 80%。</p></div>
+<div data-lang="en"><p>2025 enters the "agentic AI" era: Claude Opus 4.7, GPT-5.5, Gemini 3 Pro autonomously execute long-horizon multi-step tasks (codebase refactors, literature review, experiment design). SWE-bench Verified breaks 80 %.</p></div></div>
+</div>
+</section>
+
+<!-- ===== Section 6: Interactive #2 (Activation Function Playground) ===== -->
+<section class="section">
+<div class="section-label" data-zh="互動 #2" data-en="INTERACTIVE #2">激活函數玩具</div>
+<h2 data-zh="六、互動：神經元 + 激活函數玩具" data-en="VI. Interactive: Neuron + Activation Playground">六、激活函數玩具</h2>
+<div data-lang="zh"><p>調整單一神經元的 <strong>weight w</strong> 與 <strong>bias b</strong>，切換激活函數，觀察輸出曲線。直觀感受「為何 ReLU 取代 sigmoid」。</p></div>
+<div data-lang="en"><p>Adjust a single neuron's <strong>weight w</strong> and <strong>bias b</strong>, switch activations, and see the output curve. Build intuition for "why ReLU replaced sigmoid".</p></div>
+
+<div class="interactive-panel">
+<div class="slider-group"><label><span data-zh="權重 w" data-en="Weight w">權重 w</span> <span id="wVal">1.0</span></label><input type="range" id="wSlider" min="-3" max="3" step="0.1" value="1.0"></div>
+<div class="slider-group"><label><span data-zh="偏差 b" data-en="Bias b">偏差 b</span> <span id="bVal">0.0</span></label><input type="range" id="bSlider" min="-3" max="3" step="0.1" value="0.0"></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+  <button class="act-btn active" data-act="sigmoid">Sigmoid</button>
+  <button class="act-btn" data-act="tanh">tanh</button>
+  <button class="act-btn" data-act="relu">ReLU</button>
+  <button class="act-btn" data-act="gelu">GELU</button>
+</div>
+<div class="chart-container" style="height:240px;"><canvas id="actChart"></canvas></div>
+<p style="font-size:.78rem;color:var(--c-ink-muted);text-align:center;"><span data-lang="zh">提示：注意 ReLU 在 x &lt; 0 完全為 0（梯度也為 0），而 sigmoid 兩端飽和梯度趨近 0——這就是「梯度消失」的根源。</span><span data-lang="en">Tip: ReLU is exactly 0 for x &lt; 0 (and gradient = 0), while sigmoid saturates at both ends with near-zero gradient — that's the root of "vanishing gradients".</span></p>
+</div>
+<style>.act-btn{padding:6px 14px;border-radius:8px;border:1px solid var(--c-border);background:var(--c-surface);font-weight:600;font-size:.85rem;cursor:pointer;transition:.2s}.act-btn:hover{border-color:var(--c-accent)}.act-btn.active{background:var(--c-accent);color:#fff;border-color:var(--c-accent)}</style>
+</section>
+
+<!-- ===== Section 7: 🧬 For Bioinformaticians ===== -->
+<section class="section">
+<div class="section-label" data-zh="🧬 生資連結" data-en="🧬 FOR BIOINFORMATICIANS">AI × 生命科學</div>
+<h2 data-zh="七、AI 正在改寫的生物資訊地景" data-en="VII. AI Is Rewriting Bioinformatics">七、生資連結點</h2>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;">
+<span class="callout-icon">🧬</span>
+<div>
+<strong data-zh="生命科學的 ChatGPT 時刻" data-en="Biology's ChatGPT moment">生命科學的 ChatGPT 時刻</strong>
+<p data-lang="zh">2020 年 AlphaFold 2 對生命科學的衝擊，相當於 2022 年 ChatGPT 對社會的衝擊。從那刻起，AI 不再是「生資中可用可不用的工具」，而是<strong>每個生資工作流的基礎元件</strong>。本節整理你必須認得的關鍵模型。</p>
+<p data-lang="en">AlphaFold 2 in 2020 hit biology the way ChatGPT hit society in 2022. Since then AI isn't an optional bioinformatics tool — it's a <strong>foundational component of every workflow</strong>. This section lists the key models you must recognize.</p>
+</div></div>
+
+<div class="card-grid cols-2">
+<div class="card"><div class="card-icon">🧪</div><h4>AlphaFold 2 / 3 <span data-zh="（蛋白質結構）" data-en="(protein structure)">（結構）</span></h4>
+<div data-lang="zh"><p><strong>AlphaFold 2</strong>（Jumper et al. <em>Nature</em> 2021）：MSA → Evoformer → Structure module，達到實驗精度。<strong>AlphaFold 3</strong>（Abramson et al. <em>Nature</em> 2024）：用 diffusion model 預測蛋白質-DNA-RNA-小分子-離子複合體。線上免費（不可商用）：<code>alphafoldserver.com</code>；DeepMind + EBI 已釋出 2 億預測結構庫 <code>alphafold.ebi.ac.uk</code>。</p></div>
+<div data-lang="en"><p><strong>AlphaFold 2</strong> (Jumper et al., <em>Nature</em> 2021): MSA → Evoformer → Structure module, reaching experimental accuracy. <strong>AlphaFold 3</strong> (Abramson et al., <em>Nature</em> 2024): diffusion model for protein-DNA-RNA-ligand-ion complexes. Free non-commercial use at <code>alphafoldserver.com</code>; DeepMind + EBI ship 200 M predictions at <code>alphafold.ebi.ac.uk</code>.</p></div></div>
+
+<div class="card"><div class="card-icon">🔬</div><h4>ESMFold / OmegaFold <span data-zh="（語言模型蛋白質）" data-en="(LM-based protein)">（單序列）</span></h4>
+<div data-lang="zh"><p>Meta <strong>ESMFold</strong>（Lin et al. <em>Science</em> 2023）：在 6.5 億蛋白質序列上預訓 ESM-2 語言模型，<strong>不需 MSA</strong>，速度比 AlphaFold 2 快 60 倍，特別適合「孤兒蛋白」與宏基因組。ESM-3（2024）整合序列、結構、功能。</p></div>
+<div data-lang="en"><p>Meta <strong>ESMFold</strong> (Lin et al., <em>Science</em> 2023): pretrains ESM-2 on 650 M protein sequences. <strong>No MSA needed</strong>; 60× faster than AlphaFold 2 — perfect for orphan proteins and metagenomes. ESM-3 (2024) jointly models sequence, structure, and function.</p></div></div>
+
+<div class="card"><div class="card-icon">🧬</div><h4>scGPT / Geneformer / scFoundation <span data-zh="（單細胞）" data-en="(single-cell)">（單細胞）</span></h4>
+<div data-lang="zh"><p>「單細胞基礎模型 (cell FM)」是 2023–2024 熱點：<strong>scGPT</strong>（Cui et al. <em>Nat Methods</em> 2024）在 3300 萬細胞訓練、<strong>Geneformer</strong>（Theodoris et al. <em>Nature</em> 2023）3000 萬、<strong>scFoundation</strong>（Hao et al. <em>Nat Methods</em> 2024）5000 萬、<strong>UCE</strong>（Rosen et al. 2023）360 萬細胞跨物種。下游可細胞型別註釋、攝動預測、批次校正。</p></div>
+<div data-lang="en"><p>"Cell foundation models" became hot in 2023–2024: <strong>scGPT</strong> (Cui et al. <em>Nat Methods</em> 2024) trained on 33 M cells; <strong>Geneformer</strong> (Theodoris et al. <em>Nature</em> 2023) 30 M; <strong>scFoundation</strong> (Hao et al. <em>Nat Methods</em> 2024) 50 M; <strong>UCE</strong> (Rosen et al. 2023) 3.6 M cross-species. Downstream: cell-type annotation, perturbation prediction, batch correction.</p></div></div>
+
+<div class="card"><div class="card-icon">🧪</div><h4>DeepVariant <span data-zh="（變異呼叫）" data-en="(variant calling)">（變異呼叫）</span></h4>
+<div data-lang="zh"><p>Google Brain <strong>DeepVariant</strong>（Poplin et al. <em>Nat Biotech</em> 2018）：把 NGS 變異呼叫變成「影像分類」——pileup 視為圖片，CNN 判斷 SNP/indel。其準確率超越 GATK HaplotypeCaller，特別在 PacBio HiFi 與 Oxford Nanopore 長讀長表現更佳。已成為 Illumina DRAGEN、PacBio HiFi 預設 pipeline 之一。</p></div>
+<div data-lang="en"><p>Google Brain's <strong>DeepVariant</strong> (Poplin et al., <em>Nat Biotech</em> 2018) treats NGS variant calling as image classification — pileups become images, a CNN decides SNP/indel. Beats GATK HaplotypeCaller, especially on PacBio HiFi and Oxford Nanopore long reads. Now a default pipeline in Illumina DRAGEN and PacBio HiFi.</p></div></div>
+
+<div class="card"><div class="card-icon">💊</div><h4>DiffDock / RFdiffusion <span data-zh="（藥物設計）" data-en="(drug design)">（生成式）</span></h4>
+<div data-lang="zh"><p>2023–2024 擴散模型 (diffusion) 進入生命科學：MIT <strong>DiffDock</strong>（Corso et al. <em>ICLR</em> 2023）將分子對接從「打分」轉為「生成」；Baker Lab <strong>RFdiffusion</strong>（Watson et al. <em>Nature</em> 2023）能<strong>從零設計</strong>結合特定靶點的新蛋白——已有實驗驗證的 picomolar 親和力結合物。</p></div>
+<div data-lang="en"><p>Diffusion models entered life science in 2023–2024: MIT's <strong>DiffDock</strong> (Corso et al., <em>ICLR</em> 2023) reframes docking from scoring to generation; Baker Lab's <strong>RFdiffusion</strong> (Watson et al., <em>Nature</em> 2023) <strong>de novo</strong> designs proteins binding given targets — with experimentally validated picomolar binders.</p></div></div>
+
+<div class="card"><div class="card-icon">🎯</div><h4>DeepBind / DeepCRISPR / Enformer <span data-zh="（調控）" data-en="(regulation)">（基因調控）</span></h4>
+<div data-lang="zh"><p><strong>DeepBind</strong>（Alipanahi et al. <em>Nat Biotech</em> 2015）：CNN 學 TF binding。<strong>DeepCRISPR</strong>：預測 Cas9 切割效率與脫靶。<strong>Enformer</strong>（Avsec et al. <em>Nat Methods</em> 2021）：Transformer 預測長距 (200 kb) 的基因表現。<strong>Borzoi</strong>（Linder et al. 2024）：把 Enformer 擴大到 524 kb。</p></div>
+<div data-lang="en"><p><strong>DeepBind</strong> (Alipanahi et al., <em>Nat Biotech</em> 2015): CNN for TF binding. <strong>DeepCRISPR</strong>: Cas9 efficiency & off-target prediction. <strong>Enformer</strong> (Avsec et al., <em>Nat Methods</em> 2021): Transformer predicting expression over 200 kb. <strong>Borzoi</strong> (Linder et al., 2024) extends to 524 kb.</p></div></div>
+
+<div class="card"><div class="card-icon">💊</div><h4>MolGAN / Atomwise / Insilico Medicine <span data-zh="（生成式藥物）" data-en="(generative drug design)">（藥物 AI）</span></h4>
+<div data-lang="zh"><p><strong>MolGAN</strong>（De Cao &amp; Kipf 2018）：GAN 生成新型小分子；<strong>REINVENT 4</strong>（AstraZeneca 2024）目前最強分子生成器。<strong>Atomwise</strong> 用 CNN-based AtomNet 篩選 10⁹ 化合物。<strong>Insilico Medicine</strong> 的 INS018_055（生成式設計的抗肺纖維化）2024 進入 Phase IIa 臨床，是<strong>首個全由 AI 設計</strong>的進入人體試驗的小分子。</p></div>
+<div data-lang="en"><p><strong>MolGAN</strong> (De Cao &amp; Kipf, 2018): GAN-generated small molecules. <strong>REINVENT 4</strong> (AstraZeneca 2024) is the current strongest generator. <strong>Atomwise</strong> screens 10⁹ compounds with AtomNet CNN. <strong>Insilico Medicine</strong>'s INS018_055 (AI-designed anti-fibrotic) reached Phase IIa in 2024 — the <strong>first fully AI-designed</strong> small molecule in human trials.</p></div></div>
+
+<div class="card"><div class="card-icon">🧠</div><h4>scBERT / UCE / GeneCompass <span data-zh="（單細胞 v2）" data-en="(scFM v2)">（跨物種）</span></h4>
+<div data-lang="zh"><p>第二波 cell FM 主打<strong>跨物種、跨組織</strong>：<strong>scBERT</strong>（Yang et al. <em>Nat MI</em> 2022）首批 BERT 風格；<strong>UCE (Universal Cell Embedding)</strong>（Rosen et al. 2023）含 360 萬細胞、8 個物種；<strong>GeneCompass</strong>（Yang et al. 2023）人鼠對比預訓。<strong>2024 評估警示</strong>（Kedzierska et al. <em>Genome Biol</em>）：cell FM 對細胞型別分類「常輸給線性 baseline」——FM 真正價值仍在攝動預測與罕見細胞型別。</p></div>
+<div data-lang="en"><p>The 2nd wave of cell FMs focus on <strong>cross-species, cross-tissue</strong>: <strong>scBERT</strong> (Yang et al., <em>Nat MI</em> 2022) — first BERT-style; <strong>UCE</strong> (Rosen et al., 2023) — 3.6 M cells, 8 species; <strong>GeneCompass</strong> (Yang et al., 2023) — joint human-mouse pretraining. <strong>2024 benchmark warning</strong> (Kedzierska et al., <em>Genome Biol</em>): cell FMs often <strong>lose to linear baselines</strong> on cell-type classification — their real value is in perturbation prediction and rare cell types.</p></div></div>
+
+<div class="card"><div class="card-icon">🩺</div><h4>MedSAM / RETFound / CheXzero <span data-zh="（醫學影像 FM）" data-en="(medical imaging FM)">（影像基礎模型）</span></h4>
+<div data-lang="zh"><p>醫學影像也進入「基礎模型」時代：<strong>MedSAM</strong>（Ma et al. <em>Nat Comm</em> 2024）改 Meta SAM，2D 醫學影像通用分割；<strong>RETFound</strong>（Zhou et al. <em>Nature</em> 2023）視網膜眼底圖預訓，下游同時診斷糖網、心血管、Parkinson；<strong>CheXzero</strong> (Tiu et al. <em>Nat BME</em> 2022) 零樣本胸 X 光分類。FDA 2024 已核可 600+ AI/ML 醫療裝置（vs 2020 僅 64 個）。</p></div>
+<div data-lang="en"><p>Medical imaging enters the "foundation model" era: <strong>MedSAM</strong> (Ma et al., <em>Nat Comm</em> 2024) adapts Meta SAM for universal 2D medical segmentation; <strong>RETFound</strong> (Zhou et al., <em>Nature</em> 2023) is pretrained on retinal fundus, downstream diagnoses diabetic retinopathy, cardiovascular events, Parkinson's; <strong>CheXzero</strong> (Tiu et al., <em>Nat BME</em> 2022) is zero-shot chest X-ray classification. FDA cleared 600+ AI/ML devices by 2024 (vs 64 in 2020).</p></div></div>
+</div>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<span data-lang="zh"><strong>生資使用 LLM 的兩大陷阱：</strong>① <strong>Hallucination</strong>——LLM 可能編造不存在的 PubMed PMID、編造 Bioconductor 函數名稱。<strong>務必驗證</strong>每個事實引用。② <strong>Data leakage 風險</strong>——把 PHI / 病人 ID 貼進 ChatGPT 違反 HIPAA。醫院若需 LLM 應用，用 HIPAA-compliant Azure OpenAI / Anthropic Bedrock 私有部署。</span>
+<span data-lang="en"><strong>Two LLM traps for bioinformaticians:</strong> (1) <strong>Hallucination</strong> — LLMs invent nonexistent PMIDs and Bioconductor function names. <strong>Always verify</strong> citations. (2) <strong>Data leakage</strong> — pasting PHI / patient IDs into ChatGPT violates HIPAA. For hospital use, deploy HIPAA-compliant Azure OpenAI or Anthropic Bedrock private endpoints.</span>
+</div></div>
+</section>
+
+<!-- ===== Section 8: Decision Tree ===== -->
+<section class="section">
+<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">該用什麼模型</div>
+<h2 data-zh="八、決策樹：傳統 ML、深度學習、LLM？" data-en="VIII. Decision Tree: Classical ML, DL, or LLM?">八、決策樹</h2>
+<div class="decision-tree">
+<h4>🌳 <span data-zh="我該用什麼方法？" data-en="Which method should I use?">我該用什麼方法？</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>資料 &lt; 1 萬筆，特徵是<strong>表格</strong>（CSV）？<span class="dt-arrow">→</span> 用 <strong>XGBoost / LightGBM / Random Forest</strong>。Grinsztajn et al. 2022 證明在中小表格資料 GBT &gt; DL。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>輸入是<strong>影像</strong>？<span class="dt-arrow">→</span> <strong>CNN</strong>（ResNet、EfficientNet）或 <strong>Vision Transformer (ViT)</strong>；醫學影像可用預訓 <strong>MedSAM</strong>、<strong>RETFound</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>輸入是<strong>文字 / 序列</strong>？<span class="dt-arrow">→</span> 短任務 (&lt; 4k token) 用<strong>微調</strong> BERT/RoBERTa；長任務或對話用 LLM API（GPT/Claude/Gemini）+ RAG。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>有任務領域的<strong>預訓模型</strong>？<span class="dt-arrow">→</span> 優先用<strong>微調 (fine-tune)</strong> 或 LoRA；省 100× 資料與運算。生資界先看 ESM、scGPT、Enformer。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>只想<strong>原型驗證</strong>，沒時間訓練？<span class="dt-arrow">→</span> 直接 <strong>LLM API + 系統提示 (system prompt)</strong>，2 小時就能上線 demo。</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div><strong>邊緣裝置</strong>（手機、IoT）？<span class="dt-arrow">→</span> 用 INT8/INT4 量化模型；TFLite、ONNX Runtime、CoreML。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Data &lt; 10 k rows, <strong>tabular</strong> (CSV)? <span class="dt-arrow">→</span> <strong>XGBoost / LightGBM / Random Forest</strong>. Grinsztajn et al. 2022 showed GBTs beat DL on small/medium tabular data.</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Input is <strong>images</strong>? <span class="dt-arrow">→</span> <strong>CNN</strong> (ResNet, EfficientNet) or <strong>ViT</strong>; for medical images try pretrained <strong>MedSAM</strong> or <strong>RETFound</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Input is <strong>text / sequence</strong>? <span class="dt-arrow">→</span> Short (&lt; 4 k tokens) → fine-tune BERT/RoBERTa; long or conversational → LLM API + RAG.</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Have a <strong>domain pretrained model</strong>? <span class="dt-arrow">→</span> Prefer <strong>fine-tuning or LoRA</strong>; saves 100× data and compute. In biology: ESM, scGPT, Enformer.</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>Just need a <strong>quick demo</strong>? <span class="dt-arrow">→</span> <strong>LLM API + a good system prompt</strong>; ship in 2 hours.</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>Deploying to <strong>edge devices</strong>? <span class="dt-arrow">→</span> Quantize to INT8/INT4; use TFLite, ONNX Runtime, or CoreML.</div></div>
+</div>
+</div>
+</section>
+
+<!-- ===== Section 9: Code Tabs ===== -->
+<section class="section">
+<div class="section-label" data-zh="程式碼" data-en="CODE">Python / R / Pseudocode</div>
+<h2 data-zh="九、動手做：從 sklearn 到 PyTorch" data-en="IX. Hands-on: From sklearn to PyTorch">九、動手做</h2>
+<div class="code-tabs"><div class="code-tab-btns">
+<button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button>
+<button class="code-tab-btn" onclick="switchTab(this,'r1')">R</button>
+<button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button>
+</div>
+
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># ---- 1) 經典 ML：scikit-learn 1.6 在 Iris ----</span>
 <span class="kw">from</span> sklearn.datasets <span class="kw">import</span> load_iris
-<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split, cross_val_score
 <span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
 <span class="kw">from</span> sklearn.metrics <span class="kw">import</span> classification_report
 
-<span class="comment"># 1) 載入資料 / Load data</span>
-X, y = <span class="func">load_iris</span>(return_X_y=<span class="kw">True</span>)             <span class="comment"># 150 筆 × 4 特徵</span>
+X, y = <span class="func">load_iris</span>(return_X_y=<span class="kw">True</span>)
+X_tr, X_te, y_tr, y_te = <span class="func">train_test_split</span>(X, y, test_size=<span class="num">0.2</span>, stratify=y, random_state=<span class="num">42</span>)
 
-<span class="comment"># 2) 切分訓練/測試集 / Train-test split</span>
-X_tr, X_te, y_tr, y_te = <span class="func">train_test_split</span>(X, y,
-                            test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>, stratify=y)
-
-<span class="comment"># 3) 訓練 Random Forest / Train</span>
-clf = <span class="func">RandomForestClassifier</span>(n_estimators=<span class="num">100</span>, random_state=<span class="num">42</span>)
+clf = <span class="func">RandomForestClassifier</span>(n_estimators=<span class="num">200</span>, max_depth=<span class="num">5</span>, random_state=<span class="num">42</span>)
 clf.<span class="func">fit</span>(X_tr, y_tr)
+<span class="func">print</span>(<span class="func">classification_report</span>(y_te, clf.<span class="func">predict</span>(X_te)))
+<span class="func">print</span>(<span class="str">"5-fold CV:"</span>, <span class="func">cross_val_score</span>(clf, X, y, cv=<span class="num">5</span>).<span class="func">mean</span>())
 
-<span class="comment"># 4) 評估 / Evaluate</span>
-y_pred = clf.<span class="func">predict</span>(X_te)
-<span class="func">print</span>(<span class="func">classification_report</span>(y_te, y_pred))
-<span class="comment"># precision / recall / f1 通常都 &gt; 0.95</span>
+<span class="comment"># ---- 2) PyTorch 簡單神經網路 ----</span>
+<span class="kw">import</span> torch, torch.nn <span class="kw">as</span> nn
 
-<span class="comment"># 5) 特徵重要性 / Feature importances</span>
-<span class="func">print</span>(<span class="func">dict</span>(<span class="func">zip</span>([<span class="str">"sepal_l"</span>,<span class="str">"sepal_w"</span>,<span class="str">"petal_l"</span>,<span class="str">"petal_w"</span>], clf.feature_importances_)))</pre></div>
-<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// 梯度下降通用流程 / Generic gradient descent</span>
-<span class="kw">function</span> <span class="func">GradientDescent</span>(model, data, lr, epochs):
-    <span class="kw">for</span> epoch = <span class="num">1</span> <span class="kw">to</span> epochs:
-        <span class="kw">for each</span> (x, y) <span class="kw">in</span> data:
-            y_pred = model.<span class="func">forward</span>(x)        <span class="comment">// 前向傳播</span>
-            loss   = <span class="func">Loss</span>(y_pred, y)
-            grads  = model.<span class="func">backward</span>(loss)     <span class="comment">// 反向傳播</span>
-            <span class="kw">for each</span> parameter w <span class="kw">in</span> model:
-                w = w − lr × grads[w]      <span class="comment">// 沿梯度反方向更新</span>
-        <span class="func">print</span>(<span class="str">"epoch"</span>, epoch, <span class="str">"avg loss="</span>, avg_loss)
-    <span class="kw">return</span> model</pre></div>
+<span class="kw">class</span> MLP(nn.Module):
+    <span class="kw">def</span> <span class="func">__init__</span>(self):
+        <span class="func">super</span>().<span class="func">__init__</span>()
+        self.net = nn.<span class="func">Sequential</span>(
+            nn.<span class="func">Linear</span>(<span class="num">4</span>, <span class="num">16</span>), nn.<span class="func">ReLU</span>(),
+            nn.<span class="func">Dropout</span>(<span class="num">0.2</span>),                 <span class="comment"># 防過擬合</span>
+            nn.<span class="func">Linear</span>(<span class="num">16</span>, <span class="num">3</span>))
+    <span class="kw">def</span> <span class="func">forward</span>(self, x): <span class="kw">return</span> self.<span class="func">net</span>(x)
+
+model = <span class="func">MLP</span>()
+opt   = torch.optim.<span class="func">AdamW</span>(model.<span class="func">parameters</span>(), lr=<span class="num">1e-3</span>)
+loss_fn = nn.<span class="func">CrossEntropyLoss</span>()
+
+X_tensor = torch.<span class="func">tensor</span>(X_tr, dtype=torch.float32)
+y_tensor = torch.<span class="func">tensor</span>(y_tr)
+<span class="kw">for</span> epoch <span class="kw">in</span> <span class="func">range</span>(<span class="num">100</span>):
+    logits = <span class="func">model</span>(X_tensor); loss = <span class="func">loss_fn</span>(logits, y_tensor)
+    opt.<span class="func">zero_grad</span>(); loss.<span class="func">backward</span>(); opt.<span class="func">step</span>()
+
+<span class="comment"># ---- 3) HuggingFace Transformers：呼叫蛋白質語言模型 ESM-2 ----</span>
+<span class="kw">from</span> transformers <span class="kw">import</span> AutoTokenizer, AutoModel
+tok   = AutoTokenizer.<span class="func">from_pretrained</span>(<span class="str">"facebook/esm2_t12_35M_UR50D"</span>)
+esm   = AutoModel.<span class="func">from_pretrained</span>(<span class="str">"facebook/esm2_t12_35M_UR50D"</span>)
+seq   = <span class="str">"MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ"</span>            <span class="comment"># 蛋白質序列</span>
+emb   = <span class="func">esm</span>(**<span class="func">tok</span>(seq, return_tensors=<span class="str">"pt"</span>)).last_hidden_state
+<span class="func">print</span>(emb.shape)   <span class="comment"># torch.Size([1, L+2, 480]) — 每個 residue 一個 embedding</span></pre></div>
+
+<div class="code-tab-content" id="r1"><pre><span class="comment"># ---- 1) tidymodels (R 的現代 ML 框架) ----</span>
+<span class="kw">library</span>(tidymodels); <span class="kw">library</span>(ranger)
+
+set.seed(<span class="num">42</span>)
+split  <- <span class="func">initial_split</span>(iris, prop = <span class="num">0.8</span>, strata = Species)
+train  <- <span class="func">training</span>(split); test <- <span class="func">testing</span>(split)
+
+rec    <- <span class="func">recipe</span>(Species ~ ., data = train) |> <span class="func">step_normalize</span>(<span class="func">all_numeric_predictors</span>())
+spec   <- <span class="func">rand_forest</span>(trees = <span class="num">200</span>, min_n = <span class="num">5</span>) |>
+          <span class="func">set_engine</span>(<span class="str">"ranger"</span>) |> <span class="func">set_mode</span>(<span class="str">"classification"</span>)
+wf     <- <span class="func">workflow</span>() |> <span class="func">add_recipe</span>(rec) |> <span class="func">add_model</span>(spec)
+fit    <- <span class="func">fit</span>(wf, train)
+preds  <- <span class="func">predict</span>(fit, test) |> <span class="func">bind_cols</span>(test)
+<span class="func">metrics</span>(preds, truth = Species, estimate = .pred_class)
+
+<span class="comment"># ---- 2) 5-fold CV ----</span>
+folds  <- <span class="func">vfold_cv</span>(train, v = <span class="num">5</span>, strata = Species)
+<span class="func">fit_resamples</span>(wf, folds) |> <span class="func">collect_metrics</span>()
+
+<span class="comment"># ---- 3) caret 1-liner (老派) ----</span>
+<span class="kw">library</span>(caret)
+m <- <span class="func">train</span>(Species ~ ., data = iris, method = <span class="str">"rf"</span>,
+           trControl = <span class="func">trainControl</span>(method = <span class="str">"cv"</span>, number = <span class="num">5</span>))
+<span class="func">print</span>(m)</pre></div>
+
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// ---------- 梯度下降的核心 ----------</span>
+<span class="kw">function</span> <span class="func">GradientDescent</span>(model θ, data D, lr η, epochs T):
+    <span class="kw">for</span> t = 1 <span class="kw">to</span> T:
+        <span class="kw">for each</span> mini-batch (X, y) <span class="kw">in</span> shuffle(D):
+            ŷ  = model.<span class="func">forward</span>(X, θ)
+            L  = <span class="func">loss</span>(ŷ, y)
+            g  = ∇_θ L          <span class="comment">// 反向傳播（鏈式法則）</span>
+            θ  = θ − η · g       <span class="comment">// 參數更新</span>
+    <span class="kw">return</span> θ
+
+<span class="comment">// ---------- Adam 優化器 ----------</span>
+<span class="kw">function</span> <span class="func">AdamStep</span>(θ, g, m, v, t, lr, β1=0.9, β2=0.999, ε=1e-8):
+    m = β1·m + (1−β1)·g           <span class="comment">// 一階動量</span>
+    v = β2·v + (1−β2)·g²          <span class="comment">// 二階動量</span>
+    m̂ = m / (1 − β1^t)            <span class="comment">// bias correction</span>
+    v̂ = v / (1 − β2^t)
+    θ = θ − lr · m̂ / (√v̂ + ε)
+    <span class="kw">return</span> θ, m, v
+
+<span class="comment">// ---------- Train / Val / Test 嚴格分割 ----------</span>
+<span class="kw">function</span> <span class="func">ProperPipeline</span>(D):
+    <span class="kw">split</span> D <span class="kw">into</span> (train 70%, val 15%, test 15%)
+    <span class="kw">for each</span> hyperparam config H:
+        model = <span class="func">Train</span>(train, H)
+        val_score = <span class="func">Eval</span>(model, val)
+    pick best H, retrain on train+val
+    <span class="kw">return</span> <span class="func">Eval</span>(model, test)   <span class="comment">// 測試集只看一次</span></pre></div>
 </div>
 </section>
 
+<!-- ===== Section 10: Misconceptions ===== -->
+<section class="section">
+<div class="section-label" data-zh="常見誤解" data-en="MISCONCEPTIONS">陷阱</div>
+<h2 data-zh="十、AI/ML 的 7 個常見迷思" data-en="X. Seven Common AI/ML Myths">十、常見誤解</h2>
+<div class="card-grid cols-2">
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「AI 會思考、有意識」" data-en="'AI thinks; AI is conscious'">「AI 會思考」</span></h4>
+<div data-lang="zh"><p>目前所有 LLM 都是<strong>模式匹配</strong>（pattern matching on tokens）。它沒有信念、沒有目標、沒有自我意識。看起來「會推理」是因為訓練資料夾雜大量推理範例。混淆「能模擬推理」與「真的有意識」是<strong>人類心理學偏誤</strong>，不是科學事實。</p></div>
+<div data-lang="en"><p>All current LLMs are <strong>pattern matchers on tokens</strong>. They have no beliefs, goals, or self-awareness. They "reason" because training data contained reasoning. Conflating "simulates reasoning" with "is conscious" is a <strong>human psychological bias</strong>, not science.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「Deep Learning 永遠勝出」" data-en="'DL always wins'">「DL 永遠贏」</span></h4>
+<div data-lang="zh"><p>在表格資料（醫療記錄、實驗測量、客戶 CRM），<strong>XGBoost / Random Forest 經常打贏 DL</strong>。Grinsztajn et al. 2022 在 NeurIPS 用 45 個 benchmark 系統證明這點。除非你有 100 萬+ 筆資料、特徵有局部結構（影像、文字、序列），否則先用 GBT。</p></div>
+<div data-lang="en"><p>For tabular data (clinical records, lab measurements, CRM), <strong>XGBoost / RF often beat DL</strong>. Grinsztajn et al. (NeurIPS 2022) showed this across 45 benchmarks. Unless you have 1 M+ rows with local structure (images, text, sequences), start with GBTs.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「LLM 不會錯」" data-en="'LLMs are infallible'">「LLM 不會錯」</span></h4>
+<div data-lang="zh"><p>LLM 會<strong>幻覺 (hallucinate)</strong>——自信地編造不存在的事實，特別是 PubMed PMID、Bioconductor 函數簽名、化學分子式。<strong>2024 醫學研究</strong>顯示連 GPT-4 在臨床問答仍有 5–10% 顯著錯誤率。<strong>永遠驗證</strong>引用、永遠 code-review LLM 寫的程式。</p></div>
+<div data-lang="en"><p>LLMs <strong>hallucinate</strong> — confidently fabricate PMIDs, Bioconductor signatures, chemical formulas. <strong>2024 medical studies</strong> show GPT-4 still makes 5–10 % material errors in clinical QA. <strong>Always verify</strong> citations; always code-review what an LLM wrote.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「accuracy 高就是好模型」" data-en="'High accuracy = good model'">「Accuracy 高就好」</span></h4>
+<div data-lang="zh"><p>癌症篩檢：99% 健康 + 1% 患病。「永遠預測健康」就有 99% accuracy，但<strong>抓不到任何病人</strong>。在不平衡資料用 <strong>F1、PR-AUC、Sensitivity@Specificity</strong>；臨床尤其關注 <strong>NPV / PPV</strong>。</p></div>
+<div data-lang="en"><p>Cancer screening: 99 % healthy + 1 % sick. "Always predict healthy" hits 99 % accuracy but <strong>misses every patient</strong>. On imbalanced data use <strong>F1, PR-AUC, Sensitivity@Specificity</strong>; clinics also need <strong>NPV / PPV</strong>.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「資料越多越好」" data-en="'More data is always better'">「資料越多越好」</span></h4>
+<div data-lang="zh"><p>髒資料（標籤噪音、bias）越多越糟。Andrew Ng 提倡「<strong>data-centric AI</strong>」：花時間清洗 1000 筆高品質資料勝過 1 萬筆爛資料。Garbage in, garbage out。</p></div>
+<div data-lang="en"><p>Garbage in, garbage out. Dirty data (label noise, bias) gets worse at scale. Andrew Ng's "<strong>data-centric AI</strong>" mantra: 1,000 well-curated rows beat 10,000 sloppy ones.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「scaling law 永遠繼續」" data-en="'Scaling laws hold forever'">「Scaling 永無止境」</span></h4>
+<div data-lang="zh"><p>2020–2023 大家相信「再大 10 倍就好」。2024 起多家報告 <strong>pretraining 邊際效益遞減</strong>，OpenAI、Anthropic、Google 紛紛轉向 <strong>test-time compute</strong>（推理時花更多算力，如 chain-of-thought）。「scaling = AGI」是過去式。</p></div>
+<div data-lang="en"><p>2020–2023 we all believed "just 10× bigger". From 2024 multiple labs report <strong>diminishing pretraining returns</strong>; OpenAI, Anthropic, Google pivoted to <strong>test-time compute</strong> (CoT, search). "Scaling = AGI" is past tense.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ <span data-zh="「開源 = 一定不如封閉模型」" data-en="'Open weights are always behind'">「開源永遠輸」</span></h4>
+<div data-lang="zh"><p>2024 起開源模型已大幅縮短差距：<strong>DeepSeek-V3 / R1</strong>（2025）以 1/10 訓練成本逼近 GPT-4 等級；<strong>Llama 4</strong>、<strong>Qwen 3</strong>、<strong>Mistral Large 2</strong> 在多基準與封閉模型互有勝負。對<strong>生資人</strong>更有意義：可本地部署，PHI 不出院、可審計、可微調。差距從「24 個月」縮到「3–6 個月」。</p></div>
+<div data-lang="en"><p>Open weights closed the gap fast in 2024: <strong>DeepSeek-V3 / R1</strong> (2025) approach GPT-4 at 1/10 the training cost; <strong>Llama 4, Qwen 3, Mistral Large 2</strong> trade blows with frontier closed models. For bioinformatics this matters more: <strong>local deployment</strong>, PHI stays on-prem, audit-friendly, fine-tunable. The "24-month gap" shrank to 3–6 months.</p></div></div>
+</div>
+</section>
+
+<!-- ===== Section 11: Quiz ===== -->
 <section class="quiz-section">
-<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
-<div class="quiz-q" data-answer="1">
-<p data-lang="zh">1. 監督學習與非監督學習最本質的差別是？</p>
-<p data-lang="en">1. The essential difference between supervised and unsupervised learning is?</p>
+<h3>📝 <span data-zh="自我檢測（7 題）" data-en="Self-Check (7 Questions)">自我檢測</span></h3>
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">1. AI、ML、DL、LLM 的包含關係是？</p>
+<p data-lang="en">1. The containment hierarchy for AI / ML / DL / LLM is:</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 監督學習用神經網路，非監督不用</span><span data-lang="en">A. Supervised uses neural nets, unsupervised doesn't</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 監督學習的資料有標籤 (y)，非監督只有 x</span><span data-lang="en">B. Supervised data has labels (y); unsupervised has only x</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 監督學習比非監督慢</span><span data-lang="en">C. Supervised is slower than unsupervised</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 非監督學習一定比監督好</span><span data-lang="en">D. Unsupervised always beats supervised</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. LLM ⊃ DL ⊃ ML ⊃ AI</span><span data-lang="en">A. LLM ⊃ DL ⊃ ML ⊃ AI</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. AI = ML = DL = LLM</span><span data-lang="en">B. They are equivalent</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. AI ⊃ ML ⊃ DL ⊃ LLM</span><span data-lang="en">C. AI ⊃ ML ⊃ DL ⊃ LLM</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. DL ⊃ AI ⊃ ML</span><span data-lang="en">D. DL ⊃ AI ⊃ ML</span></div>
 </div><div class="quiz-feedback" id="fb1"></div></div>
 
 <div class="quiz-q" data-answer="2">
-<p data-lang="zh">2. Transformer 架構的核心機制是？</p>
-<p data-lang="en">2. The core mechanism of Transformer is?</p>
+<p data-lang="zh">2. 為何訓練集準確率 99% 但測試集 60%？</p>
+<p data-lang="en">2. Why might training accuracy be 99 % but test only 60 %?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 卷積 (Convolution)</span><span data-lang="en">A. Convolution</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. LSTM 細胞</span><span data-lang="en">B. LSTM cells</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 自注意力 (Self-Attention)</span><span data-lang="en">C. Self-Attention</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. K-Means 分群</span><span data-lang="en">D. K-Means clustering</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 模型太簡單 (underfitting)</span><span data-lang="en">A. Underfitting</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 學習率太低</span><span data-lang="en">B. Learning rate too low</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 過擬合 (overfitting)；解法：增資料、Dropout、L2、early stopping</span><span data-lang="en">C. Overfitting; fixes: more data, Dropout, L2, early stopping</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 模型壞了，丟掉</span><span data-lang="en">D. Model is broken; discard</span></div>
 </div><div class="quiz-feedback" id="fb2"></div></div>
 
-<div class="quiz-q" data-answer="0">
-<p data-lang="zh">3. 關於「過擬合 (overfitting)」，下列敘述何者正確？</p>
-<p data-lang="en">3. Which statement about <strong>overfitting</strong> is correct?</p>
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">3. AlphaFold 2 (2020) 在 CASP14 達到的精度約為？</p>
+<p data-lang="en">3. AlphaFold 2 (2020) achieved roughly what accuracy at CASP14?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 模型在訓練集表現很好，但在測試集（未見資料）表現差</span><span data-lang="en">A. The model fits training data well but performs poorly on test (unseen) data</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 模型在訓練與測試都表現很差</span><span data-lang="en">B. The model performs poorly on both training and test sets</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 過擬合可以靠增加參數解決</span><span data-lang="en">C. Overfitting is fixed by adding more parameters</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 過擬合只發生於深度學習</span><span data-lang="en">D. Overfitting only happens in deep learning</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 60 GDT_TS（與傳統方法相當）</span><span data-lang="en">A. 60 GDT_TS (similar to classical methods)</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 92 GDT_TS（相當於實驗結構精度）</span><span data-lang="en">B. 92 GDT_TS (experimental accuracy)</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 100 GDT_TS（完美）</span><span data-lang="en">C. 100 GDT_TS (perfect)</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 35 GDT_TS</span><span data-lang="en">D. 35 GDT_TS</span></div>
 </div><div class="quiz-feedback" id="fb3"></div></div>
+
+<div class="quiz-q" data-answer="3">
+<p data-lang="zh">4. Grinsztajn 等 (NeurIPS 2022) 的研究發現？</p>
+<p data-lang="en">4. The Grinsztajn et al. (NeurIPS 2022) finding is:</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. DL 永遠勝過 GBT</span><span data-lang="en">A. DL always beats GBT</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 小資料只能用線性模型</span><span data-lang="en">B. Small data can only use linear models</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. CNN 是表格資料的最佳選擇</span><span data-lang="en">C. CNN is best for tabular data</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 在中小型表格資料 (&lt;10k rows)，XGBoost/RF 常勝過深度學習</span><span data-lang="en">D. For small/medium tabular data, XGBoost/RF often beat deep nets</span></div>
+</div><div class="quiz-feedback" id="fb4"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">5. 在臨床/醫療場景使用公開 LLM 服務的最大風險？</p>
+<p data-lang="en">5. The biggest risk of using a public LLM service in clinical/medical settings?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 推理速度慢</span><span data-lang="en">A. Slow inference</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. API 費用貴</span><span data-lang="en">B. Expensive API</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. ① 幻覺（捏造 PMID/Bioconductor 函數）+ ② 把 PHI 貼進 ChatGPT 違反 HIPAA</span><span data-lang="en">C. (1) Hallucination (made-up PMIDs/functions) + (2) pasting PHI into ChatGPT violates HIPAA</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 模型不支援中文</span><span data-lang="en">D. No Chinese support</span></div>
+</div><div class="quiz-feedback" id="fb5"></div></div>
+
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">6. 2017 Vaswani et al. 提出的 Transformer 架構，核心創新是？</p>
+<p data-lang="en">6. The core innovation of Vaswani et al. 2017's Transformer is?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 更深的 CNN 結構</span><span data-lang="en">A. Deeper CNN</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Self-attention 機制——讓每個 token 並行直接「看見」序列中任意位置，不像 RNN 須循環傳遞</span><span data-lang="en">B. Self-attention — each token sees every position in parallel, unlike RNN's chained recurrence</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 強化學習取代監督學習</span><span data-lang="en">C. RL replaces supervised learning</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 用更大批次訓練</span><span data-lang="en">D. Larger batches</span></div>
+</div><div class="quiz-feedback" id="fb6"></div></div>
+
+<div class="quiz-q" data-answer="3">
+<p data-lang="zh">7. RFdiffusion (Watson et al. <em>Nature</em> 2023) 在蛋白質設計上的關鍵突破是？</p>
+<p data-lang="en">7. The key breakthrough of RFdiffusion (Watson et al., <em>Nature</em> 2023) in protein design is?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 改良 AlphaFold 的 MSA 算法</span><span data-lang="en">A. Improves AlphaFold's MSA</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 加快蛋白質結構預測 100 倍</span><span data-lang="en">B. 100× faster structure prediction</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 預測蛋白質功能</span><span data-lang="en">C. Predicts protein function</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 用擴散模型「從零生成」結合特定靶點的全新蛋白；已實驗驗證 picomolar 親和力結合物</span><span data-lang="en">D. Uses diffusion to <em>de novo</em> generate novel proteins binding given targets; experimentally validated picomolar binders</span></div>
+</div><div class="quiz-feedback" id="fb7"></div></div>
 </section>
 
+<!-- ===== Section 12: 💭 Discussion ===== -->
+<section class="section" style="background:#fef3c7;border-radius:14px;padding:32px;">
+<div class="section-label">💭 <span data-zh="延伸思考" data-en="DISCUSSION">延伸思考</span></div>
+<h2 data-zh="十一、延伸思考與討論題" data-en="XI. Discussion & Reflection">十一、延伸思考</h2>
+<ol style="margin-left:20px;line-height:1.9;">
+<li data-lang="zh"><strong>AGI 時間表：</strong>Anthropic 創辦人 Dario Amodei 2024 預測 2026–2027 出現「強大 AI」；Yann LeCun 則認為「LLM 不會通往 AGI」。你站哪邊？這個技術預測會如何影響你今天的職涯選擇？</li>
+<li data-lang="en"><strong>AGI timing:</strong> Anthropic's Dario Amodei predicts "powerful AI" by 2026–2027; Yann LeCun argues "LLMs are not the path to AGI". Where do you stand, and how does that shape your career bets today?</li>
+
+<li data-lang="zh"><strong>AI 改寫生命科學的四個典範轉移：</strong>① 結構生物學（AlphaFold 取代部分晶體學）；② 細胞分析（cell FM 取代手工註釋）；③ 藥物設計（生成式 → 從零設計）；④ 臨床診斷（LLM 整合多模態）。你正在做的研究會被哪個典範影響？</li>
+<li data-lang="en"><strong>Four AI-driven paradigm shifts in biology:</strong> (1) structural biology (AlphaFold partly replaces crystallography); (2) cell biology (cell FMs replace manual annotation); (3) drug design (generative → de novo); (4) clinical AI (multimodal LLMs). Which one will most reshape your current research?</li>
+
+<li data-lang="zh"><strong>Scaling 還會持續嗎？</strong>2024 起多家報告 pretraining 邊際效益遞減，轉而押注 test-time compute（o1、Extended Thinking、Deep Think）。如果 scaling 真的撞牆，AI 進步軌跡會如何改變？</li>
+<li data-lang="en"><strong>Will scaling keep delivering?</strong> Since 2024, multiple labs report diminishing pretraining returns and have pivoted to test-time compute (o1, Extended Thinking, Deep Think). If scaling truly plateaus, how will AI's trajectory shift?</li>
+
+<li data-lang="zh"><strong>學會與 AI 共事：</strong>2026 的工程師價值在於「會問問題、會驗證、能整合」。在你的領域，哪三個技能在 AI 普及後變得「更值錢」？哪三個「貶值」？</li>
+<li data-lang="en"><strong>Coexisting with AI:</strong> In 2026 an engineer's value is "asking good questions, verifying, integrating". In your field, which three skills become <em>more</em> valuable post-AI? Which three depreciate?</li>
+
+<li data-lang="zh"><strong>AI Hallucination 與臨床診斷：</strong>若你是醫師，會接受一個「準確率 95%、但偶爾自信地虛構不存在引用」的 AI 助手嗎？怎樣的「驗證流程」能讓你安心使用？這跟「準確率 80% 但會說不知道」的 AI 哪個比較適合臨床？</li>
+<li data-lang="en"><strong>Hallucination in clinical diagnosis:</strong> Would you, as a clinician, accept a "95 % accurate but occasionally confidently fabricates citations" AI assistant? What verification workflow would let you sleep at night? Is an "80 % accurate but says I don't know" model actually preferable in clinic?</li>
+
+<li data-lang="zh"><strong>開源 vs 封閉 AI 的權衡：</strong>本地部署 Llama 4 / Qwen 3 / DeepSeek 讓 PHI 不出院、可審計，但效能可能落後旗艦封閉模型 3–6 個月。對你的研究單位，哪個權衡更合理？歐盟 AI Act 對「通用 AI」的要求又會如何影響開源策略？</li>
+<li data-lang="en"><strong>Open vs closed AI trade-off:</strong> Local Llama 4 / Qwen 3 / DeepSeek keeps PHI on-prem and audit-friendly, but lags 3–6 months behind the frontier closed models. Which trade-off fits your lab? How will the EU AI Act's "general-purpose AI" obligations affect open-source strategy?</li>
+
+<li data-lang="zh"><strong>生資人需要學多深的 AI？</strong>同樣是 PI 級生資人：① 只需「會用 ChatGPT」？② 還是要懂 PyTorch + fine-tune？③ 還是要能設計新模型？2026 的招聘市場顯示「能批判性使用 + 能微調 + 懂評估」者最稀缺。你的學習計畫排序如何？</li>
+<li data-lang="en"><strong>How deep should bioinformaticians go on AI?</strong> For a PI-level bioinformatician: (1) "just use ChatGPT well"? (2) understand PyTorch + fine-tuning? (3) design new models? 2026 hiring shows the scarcest profile is "critical use + fine-tuning + evaluation". How do you prioritize learning?</li>
+</ol>
+</section>
+
+<!-- ===== Page Nav ===== -->
 <nav class="page-nav">
-<a href="security.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 13: 資訊安全與密碼學" data-en="Ch 13: Information Security &amp; Cryptography">Ch 13: 資訊安全與密碼學</span></a>
-<a href="cloud-iot.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 15: 雲端、邊緣與 IoT" data-en="Ch 15: Cloud, Edge &amp; IoT">Ch 15: 雲端、邊緣與 IoT</span></a>
+<a href="security.html"><span class="nav-dir" data-zh="← 上一章" data-en="← Prev">← 上一章</span><span class="nav-title" data-zh="Ch 13: 資訊安全與密碼學" data-en="Ch 13: Security & Cryptography">Ch 13: 資訊安全與密碼學</span></a>
+<a href="cloud-iot.html"><span class="nav-dir" data-zh="下一章 →" data-en="Next →">下一章 →</span><span class="nav-title" data-zh="Ch 15: 雲端、邊緣與 IoT" data-en="Ch 15: Cloud, Edge & IoT">Ch 15: 雲端、邊緣與 IoT</span></a>
 </nav>
 </main>
 <footer class="site-footer">© Charlene — Introduction to Computer Science · Interactive Tutorial</footer>
@@ -227,16 +569,42 @@ y_pred = clf.<span class="func">predict</span>(X_te)
 window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
 function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
 
-// 2026 LLM benchmark comparison (approximate values, May 2026)
-const benchLabels = ['MMLU (general)','GPQA Diamond','SWE-bench Verified','LMArena Elo (norm.)'];
-new Chart(document.getElementById('llmChart'),{type:'bar',data:{labels:benchLabels,datasets:[
-  {label:'GPT-5.5',         data:[92,82,75,92],backgroundColor:'rgba(29,78,216,.8)'},
-  {label:'Claude Opus 4.7', data:[91,84,82,94],backgroundColor:'rgba(217,119,6,.8)'},
-  {label:'Gemini 3 Ultra',  data:[91,80,72,90],backgroundColor:'rgba(5,150,105,.8)'},
-  {label:'Llama 4 (open)',  data:[86,68,55,82],backgroundColor:'rgba(124,58,237,.8)'}
-]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'},tooltip:{callbacks:{label:(c)=>c.dataset.label+': '+c.raw+'%'}}},scales:{y:{beginAtZero:true,max:100,title:{display:true,text:'Score (%)'}}}}});
+// ---- LLM Benchmark Chart ----
+const llmModels = ['Claude Opus 4.7','GPT-5.5','Gemini 3 Pro','Llama 4 Maverick'];
+new Chart(document.getElementById('llmChart'),{type:'radar',data:{labels:['MMLU','GPQA','SWE-bench Verified','Arena Elo (norm)','HumanEval'],datasets:[
+  {label:llmModels[0],data:[92,84,82,94,96],backgroundColor:'rgba(217,119,6,.20)',borderColor:'rgb(217,119,6)',pointBackgroundColor:'rgb(217,119,6)'},
+  {label:llmModels[1],data:[94,82,80,92,96],backgroundColor:'rgba(29,78,216,.20)',borderColor:'rgb(29,78,216)',pointBackgroundColor:'rgb(29,78,216)'},
+  {label:llmModels[2],data:[93,80,77,90,95],backgroundColor:'rgba(5,150,105,.20)',borderColor:'rgb(5,150,105)',pointBackgroundColor:'rgb(5,150,105)'},
+  {label:llmModels[3],data:[88,72,68,84,92],backgroundColor:'rgba(168,85,247,.20)',borderColor:'rgb(168,85,247)',pointBackgroundColor:'rgb(168,85,247)'}
+]},options:{responsive:true,maintainAspectRatio:false,scales:{r:{min:50,max:100,ticks:{stepSize:10}}},plugins:{legend:{position:'top'}}}});
 
-const QF={zh:{q1_y:'監督學習需要 (x, y) 標籤，非監督只看 x 自己找結構（如聚類、降維）。',q1_n:'答案 B。',q2_y:'Self-attention 讓每個 token 直接看所有 token，是 Transformer 的關鍵。',q2_n:'答案 C。',q3_y:'過擬合是模型「死記」訓練集卻無法泛化。可用正則化、Dropout、增加資料解決。',q3_n:'答案 A。'},en:{q1_y:'Supervised needs (x, y) labels; unsupervised gets x only and discovers structure (clustering, dim. reduction).',q1_n:'Answer: B.',q2_y:'Self-attention lets every token see every other token — Transformer’s core.',q2_n:'Answer: C.',q3_y:'Overfitting = memorizing training data, failing to generalize. Fix via regularization, dropout, more data.',q3_n:'Answer: A.'}};
+// ---- Activation function chart ----
+let currentAct='sigmoid';
+function actY(x,w,b,fn){const z=w*x+b;switch(fn){case 'sigmoid':return 1/(1+Math.exp(-z));case 'tanh':return Math.tanh(z);case 'relu':return Math.max(0,z);case 'gelu':return 0.5*z*(1+Math.tanh(Math.sqrt(2/Math.PI)*(z+0.044715*z*z*z)));}}
+const xs=[];for(let i=-50;i<=50;i++)xs.push(i/10);
+const actChart = new Chart(document.getElementById('actChart'),{type:'line',data:{labels:xs,datasets:[{label:'activation(w·x + b)',data:xs.map(x=>actY(x,1,0,'sigmoid')),borderColor:'rgb(29,78,216)',backgroundColor:'rgba(29,78,216,.10)',fill:true,tension:.1,pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{min:-1.2,max:2.5},x:{title:{display:true,text:'input x'}}},plugins:{legend:{display:false}}}});
+function refreshAct(){const w=+document.getElementById('wSlider').value,b=+document.getElementById('bSlider').value;document.getElementById('wVal').textContent=w.toFixed(1);document.getElementById('bVal').textContent=b.toFixed(1);actChart.data.datasets[0].data=xs.map(x=>actY(x,w,b,currentAct));actChart.update('none');}
+document.getElementById('wSlider').addEventListener('input',refreshAct);
+document.getElementById('bSlider').addEventListener('input',refreshAct);
+document.querySelectorAll('.act-btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.act-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');currentAct=b.dataset.act;refreshAct();}));
+
+// ---- Quiz ----
+const QF={zh:{
+q1_y:'AI 最廣，ML 是 AI 的子集，DL 是 ML 的子集（多層 NN），LLM 是 DL 在文字的特例。',q1_n:'答案 C。',
+q2_y:'這是典型 overfitting。解法：更多資料、Dropout、L2、early stopping、data augmentation。',q2_n:'答案 C。',
+q3_y:'AlphaFold 2 達到 92.4 GDT_TS，相當於 X-ray 晶體學的實驗精度，是 CASP 史上最大躍進。',q3_n:'答案 B。',
+q4_y:'Grinsztajn et al. 2022 在 NeurIPS 用 45 個 benchmark 證實：中小表格資料 GBT 往往勝過 DL。',q4_n:'答案 D。',
+q5_y:'公開 LLM 既會幻覺（捏造引用），又有 PHI 外洩風險（違反 HIPAA）。醫療場景用私有部署（Azure OpenAI / Anthropic Bedrock）。',q5_n:'答案 C。',
+q6_y:'Self-attention 讓每個 token 並行直接看見序列任意位置；RNN 須循序傳遞、難並行。GPU 友好成就 LLM 時代。',q6_n:'答案 B。',
+q7_y:'RFdiffusion 用擴散模型「從零」生成全新蛋白，並有實驗驗證 picomolar 結合物——AI 從「預測結構」進化到「設計結構」。',q7_n:'答案 D。'},
+en:{
+q1_y:'AI is the broadest; ML ⊂ AI; DL ⊂ ML (multi-layer NN); LLM ⊂ DL (text specialty).',q1_n:'Answer: C.',
+q2_y:'Classic overfitting. Fixes: more data, Dropout, L2, early stopping, augmentation.',q2_n:'Answer: C.',
+q3_y:'AlphaFold 2 hit 92.4 GDT_TS — experimental accuracy comparable to X-ray crystallography, CASP\'s biggest-ever leap.',q3_n:'Answer: B.',
+q4_y:'Grinsztajn et al. (NeurIPS 2022) showed across 45 benchmarks that GBTs often beat DL on small/medium tabular data.',q4_n:'Answer: D.',
+q5_y:'Public LLMs both hallucinate (made-up citations) and risk PHI leakage (HIPAA violation). Use private endpoints (Azure OpenAI, Bedrock) for clinical use.',q5_n:'Answer: C.',
+q6_y:'Self-attention lets every token directly see every position in parallel; RNNs propagate sequentially and don\'t parallelize. GPU-friendly — enabled the LLM era.',q6_n:'Answer: B.',
+q7_y:'RFdiffusion uses diffusion to <em>de novo</em> generate brand-new proteins; experimentally validated picomolar binders. AI evolved from "predict structure" to "design structure".',q7_n:'Answer: D.'}};
 document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
 </script>
 </body></html>

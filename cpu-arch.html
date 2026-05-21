@@ -12,69 +12,71 @@
 <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
 <header class="page-hero"><div class="step-badge">CHAPTER 4 / 16</div>
 <h1 data-zh="CPU 與計算機組織" data-en="CPU & Computer Organization">CPU 與計算機組織</h1>
-<p class="subtitle" data-lang="zh">CPU 是計算機的大腦——每秒可執行數十億次指令。本章拆解 von Neumann 架構、Fetch-Decode-Execute 週期、管線化、與 RISC/CISC、CPU/GPU 的設計權衡。</p>
-<p class="subtitle" data-lang="en">The CPU is the computer's brain — billions of instructions per second. This chapter unpacks the von Neumann model, fetch-decode-execute, pipelining, and the RISC/CISC and CPU/GPU trade-offs.</p>
+<p class="subtitle" data-lang="zh">你手中的 iPhone 比 1969 阿波羅 11 號的登月電腦快 <strong>1 億倍</strong>，但寫程式的核心原則沒變——Fetch、Decode、Execute。本章帶你拆解一顆 2026 旗艦 CPU 的每一個齒輪。</p>
+<p class="subtitle" data-lang="en">Your iPhone is <strong>100 million times</strong> faster than the Apollo 11 lunar computer, yet the programming principles haven't changed — Fetch, Decode, Execute. This chapter takes apart every gear in a 2026 flagship CPU.</p>
 </header>
 <main class="content-wrap">
 
 <section class="section">
-<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
-<h2 data-zh="CPU 是怎麼運作的？" data-en="How does a CPU work?">CPU 是怎麼運作的？</h2>
-<div data-lang="zh"><p>中央處理單元 (<strong>Central Processing Unit, CPU</strong>) 是執行程式指令的核心晶片。一顆 2026 年的桌面 CPU 內含數百億顆電晶體，組成數十個核心，每秒可完成上兆 (10¹²) 次基本運算。</p>
-<p>無論是手機、伺服器、汽車 ECU 還是 AI 推論加速器，內部運作都遵循同一個套路：<strong>取指 (Fetch) → 解碼 (Decode) → 執行 (Execute) → 寫回 (Writeback)</strong>，俗稱「機器週期」。</p></div>
-<div data-lang="en"><p>The <strong>Central Processing Unit (CPU)</strong> is the chip that executes program instructions. A 2026 desktop CPU contains tens of billions of transistors organized into dozens of cores, performing trillions (10¹²) of basic operations per second.</p>
-<p>Whether it's a phone, server, car ECU, or AI accelerator, the routine is the same: <strong>Fetch → Decode → Execute → Writeback</strong> — the "machine cycle."</p></div>
+<div class="section-label" data-zh="開場故事" data-en="OPENING STORY">1 億倍的世代差距</div>
+<h2 data-zh="一、iPhone 比阿波羅快 1 億倍——但原則沒變" data-en="I. Your iPhone vs Apollo: 100 Million Times Faster, Same Principles">一、口袋裡比登月電腦強一億倍</h2>
+<div data-lang="zh"><p>1969 年 7 月 20 日，<strong>阿波羅 11 號登月導引電腦 (AGC)</strong>用 64 KB ROM、4 KB RAM、2.048 MHz 時脈把人類送上月球。它的計算能力大約是<strong>每秒 40,000 次加法</strong>，重 32 公斤，耗電 70 W。</p>
+<p>2024 年的 <strong>iPhone 16 Pro (A18 Pro)</strong>：每秒約 <strong>5 兆次運算</strong>（5 × 10¹²），重 199 克，使用 ~3 W。比 AGC 快 <strong>1.25 億倍</strong>、輕 160 倍、省電 23 倍。每隔 6 年，「口袋裡的運算力」就再翻百倍。</p>
+<p>但寫程式的核心原則一點都沒變：<strong>Fetch（取指）→ Decode（解碼）→ Execute（執行）→ Writeback（寫回）</strong>。從 Babbage 的齒輪、ENIAC 的真空管、Intel 4004 的 2,300 顆電晶體、到今天的 208 億顆 ARM 核心——每顆 CPU 都在重複這個迴圈。</p></div>
+<div data-lang="en"><p>20 July 1969. The <strong>Apollo 11 Guidance Computer (AGC)</strong>, with 64 KB ROM, 4 KB RAM, and a 2.048 MHz clock, put humans on the Moon. Its compute? Around <strong>40,000 adds/sec</strong>. Weight: 32 kg. Power: 70 W.</p>
+<p>2024's <strong>iPhone 16 Pro (A18 Pro)</strong>: about <strong>5 trillion ops/sec</strong> (5 × 10¹²). Weight 199 g, power ~3 W. <strong>125 million × faster</strong>, 160× lighter, 23× less power. Every six years, pocket compute multiplies by ~100×.</p>
+<p>And yet the programming basics are unchanged: <strong>Fetch → Decode → Execute → Writeback</strong>. From Babbage's gears, ENIAC's tubes, Intel 4004's 2,300 transistors, to today's 20.8-billion-transistor ARM cores — every CPU repeats this loop.</p></div>
 <div class="callout tip"><span class="callout-icon">💡</span><div>
-<span data-lang="zh"><strong>核心觀念：</strong>CPU 並不「理解」程式，它只是不斷讀取記憶體裡的 0/1，按照硬體電路的規則動作。所謂「智慧」來自程式設計師寫的指令序列。</span>
+<span data-lang="zh"><strong>核心觀念：</strong>CPU 並不「理解」程式。它只是不斷讀取記憶體裡的 0/1，按照硬體電路的規則動作。所謂「智慧」來自程式設計師寫的指令序列。</span>
 <span data-lang="en"><strong>Core idea:</strong> A CPU does not "understand" programs — it just reads 0/1 from memory and reacts per hardware rules. The "intelligence" comes from the programmer's instruction sequence.</span>
 </div></div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="架構" data-en="ARCHITECTURE">兩大架構</div>
-<h2 data-zh="一、von Neumann vs Harvard 架構" data-en="I. von Neumann vs Harvard">一、von Neumann vs Harvard 架構</h2>
+<div class="section-label" data-zh="兩大架構" data-en="ARCHITECTURE">von Neumann vs Harvard</div>
+<h2 data-zh="二、初學者基礎：兩大架構" data-en="II. Beginner Basics: Two Architectures">二、von Neumann vs Harvard 架構</h2>
 <table class="comp-table">
 <thead><tr><th data-zh="特性" data-en="Feature">特性</th><th>von Neumann</th><th>Harvard</th></tr></thead>
 <tbody>
 <tr><td data-lang="zh">指令與資料記憶體</td><td data-lang="en">Instruction &amp; data memory</td><td data-lang="zh">共用同一記憶體</td><td data-lang="zh">分開存放</td></tr>
 <tr><td data-lang="zh">匯流排</td><td data-lang="en">Buses</td><td data-lang="zh">單條（瓶頸）</td><td data-lang="zh">分離（指令+資料可同時讀）</td></tr>
 <tr><td data-lang="zh">代表應用</td><td data-lang="en">Typical use</td><td>PC、伺服器、智慧手機</td><td>微控制器、DSP、AI 加速器</td></tr>
-<tr><td data-lang="zh">優點</td><td data-lang="en">Pros</td><td data-lang="zh">設計簡單、彈性高</td><td data-lang="zh">效能高、可同時取指與資料</td></tr>
+<tr><td data-lang="zh">優點</td><td data-lang="en">Pros</td><td data-lang="zh">設計簡單、彈性高（程式即資料）</td><td data-lang="zh">效能高、可同時取指與資料</td></tr>
 <tr><td data-lang="zh">缺點</td><td data-lang="en">Cons</td><td data-lang="zh">"von Neumann 瓶頸"</td><td data-lang="zh">硬體成本高</td></tr>
 </tbody></table>
-<div data-lang="zh"><p>實務上，現代 CPU 是「<strong>修改型 Harvard</strong>」：主記憶體共用（von Neumann），但 L1 cache 分為 L1-I（指令）和 L1-D（資料），兼具兩者優點。</p></div>
-<div data-lang="en"><p>In practice, modern CPUs are <strong>modified Harvard</strong>: main memory is shared (von Neumann), but L1 cache splits into L1-I (instruction) and L1-D (data) — best of both.</p></div>
+<div data-lang="zh"><p>實務上，現代 CPU 是「<strong>修改型 Harvard (modified Harvard)</strong>」：主記憶體共用（von Neumann），但 L1 cache 分為 <strong>L1-I（指令快取）</strong> 和 <strong>L1-D（資料快取）</strong>，可同時讀寫——兼具兩者優點。Apple M4 的 L1 cache 是 192 KB 指令 + 128 KB 資料；Intel Core Ultra 是 64 KB + 48 KB。</p></div>
+<div data-lang="en"><p>In practice, modern CPUs are <strong>modified Harvard</strong>: main memory is shared (von Neumann), but L1 cache splits into <strong>L1-I (instruction)</strong> and <strong>L1-D (data)</strong> — best of both. Apple M4 has 192 KB L1-I + 128 KB L1-D; Intel Core Ultra has 64 KB + 48 KB.</p></div>
 </section>
 
 <section class="section">
 <div class="section-label" data-zh="五大組件" data-en="FIVE COMPONENTS">CPU 五大組件</div>
-<h2 data-zh="二、CPU 五大組件" data-en="II. The Five CPU Components">二、CPU 五大組件</h2>
+<h2 data-zh="三、CPU 五大組件" data-en="III. The Five CPU Components">三、CPU 五大組件</h2>
 <div class="card-grid cols-3">
-<div class="card"><h4>🧮 ALU (算術邏輯單元)</h4><div data-lang="zh"><p>Arithmetic Logic Unit：執行加減乘除、比較、AND/OR/XOR 等運算。現代 CPU 含多個 ALU 與一個獨立 FPU（浮點單元）。</p></div><div data-lang="en"><p>Arithmetic Logic Unit — performs add, sub, mul, div, compare, AND/OR/XOR. Modern CPUs have several ALUs and a separate FPU (float unit).</p></div></div>
-<div class="card"><h4>🎛️ Control Unit (控制單元)</h4><div data-lang="zh"><p>解碼指令、發送控制訊號協調其他單元。可視為 CPU 的「交通指揮」。</p></div><div data-lang="en"><p>Decodes instructions and emits control signals coordinating every other unit. Think of it as the CPU's traffic cop.</p></div></div>
-<div class="card"><h4>📥 Registers (暫存器)</h4><div data-lang="zh"><p>CPU 內部最快的儲存單元，僅幾十到幾百個，但存取只需 1 個時脈週期。x86-64 有 16 個通用暫存器；ARM64 有 31 個。</p></div><div data-lang="en"><p>The fastest storage inside a CPU — dozens to hundreds of slots, accessed in 1 cycle. x86-64 has 16 general-purpose registers; ARM64 has 31.</p></div></div>
-<div class="card"><h4>📌 Program Counter (PC)</h4><div data-lang="zh"><p>儲存「下一條要執行的指令位址」。每執行一條指令就自動加 4（32-bit）或 8（64-bit），跳轉指令會直接改寫它。</p></div><div data-lang="en"><p>Holds the address of the next instruction. Auto-increments by 4 (32-bit) or 8 (64-bit) per cycle; jumps rewrite it directly.</p></div></div>
-<div class="card"><h4>📋 Instruction Register (IR)</h4><div data-lang="zh"><p>暫存當前正在執行的指令，供 Control Unit 解碼。</p></div><div data-lang="en"><p>Holds the instruction currently being decoded by the Control Unit.</p></div></div>
-<div class="card"><h4>💨 Cache</h4><div data-lang="zh"><p>L1 / L2 / L3 多級快取，緩衝 CPU 與主記憶體之間的速度差距（Ch 5 詳述）。</p></div><div data-lang="en"><p>Multi-level L1/L2/L3 caches that bridge the CPU-DRAM speed gap (see Ch 5).</p></div></div>
+<div class="card"><h4>🧮 <span data-zh="ALU (算術邏輯單元)" data-en="ALU (Arithmetic Logic Unit)">ALU</span></h4><div data-lang="zh"><p>Arithmetic Logic Unit：執行加減乘除、比較、AND/OR/XOR。現代 CPU 內含多個 ALU + 獨立 FPU（浮點單元）+ SIMD 單元（AVX-512/NEON）。</p></div><div data-lang="en"><p>Performs add, sub, mul, div, compare, AND/OR/XOR. Modern CPUs have several ALUs + separate FPU + SIMD units (AVX-512/NEON).</p></div></div>
+<div class="card"><h4>🎛️ <span data-zh="Control Unit (控制單元)" data-en="Control Unit">Control Unit</span></h4><div data-lang="zh"><p>解碼指令、發送控制訊號協調其他單元。可視為 CPU 的「交通指揮」。</p></div><div data-lang="en"><p>Decodes instructions, sends control signals coordinating every other unit. Think of it as the CPU's traffic cop.</p></div></div>
+<div class="card"><h4>📥 <span data-zh="Registers (暫存器)" data-en="Registers">Registers</span></h4><div data-lang="zh"><p>CPU 內部最快的儲存單元，僅幾十個，但存取只需 1 個時脈週期。x86-64 有 16 個通用暫存器；ARM64 有 31 個；RISC-V 有 32 個。</p></div><div data-lang="en"><p>The fastest storage inside a CPU — dozens of slots, accessed in 1 cycle. x86-64 has 16 general-purpose; ARM64 has 31; RISC-V has 32.</p></div></div>
+<div class="card"><h4>📌 <span data-zh="Program Counter (PC)" data-en="Program Counter (PC)">Program Counter</span></h4><div data-lang="zh"><p>儲存「下一條要執行的指令位址」。每執行一條指令就自動加 4（32-bit）或 8（64-bit），跳轉指令會直接改寫它。</p></div><div data-lang="en"><p>Holds the address of the next instruction. Auto-increments by 4 (32-bit) or 8 (64-bit); jumps rewrite it directly.</p></div></div>
+<div class="card"><h4>📋 <span data-zh="Instruction Register (IR)" data-en="Instruction Register (IR)">Instruction Register</span></h4><div data-lang="zh"><p>暫存當前正在執行的指令，供 Control Unit 解碼。</p></div><div data-lang="en"><p>Holds the instruction currently being decoded by the Control Unit.</p></div></div>
+<div class="card"><h4>💨 <span data-zh="Cache (快取)" data-en="Cache">Cache</span></h4><div data-lang="zh"><p>L1 / L2 / L3 多級快取，緩衝 CPU 與主記憶體之間的速度差距（Ch 5 詳述）。沒有 cache，CPU 跑得再快也只能等記憶體。</p></div><div data-lang="en"><p>Multi-level L1/L2/L3 caches bridge the CPU-DRAM speed gap (see Ch 5). Without cache, even the fastest CPU stalls on memory.</p></div></div>
 </div>
 </section>
 
 <section class="section">
 <div class="section-label" data-zh="機器週期" data-en="MACHINE CYCLE">Fetch-Decode-Execute</div>
-<h2 data-zh="三、機器週期：Fetch → Decode → Execute" data-en="III. Machine Cycle: Fetch → Decode → Execute">三、機器週期</h2>
+<h2 data-zh="四、機器週期：Fetch → Decode → Execute" data-en="IV. Machine Cycle: Fetch → Decode → Execute">四、機器週期</h2>
 <div class="workflow">
 <div class="workflow-step" data-step="1"><h4 data-zh="① 取指 (Fetch)" data-en="① Fetch">① Fetch</h4>
 <div data-lang="zh"><p>Control Unit 根據 PC 的位址，從記憶體（或 L1-I cache）讀出指令，存入 IR。PC 自動加 4。</p></div>
 <div data-lang="en"><p>Control unit uses PC to read an instruction from memory (or L1-I cache) into IR. PC auto-increments by 4.</p></div></div>
 <div class="workflow-step" data-step="2"><h4 data-zh="② 解碼 (Decode)" data-en="② Decode">② Decode</h4>
-<div data-lang="zh"><p>把 IR 中的 0/1 譯成「動作」：是加法？要讀哪個暫存器？要寫回哪？產生控制訊號。</p></div>
-<div data-lang="en"><p>Translate IR bits into actions: which op? which registers? where to write? Produce control signals.</p></div></div>
+<div data-lang="zh"><p>把 IR 中的 0/1 譯成「動作」：是加法？要讀哪個暫存器？要寫回哪？產生控制訊號。x86 的 micro-ops 拆解也在此步。</p></div>
+<div data-lang="en"><p>Translate IR bits into actions: which op? which registers? where to write? Produce control signals. x86 micro-op cracking happens here.</p></div></div>
 <div class="workflow-step" data-step="3"><h4 data-zh="③ 執行 (Execute)" data-en="③ Execute">③ Execute</h4>
-<div data-lang="zh"><p>ALU 完成運算；分支指令會比較條件並設旗標。</p></div>
-<div data-lang="en"><p>ALU performs the operation; branch instructions compare and set flags.</p></div></div>
+<div data-lang="zh"><p>ALU 完成運算；分支指令會比較條件並設旗標。可能多個 ALU 並行（super-scalar）。</p></div>
+<div data-lang="en"><p>ALU performs the operation; branch instructions compare and set flags. Multiple ALUs may execute in parallel (superscalar).</p></div></div>
 <div class="workflow-step" data-step="4"><h4 data-zh="④ 存取記憶體 (Memory)" data-en="④ Memory">④ Memory</h4>
-<div data-lang="zh"><p>load/store 指令會在此階段讀寫主記憶體；非記憶體指令直接跳過。</p></div>
-<div data-lang="en"><p>Load/store instructions read or write main memory; others skip this stage.</p></div></div>
+<div data-lang="zh"><p>load/store 指令會在此階段讀寫主記憶體；非記憶體指令直接跳過。L1 cache 命中 ~4 cycle、L2 ~12、L3 ~40、DRAM ~200。</p></div>
+<div data-lang="en"><p>Load/store instructions read or write main memory; others skip this stage. Hits: L1 ~4 cycles, L2 ~12, L3 ~40, DRAM ~200.</p></div></div>
 <div class="workflow-step" data-step="5"><h4 data-zh="⑤ 寫回 (Writeback)" data-en="⑤ Writeback">⑤ Writeback</h4>
 <div data-lang="zh"><p>運算結果寫回目的暫存器。週期結束，回到 Fetch。</p></div>
 <div data-lang="en"><p>Write the result back to the destination register. End of cycle — return to Fetch.</p></div></div>
@@ -82,33 +84,34 @@
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="管線化" data-en="PIPELINING">管線化與危險</div>
-<h2 data-zh="四、5-stage Pipeline 與 Hazards" data-en="IV. 5-Stage Pipeline & Hazards">四、管線化 (Pipelining)</h2>
-<div data-lang="zh"><p>若一條指令花 5 個週期，CPU 每 5 cycle 才完成一條，太慢。<strong>管線化</strong>把五個階段重疊：第 1 條指令在 Execute 時，第 2 條在 Decode、第 3 條在 Fetch——理想上 <strong>每 cycle 完成 1 條指令</strong>（IPC=1），效能提升 5 倍。</p>
-<p>但管線會遇到三種「危險 (hazard)」：</p>
+<div class="section-label" data-zh="深入剖析" data-en="DEEP DIVE">管線化 + 危險</div>
+<h2 data-zh="五、進階：管線化 (Pipelining) 與三種危險" data-en="V. Advanced: Pipelining & Three Hazards">五、管線化與三種危險</h2>
+<div data-lang="zh"><p>若一條指令花 5 個週期，CPU 每 5 cycle 才完成一條，太慢。<strong>管線化 (pipelining)</strong> 把五個階段重疊：第 1 條指令在 Execute 時，第 2 條在 Decode、第 3 條在 Fetch——理想上 <strong>每 cycle 完成 1 條指令</strong>（IPC=1），效能提升 5 倍。</p>
+<p>現代高階 CPU 用<strong>深管線 + 超純量</strong>：Intel P-core 約 14 級管線、Apple M4 約 12 級；同時擁有 6–8 條執行通道（IPC 可達 6–8）。但管線會遇到三種「危險 (hazard)」：</p>
 <ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
-<li><strong>資料危險 (Data hazard)</strong>：後一條指令需要前一條尚未寫回的結果 → 用<em>轉送 (forwarding)</em>或插入<em>氣泡 (bubble)</em>。</li>
-<li><strong>控制危險 (Control hazard)</strong>：遇到分支，不確定下一條該取哪個位址 → 用<em>分支預測 (branch prediction)</em>，2026 年高階 CPU 預測準確率 &gt; 98%。</li>
-<li><strong>結構危險 (Structural hazard)</strong>：兩條指令同時需要同一硬體資源 → 增加單元或排程。</li>
+<li><strong>① 資料危險 (Data hazard)：</strong>後一條指令需要前一條尚未寫回的結果。例：<code>R1 = R2 + R3</code> 後緊接 <code>R4 = R1 × R5</code>。解法：<em>轉送 (forwarding)</em> 直接把 EX 階段的結果遞給下一個 EX，省去等寫回；或插入<em>氣泡 (bubble)</em>。</li>
+<li><strong>② 控制危險 (Control hazard)：</strong>遇到分支 (if/while)，不確定下一條該取哪個位址。解法：<em>分支預測 (branch prediction)</em>，2026 高階 CPU 用 TAGE 演算法準確率 &gt; 98%。<strong>但這就是 Spectre 漏洞的源頭。</strong></li>
+<li><strong>③ 結構危險 (Structural hazard)：</strong>兩條指令同時需要同一硬體資源（如同一個 ALU）。解法：增加單元（超純量）或重排執行順序 (out-of-order execution)。</li>
 </ul></div>
 <div data-lang="en"><p>If one instruction takes 5 cycles, completing one every 5 cycles is too slow. <strong>Pipelining</strong> overlaps stages: while instruction 1 is in Execute, 2 is in Decode, 3 in Fetch — ideally <strong>1 instruction per cycle</strong> (IPC=1), a 5× speedup.</p>
-<p>Three classic <strong>hazards</strong>:</p>
+<p>Modern high-end CPUs use <strong>deep pipelines + superscalar</strong>: Intel P-core ~14 stages, Apple M4 ~12; 6–8 execution lanes (IPC reaches 6–8). But pipelines face three <strong>hazards</strong>:</p>
 <ul style="margin:8px 0 14px 20px;color:var(--c-ink-light);">
-<li><strong>Data hazard</strong>: a later instruction needs a result not yet written back → use <em>forwarding</em> or insert a <em>bubble</em>.</li>
-<li><strong>Control hazard</strong>: branches make next-fetch ambiguous → use <em>branch prediction</em> (2026 high-end CPUs &gt; 98% accurate).</li>
-<li><strong>Structural hazard</strong>: two instructions need the same hardware → add units or schedule around it.</li>
+<li><strong>① Data hazard:</strong> a later instruction needs a result not yet written back. E.g., <code>R1 = R2 + R3</code> followed by <code>R4 = R1 × R5</code>. Fix: <em>forwarding</em> (pass EX result directly to next EX) or insert a <em>bubble</em>.</li>
+<li><strong>② Control hazard:</strong> branches make next-fetch ambiguous. Fix: <em>branch prediction</em> — 2026 high-end CPUs use TAGE with &gt;98% accuracy. <strong>This is the root of the Spectre vulnerability.</strong></li>
+<li><strong>③ Structural hazard:</strong> two instructions need the same hardware (e.g., one ALU). Fix: add units (superscalar) or reorder execution (out-of-order).</li>
 </ul></div>
-<div class="callout warn"><span class="callout-icon">⚠️</span><div>
-<div data-lang="zh"><strong>Spectre / Meltdown (2018)：</strong>分支預測的「投機執行」造成了史上最嚴重的 CPU 漏洞，幾乎所有 1995 年後的 CPU 都受影響。修補方案使部分指令慢了 5%–30%。</div>
-<div data-lang="en"><strong>Spectre / Meltdown (2018):</strong> Speculative execution behind branch prediction caused the worst CPU vulnerabilities ever — nearly every CPU since 1995 was affected. Mitigations slowed some workloads by 5–30%.</div>
+
+<div class="callout danger"><span class="callout-icon">🚨</span><div>
+<div data-lang="zh"><strong>Spectre / Meltdown (2018)：</strong>分支預測的「投機執行」造成史上最嚴重的 CPU 漏洞——攻擊者誘導 CPU「猜錯」並執行受限的記憶體存取，雖然事後撤銷，但 cache side-channel 殘留洩漏內容。幾乎所有 1995 年後的 CPU 都受影響，連 ARM、Apple M 系列都不能倖免。修補方案讓部分指令慢 5–30%。後續還有 Foreshadow、ZombieLoad、Retbleed 等變種。</div>
+<div data-lang="en"><strong>Spectre / Meltdown (2018):</strong> Speculative execution behind branch prediction caused the worst CPU vulnerabilities ever — attackers trick the CPU into "guessing wrong" and accessing restricted memory; though rolled back, cache side-channels leak the content. Nearly every CPU since 1995 was affected, even ARM and Apple M. Mitigations cost 5–30%. Variants since: Foreshadow, ZombieLoad, Retbleed.</div>
 </div></div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="互動比較" data-en="INTERACTIVE">2026 CPU/GPU 規格</div>
-<h2 data-zh="五、互動：2026 旗艦處理器規格比較" data-en="V. Interactive: 2026 Flagship Chip Comparison">五、2026 旗艦處理器比較</h2>
-<div data-lang="zh"><p>下圖比較 2026 年四款代表性處理器在<strong>核心數</strong>、<strong>最高時脈 (GHz)</strong> 與 <strong>TDP (W)</strong> 三項規格上的差異。NVIDIA H100 是 GPU——核心極多 (14592 CUDA cores)、單一時脈低；CPU 則時脈高、核心少。</p></div>
-<div data-lang="en"><p>The chart compares four representative 2026 processors on <strong>cores</strong>, <strong>boost clock (GHz)</strong>, and <strong>TDP (W)</strong>. NVIDIA H100 is a GPU — many cores (14592 CUDA), lower clock; CPUs have higher clocks but fewer cores.</p></div>
+<div class="section-label" data-zh="互動 #1" data-en="INTERACTIVE #1">2026 旗艦比較</div>
+<h2 data-zh="六、互動 ①：2026 旗艦處理器規格" data-en="VI. Interactive ①: 2026 Flagship Specs">六、2026 旗艦處理器比較</h2>
+<div data-lang="zh"><p>下圖比較 2026 年四款代表性處理器在<strong>核心數</strong>、<strong>最高時脈 (GHz)</strong> 與 <strong>TDP (W)</strong> 三項規格上的差異。NVIDIA H100 是 GPU——核心極多 (14,592 CUDA cores)、單一時脈低；CPU 則時脈高、核心少。把滑鼠移上去看實際數字。</p></div>
+<div data-lang="en"><p>The chart compares four representative 2026 processors on <strong>cores</strong>, <strong>boost clock (GHz)</strong>, and <strong>TDP (W)</strong>. NVIDIA H100 is a GPU — many cores (14,592 CUDA), lower clock; CPUs have higher clocks but fewer cores. Hover for real numbers.</p></div>
 <div class="interactive-panel">
 <div class="chart-container"><canvas id="cpuChart"></canvas></div>
 <p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:8px;"><span data-lang="zh">資料：廠商規格表，2026-05。GPU CUDA cores 為計算單元，與 CPU 核心定義不同，僅作量級對照。</span><span data-lang="en">Source: vendor spec sheets, 2026-05. GPU CUDA cores are compute lanes, not directly comparable to CPU cores — order-of-magnitude only.</span></p>
@@ -116,100 +119,214 @@
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">選對處理器</div>
-<h2 data-zh="六、決策樹：選 CPU 還是 GPU？x86 還是 ARM？" data-en="VI. Decision Tree: CPU vs GPU? x86 vs ARM?">六、選對處理器</h2>
+<div class="section-label" data-zh="歷史故事" data-en="STORIES">四個經典故事</div>
+<h2 data-zh="七、四個經典 CPU 故事" data-en="VII. Four Classic CPU Stories">七、四個經典故事</h2>
+<div class="card-grid cols-2">
+<div class="card"><h4>🇮🇹 <span data-zh="Intel 4004：義大利人改變世界" data-en="Intel 4004: An Italian Changed the World">Intel 4004：Faggin 的故事</span></h4><div data-lang="zh"><p>1971 年義大利移民 <strong>Federico Faggin</strong> 在 Intel 設計史上第一顆商用微處理器 4004：2,300 顆電晶體、4-bit、108 KHz、10 μm 製程。原本只是給日本 Busicom 計算機代工，Intel 副總 Hoff 卻看見潛力。Faggin 在每顆晶片角落刻上自己的縮寫 "F.F."——這是 CPU 史上第一個「設計師簽名」。50 年後，Faggin 接受訪問說：「我們當時根本不知道在發明什麼。」</p></div><div data-lang="en"><p>In 1971, Italian immigrant <strong>Federico Faggin</strong> at Intel designed the first commercial microprocessor: 2,300 transistors, 4-bit, 108 KHz, 10 μm. It was originally a contract chip for Japan's Busicom calculator, but Intel VP Hoff saw the potential. Faggin etched "F.F." in every chip's corner — the first "designer's signature" in CPU history. 50 years later he reflected: "We had no idea what we were inventing."</p></div></div>
+<div class="card"><h4>🍎 <span data-zh="Apple M1：統一記憶體革命" data-en="Apple M1: Unified-Memory Revolution">Apple M1 (2020)</span></h4><div data-lang="zh"><p>2020 年 11 月 Apple 推出 M1——首顆採用 5nm + Big.LITTLE + <strong>統一記憶體 (UMA)</strong> 的個人電腦 CPU。CPU 和 GPU <strong>共用同一塊 DRAM</strong>，省去 PCIe 拷貝。同尺寸下效能比 Intel 高 50%、功耗降 70%。隔年第一次「ARM Mac」銷量超越 Intel Mac。對 scRNA-seq 等大資料分析特別重要——scvi-tools 在 M1 Max 64GB 上跑 5 萬細胞，比同價位 Intel 機快 3 倍。</p></div><div data-lang="en"><p>In Nov 2020, Apple released the M1 — the first PC CPU with 5nm + Big.LITTLE + <strong>unified memory (UMA)</strong>. CPU and GPU <strong>share the same DRAM</strong>, skipping PCIe copies. 50% more performance and 70% less power vs Intel of the same size. ARM Macs outsold Intel Macs in their first year. Huge for big-data work: scvi-tools on a 64 GB M1 Max processes 50,000 cells 3× faster than an Intel machine at the same price.</p></div></div>
+<div class="card"><h4>⚔️ <span data-zh="RISC vs CISC：40 年聖戰" data-en="RISC vs CISC: 40-Year Holy War">RISC vs CISC：40 年聖戰</span></h4><div data-lang="zh"><p>1980s Berkeley 的 David Patterson 與 Stanford 的 John Hennessy 提出 <strong>RISC</strong>（指令少而簡單），預測會擊敗 <strong>CISC</strong>（指令多而複雜，如 x86）。1990s x86 用「micro-op 解碼」把 CISC 轉成內部 RISC 才追上。2010s ARM 進入手機、伺服器；2024 Apple 全部改 ARM、AWS Graviton4、印度政府力推 RISC-V——RISC 終於贏了。Patterson 與 Hennessy 2017 共得圖靈獎。</p></div><div data-lang="en"><p>In the 1980s, Berkeley's David Patterson and Stanford's John Hennessy proposed <strong>RISC</strong> (few, simple instructions) over <strong>CISC</strong> (many, complex — like x86). In the 1990s, x86 caught up by internally decoding to RISC-like micro-ops. 2010s: ARM dominates phones and servers; 2024: Apple is all-ARM, AWS Graviton4, India pushes RISC-V — RISC finally won. Patterson and Hennessy shared the 2017 Turing Award.</p></div></div>
+<div class="card"><h4>🐛 <span data-zh="Pentium FDIV bug ($4.75 億)" data-en="Pentium FDIV bug ($475M)">Pentium FDIV bug (1994)</span></h4><div data-lang="zh"><p>1994 年數學教授 Thomas Nicely 發現 Intel Pentium 的浮點除法在某些罕見值出錯（4195835.0 / 3145727.0 結果差 1.5 ppm）。Intel 一開始拒換，被媒體痛批後改弦更張，全面召回，花費 <strong>$4.75 億美元</strong>。從此「Intel 品質」神話破滅，也啟發了之後嚴謹的 CPU 形式驗證——Hennessy 後來說：「FDIV bug 讓 Intel 學到，CPU 與其他軟體不一樣，沒有 patch 補丁這回事。」</p></div><div data-lang="en"><p>In 1994, math professor Thomas Nicely found Intel's Pentium FPU divided incorrectly on rare values (4195835.0 / 3145727.0 off by 1.5 ppm). Intel initially refused replacements; after media outcry, it issued a full recall costing <strong>$475 million</strong>. Intel's quality myth broke, and the industry invested in formal CPU verification. Hennessy: "FDIV taught Intel that CPUs aren't software — there's no patch."</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動 #2" data-en="INTERACTIVE #2">管線視覺化</div>
+<h2 data-zh="八、互動 ②：5-stage 管線視覺化（含資料危險）" data-en="VIII. Interactive ②: 5-Stage Pipeline Viz (with Data Hazard)">八、管線視覺化</h2>
+<div data-lang="zh"><p>下方表格演示 5 個指令在 5 階段管線中如何重疊執行：每行為一個指令，每列為一個 cycle。理想情況下，<strong>5 cycle 後每 cycle 完成 1 條指令</strong>。切換到「Data hazard」模式可看到當第 2 條指令依賴第 1 條結果時，需要插入<strong>氣泡 (bubble)</strong>。</p></div>
+<div data-lang="en"><p>The table shows 5 instructions flowing through a 5-stage pipeline: each row is an instruction, each column a cycle. Ideally, <strong>after 5 cycles, one instruction completes per cycle</strong>. Switch to "Data hazard" mode to see bubbles inserted when instruction 2 depends on instruction 1's result.</p></div>
+<div class="interactive-panel">
+<div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:18px;">
+  <button id="modeIdeal" class="pipeBtn" style="padding:10px 18px;border:2px solid var(--c-accent);background:var(--c-accent);color:#fff;border-radius:8px;font-weight:700;cursor:pointer;" data-zh="理想管線" data-en="Ideal Pipeline">理想管線</button>
+  <button id="modeHazard" class="pipeBtn" style="padding:10px 18px;border:2px solid var(--c-accent);background:#fff;color:var(--c-accent);border-radius:8px;font-weight:700;cursor:pointer;" data-zh="含資料危險" data-en="With Data Hazard">含資料危險</button>
+</div>
+<div id="pipeViz" style="overflow-x:auto;"></div>
+<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:12px;"><span data-lang="zh">IF=取指、ID=解碼、EX=執行、MEM=記憶體存取、WB=寫回；🟡 表示氣泡 stall。</span><span data-lang="en">IF=fetch, ID=decode, EX=execute, MEM=memory access, WB=writeback; 🟡 = bubble stall.</span></p>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="生資連結" data-en="BIOINFO LINK">給生資人</div>
+<h2 data-zh="九、🧬 生資連結：BWA、SIMD、GPU、Apple M" data-en="IX. 🧬 Bioinformatics Link: BWA, SIMD, GPU, Apple M">九、🧬 給生物資訊學家</h2>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;"><span class="callout-icon">🧬</span><div>
+<strong data-zh="給生物資訊學家：CPU 設計決定了你跑的工具能多快" data-en="For Bioinformaticians: CPU Design Decides How Fast Your Tools Run">給生物資訊學家：選對 CPU 決定生資速度</strong>
+<p data-lang="zh">BWA-MEM2 為何加速 4×？因為它用 SIMD AVX-512。AlphaFold 為何需要 GPU？因為矩陣運算高度可平行。理解 CPU 架構，能讓你選對硬體、設定對 thread 數、避開「核心多但 Amdahl 卡住」的陷阱。</p>
+<p data-lang="en">Why is BWA-MEM2 4× faster? AVX-512 SIMD. Why does AlphaFold need GPUs? Highly parallel matrix math. Understanding CPU architecture lets you pick the right hardware, set the right thread count, and avoid the "many-core but Amdahl-limited" trap.</p>
+</div></div>
+
+<div class="card-grid cols-2">
+<div class="card"><h4>🧬 <span data-zh="BWA / STAR：多核心對齊" data-en="BWA / STAR: Multi-core Alignment">BWA / STAR：多核心</span></h4><div data-lang="zh"><p>BWA、STAR、minimap2 的 <strong>seed-and-extend</strong> 演算法天然可平行——每條 read 獨立比對，無資料相依。在 24 核 EPYC 上 <code>-t 24</code> 接近線性加速。但寫入 BAM 時是序列瓶頸，需 <code>samtools sort -@ N</code> 配合。<strong>實務建議：</strong>對齊 thread = 物理核心數（不要 hyperthread），<code>fastp</code> 也是；<code>samtools sort</code> thread = 4–8 就好（受 I/O 限制）。</p></div><div data-lang="en"><p>BWA, STAR, minimap2's <strong>seed-and-extend</strong> is embarrassingly parallel — each read aligns independently. On a 24-core EPYC, <code>-t 24</code> scales nearly linearly. But BAM writing is serial; pair with <code>samtools sort -@ N</code>. <strong>Practical tip:</strong> alignment threads = physical cores (not hyperthreads); <code>fastp</code> too. <code>samtools sort</code> threads = 4–8 (I/O-bound).</p></div></div>
+<div class="card"><h4>⚡ <span data-zh="SIMD 加速：MAFFT、HMMER3" data-en="SIMD: MAFFT, HMMER3">SIMD：MAFFT、HMMER3</span></h4><div data-lang="zh"><p>SIMD (Single Instruction Multiple Data) 讓一條指令同時處理 4–16 個資料元素。<strong>HMMER3</strong> (Eddy 2011 PLOS Comp Biol) 用 SSE2/AVX2 把 profile HMM 比對加速 100×。<strong>MAFFT</strong> 用 SIMD 把多序列比對加速 16×。<strong>BWA-MEM2</strong> (Vasimuddin 2019) 用 AVX-512 比 BWA-MEM 快 1.8–3.2×。<strong>確認你的 CPU 支援：</strong><code>cat /proc/cpuinfo | grep -E 'sse|avx'</code>。</p></div><div data-lang="en"><p>SIMD (Single Instruction Multiple Data) processes 4–16 data elements per instruction. <strong>HMMER3</strong> (Eddy 2011 PLOS Comp Biol) uses SSE2/AVX2 for a 100× profile-HMM speedup. <strong>MAFFT</strong> uses SIMD for 16× faster multi-seq alignment. <strong>BWA-MEM2</strong> (Vasimuddin 2019) uses AVX-512 for 1.8–3.2× over BWA-MEM. <strong>Check support:</strong> <code>cat /proc/cpuinfo | grep -E 'sse|avx'</code>.</p></div></div>
+<div class="card"><h4>🎮 <span data-zh="GPU：AlphaFold、scGPT" data-en="GPU: AlphaFold, scGPT">GPU：AlphaFold、scGPT</span></h4><div data-lang="zh"><p>Transformer 推論（AlphaFold2/3、ESM-2、scGPT）有 90%+ 計算量是<strong>大矩陣乘法</strong>——GPU 強項。NVIDIA A100 (FP32 19.5 TFLOPS) 比 16-core CPU (1 TFLOPS) 快 ~20×；H100 FP8 ~3 PFLOPS 又快 100×。<strong>實務：</strong>單細胞 atlas 訓練 → A100 80GB；FoldDock 推論 → 一張 RTX 4090 24GB 就夠；scGPT 微調 → 至少 40GB GPU。CPU 只用於資料載入與後處理。</p></div><div data-lang="en"><p>Transformer inference (AlphaFold2/3, ESM-2, scGPT) is 90%+ <strong>large matrix multiplies</strong> — GPU territory. NVIDIA A100 (FP32 19.5 TFLOPS) is ~20× a 16-core CPU (1 TFLOPS); H100 FP8 ~3 PFLOPS is 100× more. <strong>Practical:</strong> single-cell atlas training → A100 80GB; FoldDock inference → one RTX 4090 24GB; scGPT fine-tuning → ≥40 GB GPU. CPUs only handle data loading and post-processing.</p></div></div>
+<div class="card"><h4>🍏 <span data-zh="Apple M：scRNA-seq 友善" data-en="Apple M: scRNA-seq Friendly">Apple M：UMA 救星</span></h4><div data-lang="zh"><p>scRNA-seq 大資料分析 (Scanpy、scvi-tools、scGPT) 常被 RAM ↔ GPU 拷貝拖慢。Apple M-series 的<strong>統一記憶體 (UMA)</strong> 讓 CPU 和 GPU 共用同一塊 DRAM，<strong>零拷貝</strong>。M3 Max 128 GB 上跑 100 萬細胞 PBMC atlas，比同價位 Intel + RTX 4090 工作站快 1.5–3 倍——尤其是「載入大型 AnnData → 跑 PCA → 訓 scVI → UMAP」這整條 pipeline。缺點：CUDA 生態不在 M 上原生，需依賴 MLX (Apple) 或 PyTorch MPS backend。</p></div><div data-lang="en"><p>Big-data scRNA-seq (Scanpy, scvi-tools, scGPT) is often bottlenecked by RAM↔GPU copies. Apple M's <strong>unified memory (UMA)</strong> means CPU and GPU share DRAM — <strong>zero-copy</strong>. An M3 Max 128 GB runs a 1M-cell PBMC atlas 1.5–3× faster than a same-priced Intel + RTX 4090 box — especially for "load AnnData → PCA → train scVI → UMAP." Drawback: CUDA isn't native on M; use MLX (Apple) or PyTorch MPS.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">選 CPU 還是 GPU</div>
+<h2 data-zh="十、決策樹：選 CPU、GPU、還是 NPU？x86 還是 ARM？" data-en="X. Decision Tree: CPU vs GPU vs NPU? x86 vs ARM?">十、選對處理器</h2>
 <div class="decision-tree">
 <h4>🌳 <span data-zh="處理器選用決策樹" data-en="Processor Choice Decision Tree">處理器選用決策樹</span></h4>
 <div data-lang="zh">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>工作負載「高度可平行、矩陣運算為主」？<span class="dt-arrow">→ 是 →</span> <strong>GPU</strong>（AI 訓練、影像處理、科學模擬）。</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>需要「低延遲、分支複雜的序列邏輯」？<span class="dt-arrow">→ 是 →</span> <strong>CPU</strong>（資料庫、編譯器、作業系統）。</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>「行動裝置 / 電池供電」？<span class="dt-arrow">→ 是 →</span> <strong>ARM</strong>（功耗低、效率高，Apple M、Qualcomm、AWS Graviton）。</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>「需相容 Windows 應用 / 老牌 x86 軟體」？<span class="dt-arrow">→ 是 →</span> <strong>x86</strong>（Intel、AMD）。</div></div>
-<div class="dt-node"><span class="dt-q">Q5:</span><div>「LLM 推論在邊緣裝置」？<span class="dt-arrow">→ 是 →</span> <strong>NPU</strong>（Apple Neural Engine、Qualcomm Hexagon、Intel AI Boost）。</div></div>
+<div class="dt-node"><span class="dt-q">Q1:</span><div>工作負載「高度可平行、矩陣運算為主」？<span class="dt-arrow">→ 是 →</span> <strong>GPU</strong>（AlphaFold、scGPT、影像、scientific simulation）。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>需要「低延遲、分支複雜的序列邏輯」？<span class="dt-arrow">→ 是 →</span> <strong>CPU</strong>（資料庫、編譯器、OS、BWA seed phase）。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>「行動裝置 / 電池供電 / 大資料 + 不愛複雜驅動」？<span class="dt-arrow">→ 是 →</span> <strong>ARM (Apple M / AWS Graviton)</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>「需相容老 Windows 應用 / Bioconda 全 CUDA 生態」？<span class="dt-arrow">→ 是 →</span> <strong>x86 (Intel/AMD)</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>「LLM 推論在邊緣裝置 / 筆電」？<span class="dt-arrow">→ 是 →</span> <strong>NPU</strong>（Apple Neural Engine、Qualcomm Hexagon、Intel AI Boost）。</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>「需要 BAM/CRAM 加速器 / 100 Gbps 網路」？<span class="dt-arrow">→ 是 →</span> <strong>FPGA / DPU</strong>（NVIDIA BlueField、AWS Nitro）。</div></div>
 </div>
 <div data-lang="en">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>Highly parallel matrix workload? <span class="dt-arrow">→ Yes →</span> <strong>GPU</strong> (AI training, graphics, scientific simulation).</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>Low-latency, branchy sequential logic? <span class="dt-arrow">→ Yes →</span> <strong>CPU</strong> (databases, compilers, OS).</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>Mobile / battery-powered? <span class="dt-arrow">→ Yes →</span> <strong>ARM</strong> (low power, high efficiency — Apple M, Qualcomm, AWS Graviton).</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>Need Windows / legacy x86 compatibility? <span class="dt-arrow">→ Yes →</span> <strong>x86</strong> (Intel, AMD).</div></div>
-<div class="dt-node"><span class="dt-q">Q5:</span><div>LLM inference on-device? <span class="dt-arrow">→ Yes →</span> <strong>NPU</strong> (Apple Neural Engine, Qualcomm Hexagon, Intel AI Boost).</div></div>
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Highly parallel matrix workload? <span class="dt-arrow">→ Yes →</span> <strong>GPU</strong> (AlphaFold, scGPT, imaging, simulation).</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Low-latency, branchy sequential logic? <span class="dt-arrow">→ Yes →</span> <strong>CPU</strong> (databases, compilers, OS, BWA seeding).</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Mobile / battery / big data without driver headaches? <span class="dt-arrow">→ Yes →</span> <strong>ARM (Apple M / AWS Graviton)</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Need legacy Windows / full Bioconda CUDA stack? <span class="dt-arrow">→ Yes →</span> <strong>x86 (Intel/AMD)</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>LLM inference on-device / laptop? <span class="dt-arrow">→ Yes →</span> <strong>NPU</strong> (Apple Neural Engine, Qualcomm Hexagon, Intel AI Boost).</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>BAM/CRAM accelerator / 100 Gbps network? <span class="dt-arrow">→ Yes →</span> <strong>FPGA / DPU</strong> (NVIDIA BlueField, AWS Nitro).</div></div>
 </div>
 </div>
 
 <div class="callout tip"><span class="callout-icon">💡</span><div>
-<div data-lang="zh"><strong>2026 趨勢：</strong>① <strong>chiplet</strong>（多顆小晶粒封裝在一起，良率高、可混搭製程）；② <strong>3D 堆疊</strong>（TSMC SoIC、Intel Foveros、AMD 3D V-Cache）；③ <strong>NPU</strong> 已內建於消費級 CPU；④ <strong>RISC-V</strong> 開源指令集快速崛起（嵌入式、AI 加速器、印度政府力推）。</div>
-<div data-lang="en"><strong>2026 trends:</strong> (1) <strong>chiplets</strong> — multiple smaller dies in one package (better yield, mixed process); (2) <strong>3D stacking</strong> (TSMC SoIC, Intel Foveros, AMD 3D V-Cache); (3) <strong>NPUs</strong> now standard in consumer CPUs; (4) <strong>RISC-V</strong> open ISA surging in embedded, AI accelerators, and government-backed Indian/EU chips.</div>
+<div data-lang="zh"><strong>2026 趨勢：</strong>① <strong>chiplet</strong>（多顆小晶粒封裝，良率高、混搭製程）；② <strong>3D 堆疊</strong>（TSMC SoIC、Intel Foveros、AMD 3D V-Cache）；③ <strong>NPU</strong> 已內建消費級 CPU；④ <strong>RISC-V</strong> 開源指令集崛起（嵌入式、AI 加速器、印度政府力推）；⑤ <strong>CXL 3.0</strong> 讓 CPU、GPU、記憶體真正共享。</div>
+<div data-lang="en"><strong>2026 trends:</strong> (1) <strong>chiplets</strong> — multiple smaller dies in one package; (2) <strong>3D stacking</strong> (TSMC SoIC, Intel Foveros, AMD 3D V-Cache); (3) <strong>NPUs</strong> now standard in consumer CPUs; (4) <strong>RISC-V</strong> open ISA surging in embedded, AI accelerators, India-backed chips; (5) <strong>CXL 3.0</strong> for true CPU-GPU-memory pooling.</div>
 </div></div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="效能指標" data-en="METRICS">效能指標</div>
-<h2 data-zh="七、性能指標 & RISC vs CISC" data-en="VII. Performance Metrics & RISC vs CISC">七、性能指標</h2>
+<div class="section-label" data-zh="效能指標" data-en="METRICS">效能指標 + RISC vs CISC</div>
+<h2 data-zh="十一、效能指標 & RISC vs CISC" data-en="XI. Performance Metrics & RISC vs CISC">十一、性能指標</h2>
 <table class="comp-table">
 <thead><tr><th data-zh="指標" data-en="Metric">指標</th><th data-zh="定義" data-en="Definition">定義</th><th data-zh="典型值 (2026)" data-en="Typical (2026)">典型值</th></tr></thead>
 <tbody>
 <tr><td>Clock</td><td data-lang="zh">時脈頻率</td><td data-lang="en">Clock frequency</td><td>3–6 GHz</td></tr>
 <tr><td>IPC</td><td data-lang="zh">每週期指令數</td><td data-lang="en">Instructions per cycle</td><td>4–8</td></tr>
-<tr><td>MIPS</td><td data-lang="zh">百萬指令/秒</td><td data-lang="en">Million instructions/sec</td><td>~10⁵ MIPS</td></tr>
+<tr><td>MIPS</td><td data-lang="zh">百萬指令/秒 = Clock × IPC</td><td data-lang="en">M instructions/sec</td><td>~10⁵ MIPS</td></tr>
 <tr><td>FLOPS</td><td data-lang="zh">浮點運算/秒</td><td data-lang="en">Floating-point ops/sec</td><td>CPU ~1 TFLOPS / GPU ~1 PFLOPS</td></tr>
 <tr><td>TDP</td><td data-lang="zh">熱設計功耗</td><td data-lang="en">Thermal Design Power</td><td>15 W (筆電) – 700 W (H100)</td></tr>
+<tr><td>Perf/W</td><td data-lang="zh">每瓦效能</td><td data-lang="en">Performance per Watt</td><td data-lang="zh">2026 比 2010 高 20×</td></tr>
 </tbody></table>
+
 <table class="comp-table" style="margin-top:18px;">
 <thead><tr><th></th><th>RISC</th><th>CISC</th></tr></thead>
 <tbody>
 <tr><td data-lang="zh">指令集大小</td><td data-lang="en">ISA size</td><td data-lang="zh">少 (~100 條)、定長</td><td data-lang="zh">多 (~1500 條)、變長</td></tr>
 <tr><td data-lang="zh">每指令週期</td><td data-lang="en">Cycles/instr</td><td>1（單純）</td><td data-lang="zh">數個（複雜）</td></tr>
 <tr><td data-lang="zh">代表架構</td><td data-lang="en">Examples</td><td>ARM、RISC-V、MIPS</td><td>x86 / x86-64</td></tr>
-<tr><td data-lang="zh">優勢</td><td data-lang="en">Strength</td><td data-lang="zh">省電、易管線化</td><td data-lang="zh">向後相容、單指令做更多事</td></tr>
+<tr><td data-lang="zh">優勢</td><td data-lang="en">Strength</td><td data-lang="zh">省電、易管線化、易實作 SIMD</td><td data-lang="zh">向後相容、單指令做更多事</td></tr>
 </tbody></table>
 </section>
 
 <section class="section">
 <div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
-<h2 data-zh="八、Python：量測你 CPU 的單核心吞吐量" data-en="VIII. Python: Measure Your CPU's Single-Core Throughput">八、動手試</h2>
-<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
+<h2 data-zh="十二、Python + R + Pseudocode：量測你 CPU 的吞吐量" data-en="XII. Python + R + Pseudocode: Measure Your CPU">十二、動手試</h2>
+<div class="code-tabs"><div class="code-tab-btns">
+<button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button>
+<button class="code-tab-btn" onclick="switchTab(this,'r1')">R</button>
+<button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
 <div class="code-tab-content active" id="py1"><pre><span class="comment"># 量測 CPU 單核加法吞吐量 / Measure single-core add throughput</span>
 <span class="kw">import</span> time
-
 N = <span class="num">10_000_000</span>
 start = time.<span class="func">perf_counter</span>()
 total = <span class="num">0</span>
 <span class="kw">for</span> i <span class="kw">in</span> <span class="func">range</span>(N):
     total += i
 elapsed = time.<span class="func">perf_counter</span>() - start
-
-<span class="func">print</span>(<span class="str">f"{N:,} adds in {elapsed:.3f}s"</span>)
-<span class="func">print</span>(<span class="str">f"≈ {N/elapsed/1e6:.1f} M adds/sec"</span>)
-<span class="comment"># 純 Python ~50M/s；NumPy 向量化可達 ~5000M/s（用 SIMD）</span>
-<span class="comment"># Pure Python ~50M/s; NumPy vectorized ~5000M/s (uses SIMD)</span>
+<span class="func">print</span>(<span class="str">f"{N:,} adds in {elapsed:.3f}s ≈ {N/elapsed/1e6:.1f} M adds/sec"</span>)
+<span class="comment"># 純 Python ~50M/s</span>
 
 <span class="kw">import</span> numpy <span class="kw">as</span> np
 a = np.<span class="func">arange</span>(N, dtype=<span class="str">'int64'</span>)
 start = time.<span class="func">perf_counter</span>()
 total = a.<span class="func">sum</span>()
-elapsed = time.<span class="func">perf_counter</span>() - start
-<span class="func">print</span>(<span class="str">f"NumPy sum: {N/elapsed/1e9:.2f} G ops/sec"</span>)
+<span class="func">print</span>(<span class="str">f"NumPy: {N/(time.perf_counter()-start)/1e9:.2f} G ops/sec"</span>)
+<span class="comment"># NumPy 向量化 ~5000M/s（用 AVX2/AVX-512 SIMD）→ 100× 加速</span>
 
-<span class="comment"># 觀察分支預測效果 / Observe branch prediction</span>
-<span class="comment"># 已排序陣列 → 分支可預測 → 快；隨機陣列 → 預測失敗 → 慢 2–3 倍</span>
-<span class="comment"># Sorted array → predictable branches; random → 2-3× slowdown</span></pre></div>
+<span class="comment"># 多核心：用 multiprocessing 加速 / Multi-core: multiprocessing</span>
+<span class="kw">from</span> multiprocessing <span class="kw">import</span> Pool
+<span class="kw">def</span> <span class="func">square</span>(x): <span class="kw">return</span> x*x
+<span class="kw">with</span> <span class="func">Pool</span>(<span class="num">8</span>) <span class="kw">as</span> p:
+    result = p.<span class="func">map</span>(square, <span class="func">range</span>(<span class="num">10_000_000</span>))
+<span class="comment"># 8 核近 8× 加速（受 Amdahl 定律限制）</span>
+
+<span class="comment"># 分支預測示範 / Branch prediction demo</span>
+<span class="kw">import</span> random
+N = <span class="num">10_000_000</span>
+sorted_arr = <span class="func">sorted</span>(<span class="func">random</span>.<span class="func">choices</span>(<span class="func">range</span>(<span class="num">256</span>), k=N))
+random_arr = <span class="func">random</span>.<span class="func">choices</span>(<span class="func">range</span>(<span class="num">256</span>), k=N)
+<span class="comment"># 排序陣列 → 分支可預測 → 快</span>
+<span class="comment"># 隨機陣列 → 預測失敗 → 慢 2–3 倍</span></pre></div>
+<div class="code-tab-content" id="r1"><pre><span class="comment"># R：用 microbenchmark 量 CPU 吞吐量</span>
+<span class="kw">library</span>(microbenchmark)
+N &lt;- <span class="num">1e7</span>
+<span class="func">microbenchmark</span>(
+  loop  = <span class="func">sum</span>(<span class="func">seq_len</span>(N)),       <span class="comment"># R 內建向量化</span>
+  apply = <span class="func">Reduce</span>(<span class="str">"+"</span>, <span class="func">seq_len</span>(N)), <span class="comment"># 純函數 reduce，慢得多</span>
+  times = <span class="num">5L</span>
+)
+
+<span class="comment"># 多核心 / Multi-core via parallel</span>
+<span class="kw">library</span>(parallel)
+n_cores &lt;- <span class="func">detectCores</span>() - <span class="num">1L</span>
+<span class="func">mclapply</span>(<span class="num">1</span>:<span class="num">8</span>, <span class="kw">function</span>(i) <span class="func">sum</span>(<span class="func">runif</span>(<span class="num">1e7</span>)), mc.cores=n_cores)
+<span class="comment"># Windows 上改用 parLapply (mclapply 只在 Unix 有效)</span>
+
+<span class="comment"># 觀察 SIMD：向量化 vs for-loop</span>
+x &lt;- <span class="func">runif</span>(<span class="num">1e7</span>)
+<span class="func">system.time</span>(<span class="func">sum</span>(x))            <span class="comment"># 內建 SIMD ~0.005s</span>
+<span class="func">system.time</span>({s &lt;- <span class="num">0</span>; <span class="kw">for</span>(i <span class="kw">in</span> <span class="func">seq_along</span>(x)) s &lt;- s + x[i]; s})  <span class="comment"># ~2s</span></pre></div>
 <div class="code-tab-content" id="pseudo1"><pre><span class="comment">// Fetch-Decode-Execute 主迴圈 / Machine cycle main loop</span>
 <span class="kw">while</span> CPU is running:
-    instr = MEMORY[PC]              <span class="comment">// ① Fetch</span>
+    instr = MEMORY[PC]                <span class="comment">// ① Fetch</span>
     PC = PC + <span class="num">4</span>
     (op, rs, rt, rd) = <span class="func">Decode</span>(instr) <span class="comment">// ② Decode</span>
     <span class="kw">switch</span> op:                      <span class="comment">// ③ Execute</span>
-        <span class="kw">case</span> ADD:  REG[rd] = REG[rs] + REG[rt]
-        <span class="kw">case</span> SUB:  REG[rd] = REG[rs] − REG[rt]
-        <span class="kw">case</span> LOAD: REG[rd] = MEMORY[REG[rs]]   <span class="comment">// ④ Memory</span>
+        <span class="kw">case</span> ADD:   REG[rd] = REG[rs] + REG[rt]
+        <span class="kw">case</span> SUB:   REG[rd] = REG[rs] − REG[rt]
+        <span class="kw">case</span> LOAD:  REG[rd] = MEMORY[REG[rs]]   <span class="comment">// ④ Memory</span>
         <span class="kw">case</span> STORE: MEMORY[REG[rs]] = REG[rt]
-        <span class="kw">case</span> BEQ:  <span class="kw">if</span> REG[rs] == REG[rt]: PC = target
-    <span class="comment">// ⑤ Writeback already happened above</span></pre></div>
+        <span class="kw">case</span> BEQ:   <span class="kw">if</span> REG[rs] == REG[rt]: PC = target
+    <span class="comment">// ⑤ Writeback already happened above</span>
+
+<span class="comment">// Amdahl 定律 / Amdahl's Law: max speedup with P=parallel fraction, N=cores</span>
+<span class="kw">function</span> <span class="func">AmdahlSpeedup</span>(P, N):
+    <span class="kw">return</span> <span class="num">1</span> / ((<span class="num">1</span> − P) + P / N)
+<span class="comment">// 例：P=0.95, N=64 → speedup ≈ 16.6 (不是 64！)</span>
+<span class="comment">// 即使 95% 可平行，64 核也只快 16.6 倍——序列部分主宰</span></pre></div>
 </div>
 </section>
 
+<section class="section">
+<div class="section-label" data-zh="常見誤解" data-en="MISCONCEPTIONS">五個常見誤解</div>
+<h2 data-zh="十三、常見誤解與陷阱" data-en="XIII. Common Misconceptions">十三、常見誤解</h2>
+
+<div class="callout danger"><span class="callout-icon">🚨</span><div>
+<div data-lang="zh"><strong>誤解 #1：「時脈高 = CPU 快」</strong>——錯。<strong>速度 = Clock × IPC</strong>。Apple M3 (4.05 GHz, IPC ~8) 比 Intel Core Ultra (5.7 GHz, IPC ~5) 整體效能高，因為 IPC 大兩倍。AMD 90s 的「PR Rating」就是承認時脈不能單獨代表速度。</div>
+<div data-lang="en"><strong>Myth #1:</strong> "Higher clock = faster CPU." Wrong. <strong>Speed = Clock × IPC.</strong> Apple M3 (4.05 GHz, IPC ~8) often outperforms Intel Core Ultra (5.7 GHz, IPC ~5). AMD's 1990s "PR Rating" acknowledged that clock alone is misleading.</div>
+</div></div>
+
+<div class="callout danger"><span class="callout-icon">🚨</span><div>
+<div data-lang="zh"><strong>誤解 #2：「核心多 = 必定快」</strong>——錯。<strong>Amdahl 定律</strong>說：speedup = 1 / ((1−P) + P/N)，P 是可平行比例。若 P=0.95，N=64 → speedup 僅 16.6 倍（不是 64）。序列部分主宰結果。<strong>實務：</strong>不要盲目給 BAM merging 64 thread——磁碟 I/O 才 4–8 thread 就飽和。</div>
+<div data-lang="en"><strong>Myth #2:</strong> "More cores = always faster." Wrong. <strong>Amdahl's Law:</strong> speedup = 1 / ((1−P) + P/N), P = parallel fraction. With P=0.95, N=64 → only 16.6× (not 64). The serial part dominates. <strong>Practical:</strong> don't blindly give BAM merge 64 threads — disk I/O saturates at 4–8.</div>
+</div></div>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>誤解 #3：「Hyperthread = 真實核心」</strong>——錯。Intel Hyperthreading (Apple/AMD 也有 SMT) 讓一個物理核心同時跑 2 個邏輯執行緒，<strong>共享 ALU 與 cache</strong>。對 BWA、AlphaFold 這類 CPU-bound 工具，hyperthread 只加 20–40% 效能，<strong>不是 2 倍</strong>。對 I/O-bound 工作（資料庫、網頁伺服器）才接近 2 倍。</div>
+<div data-lang="en"><strong>Myth #3:</strong> "Hyperthread = real core." Wrong. Intel Hyperthreading (Apple/AMD also have SMT) lets one physical core run two logical threads, <strong>sharing ALUs and cache</strong>. For CPU-bound tools (BWA, AlphaFold), hyperthreading adds only 20–40%, <strong>not 2×</strong>. I/O-bound work (DBs, web servers) approaches 2×.</div>
+</div></div>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>誤解 #4：「GPU 永遠比 CPU 快」</strong>——錯。GPU 在<strong>並行矩陣運算</strong>勝出（AlphaFold、scGPT）；但 GPU 啟動 kernel 有 5–20 μs 延遲，對<strong>小資料、分支密集</strong>工作（BWA seeding、BAM index 查詢）反而慢過 CPU。實務：「先 CPU 再 GPU」常是正解（CPU 做 I/O + 預處理，GPU 做矩陣乘）。</div>
+<div data-lang="en"><strong>Myth #4:</strong> "GPU is always faster than CPU." Wrong. GPUs excel at <strong>parallel matrix ops</strong> (AlphaFold, scGPT); but GPU kernel launch has 5–20 μs latency, making them slower than CPUs on <strong>small, branchy</strong> workloads (BWA seeding, BAM index queries). Rule: CPU first (I/O + preprocessing), then GPU (matmul).</div>
+</div></div>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>誤解 #5：「Spectre / Meltdown 已修補了，可以忽略」</strong>——錯。<strong>新變種還在不斷出現</strong>：Foreshadow (2018)、ZombieLoad (2019)、CrossTalk (2020)、Retbleed (2022)、Inception (2023)、GoFetch (2024)、SLAM (2024)。雲端共享環境（AWS EC2、GCP）要特別小心 cross-tenant 側通道；單機通常不用擔心。</div>
+<div data-lang="en"><strong>Myth #5:</strong> "Spectre/Meltdown is patched; ignore it." Wrong. <strong>New variants keep appearing</strong>: Foreshadow (2018), ZombieLoad (2019), CrossTalk (2020), Retbleed (2022), Inception (2023), GoFetch (2024), SLAM (2024). Shared-cloud (AWS EC2, GCP) needs cross-tenant side-channel scrutiny; single-tenant usually fine.</div>
+</div></div>
+</section>
+
 <section class="quiz-section">
-<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<h3>📝 <span data-zh="自我檢測（5 題）" data-en="Self-Check (5 Questions)">自我檢測</span></h3>
+
 <div class="quiz-q" data-answer="1">
 <p data-lang="zh">1. 5-stage pipeline 中，「分支指令導致下一條取錯位址」屬於哪種危險？</p>
 <p data-lang="en">1. In a 5-stage pipeline, "a branch makes the next fetch ambiguous" is which kind of hazard?</p>
@@ -239,6 +356,43 @@ elapsed = time.<span class="func">perf_counter</span>() - start
 <div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 記憶體容量永遠不夠</span><span data-lang="en">C. Memory capacity is never enough</span></div>
 <div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 指令與資料共用一條匯流排，造成 CPU 等待記憶體</span><span data-lang="en">D. Instructions and data share one bus, leaving the CPU waiting on memory</span></div>
 </div><div class="quiz-feedback" id="fb3"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">4. 根據 Amdahl 定律，若一份工作 95% 可平行 (P=0.95)，在 64 核 CPU 上最大加速倍率約為？</p>
+<p data-lang="en">4. By Amdahl's Law, if 95% of a job is parallel (P=0.95), the max speedup on 64 cores is about?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 64 倍（線性加速）</span><span data-lang="en">A. 64× (linear)</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 32 倍</span><span data-lang="en">B. 32×</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 約 16.6 倍（序列部分主宰）</span><span data-lang="en">C. ~16.6× (serial part dominates)</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 約 5%</span><span data-lang="en">D. ~5%</span></div>
+</div><div class="quiz-feedback" id="fb4"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">5. 為何 AlphaFold2 推論用 GPU 而不是 CPU？</p>
+<p data-lang="en">5. Why does AlphaFold2 inference use GPU instead of CPU?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. CPU 不支援浮點運算</span><span data-lang="en">A. CPUs don't support floating point</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. GPU 時脈遠高於 CPU</span><span data-lang="en">B. GPUs have much higher clock than CPUs</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Transformer 90%+ 計算是大矩陣乘法，GPU 數千核心可平行處理，比 CPU 快 100×</span><span data-lang="en">C. 90%+ of Transformer compute is large matmul; thousands of GPU cores parallelize it ~100× faster than CPUs</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. GPU 記憶體比 CPU 大</span><span data-lang="en">D. GPU memory is larger than CPU memory</span></div>
+</div><div class="quiz-feedback" id="fb5"></div></div>
+</section>
+
+<section class="section" style="background:#fef3c7;border-radius:14px;padding:32px;">
+<div class="section-label">💭 <span data-zh="延伸思考" data-en="DISCUSSION">延伸思考</span></div>
+<h2 data-zh="十四、延伸思考與討論" data-en="XIV. Discussion & Reflection">十四、延伸思考</h2>
+<ol style="margin-left:20px;line-height:1.9;color:var(--c-ink);">
+<li data-lang="zh"><strong>Spectre 教我們什麼？</strong> 投機執行帶來 ~30% 效能，但安全代價是？「為了安全，是否該禁用 speculative execution？」業界至今仍在拉鋸。</li>
+<li data-lang="en"><strong>What does Spectre teach us?</strong> Speculative execution gives ~30% performance, but at what security cost? "Should we disable speculation for security?" The industry still debates.</li>
+<li data-lang="zh"><strong>神經型態 CPU 會取代 von Neumann 嗎？</strong> Intel Loihi 2、IBM NorthPole 用「事件驅動」突破 von Neumann 瓶頸——但通用性差。它能取代主流 CPU 嗎？還是只當 AI 加速器？</li>
+<li data-lang="en"><strong>Will neuromorphic chips replace von Neumann?</strong> Intel Loihi 2, IBM NorthPole are "event-driven," beating the von Neumann bottleneck — but lack generality. Mainstream replacement? Or AI-only accelerator?</li>
+<li data-lang="zh"><strong>RISC-V 開源 ISA 的長遠影響？</strong> 印度政府、歐盟、Tenstorrent、Meta 都已採用。它能像 Linux 一樣統一硬體生態嗎？對生資意味著什麼？</li>
+<li data-lang="en"><strong>Long-term impact of RISC-V open ISA?</strong> India, EU, Tenstorrent, Meta have adopted it. Will it unify hardware like Linux unified OSes? What does it mean for bioinformatics?</li>
+<li data-lang="zh"><strong>Apple 統一記憶體：未來主流？</strong> 若所有 CPU 都採 UMA + chiplet，那「離散 GPU + PCIe」設計還有存在價值嗎？對大 atlas scRNA-seq 工作流意義為何？</li>
+<li data-lang="en"><strong>Apple's unified memory: the future mainstream?</strong> If all CPUs adopt UMA + chiplet, do discrete GPUs + PCIe still make sense? What does it mean for large atlas scRNA-seq workflows?</li>
+<li data-lang="zh"><strong>FPGA 在生資能贏 GPU 嗎？</strong> Illumina DRAGEN 用 FPGA 跑 BWA + GATK 比純 CPU 快 30×。為何 GPU 沒大規模取代它？</li>
+<li data-lang="en"><strong>Can FPGAs beat GPUs in bio?</strong> Illumina DRAGEN runs BWA + GATK 30× faster than CPU using FPGAs. Why hasn't GPU displaced this?</li>
+</ol>
 </section>
 
 <nav class="page-nav">
@@ -275,8 +429,46 @@ new Chart(document.getElementById('cpuChart'),{
     scales:{y:{title:{display:true,text:'log-scaled mixed metric'}}}}
 });
 
-// Quiz
-const QF={zh:{q1_y:'分支去向未知 → 取指錯誤 → 控制危險。',q1_n:'答案 B。',q2_y:'RISC 指令簡單、定長、易管線；ARM/RISC-V 主導行動與嵌入式。',q2_n:'答案 C。',q3_y:'von Neumann 共用匯流排造成指令與資料無法同時取——這就是瓶頸的本質。',q3_n:'答案 D。'},en:{q1_y:'Unknown branch target → wrong fetch → control hazard.',q1_n:'Answer: B.',q2_y:'RISC has simple, fixed-length, pipeline-friendly instructions; ARM/RISC-V dominate mobile and embedded.',q2_n:'Answer: C.',q3_y:'Sharing one bus prevents simultaneous instruction+data access — that is the bottleneck.',q3_n:'Answer: D.'}};
-document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
+// Pipeline visualization
+let pipeMode='ideal';
+const stages=['IF','ID','EX','MEM','WB'];
+const stageColors={'IF':'#3b82f6','ID':'#8b5cf6','EX':'#16a34a','MEM':'#f59e0b','WB':'#dc2626','--':'#e5e7eb','🟡':'#fde047'};
+function renderPipe(){
+  // Build the 5-instruction schedule
+  const idealRows=[];
+  for(let i=0;i<5;i++){
+    const row=new Array(10).fill('--');
+    for(let s=0;s<5;s++)row[i+s]=stages[s];
+    idealRows.push(row);
+  }
+  // Hazard: I2 depends on I1, needs 2 bubble cycles before EX
+  const hazardRows=[];
+  hazardRows.push([...idealRows[0]]);   // I1 unchanged
+  const i2=new Array(10).fill('--');
+  i2[1]='IF';i2[2]='ID';i2[3]='🟡';i2[4]='🟡';i2[5]='EX';i2[6]='MEM';i2[7]='WB';
+  hazardRows.push(i2);
+  // I3..I5 shift by 2 because of stalls
+  for(let i=2;i<5;i++){
+    const row=new Array(10).fill('--');
+    for(let s=0;s<5;s++)row[i+s+2]=stages[s];
+    hazardRows.push(row);
+  }
+  const rows=pipeMode==='ideal'?idealRows:hazardRows;
+  const L=I18n.get();
+  const insn=L==='zh'?'指令':'Insn';
+  let html='<table style="border-collapse:collapse;margin:auto;font-family:var(--font-mono);font-size:.82rem;">';
+  html+='<tr><th style="padding:6px 10px;background:var(--c-accent-dark);color:#fff;font-weight:600;">'+insn+'</th>';
+  for(let c=0; c++) html+='<th style="padding:6px 10px;background:#f1f5f9;">'+c+'</th>';
+  html+='</tr>';
+  rows.forEach((r,i)=>{
+    html+='<tr><td style="padding:6px 10px;background:var(--c-accent-dark);color:#fff;font-weight:600;">'+(L==='zh'?'I':'I')+(i+1)+'</td>';
+    r.forEach(s=>{const bg=s==='--'?'#fff':(s==='--'?'#fff':'#e0e7ff');html+='<td style="padding:5px 10px;text-align:center;background:'+bg+';">'+(s==='--'?'·':s)+'</td>';});
+    html+='</tr>';
+  });
+  html+='</table>';
+  document.getElementById('pipelineViz').innerHTML=html;
+}
+document.querySelectorAll('input[name="pipeMode"]').forEach(r=>r.addEventListener('change',renderPipeline));
+renderPipeline();
 </script>
 </body></html>

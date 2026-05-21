@@ -12,204 +12,599 @@
 <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
 <header class="page-hero"><div class="step-badge">CHAPTER 11 / 16</div>
 <h1 data-zh="資料結構" data-en="Data Structures">資料結構</h1>
-<p class="subtitle" data-lang="zh">演算法是邏輯；資料結構是容器——兩者一體兩面。選對容器，演算法的複雜度自然下降。</p>
-<p class="subtitle" data-lang="en">Algorithms are the logic; data structures are the containers — two faces of the same coin. Pick the right container and complexity drops on its own.</p>
+<p class="subtitle" data-lang="zh">一張 1 GB 的人類基因組 FASTA，用錯資料結構查 BRCA1 位置可能要 10 分鐘；用對結構只要 0.01 秒——快 60,000×。資料結構是程式設計的「骨架」。</p>
+<p class="subtitle" data-lang="en">A 1 GB human-genome FASTA: looking up BRCA1 with the wrong data structure may take 10 minutes; with the right one, 0.01 seconds — 60,000× faster. Data structures are the skeleton of programming.</p>
 </header>
 <main class="content-wrap">
 
 <section class="section">
-<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
-<h2 data-zh="為什麼資料結構重要？" data-en="Why data structures matter">為什麼資料結構重要？</h2>
-<div data-lang="zh"><p>同一個搜尋任務，用未排序陣列要 O(n)、排序陣列加二分搜尋要 O(log n)、Hash Table 卻只要 O(1)。<strong>資料結構決定了你的演算法能跑多快。</strong></p>
-<p>Linus Torvalds 曾說：「<em>Bad programmers worry about the code. Good programmers worry about data structures and their relationships.</em>」這也是面試的高頻考點。</p></div>
-<div data-lang="en"><p>The same lookup is O(n) in an unsorted array, O(log n) in a sorted array with binary search, and O(1) in a hash table. <strong>Data structures dictate how fast your algorithm can run.</strong></p>
-<p>Linus Torvalds: "<em>Bad programmers worry about the code. Good programmers worry about data structures and their relationships.</em>" Also the most-tested interview topic.</p></div>
-<div class="callout tip"><span class="callout-icon">💡</span><div>
-<span data-lang="zh"><strong>核心觀念：</strong>每種資料結構都是一組「時空 trade-off」。Hash 快但耗記憶體；Linked List 省記憶體但慢；Array 中庸但插入差。沒有萬能解。</span>
-<span data-lang="en"><strong>Core idea:</strong> Every data structure is a time-space trade-off. Hashes are fast but memory-hungry; linked lists are slim but slow; arrays are middle-of-the-road but slow to insert. No silver bullet.</span>
-</div></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="線性結構" data-en="LINEAR">線性結構</div>
-<h2 data-zh="一、線性：Array、Linked List、Stack、Queue" data-en="I. Linear: Array, Linked List, Stack, Queue">一、線性資料結構</h2>
-<div class="card-grid cols-2">
-<div class="card"><h4>📦 Array</h4><div data-lang="zh"><p>連續記憶體區塊。<strong>存取 O(1)</strong>，但插入/刪除中間元素需移動其他元素 O(n)。Python 的 <code>list</code>、C 的陣列、Java 的 ArrayList 屬此類。</p></div><div data-lang="en"><p>Contiguous memory. <strong>Random access O(1)</strong>; inserting/deleting in the middle is O(n) because elements must shift. Python <code>list</code>, C arrays, Java ArrayList are arrays.</p></div></div>
-<div class="card"><h4>🔗 Linked List</h4><div data-lang="zh"><p>每個 node 透過指標指向下一個 node。<strong>插入/刪除 O(1)</strong>，但隨機存取 O(n)。雙向、循環、跳表等變體。</p></div><div data-lang="en"><p>Each node points to the next. <strong>Insert/delete O(1)</strong>; random access is O(n). Variants: doubly-linked, circular, skip list.</p></div></div>
-<div class="card"><h4>📚 Stack (LIFO)</h4><div data-lang="zh"><p>「後進先出」（Last In First Out）。瀏覽器返回、函式呼叫、撤銷 (undo) 全靠 stack。操作：push、pop、peek，全為 O(1)。</p></div><div data-lang="en"><p>Last In, First Out. Browser back, function calls, undo — all stacks. Push, pop, peek are O(1).</p></div></div>
-<div class="card"><h4>🎫 Queue (FIFO)</h4><div data-lang="zh"><p>「先進先出」。任務排程、訊息佇列、BFS 都用 queue。雙端佇列 (<strong>deque</strong>) 可雙頭操作，Python 的 <code>collections.deque</code> 是優選。</p></div><div data-lang="en"><p>First In, First Out. Task scheduling, message queues, BFS use queues. A <strong>deque</strong> allows ops at both ends; Python's <code>collections.deque</code> is preferred.</p></div></div>
-</div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="互動演示" data-en="INTERACTIVE">Stack vs Queue</div>
-<h2 data-zh="二、互動：Stack push/pop vs Queue enqueue/dequeue" data-en="II. Interactive: Stack push/pop vs Queue enqueue/dequeue">二、互動：Stack vs Queue</h2>
-<div class="interactive-panel">
-<div style="display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-bottom:16px;">
-  <div style="text-align:center;"><div style="font-weight:600;margin-bottom:6px;">📚 Stack (LIFO)</div>
-    <div id="stackDisp" style="min-width:120px;min-height:160px;border:2px solid var(--c-accent);border-radius:6px;padding:6px;display:flex;flex-direction:column-reverse;gap:4px;background:rgba(29,78,216,.05);"></div>
-    <div style="margin-top:8px;"><button class="code-tab-btn" onclick="stackPush()">push</button> <button class="code-tab-btn" onclick="stackPop()">pop</button></div></div>
-  <div style="text-align:center;"><div style="font-weight:600;margin-bottom:6px;">🎫 Queue (FIFO)</div>
-    <div id="queueDisp" style="min-width:120px;min-height:160px;border:2px solid var(--c-accent);border-radius:6px;padding:6px;display:flex;flex-direction:column;gap:4px;background:rgba(29,78,216,.05);"></div>
-    <div style="margin-top:8px;"><button class="code-tab-btn" onclick="queueAdd()">enqueue</button> <button class="code-tab-btn" onclick="queueRemove()">dequeue</button></div></div>
-</div>
-<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;"><span data-lang="zh">點選按鈕觀察兩種容器存取順序的差異</span><span data-lang="en">Click the buttons to compare access order of the two containers</span></p>
-</div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="雜湊" data-en="HASH">Hash Table</div>
-<h2 data-zh="三、Hash Table：O(1) 的魔法" data-en="III. Hash Table: The O(1) Magic">三、Hash Table</h2>
-<div data-lang="zh"><p>Hash Table 由 <strong>hash function</strong> 把 key 對應到陣列索引。理想情況下，查找、插入、刪除都是 O(1)。Python 的 <code>dict</code>、JavaScript 的 <code>Object</code> / <code>Map</code>、Java 的 <code>HashMap</code> 都基於 hash。</p>
-<p><strong>碰撞 (collision)</strong>：兩個 key 算出同一個索引時的處理方式：</p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>Chaining</strong>：每個 bucket 是一個 linked list。Python、Java 採用。</li>
-<li><strong>Open Addressing</strong>：碰撞時跳到下一個空 bucket。CPU cache 友善，但需要小心 load factor。</li>
-</ul></div>
-<div data-lang="en"><p>A hash table uses a <strong>hash function</strong> to map keys to array indices. Ideally lookup/insert/delete are O(1). Python <code>dict</code>, JS <code>Object</code>/<code>Map</code>, Java <code>HashMap</code> all use hashes.</p>
-<p><strong>Collision</strong> handling — when two keys hash to the same bucket:</p>
-<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>Chaining</strong>: each bucket is a linked list. Used by Python and Java.</li>
-<li><strong>Open Addressing</strong>: probe to the next empty bucket. Cache-friendly but watch the load factor.</li>
-</ul></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="樹與圖" data-en="TREES & GRAPHS">樹與圖</div>
-<h2 data-zh="四、樹與圖" data-en="IV. Trees and Graphs">四、樹與圖</h2>
-<table class="comp-table">
-<thead><tr><th data-zh="結構" data-en="Structure">結構</th><th data-zh="特性" data-en="Property">特性</th><th data-zh="典型用途" data-en="Use case">典型用途</th></tr></thead>
-<tbody>
-<tr><td>Binary Tree</td><td data-lang="zh">每個 node 最多 2 個子節點</td><td data-lang="en">Each node has ≤ 2 children</td><td data-lang="zh">運算式樹、層次結構</td><td data-lang="en">Expression trees, hierarchies</td></tr>
-<tr><td>BST</td><td data-lang="zh">左 &lt; 根 &lt; 右；搜尋平均 O(log n)</td><td data-lang="en">left &lt; root &lt; right; avg search O(log n)</td><td data-lang="zh">符號表、簡易索引</td><td data-lang="en">Symbol tables, simple indexes</td></tr>
-<tr><td>AVL / Red-Black</td><td data-lang="zh">自平衡 BST，最差仍 O(log n)</td><td data-lang="en">Self-balancing BST, worst-case O(log n)</td><td data-lang="zh">C++ <code>std::map</code>、Linux scheduler</td><td data-lang="en">C++ <code>std::map</code>, Linux scheduler</td></tr>
-<tr><td>Heap (priority queue)</td><td data-lang="zh">完全二元樹；最大/最小在根</td><td data-lang="en">Complete binary tree; max/min at root</td><td data-lang="zh">Dijkstra、Top-K、heapsort</td><td data-lang="en">Dijkstra, top-K, heapsort</td></tr>
-<tr><td>Trie (字典樹)</td><td data-lang="zh">每個 edge 代表一個字元</td><td data-lang="en">Each edge represents a character</td><td data-lang="zh">自動補字、IP 路由</td><td data-lang="en">Autocomplete, IP routing</td></tr>
-<tr><td>Graph</td><td data-lang="zh">node + edge (有向/無向、加權)</td><td data-lang="en">Nodes + edges (directed/undirected, weighted)</td><td data-lang="zh">社交網路、地圖、依賴關係</td><td data-lang="en">Social networks, maps, dependencies</td></tr>
-</tbody></table>
-<div class="callout warn"><span class="callout-icon">⚠️</span><div>
-<div data-lang="zh"><strong>圖的表示法：</strong>① <strong>Adjacency Matrix</strong> O(V²) 空間，邊查 O(1)，適合稠密圖；② <strong>Adjacency List</strong> O(V+E) 空間，遍歷快，適合稀疏圖（多數真實場景）。<strong>BFS</strong> 用 queue 找最短「邊數」；<strong>DFS</strong> 用 stack 或遞迴，常用於拓樸排序。</div>
-<div data-lang="en"><strong>Graph representations:</strong> (1) <strong>Adjacency Matrix</strong> uses O(V²) space, O(1) edge lookup — good for dense graphs; (2) <strong>Adjacency List</strong> uses O(V+E) — better for sparse graphs (most real ones). <strong>BFS</strong> uses a queue for shortest edges; <strong>DFS</strong> uses a stack or recursion, often for topological sort.</div>
-</div></div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="進階結構" data-en="ADVANCED">進階資料結構</div>
-<h2 data-zh="五、進階：Bloom filter、Skip list、LSM-tree" data-en="V. Advanced: Bloom filter, Skip list, LSM-tree">五、進階資料結構</h2>
-<div class="card-grid cols-3">
-<div class="card"><h4>🌸 Bloom Filter</h4><div data-lang="zh"><p>機率性結構：「絕對不存在」或「可能存在」。極省記憶體，常用於 CDN、爬蟲去重、資料庫快取預判。</p></div><div data-lang="en"><p>Probabilistic set: "definitely not" or "maybe." Tiny memory; used for CDN caches, crawler dedup, DB cache prefilter.</p></div></div>
-<div class="card"><h4>🪜 Skip List</h4><div data-lang="zh"><p>多層 linked list，期望 O(log n) 查找。Redis 的 sorted set (zset) 與某些資料庫索引用此結構。</p></div><div data-lang="en"><p>Multi-level linked list with expected O(log n) lookup. Used by Redis sorted sets and some DB indexes.</p></div></div>
-<div class="card"><h4>🌲 LSM-Tree</h4><div data-lang="zh"><p>Log-Structured Merge Tree。寫入快、適合 SSD，LevelDB、RocksDB、Cassandra、ScyllaDB 都用。</p></div><div data-lang="en"><p>Log-Structured Merge Tree. Write-optimized, SSD-friendly; powers LevelDB, RocksDB, Cassandra, ScyllaDB.</p></div></div>
-</div>
-</section>
-
-<section class="section">
-<div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">該選哪一種？</div>
-<h2 data-zh="六、決策：該選哪種資料結構？" data-en="VI. Decision: Which data structure to pick?">六、該選哪種資料結構？</h2>
-<div class="decision-tree">
-<h4>🌳 <span data-zh="資料結構選擇樹" data-en="Data structure selector">資料結構選擇樹</span></h4>
+<div class="section-label" data-zh="開場" data-en="OPENING">60,000× 的差距</div>
+<h2 data-zh="同一個檔案，60,000 倍的差距" data-en="Same File, 60,000× Difference">同一個檔案，60,000 倍的差距</h2>
 <div data-lang="zh">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>需要「依鍵快速查值」？<span class="dt-arrow">→ 是 →</span> <strong>Hash Table (dict/map)</strong>，平均 O(1)。若還要排序遍歷 → 改用紅黑樹型 map。</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>頻繁從尾端 push/pop？<span class="dt-arrow">→ 是 →</span> <strong>Stack (LIFO)</strong> 用 array-based stack；雙端 push/pop → <strong>deque</strong>。</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>要先進先出 (任務排程、BFS)？<span class="dt-arrow">→ 是 →</span> <strong>Queue</strong> 或 <strong>deque</strong>。</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>要「永遠取最大/最小」？<span class="dt-arrow">→ 是 →</span> <strong>Heap / Priority Queue</strong>，<code>heapq</code>、Java <code>PriorityQueue</code>。</div></div>
-<div class="dt-node"><span class="dt-q">Q5:</span><div>需要範圍查詢 / 排序順序遍歷？<span class="dt-arrow">→ 是 →</span> <strong>BST / Skip List / B-Tree (DB 索引)</strong>。</div></div>
-<div class="dt-node"><span class="dt-q">Q6:</span><div>處理關聯/網路？<span class="dt-arrow">→</span> <strong>Graph + Adjacency List</strong>，搭配 BFS / DFS / Dijkstra。</div></div>
+<p>假設你有一個 1 GB 的 <code>hg38.fa</code> 人類參考基因組。你想知道 <strong>BRCA1 基因從第幾個 byte 開始</strong>。怎麼找？</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);line-height:1.8;">
+<li><strong>方法 A：</strong>用 Python 開檔，<code>for line in f: if "BRCA1" in line: ...</code>——掃整個 1 GB 檔案。耗時 <strong>10 分鐘</strong>。</li>
+<li><strong>方法 B：</strong>先用 <code>samtools faidx hg38.fa</code> 建立 <code>.fai</code> 索引（一個小檔，內含每條染色體在 FASTA 的位元組偏移）；再用 <code>samtools faidx hg38.fa chr17:43044295-43170245</code>。耗時 <strong>0.01 秒</strong>。</li>
+</ul>
+<p>差距 <strong>60,000 倍</strong>。差別在哪？方法 A 用的是 list/sequential scan；方法 B 用的是 <strong>hash table + B-tree-style index</strong>。<strong>選對資料結構，速度勝過任何硬體升級。</strong></p>
+<p>這一章不只教你「array vs list」，它要回答：為什麼 BAM 一定要有 <code>.bai</code>？為什麼 SPAdes 用 de Bruijn graph 做組裝？為什麼 BLAST 用 hash table 找 k-mer？</p>
 </div>
 <div data-lang="en">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>Fast key→value lookup? <span class="dt-arrow">→ Yes →</span> <strong>Hash Table</strong>, avg O(1). Need sorted iteration too → use a tree-based map.</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>Frequent push/pop at one end? <span class="dt-arrow">→ Yes →</span> <strong>Stack (LIFO)</strong>; both ends → <strong>deque</strong>.</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>FIFO (task scheduling, BFS)? <span class="dt-arrow">→ Yes →</span> <strong>Queue</strong> or <strong>deque</strong>.</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>Always need max/min? <span class="dt-arrow">→ Yes →</span> <strong>Heap / Priority Queue</strong>: <code>heapq</code>, Java <code>PriorityQueue</code>.</div></div>
-<div class="dt-node"><span class="dt-q">Q5:</span><div>Range queries / sorted scan? <span class="dt-arrow">→ Yes →</span> <strong>BST / Skip List / B-Tree</strong> (DB indexes).</div></div>
-<div class="dt-node"><span class="dt-q">Q6:</span><div>Modeling relationships/networks? <span class="dt-arrow">→</span> <strong>Graph + Adjacency List</strong> with BFS / DFS / Dijkstra.</div></div>
+<p>Suppose you have a 1 GB <code>hg38.fa</code> human reference genome. You want to know <strong>at which byte offset BRCA1 starts</strong>. How?</p>
+<ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);line-height:1.8;">
+<li><strong>Method A:</strong> open in Python, <code>for line in f: if "BRCA1" in line: ...</code> — scans the entire 1 GB. Takes <strong>10 minutes</strong>.</li>
+<li><strong>Method B:</strong> run <code>samtools faidx hg38.fa</code> once to build a <code>.fai</code> index (a small file mapping each chromosome to its byte offset); then <code>samtools faidx hg38.fa chr17:43044295-43170245</code>. Takes <strong>0.01 seconds</strong>.</li>
+</ul>
+<p>That's <strong>60,000×</strong>. The difference: Method A uses a list/sequential scan; Method B uses a <strong>hash table + B-tree-style index</strong>. <strong>Picking the right data structure beats any hardware upgrade.</strong></p>
+<p>This chapter isn't just "array vs list." It answers: why does BAM always need a <code>.bai</code>? Why does SPAdes use de Bruijn graphs for assembly? Why does BLAST hash k-mers?</p>
+</div>
+<div class="callout tip"><span class="callout-icon">💡</span><div>
+<span data-lang="zh"><strong>核心觀念：</strong>資料結構 = 資料的「組織方式」+ 一組可用的「操作」。同一份資料以不同結構儲存，搜尋、插入、刪除、範圍查詢的複雜度天差地別。<strong>沒有最好的結構，只有最配合「工作負載 (workload)」的結構。</strong></span>
+<span data-lang="en"><strong>Core idea:</strong> A data structure = data's <em>organization</em> + a set of <em>operations</em>. The same data, stored differently, has wildly different complexities for search / insert / delete / range queries. <strong>There is no "best" structure — only the one that fits your workload.</strong></span>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="核心結構" data-en="CORE STRUCTURES">核心：八大結構</div>
+<h2 data-zh="一、初學者必懂的八大資料結構" data-en="I. Eight Core Data Structures for Beginners">一、八大資料結構速覽</h2>
+<div class="card-grid cols-2">
+<div class="card"><div class="card-icon">📚</div><h4>Array / List <span style="color:var(--c-ink-muted);font-weight:400;font-size:.9rem;">線性</span></h4>
+<div data-lang="zh"><p>連續記憶體格子，<strong>索引存取 O(1)</strong>、<strong>中間插入 O(n)</strong>。Python list、NumPy array、C array、Rust Vec 全是這類。<strong>cache friendly</strong>，是最常用的結構。</p></div>
+<div data-lang="en"><p>Contiguous memory cells. <strong>Index access O(1)</strong>, <strong>middle insert O(n)</strong>. Python list, NumPy array, C array, Rust Vec — all this family. <strong>Cache-friendly</strong>, the most common structure.</p></div></div>
+
+<div class="card"><div class="card-icon">🔗</div><h4>Linked List <span style="color:var(--c-ink-muted);font-weight:400;font-size:.9rem;">線性</span></h4>
+<div data-lang="zh"><p>每個節點存「資料 + 下一節點 pointer」。<strong>頭插 O(1)、中間插 O(1)（若已有指標）</strong>，但 <strong>索引存取 O(n)</strong>。實務少用（cache 不友善），但 OS kernel 的 task list、Lisp 全靠它。</p></div>
+<div data-lang="en"><p>Each node holds "data + pointer to next." <strong>Head insert O(1), middle insert O(1)</strong> (if you have a pointer), but <strong>index access O(n)</strong>. Less used in practice (cache-unfriendly), but OS kernel task lists and Lisp depend on it.</p></div></div>
+
+<div class="card"><div class="card-icon">📥</div><h4>Stack (LIFO) <span style="color:var(--c-ink-muted);font-weight:400;font-size:.9rem;">線性</span></h4>
+<div data-lang="zh"><p><strong>後進先出</strong>。push/pop 都 O(1)。函式呼叫的 call stack、HTML 解析、撤銷 (Ctrl-Z) 全用 Stack。Python list 加 append/pop 就是 stack。</p></div>
+<div data-lang="en"><p><strong>Last in, first out.</strong> push/pop both O(1). Function call stacks, HTML parsing, undo (Ctrl-Z) — all stacks. Python list with append/pop is a stack.</p></div></div>
+
+<div class="card"><div class="card-icon">📤</div><h4>Queue / Deque <span style="color:var(--c-ink-muted);font-weight:400;font-size:.9rem;">線性</span></h4>
+<div data-lang="zh"><p><strong>先進先出 (FIFO)</strong>，enqueue/dequeue O(1)。BFS 走訪、列印佇列、任務排程。<code>collections.deque</code> 是雙端 queue。</p></div>
+<div data-lang="en"><p><strong>First in, first out.</strong> enqueue/dequeue O(1). BFS traversal, printer queue, task scheduling. <code>collections.deque</code> is double-ended.</p></div></div>
+
+<div class="card"><div class="card-icon">🗂️</div><h4>Hash Table <span style="color:var(--c-ink-muted);font-weight:400;font-size:.9rem;">雜湊</span></h4>
+<div data-lang="zh"><p>用 hash function 把 key 映射到 array 索引。<strong>平均 O(1)</strong>，最壞 O(n)（collision）。Python dict、Java HashMap、C++ unordered_map、Redis 全部是 hash table。是<strong>最常用的「快速查找」結構</strong>。</p></div>
+<div data-lang="en"><p>A hash function maps keys to array indices. <strong>Average O(1)</strong>, worst O(n) (collisions). Python dict, Java HashMap, C++ unordered_map, Redis — all hash tables. <strong>The most common "fast lookup" structure.</strong></p></div></div>
+
+<div class="card"><div class="card-icon">🌳</div><h4>Tree (BST/AVL/RB) <span style="color:var(--c-ink-muted);font-weight:400;font-size:.9rem;">樹</span></h4>
+<div data-lang="zh"><p>每節點有最多兩個子節點，左子小、右子大。<strong>平衡樹（AVL、Red-Black）保證搜尋/插入/刪除 O(log n)</strong>。C++ std::map、Java TreeMap、Linux 完全公平排程器全用 RB Tree。</p></div>
+<div data-lang="en"><p>Each node has up to two children, left smaller, right larger. <strong>Balanced trees (AVL, Red-Black) guarantee O(log n)</strong> for search/insert/delete. C++ std::map, Java TreeMap, Linux CFS scheduler — all RB Trees.</p></div></div>
+
+<div class="card"><div class="card-icon">⛰️</div><h4>Heap (Binary Heap) <span style="color:var(--c-ink-muted);font-weight:400;font-size:.9rem;">樹</span></h4>
+<div data-lang="zh"><p>完全二元樹，<strong>min-heap</strong>：父節點 ≤ 子節點。<strong>取最小 O(1)、插入/刪除 O(log n)</strong>。實作 priority queue、Dijkstra、heapsort 的核心。Python <code>heapq</code>。</p></div>
+<div data-lang="en"><p>Complete binary tree. <strong>Min-heap</strong>: parent ≤ children. <strong>Get-min O(1), insert/delete O(log n)</strong>. Core of priority queues, Dijkstra, heapsort. Python <code>heapq</code>.</p></div></div>
+
+<div class="card"><div class="card-icon">🕸️</div><h4>Graph <span style="color:var(--c-ink-muted);font-weight:400;font-size:.9rem;">圖</span></h4>
+<div data-lang="zh"><p>節點 (vertex) + 邊 (edge)。可有向/無向、加權/無加權。<strong>表示法</strong>：① adjacency matrix V² 空間；② adjacency list V+E 空間。社群網路、基因組組裝 (de Bruijn graph)、蛋白質網路都是 graph。</p></div>
+<div data-lang="en"><p>Vertices + edges. Directed/undirected, weighted/unweighted. <strong>Representations</strong>: (1) adjacency matrix V² space; (2) adjacency list V+E space. Social networks, genome assembly (de Bruijn graphs), protein interaction networks — all graphs.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動 #1" data-en="INTERACTIVE #1">複雜度速查表</div>
+<h2 data-zh="二、互動 #1：八大結構的操作複雜度（Chart）" data-en="II. Interactive #1: Operation Complexity Across Structures">二、操作複雜度速查表</h2>
+<div data-lang="zh"><p>下圖以分數形式可視化各結構在「Insert / Search / Delete」操作的複雜度（越低越好；O(1)=1, O(log n)=3, O(n)=10）。<strong>注意 Hash Table 的搜尋是 O(1)，但對「範圍查詢」無能為力——必須用 Tree</strong>。</p></div>
+<div data-lang="en"><p>Below: complexity scores per structure for Insert / Search / Delete (lower = better; O(1)=1, O(log n)=3, O(n)=10). <strong>Hash tables are O(1) for search but useless for range queries — that requires a tree.</strong></p></div>
+<div class="interactive-panel">
+<div class="chart-container" style="height:420px;"><canvas id="dsChart"></canvas></div>
+</div>
+
+<table class="comp-table">
+<thead><tr><th data-zh="結構" data-en="Structure">結構</th><th>Access</th><th>Search</th><th>Insert</th><th>Delete</th><th data-zh="記憶體" data-en="Memory">記憶體</th></tr></thead>
+<tbody>
+<tr><td>Array</td><td>O(1)</td><td>O(n)</td><td>O(n)</td><td>O(n)</td><td>O(n)</td></tr>
+<tr><td>Linked List</td><td>O(n)</td><td>O(n)</td><td>O(1)*</td><td>O(1)*</td><td>O(n)</td></tr>
+<tr><td>Stack / Queue</td><td>O(n)</td><td>O(n)</td><td>O(1)</td><td>O(1)</td><td>O(n)</td></tr>
+<tr><td>Hash Table</td><td>—</td><td>O(1) avg</td><td>O(1) avg</td><td>O(1) avg</td><td>O(n)</td></tr>
+<tr><td>BST (unbalanced)</td><td>O(n)</td><td>O(n)</td><td>O(n)</td><td>O(n)</td><td>O(n)</td></tr>
+<tr><td>AVL / Red-Black Tree</td><td>O(log n)</td><td>O(log n)</td><td>O(log n)</td><td>O(log n)</td><td>O(n)</td></tr>
+<tr><td>Binary Heap</td><td>O(1) min</td><td>O(n)</td><td>O(log n)</td><td>O(log n)</td><td>O(n)</td></tr>
+<tr><td>Trie</td><td>O(m)</td><td>O(m)</td><td>O(m)</td><td>O(m)</td><td>O(N·m)</td></tr>
+<tr><td>Bloom Filter</td><td>—</td><td>O(k)</td><td>O(k)</td><td>—</td><td data-zh="極小" data-en="Tiny">極小</td></tr>
+</tbody></table>
+<p style="font-size:.82rem;color:var(--c-ink-muted);">* <span data-lang="zh">前提是已有指標到該節點；找節點仍 O(n)。m = 字串長度，N = trie 中字串總數。</span><span data-lang="en">Given a pointer to the node; finding the node is O(n). m = string length, N = total strings.</span></p>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="深入剖析" data-en="DEEP DIVE">Hash, Tree, Trie</div>
+<h2 data-zh="三、深入剖析：Hash 設計、Tree 旋轉、Trie 前綴" data-en="III. Deep Dive: Hash Design, Tree Rotations, Trie Prefixes">三、深入剖析：Hash, Tree, Trie</h2>
+
+<h3 data-zh="3.1 Hash function 與 collision" data-en="3.1 Hash Functions and Collisions">3.1 Hash function 與 collision 處理</h3>
+<div data-lang="zh"><p>Hash function 把任意 key 映射到固定範圍 [0, m) 的整數。<strong>理想性質</strong>：① 均勻分佈、② 易計算、③ 雪崩效應（input 變一個 bit，output 大幅改變）。</p>
+<p><strong>常見 hash</strong>：FNV-1a (簡單)、MurmurHash3 (快、非加密)、SipHash (Python 預設，抗 hash flooding 攻擊)、SHA-256 (加密用)。</p>
+<p><strong>Collision 處理</strong>：① <strong>Chaining</strong>：每個 bucket 是 linked list（Java HashMap 用此，超過 8 個轉成 RB Tree）；② <strong>Open addressing</strong>：碰撞時找下一個空格（線性探測 / quadratic / 雙重 hashing）。</p>
+<p><strong>Load factor</strong>：α = n/m。當 α &gt; 0.75 通常 resize（rehash 全部）。</p></div>
+<div data-lang="en"><p>A hash function maps any key into [0, m). <strong>Ideal properties</strong>: (1) uniform distribution, (2) cheap to compute, (3) avalanche (1-bit input change → big output change).</p>
+<p><strong>Common hashes</strong>: FNV-1a (simple), MurmurHash3 (fast, non-crypto), SipHash (Python default, resists hash-flooding attacks), SHA-256 (cryptographic).</p>
+<p><strong>Collision handling</strong>: (1) <strong>Chaining</strong> — each bucket is a linked list (Java HashMap, &gt;8 entries becomes RB Tree); (2) <strong>Open addressing</strong> — probe forward on collision (linear / quadratic / double hashing).</p>
+<p><strong>Load factor</strong>: α = n/m. Usually resize (rehash all) when α &gt; 0.75.</p></div>
+
+<h3 data-zh="3.2 平衡二元樹的旋轉" data-en="3.2 Balanced BST Rotations">3.2 為何要「旋轉」？平衡的代價</h3>
+<div data-lang="zh"><p>未平衡的 BST：若按順序插入 1,2,3,4,5，會退化成 linked list (O(n))。<strong>AVL Tree</strong>：每節點存 balance factor (左高-右高)，超過 ±1 就做 LL/RR/LR/RL 旋轉。<strong>Red-Black Tree</strong>：放寬條件 (允許 height 差 2 倍)，插入/刪除旋轉次數較少，實務最常用。</p></div>
+<div data-lang="en"><p>Unbalanced BST: insert 1,2,3,4,5 in order → degenerates to a linked list (O(n)). <strong>AVL Tree</strong>: each node stores a balance factor (left-height − right-height); &gt;±1 triggers LL/RR/LR/RL rotation. <strong>Red-Black Tree</strong>: looser invariant (height ratio up to 2×), fewer rotations on insert/delete — the practical workhorse.</p></div>
+
+<h3 data-zh="3.3 Trie：前綴搜尋的王者" data-en="3.3 Trie: King of Prefix Search">3.3 Trie：前綴搜尋的王者</h3>
+<div data-lang="zh"><p><strong>Trie (前綴樹)</strong> 把字串按字元逐層展開——所有共享前綴的字串走同一條路徑。<strong>查找 O(m)</strong> (m = 字串長度)，與字串總數無關！自動完成 (autocomplete)、IP 路由表 (longest prefix match)、拼字檢查、生物序列前綴搜尋皆用。</p>
+<p>變種：<strong>Radix Tree (壓縮 Trie)</strong>，把單一子節點的路徑合併，省空間。Linux kernel 用 radix tree 管 page cache。</p></div>
+<div data-lang="en"><p><strong>Trie (prefix tree)</strong> spreads strings character-by-character — all strings sharing a prefix follow one path. <strong>Search O(m)</strong> (m = string length), independent of total strings! Used in autocomplete, IP routing (longest prefix match), spell-check, bio prefix search.</p>
+<p>Variants: <strong>Radix Tree (compressed Trie)</strong> collapses single-child paths to save space. Linux kernel uses radix trees for the page cache.</p></div>
+
+<h3 data-zh="3.4 圖的兩種表示法" data-en="3.4 Two Graph Representations">3.4 圖的兩種表示法</h3>
+<div data-lang="zh"><p><strong>Adjacency matrix</strong>：V×V 矩陣，<code>M[i][j]=1</code> 表示有邊。<strong>檢查邊存在 O(1)</strong>，但空間 O(V²)，不適合稀疏圖。<br/>
+<strong>Adjacency list</strong>：每節點存「鄰居 list」。<strong>空間 O(V+E)</strong>，但檢查邊 O(degree)。基因組組裝的 de Bruijn graph (數百萬節點) 必用 adjacency list。</p></div>
+<div data-lang="en"><p><strong>Adjacency matrix</strong>: V×V matrix, <code>M[i][j]=1</code> if edge exists. <strong>Edge check O(1)</strong>, but space O(V²) — bad for sparse graphs.<br/>
+<strong>Adjacency list</strong>: each node stores a neighbor list. <strong>Space O(V+E)</strong>, edge check O(degree). Genome-assembly de Bruijn graphs (millions of nodes) require adjacency lists.</p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="歷史故事" data-en="HISTORY">五個傳奇結構</div>
+<h2 data-zh="四、五個傳奇資料結構的故事" data-en="IV. Five Legendary Data Structures">四、五個傳奇結構的故事</h2>
+<div class="card-grid cols-2">
+<div class="card"><h4>① Hash Table (1953) — IBM Hans Peter Luhn</h4>
+<div data-lang="zh"><p>1953 年 IBM 的 <strong>Hans Peter Luhn</strong>（也是 KWIC 索引發明者）首次在內部備忘錄提出「chaining hash table」。他原本要做的是「IBM 客戶資料庫的快速查詢」。同年他還發明了「Luhn algorithm」——至今所有信用卡號碼最後一位的 check digit。</p></div>
+<div data-lang="en"><p>In 1953, IBM's <strong>Hans Peter Luhn</strong> (also creator of the KWIC index) first proposed "chaining hash tables" in an internal memo. He was building "fast IBM customer-database lookups." Same year he invented the "Luhn algorithm" — still the check digit on every credit-card number today.</p></div></div>
+
+<div class="card"><h4>② AVL Tree (1962) — 莫斯科</h4>
+<div data-lang="zh"><p>1962 年蘇聯數學家 <strong>Adelson-Velsky &amp; Landis</strong> 在莫斯科發表第一個「自平衡 BST」——以兩人姓氏首字母命名 <strong>AVL Tree</strong>。冷戰時期，西方 4 年後才看到譯本。AVL 保證 O(log n)，但插入旋轉較頻繁；後來 1972 Bayer 發明 B-Tree，1978 Guibas &amp; Sedgewick 發明 Red-Black Tree。</p></div>
+<div data-lang="en"><p>In 1962, Soviet mathematicians <strong>Adelson-Velsky &amp; Landis</strong> published the first self-balancing BST in Moscow — named <strong>AVL Tree</strong> after their initials. Cold War: the West only saw the translation 4 years later. AVL guarantees O(log n) but rotates often on insert; later Bayer invented B-Trees (1972) and Guibas &amp; Sedgewick invented Red-Black Trees (1978).</p></div></div>
+
+<div class="card"><h4>③ B-Tree (1972) — 資料庫的核心</h4>
+<div data-lang="zh"><p>1972 年 <strong>Rudolf Bayer &amp; Ed McCreight</strong> 在 Boeing 研究室設計 <strong>B-Tree</strong>——每節點可有多個 key（典型 100+），高度極矮，極適合「磁碟存取」。今天每一個 SQL 資料庫的索引、檔案系統的目錄、BAM 的 .bai 都是 B-Tree 或其變種 (B+Tree)。</p></div>
+<div data-lang="en"><p>In 1972 <strong>Rudolf Bayer &amp; Ed McCreight</strong> at Boeing designed <strong>B-Tree</strong> — each node holds many keys (typically 100+), keeping the tree very flat, perfect for disk access. Today every SQL database index, filesystem directory, and BAM .bai is a B-Tree or variant (B+Tree).</p></div></div>
+
+<div class="card"><h4>④ Trie (1971) — Edward Fredkin 在 IBM</h4>
+<div data-lang="zh"><p><strong>Trie</strong> 名稱來自 "retrieval"（讀作 try）。1959 年 René de la Briandais 提出概念，1960 Edward Fredkin 正式命名與分析。MIT AI Lab 創辦人之一，後來研究數位物理 (digital physics)。Trie 在 1970s 用於拼字檢查器，今天用於 Google search autocomplete。</p></div>
+<div data-lang="en"><p><strong>Trie</strong> comes from "retrieval" (pronounced "try"). Briandais sketched it in 1959; Fredkin formally named and analyzed it in 1960. Co-founder of the MIT AI Lab, later worked on digital physics. Tries powered spell-checkers in the 1970s; today they back Google's autocomplete.</p></div></div>
+
+<div class="card"><h4>⑤ Bloom Filter (1970) — Burton Howard Bloom</h4>
+<div data-lang="zh"><p>1970 年 MIT 學生 <strong>Burton Bloom</strong> 為了「拼字檢查器在 64 KB 記憶體裡塞下整本字典」而發明 <strong>Bloom Filter</strong>——犧牲精確性換空間：可能誤判「有」，但絕不漏報「無」。今天用於 <strong>Google Bigtable</strong> 跳過不存在的 row、<strong>瀏覽器</strong> 檢查惡意網址、生資 <strong>k-mer 計數 (Cuttlefish, KMC3)</strong> 與 <strong>序列檢索 (BIGSI)</strong>。</p></div>
+<div data-lang="en"><p>In 1970 MIT student <strong>Burton Bloom</strong> invented <strong>Bloom Filter</strong> to fit a whole dictionary into 64 KB for spell-checking — trading accuracy for space: it may say "yes" wrongly, but never "no" wrongly. Today used in <strong>Google Bigtable</strong> to skip absent rows, <strong>browsers</strong> for malware-URL checks, and in bio: <strong>k-mer counters (Cuttlefish, KMC3)</strong> and <strong>sequence retrieval (BIGSI)</strong>.</p></div></div>
+
+<div class="card"><h4>⑥ Skip List (1989) — William Pugh</h4>
+<div data-lang="zh"><p>1989 年 Maryland 大學 <strong>William Pugh</strong> 發明 <strong>Skip List</strong>——一種「機率資料結構」，用 linked list 的多層來模擬 BST。實作比 RB Tree 簡單 50%，效能相當。Redis 的 sorted set (ZSET)、LevelDB、RocksDB 內部都是 Skip List。</p></div>
+<div data-lang="en"><p>In 1989 Maryland's <strong>William Pugh</strong> invented <strong>Skip List</strong> — a probabilistic structure stacking linked lists to mimic a BST. 50% less code than RB Tree, comparable performance. Redis sorted sets (ZSET), LevelDB, RocksDB all use Skip Lists internally.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動 #2" data-en="INTERACTIVE #2">Stack vs Queue 動畫</div>
+<h2 data-zh="五、互動 #2：Stack vs Queue 動畫" data-en="V. Interactive #2: Stack vs Queue Animation">五、Stack vs Queue 動畫</h2>
+<div data-lang="zh"><p>輸入幾個數字然後分別「push」到 Stack 和 Queue。注意取出順序的差異：<strong>Stack = LIFO (後進先出)；Queue = FIFO (先進先出)</strong>。</p></div>
+<div data-lang="en"><p>Push some numbers into both a Stack and a Queue. Watch the order they come out: <strong>Stack = LIFO; Queue = FIFO.</strong></p></div>
+<div class="interactive-panel">
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px;">
+<input id="sqInput" type="number" value="42" style="padding:8px 14px;border:1px solid var(--c-border);border-radius:6px;width:100px;font-family:var(--font-mono);" />
+<button id="pushBtn" style="padding:8px 16px;background:var(--c-accent);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">+ Push 推入</button>
+<button id="popBtn" style="padding:8px 16px;background:var(--c-highlight);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">− Pop 取出</button>
+<button id="randBtn" style="padding:8px 16px;background:#6b7280;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">🎲 Random</button>
+<button id="clearBtn" style="padding:8px 16px;background:#dc2626;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">🗑️ Clear</button>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+  <div>
+    <h4 style="text-align:center;color:var(--c-accent-dark);">📥 Stack (LIFO)</h4>
+    <div id="stackView" style="border:2px dashed var(--c-accent);min-height:280px;border-radius:8px;padding:8px;display:flex;flex-direction:column-reverse;gap:6px;background:var(--c-surface);"></div>
+    <p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:6px;"><span data-lang="zh">頂部 = 最新；pop 從頂部取</span><span data-lang="en">Top = newest; pop from top</span></p>
+  </div>
+  <div>
+    <h4 style="text-align:center;color:var(--c-accent-dark);">📤 Queue (FIFO)</h4>
+    <div id="queueView" style="border:2px dashed var(--c-highlight);min-height:280px;border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:6px;background:var(--c-surface);"></div>
+    <p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;margin-top:6px;"><span data-lang="zh">頂部 = 最舊；dequeue 從頂部取</span><span data-lang="en">Top = oldest; dequeue from top</span></p>
+  </div>
+</div>
+<div id="sqLog" style="margin-top:12px;padding:10px 14px;background:var(--c-code-bg);color:var(--c-code-text);border-radius:8px;font-family:var(--font-mono);font-size:.85rem;min-height:24px;"></div>
+</div>
+</section>
+
+<section class="section" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-radius:14px;padding:32px;">
+<div class="section-label" style="color:#16a34a;">🧬 <span data-zh="生物資訊連結" data-en="BIOINFORMATICS LINK">給生物資訊學家</span></div>
+<h2 data-zh="六、🧬 生物資訊連結：資料結構撐起整個生資生態系" data-en="VI. 🧬 Bio Link: Data Structures Hold Up the Entire Bio Ecosystem">六、🧬 生資連結：資料結構撐起整個生資生態系</h2>
+
+<div data-lang="zh">
+<p><strong>每個 bioinformatics 工具背後，都有一個關鍵資料結構選擇。</strong>學會這些，你能瞬間看出新工具的速度從哪裡來。</p>
+
+<h3>1. de Bruijn Graph — 短 read 組裝的靈魂</h3>
+<p><strong>SPAdes</strong> (Bankevich 2012)、<strong>Velvet</strong> (Zerbino 2008)、<strong>SOAPdenovo</strong> 都用 de Bruijn graph：把每個 k-mer (k=21~127) 當節點，相鄰 k-mer 連邊。組裝 = 在圖中找 Eulerian path。<strong>記憶體需求 = k-mer 數量 × 節點大小</strong>——這是為什麼大基因組組裝動輒需要 TB 級 RAM。</p>
+
+<h3>2. String Graph / OLC — 長 read 組裝</h3>
+<p><strong>Canu</strong> (Koren 2017)、<strong>HiCanu</strong>、<strong>Flye</strong> 用 Overlap-Layout-Consensus + string graph：每條 read 是節點，overlap &gt; 1 kb 連邊。長 read (PacBio HiFi, ONT) 比短 read 更適合 string graph，因為 overlap 訊號強。</p>
+
+<h3>3. Hash Table — BLAST 與 k-mer 計數</h3>
+<p>BLAST 把 query 切成 11-mer，<strong>用 hash table</strong> 索引整個資料庫。<strong>KMC3</strong>、<strong>Jellyfish</strong> 都是 k-mer 計數工具，核心是大型 hash table（最佳化版本用 minimizer 降低記憶體）。</p>
+
+<h3>4. Suffix Tree / Suffix Array — 序列搜尋的理論最佳</h3>
+<p><strong>Suffix Tree</strong> (McCreight 1976) 可在 O(m) 找出 pattern——但建構需 O(n) 時間 + O(n·20) 空間，對人類基因組需 60+ GB。<strong>Suffix Array</strong> (Manber &amp; Myers 1990) 空間更省。<strong>STAR aligner</strong> 用 Suffix Array 索引基因組。</p>
+
+<h3>5. B-tree / R-tree — BAM 索引 + BED 區間查詢</h3>
+<p><strong>BAM 索引 .bai</strong> 用「bin scheme + linear index」（類似 B-tree），讓 <code>samtools view chr1:1000-2000</code> 在毫秒內定位。<strong>BEDtools</strong>、<strong>tabix</strong> 用 <strong>R-tree / interval tree</strong>，O(log n + k) 查找區間 overlap（k = 結果數）。GenomicRanges (R/Bioconductor) 也是。</p>
+
+<h3>6. Bloom Filter — k-mer 是否存在 / sequence retrieval</h3>
+<p><strong>Cuttlefish 2</strong> 用 Bloom filter 減少 k-mer 計數記憶體。<strong>BIGSI</strong> (Bradley 2019) 與 <strong>COBS</strong> 用 Bloom filter 在 PB 級序列資料庫中快速判斷「query 是否可能存在」——空間極省，誤判率可控。</p>
+
+<h3>7. Priority Queue / Heap — Genome Browser 渲染與 Dijkstra</h3>
+<p><strong>IGV / JBrowse</strong> 顯示多軌時用 priority queue 排序事件。<strong>HISAT2</strong> 的 graph traversal、<strong>Bandage</strong> 的圖視覺化都靠 priority queue。Dijkstra 找最短路徑 (e.g., haplotype graph) 必用 min-heap。</p>
+
+<h3>8. Trie / Aho-Corasick — 短序列匹配與 motif 搜尋</h3>
+<p><strong>Aho-Corasick 演算法</strong> (1975) 是 Trie + failure link，一次掃描找所有 motif。<strong>FIMO</strong> (MEME suite)、<strong>HOMER</strong> 都用此演算法掃描 TFBS。<strong>Bowtie 1</strong> 也用 Trie 做 short-read 比對。</p>
+
+<h3>9. HMM Trellis Graph — gene 預測與 protein family</h3>
+<p>HMM 的計算是一個 trellis graph：每列是時間 t，每行是 state。Viterbi 演算法本質是這個 graph 上的最短路徑。<strong>HMMER3</strong>、<strong>GENSCAN</strong>、<strong>Augustus</strong> 都用此結構。</p>
+</div>
+
+<div data-lang="en">
+<p><strong>Behind every bioinformatics tool lies a critical data-structure choice.</strong> Master these, and you'll instantly spot where a new tool's speed comes from.</p>
+
+<h3>1. de Bruijn Graph — soul of short-read assembly</h3>
+<p><strong>SPAdes</strong> (Bankevich 2012), <strong>Velvet</strong> (Zerbino 2008), <strong>SOAPdenovo</strong> all use de Bruijn graphs: each k-mer (k=21–127) is a node, adjacent k-mers connect. Assembly = find Eulerian path. <strong>RAM = #k-mers × node size</strong> — why big genomes need TB-class RAM.</p>
+
+<h3>2. String Graph / OLC — long-read assembly</h3>
+<p><strong>Canu</strong> (Koren 2017), <strong>HiCanu</strong>, <strong>Flye</strong> use Overlap-Layout-Consensus + string graphs: each read is a node, overlaps &gt; 1 kb connect them. Long reads (PacBio HiFi, ONT) suit string graphs better because overlap signal is strong.</p>
+
+<h3>3. Hash Table — BLAST &amp; k-mer counting</h3>
+<p>BLAST hashes the database into 11-mers. <strong>KMC3</strong>, <strong>Jellyfish</strong> are k-mer counters built on large hash tables (best versions use minimizers to cut memory).</p>
+
+<h3>4. Suffix Tree / Array — theoretical best for sequence search</h3>
+<p><strong>Suffix Tree</strong> (McCreight 1976): O(m) pattern lookup but needs O(n) time + O(n·20) space — 60+ GB for the human genome. <strong>Suffix Array</strong> (Manber &amp; Myers 1990) is leaner. <strong>STAR aligner</strong> indexes the genome with a Suffix Array.</p>
+
+<h3>5. B-tree / R-tree — BAM index &amp; BED range queries</h3>
+<p><strong>BAM index .bai</strong> uses bin scheme + linear index (B-tree-like), letting <code>samtools view chr1:1000-2000</code> seek in milliseconds. <strong>BEDtools</strong> and <strong>tabix</strong> use <strong>R-tree / interval tree</strong> for O(log n + k) overlap queries. GenomicRanges (R/Bioconductor) too.</p>
+
+<h3>6. Bloom Filter — k-mer existence &amp; sequence retrieval</h3>
+<p><strong>Cuttlefish 2</strong> uses Bloom filters to reduce k-mer counting memory. <strong>BIGSI</strong> (Bradley 2019) and <strong>COBS</strong> use Bloom filters to query PB-scale sequence databases — tiny RAM, controlled false-positive rate.</p>
+
+<h3>7. Priority Queue / Heap — Genome Browser &amp; Dijkstra</h3>
+<p><strong>IGV / JBrowse</strong> sort multi-track events via priority queue. <strong>HISAT2</strong> graph traversal and <strong>Bandage</strong> visualization rely on priority queues. Dijkstra on haplotype graphs needs a min-heap.</p>
+
+<h3>8. Trie / Aho-Corasick — short-sequence &amp; motif matching</h3>
+<p><strong>Aho-Corasick</strong> (1975) = Trie + failure links, finding all motifs in one pass. <strong>FIMO</strong> (MEME), <strong>HOMER</strong> use it for TFBS. <strong>Bowtie 1</strong> used a Trie for short-read alignment.</p>
+
+<h3>9. HMM Trellis Graph — gene prediction &amp; protein families</h3>
+<p>HMM computation is a trellis: columns are time t, rows are states. Viterbi is essentially shortest path on this graph. <strong>HMMER3</strong>, <strong>GENSCAN</strong>, <strong>Augustus</strong> all use it.</p>
+</div>
+
+<div class="callout" style="background:#fff;border-left:4px solid #16a34a;margin-top:18px;">
+<span class="callout-icon">🎯</span><div>
+<div data-lang="zh"><strong>記住這個對應表：</strong>序列比對 → BWT/FM-Index；組裝 → de Bruijn / string graph；變異註解區間查詢 → interval tree；k-mer 存在性 → Bloom filter；資料庫索引 → B-tree。<strong>新工具發表時，先看它用什麼資料結構，就知道它的瓶頸在哪</strong>。</div>
+<div data-lang="en"><strong>Memorize this cheat sheet:</strong> alignment → BWT/FM-Index; assembly → de Bruijn / string graph; variant range query → interval tree; k-mer existence → Bloom filter; DB index → B-tree. <strong>When a new tool drops, check its data structure first — that tells you the bottleneck.</strong></div>
+</div></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="決策樹" data-en="DECISION TREE">該選 Array/List/Hash/Tree？</div>
+<h2 data-zh="七、🌳 決策樹：該選哪個資料結構？" data-en="VII. 🌳 Which Data Structure?">七、🌳 該選哪個結構？</h2>
+<div class="decision-tree">
+<h4>🌳 <span data-zh="資料結構選擇樹" data-en="Data Structure Picker">結構選擇樹</span></h4>
+<div data-lang="zh">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>需要 O(1) 索引存取嗎？<span class="dt-arrow">→</span> <strong>Array / Vector</strong>（Python list, NumPy）。Cache 最友善。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>需要 O(1) key→value 查找？<span class="dt-arrow">→</span> <strong>Hash Table</strong>（Python dict）。但無序、無範圍查詢。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>需要「有序」 + 「範圍查詢」 + 「O(log n) 操作」？<span class="dt-arrow">→</span> <strong>平衡 BST / B-tree</strong>（C++ map, SQL index）。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>頻繁取最小/最大？<span class="dt-arrow">→</span> <strong>Binary Heap / Priority Queue</strong>（Python heapq）。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>前綴搜尋 / autocomplete？<span class="dt-arrow">→</span> <strong>Trie / Radix Tree</strong>。</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>「是否存在」+ 記憶體有限 + 可接受誤判？<span class="dt-arrow">→</span> <strong>Bloom Filter</strong>（k-mer 存在性、URL 黑名單）。</div></div>
+<div class="dt-node"><span class="dt-q">Q7:</span><div>區間 overlap 查詢（基因組區間）？<span class="dt-arrow">→</span> <strong>Interval Tree / R-tree</strong>（BEDtools, tabix）。</div></div>
+<div class="dt-node"><span class="dt-q">Q8:</span><div>節點 + 關係（基因網路、社群）？<span class="dt-arrow">→</span> <strong>Graph (adjacency list)</strong>，搭配 NetworkX/igraph。</div></div>
+<div class="dt-node"><span class="dt-q">Q9:</span><div>不確定時，選 <strong>Array</strong>。改寫到別的結構通常不難，過早最佳化是萬惡之源。</div></div>
+</div>
+<div data-lang="en">
+<div class="dt-node"><span class="dt-q">Q1:</span><div>Need O(1) index access? <span class="dt-arrow">→</span> <strong>Array / Vector</strong> (Python list, NumPy). Most cache-friendly.</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Need O(1) key→value lookup? <span class="dt-arrow">→</span> <strong>Hash Table</strong> (Python dict). Unordered, no range queries.</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Need "ordered" + range queries + O(log n) ops? <span class="dt-arrow">→</span> <strong>Balanced BST / B-tree</strong> (C++ map, SQL index).</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Frequently pop min/max? <span class="dt-arrow">→</span> <strong>Binary Heap / Priority Queue</strong> (Python heapq).</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>Prefix search / autocomplete? <span class="dt-arrow">→</span> <strong>Trie / Radix Tree</strong>.</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>"Maybe exists" + limited RAM + tolerate false positives? <span class="dt-arrow">→</span> <strong>Bloom Filter</strong> (k-mer existence, URL blacklist).</div></div>
+<div class="dt-node"><span class="dt-q">Q7:</span><div>Interval-overlap queries (genome ranges)? <span class="dt-arrow">→</span> <strong>Interval Tree / R-tree</strong> (BEDtools, tabix).</div></div>
+<div class="dt-node"><span class="dt-q">Q8:</span><div>Nodes + relationships (gene networks, social)? <span class="dt-arrow">→</span> <strong>Graph (adjacency list)</strong> + NetworkX/igraph.</div></div>
+<div class="dt-node"><span class="dt-q">Q9:</span><div>Unsure? Start with <strong>Array</strong>. Rewriting later is usually easy; premature optimization is the root of all evil.</div></div>
 </div>
 </div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
-<h2 data-zh="七、實作：Python 容器 + BST / 偽碼 BFS" data-en="VII. Implement: Python containers + BST / Pseudocode BFS">七、Python 容器與 BFS</h2>
-<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode (BFS)</button></div>
-<div class="code-tab-content active" id="py1"><pre><span class="comment"># 1. 內建容器：list / dict / deque</span>
-<span class="kw">from</span> collections <span class="kw">import</span> deque
-arr  = [<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">1</span>, <span class="num">5</span>]                    <span class="comment"># list (array)</span>
-m    = {<span class="str">"apple"</span>: <span class="num">3</span>, <span class="str">"banana"</span>: <span class="num">5</span>}        <span class="comment"># dict (hash table)</span>
-q    = <span class="func">deque</span>()
-q.<span class="func">append</span>(<span class="num">1</span>); q.<span class="func">append</span>(<span class="num">2</span>); q.<span class="func">popleft</span>()    <span class="comment"># queue: enqueue / dequeue → 1</span>
+<div class="section-label" data-zh="程式碼" data-en="CODE">Python · R · Pseudocode</div>
+<h2 data-zh="八、動手寫：四大結構（三語並列）" data-en="VIII. Hands-on: Four Structures (3 languages)">八、動手寫：四大結構三語</h2>
+<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'r1')">R</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode (BFS)</button></div>
 
-<span class="comment"># 2. 自製 Binary Search Tree</span>
-<span class="kw">class</span> <span class="func">Node</span>:
+<div class="code-tab-content active" id="py1"><pre><span class="comment"># 1. list / dict / deque 內建</span>
+<span class="kw">from</span> collections <span class="kw">import</span> deque, defaultdict
+<span class="kw">import</span> heapq
+
+arr  = [<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">1</span>, <span class="num">5</span>]            <span class="comment"># list: O(1) index</span>
+d    = {<span class="str">"BRCA1"</span>: <span class="num">17</span>, <span class="str">"TP53"</span>: <span class="num">17</span>}   <span class="comment"># dict: O(1) lookup</span>
+q    = deque([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>])             <span class="comment"># deque: O(1) 兩端</span>
+h    = []
+heapq.<span class="func">heappush</span>(h, <span class="num">5</span>); heapq.<span class="func">heappush</span>(h, <span class="num">1</span>)
+<span class="func">print</span>(heapq.<span class="func">heappop</span>(h))            <span class="comment"># 1  (min-heap)</span>
+
+<span class="comment"># 2. BST class（教學示範，實務用 sortedcontainers）</span>
+<span class="kw">class</span> <span class="func">BSTNode</span>:
     <span class="kw">def</span> __init__(self, key):
         self.key, self.left, self.right = key, <span class="kw">None</span>, <span class="kw">None</span>
 
-<span class="kw">class</span> <span class="func">BST</span>:
-    <span class="kw">def</span> __init__(self):
-        self.root = <span class="kw">None</span>
-    <span class="kw">def</span> <span class="func">insert</span>(self, key):
-        self.root = self._ins(self.root, key)
-    <span class="kw">def</span> _ins(self, node, key):
-        <span class="kw">if</span> node <span class="kw">is</span> <span class="kw">None</span>: <span class="kw">return</span> <span class="func">Node</span>(key)
-        <span class="kw">if</span> key < node.key: node.left  = self._ins(node.left, key)
-        <span class="kw">elif</span> key > node.key: node.right = self._ins(node.right, key)
-        <span class="kw">return</span> node
-    <span class="kw">def</span> <span class="func">contains</span>(self, key):
-        n = self.root
-        <span class="kw">while</span> n:
-            <span class="kw">if</span> key == n.key: <span class="kw">return</span> <span class="kw">True</span>
-            n = n.left <span class="kw">if</span> key < n.key <span class="kw">else</span> n.right
-        <span class="kw">return</span> <span class="kw">False</span>
+<span class="kw">def</span> <span class="func">insert</span>(root, key):
+    <span class="kw">if</span> root <span class="kw">is</span> <span class="kw">None</span>: <span class="kw">return</span> <span class="func">BSTNode</span>(key)
+    <span class="kw">if</span> key < root.key:
+        root.left  = <span class="func">insert</span>(root.left, key)
+    <span class="kw">else</span>:
+        root.right = <span class="func">insert</span>(root.right, key)
+    <span class="kw">return</span> root
 
-t = <span class="func">BST</span>()
-<span class="kw">for</span> v <span class="kw">in</span> [<span class="num">5</span>, <span class="num">3</span>, <span class="num">7</span>, <span class="num">1</span>, <span class="num">4</span>]: t.<span class="func">insert</span>(v)
-<span class="func">print</span>(t.<span class="func">contains</span>(<span class="num">4</span>))   <span class="comment"># True (平均 O(log n))</span></pre></div>
-<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// BFS：用 queue 走訪圖，找到由 start 出發各點的最短「邊數」</span>
+<span class="kw">def</span> <span class="func">search</span>(root, key) -> <span class="kw">bool</span>:
+    <span class="kw">if</span> root <span class="kw">is</span> <span class="kw">None</span>: <span class="kw">return</span> <span class="kw">False</span>
+    <span class="kw">if</span> root.key == key: <span class="kw">return</span> <span class="kw">True</span>
+    <span class="kw">return</span> <span class="func">search</span>(root.left, key) <span class="kw">if</span> key < root.key <span class="kw">else</span> <span class="func">search</span>(root.right, key)
+
+<span class="comment"># 3. Graph BFS（adjacency list）</span>
+graph = {<span class="str">'A'</span>:[<span class="str">'B'</span>,<span class="str">'C'</span>], <span class="str">'B'</span>:[<span class="str">'D'</span>], <span class="str">'C'</span>:[<span class="str">'D'</span>,<span class="str">'E'</span>], <span class="str">'D'</span>:[], <span class="str">'E'</span>:[]}
+<span class="kw">def</span> <span class="func">bfs</span>(start):
+    visited, q = {start}, deque([start])
+    <span class="kw">while</span> q:
+        node = q.<span class="func">popleft</span>()
+        <span class="kw">print</span>(node, end=<span class="str">' '</span>)
+        <span class="kw">for</span> n <span class="kw">in</span> graph[node]:
+            <span class="kw">if</span> n <span class="kw">not in</span> visited:
+                visited.<span class="func">add</span>(n); q.<span class="func">append</span>(n)
+<span class="func">bfs</span>(<span class="str">'A'</span>)   <span class="comment"># A B C D E</span></pre></div>
+
+<div class="code-tab-content" id="r1"><pre><span class="comment"># R: 內建 vector / list / environment / igraph</span>
+arr <- <span class="func">c</span>(3, 1, 4, 1, 5)              <span class="comment"># vector</span>
+lst <- <span class="func">list</span>(BRCA1 = 17, TP53 = 17)   <span class="comment"># named list (≈ dict, but O(n))</span>
+
+<span class="comment"># R 真正的 hash：environment 或 hash 套件</span>
+h <- <span class="func">new.env</span>(hash = <span class="kw">TRUE</span>)
+h$<span class="str">BRCA1</span> <- 17; h$<span class="str">TP53</span> <- 17
+<span class="func">get</span>(<span class="str">"BRCA1"</span>, envir = h)             <span class="comment"># 17, O(1) 均攤</span>
+
+<span class="comment"># 或 fastmap 套件</span>
+<span class="kw">if</span> (<span class="func">require</span>(fastmap)) {
+  m <- fastmap::<span class="func">fastmap</span>()
+  m$<span class="func">set</span>(<span class="str">"BRCA1"</span>, 17)
+  m$<span class="func">get</span>(<span class="str">"BRCA1"</span>)
+}
+
+<span class="comment"># Graph：igraph 套件</span>
+library(igraph)
+g <- <span class="func">graph_from_edgelist</span>(
+  <span class="func">matrix</span>(<span class="func">c</span>(<span class="str">"A"</span>,<span class="str">"B"</span>, <span class="str">"A"</span>,<span class="str">"C"</span>, <span class="str">"B"</span>,<span class="str">"D"</span>, <span class="str">"C"</span>,<span class="str">"D"</span>, <span class="str">"C"</span>,<span class="str">"E"</span>),
+         ncol = 2, byrow = <span class="kw">TRUE</span>),
+  directed = <span class="kw">TRUE</span>)
+<span class="func">bfs</span>(g, root = <span class="str">"A"</span>)$order  <span class="comment"># BFS 走訪順序</span>
+
+<span class="comment"># GenomicRanges: 基因組區間 (interval tree 底層)</span>
+<span class="comment"># library(GenomicRanges)</span>
+<span class="comment"># gr <- GRanges(...)  # findOverlaps O(log n + k)</span></pre></div>
+
+<div class="code-tab-content" id="pseudo1"><pre><span class="comment">// BFS on a graph (adjacency list) — O(V + E)</span>
 <span class="kw">function</span> <span class="func">BFS</span>(graph, start):
-    <span class="kw">let</span> visited = <span class="func">new Set</span>()
-    <span class="kw">let</span> queue = <span class="func">new Queue</span>()
-    <span class="func">queue.enqueue</span>(start)
-    <span class="func">visited.add</span>(start)
-    <span class="kw">while</span> <span class="kw">not</span> queue.empty():
-        <span class="kw">let</span> node = <span class="func">queue.dequeue</span>()
+    visited = {start}
+    queue   = Queue()
+    queue.<span class="func">enqueue</span>(start)
+    <span class="kw">while</span> queue <span class="kw">is not</span> empty:
+        node = queue.<span class="func">dequeue</span>()      <span class="comment">// FIFO 先進先出</span>
         <span class="func">visit</span>(node)
         <span class="kw">for</span> neighbor <span class="kw">in</span> graph[node]:
             <span class="kw">if</span> neighbor <span class="kw">not in</span> visited:
-                <span class="func">visited.add</span>(neighbor)
-                <span class="func">queue.enqueue</span>(neighbor)</pre></div>
+                visited.<span class="func">add</span>(neighbor)
+                queue.<span class="func">enqueue</span>(neighbor)
+
+<span class="comment">// DFS 把上面 Queue 換成 Stack 即可（LIFO 後進先出）</span></pre></div>
 </div>
 </section>
 
+<section class="section">
+<div class="section-label" data-zh="案例研究" data-en="CASE STUDY">BAM 檔案的多層資料結構</div>
+<h2 data-zh="八-B、案例：BAM 檔案如何用 6 種資料結構達成「TB 級隨機存取」" data-en="VIII-B. Case Study: How BAM Uses 6 Data Structures for TB-Scale Random Access">八-B、BAM 多層資料結構案例</h2>
+<div data-lang="zh"><p>一個 1 TB 的 WGS BAM 檔案，<code>samtools view chr1:1000000-1100000</code> 為何能在 50ms 內回應？背後堆疊了 <strong>6 種資料結構</strong>：</p>
+<ol style="margin-left:20px;line-height:1.85;">
+<li><strong>① BGZF 壓縮塊（Array of Blocks）</strong>：BAM 不是「整檔 gzip」——而是切成多個 64 KB 的 BGZF block，每塊獨立壓縮。<strong>關鍵：能隨機跳到任一 block 解壓</strong>，不必從頭。</li>
+<li><strong>② Virtual File Offset (64-bit)</strong>：每個 record 用一個 64-bit 整數定位：高 48 bit 是 BGZF block 在檔案的位置，低 16 bit 是 block 內 byte offset。<strong>這是一種人造的「分層 array index」</strong>。</li>
+<li><strong>③ Bin Scheme (Hierarchical Hash)</strong>：把參考基因組切成多層 bin：level 0 = 整條 chr，level 1 = 每 512 Mb，level 5 = 每 16 kb。<strong>類似 R-tree 但離散化</strong>，UCSC binning scheme (Kent 2002 Genome Res) 啟發。</li>
+<li><strong>④ Linear Index (Array)</strong>：對每 16 kb window 存「第一個與此 window 重疊的 read 的 virtual offset」。讓查詢能<strong>跳過大量空白</strong>區域。</li>
+<li><strong>⑤ Chunk List (Linked List per Bin)</strong>：每個 bin 記錄屬於它的所有「virtual offset 區間」(chunks)。查詢時把 query range 對應的 bin 與 linear index 結果合併、deduplicate。</li>
+<li><strong>⑥ Memory-mapped File (OS-level)</strong>：samtools 可選擇用 <code>mmap</code>，由 OS 管理 page cache（Ch 6 OS 章節！）。<strong>熱常用區域自動快取在 RAM</strong>，重複查詢無 disk IO。</li>
+</ol>
+<p><strong>查詢流程</strong>：① 解析 <code>chr1:1000000-1100000</code>；② 用 bin scheme 找出涵蓋此區間的 bin 集合（最多 ~6 個）；③ 用 linear index 跳過無 read 的 chunk；④ 用每 bin 的 chunk list 收集候選 virtual offsets；⑤ jump 到對應 BGZF block 解壓；⑥ 過濾出真正落在 query range 的 read。</p>
+<p><strong>結果</strong>：1 TB BAM 的隨機區間查詢只需讀 1-5 個 BGZF block (約 1 MB) → 50ms 完成。<strong>沒有 .bai 索引</strong>就要 sequential scan 1 TB → 10+ 分鐘。差距 <strong>10,000×</strong>。</p>
+<p><strong>啟示</strong>：「<strong>分層 + 多種資料結構組合</strong>」是處理 TB-PB 級科學資料的唯一辦法。BAM 1.6 規格 (Heng Li 2009) 至今 17 年仍主導 NGS——這是資料結構工程的巔峰之作。CRAM (2014, Hsi-Yang Fritz et al.) 進一步把壓縮率提高 30-50%，但索引架構幾乎不變。</p></div>
+<div data-lang="en"><p>A 1 TB WGS BAM file — why does <code>samtools view chr1:1000000-1100000</code> respond in 50 ms? Behind it lies a stack of <strong>6 data structures</strong>:</p>
+<ol style="margin-left:20px;line-height:1.85;">
+<li><strong>① BGZF Compressed Blocks (Array of Blocks)</strong>: BAM isn't whole-file gzip — it's split into 64-KB BGZF blocks, each compressed independently. <strong>Key: random-jump to any block without reading from start.</strong></li>
+<li><strong>② Virtual File Offset (64-bit)</strong>: each record's position is a 64-bit integer — high 48 bits = BGZF block's file offset, low 16 bits = byte offset inside the block. <strong>An engineered "layered array index."</strong></li>
+<li><strong>③ Bin Scheme (Hierarchical Hash)</strong>: divide the reference into multi-level bins — level 0 = whole chromosome, level 1 = each 512 Mb, level 5 = each 16 kb. <strong>R-tree-like but discretized</strong>; inspired by UCSC binning (Kent 2002 Genome Res).</li>
+<li><strong>④ Linear Index (Array)</strong>: for every 16-kb window, store the "virtual offset of the first read overlapping it" — lets queries <strong>skip huge empty regions</strong>.</li>
+<li><strong>⑤ Chunk List (Linked List per Bin)</strong>: each bin records all "virtual offset intervals" (chunks) belonging to it. Queries merge and deduplicate the bin's chunks with the linear-index hits.</li>
+<li><strong>⑥ Memory-mapped File (OS level)</strong>: samtools can use <code>mmap</code>; the OS manages page cache (recall Ch 6 OS!). <strong>Hot regions get auto-cached in RAM</strong>, repeat queries skip disk I/O.</li>
+</ol>
+<p><strong>Query flow:</strong> (1) parse <code>chr1:1000000-1100000</code>; (2) bin scheme finds ~6 covering bins; (3) linear index skips empty chunks; (4) chunk lists collect candidate virtual offsets; (5) jump to BGZF blocks and decompress; (6) filter to reads truly inside the query range.</p>
+<p><strong>Result:</strong> a random range query on 1 TB BAM reads only 1-5 BGZF blocks (~1 MB) → 50 ms. <strong>Without .bai</strong> it would be a sequential scan of 1 TB → 10+ minutes. <strong>10,000× difference.</strong></p>
+<p><strong>Takeaway:</strong> "<strong>Layered + multiple-data-structure composition</strong>" is the only way to handle TB-PB-scale scientific data. BAM 1.6 (Heng Li 2009) has dominated NGS for 17 years — a pinnacle of data-structure engineering. CRAM (Hsi-Yang Fritz et al. 2014) improves compression 30-50% with nearly the same indexing architecture.</p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="常見誤解" data-en="MISCONCEPTIONS">常見誤解</div>
+<h2 data-zh="九、常見誤解與陷阱" data-en="IX. Common Misconceptions">九、常見誤解</h2>
+<div class="card-grid cols-2">
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ 「Linked List 比 Array 快」</h4>
+<div data-lang="zh"><p>大部分情況反過來。<strong>Array 的 cache locality 大勝</strong>——同一個 cache line (64 byte) 能讀進 16 個 int。Linked List 每個節點隨機 malloc，CPU cache miss 連連。Bjarne Stroustrup 著名演講「為何 vector 永遠贏 list」(2012) 證明：對 100,000 個元素的中間插入，<strong>vector 仍快過 linked list 5×</strong>。</p></div>
+<div data-lang="en"><p>Usually the opposite. <strong>Array's cache locality wins</strong> — one 64-byte cache line holds 16 ints. Linked-list nodes are scattered, causing cache misses. Stroustrup's famous talk "Why vector beats list" (2012) showed: even for middle-inserting 100,000 elements, <strong>vector beats linked list 5×</strong>.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ 「Hash Table 永遠 O(1)」</h4>
+<div data-lang="zh"><p>那是「平均」case。<strong>最壞 O(n)</strong>：若所有 key hash 到同一 bucket（攻擊者刻意製造），dict 變 linked list。2011 年 hash flooding 攻擊讓 PHP/Java/Python 集體當機。<strong>Python 3.3+ 預設 SipHash + random seed</strong> 對抗此攻擊。</p></div>
+<div data-lang="en"><p>That's the average. <strong>Worst case O(n)</strong>: if all keys hash to one bucket (attacker-crafted), the dict becomes a linked list. The 2011 hash-flooding attacks crashed PHP/Java/Python sites en masse. <strong>Python 3.3+ defaults to SipHash + random seed</strong> to defend.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ 「BST 自動平衡」</h4>
+<div data-lang="zh"><p>沒有「自動」這回事。<strong>普通 BST 不平衡</strong>，最壞退化成 linked list O(n)。必須是 AVL、RB Tree、Splay Tree、Treap 等「自平衡」變種。Python 沒有內建 BST，要用 <code>sortedcontainers</code>。</p></div>
+<div data-lang="en"><p>"Automatic" is a myth. <strong>Plain BST is not balanced</strong> — worst case it degenerates to a linked list O(n). You need AVL, RB Tree, Splay Tree, Treap, etc. Python has no built-in BST; use <code>sortedcontainers</code>.</p></div></div>
+
+<div class="card" style="border-left:4px solid var(--c-danger);"><h4>❌ 「Python list 是 linked list」</h4>
+<div data-lang="zh"><p>Python list 內部是 <strong>動態陣列 (dynamic array)</strong>——連續記憶體 + 翻倍擴容。所以 <code>list[i]</code> 是 O(1)，<code>list.append()</code> 均攤 O(1)。但 <code>list.insert(0, x)</code> 是 O(n) — 用 <code>collections.deque</code>。</p></div>
+<div data-lang="en"><p>Python list is a <strong>dynamic array</strong> — contiguous memory + doubling. So <code>list[i]</code> is O(1), <code>list.append()</code> amortized O(1). But <code>list.insert(0, x)</code> is O(n) — use <code>collections.deque</code>.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="進階主題 A" data-en="ADVANCED A">五大進階樹結構</div>
+<h2 data-zh="九-A、進階：5 種你必須認得的進階樹" data-en="IX-A. Advanced: Five Trees You Must Recognize">九-A、五大進階樹</h2>
+<div class="card-grid cols-2">
+<div class="card"><h4>① Red-Black Tree (RB Tree)</h4>
+<div data-lang="zh"><p>1972 Bayer 提出 「symmetric binary B-trees」，1978 Guibas &amp; Sedgewick 重新命名為 RB Tree。<strong>每節點塗紅或黑</strong>，五條規則保證高度 ≤ 2·log₂(n+1)。比 AVL 寬鬆 → 插入旋轉次數少 → 實務 50% 應用首選。<strong>Linux CFS 排程器、C++ std::map、Java TreeMap、Python sortedcontainers</strong> 都是 RB Tree。</p></div>
+<div data-lang="en"><p>1972 Bayer proposed "symmetric binary B-trees"; 1978 Guibas &amp; Sedgewick renamed it RB Tree. <strong>Each node is red or black</strong>; 5 rules cap height at 2·log₂(n+1). Looser than AVL → fewer rotations → ~50% of practical use. <strong>Linux CFS scheduler, C++ std::map, Java TreeMap, Python sortedcontainers</strong> all use RB Tree.</p></div></div>
+<div class="card"><h4>② B+ Tree</h4>
+<div data-lang="zh"><p>B-tree 的延伸：<strong>只有葉節點存資料</strong>，內部節點只存索引；<strong>葉節點用 linked list 串起來</strong>方便 range scan。<strong>2026 年所有主流 RDBMS（PostgreSQL、MySQL InnoDB、Oracle、SQL Server）的 primary index 都是 B+ Tree</strong>。為何？fanout 大（一節點 100+ key）→ 高度極矮 (3-4 層裝 10 億筆) → 每次磁碟讀取最少。</p></div>
+<div data-lang="en"><p>B-tree extension: <strong>only leaves store data</strong>; internal nodes hold indices only; <strong>leaves chained as a linked list</strong> for range scans. <strong>By 2026 every major RDBMS (PostgreSQL, MySQL InnoDB, Oracle, SQL Server) uses B+ Tree for its primary index</strong>. Why? high fanout (100+ keys/node) → tiny height (3-4 levels for 1B rows) → minimal disk reads.</p></div></div>
+<div class="card"><h4>③ Skip List</h4>
+<div data-lang="zh"><p>1989 William Pugh 在 Maryland 大學發明。<strong>機率資料結構</strong>：多層 linked list 疊在一起，每層約上一層的一半節點。<strong>期望 O(log n)，最壞 O(n)（極罕見）</strong>。實作比 RB Tree 簡單 50%，效能相當。<strong>Redis 的 sorted set (ZSET)、LevelDB、RocksDB、Apache HBase</strong> 全用 Skip List。</p></div>
+<div data-lang="en"><p>1989 William Pugh at Maryland. <strong>Probabilistic structure</strong>: stacked linked lists, each layer ~half of the one below. <strong>Expected O(log n), worst O(n) (rare)</strong>. Half the code of RB Tree with similar performance. <strong>Redis sorted sets (ZSET), LevelDB, RocksDB, Apache HBase</strong> all use Skip List.</p></div></div>
+<div class="card"><h4>④ LSM Tree (Log-Structured Merge)</h4>
+<div data-lang="zh"><p>1996 Patrick O'Neil 提出。<strong>專為寫密集設計</strong>：新資料先寫到 memtable，定期 flush 到 sorted file (SSTable)，再背景 merge。<strong>寫入 O(1)（不需找位置），讀取要查多層 → 用 Bloom filter 加速</strong>。<strong>Google Bigtable、HBase、Cassandra、LevelDB、RocksDB、TiDB</strong> 的底層都是 LSM Tree。對 NGS 中間 BAM/VCF 寫入也有應用。</p></div>
+<div data-lang="en"><p>1996 Patrick O'Neil. <strong>Designed for write-heavy workloads</strong>: new data goes to a memtable, periodically flushed to sorted files (SSTable), then merged in the background. <strong>Writes O(1) (no seek), reads check multiple levels — Bloom filters speed them up</strong>. <strong>Google Bigtable, HBase, Cassandra, LevelDB, RocksDB, TiDB</strong> all use LSM Tree. NGS intermediate BAM/VCF writes use similar ideas.</p></div></div>
+<div class="card"><h4>⑤ Splay Tree (自伸展樹)</h4>
+<div data-lang="zh"><p>1985 <strong>Sleator &amp; Tarjan</strong> (Tarjan 是圖靈獎)。<strong>無平衡規則，但每次存取後把該節點「splay」到根</strong>。<strong>均攤 O(log n)</strong>，且符合「最近用到的最快」(locality of reference) 性質——cache-friendly。實作極簡，但最壞單次操作仍可 O(n)。某些版本 Linux kernel、Windows NT cache 曾用。</p></div>
+<div data-lang="en"><p>1985 <strong>Sleator &amp; Tarjan</strong> (Tarjan a Turing laureate). <strong>No balance rules, but every access "splays" the node to the root</strong>. <strong>Amortized O(log n)</strong>, with strong locality of reference — cache-friendly. Tiny implementation, but worst-case op can still be O(n). Used in some Linux kernel paths and old Windows NT caches.</p></div></div>
+<div class="card"><h4>⑥ FM-Index (Full-text Minute-space)</h4>
+<div data-lang="zh"><p>2000 <strong>Ferragina &amp; Manzini</strong>。基於 <strong>BWT</strong> 的全文索引，能在 <strong>壓縮空間</strong> 內做 O(m) pattern 搜尋。<strong>BWA、Bowtie2</strong> 用 FM-Index 把 30 億 bp 的人類基因組塞進 3 GB 記憶體並支援 O(read_length) 比對——這是 NGS 革命的關鍵資料結構。</p></div>
+<div data-lang="en"><p>2000 <strong>Ferragina &amp; Manzini</strong>. A full-text index built on <strong>BWT</strong> that supports O(m) pattern search <strong>in compressed space</strong>. <strong>BWA, Bowtie2</strong> use FM-Index to fit the 3 Gbp human genome into 3 GB of RAM and support O(read_length) alignment — the data structure that enabled the NGS revolution.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="進階主題 B" data-en="ADVANCED B">三大進階 Hash</div>
+<h2 data-zh="九-B、進階：三大進階 Hash 變種" data-en="IX-B. Advanced: Three Advanced Hashes">九-B、三大進階 Hash</h2>
+<div class="card-grid cols-2">
+<div class="card"><h4>① Cuckoo Hashing</h4>
+<div data-lang="zh"><p>2001 <strong>Pagh &amp; Rodler</strong> 發明。用 <strong>兩個</strong> hash function：若 h₁ 與 h₂ 兩 bucket 都被占了，「踢掉」其中一個讓它去另一個位置（cuckoo 杜鵑鳥）。<strong>查詢保證 O(1) worst case</strong>（最多檢查 2 個 bucket）！缺點：load factor &gt; 50% 容易陷入迴圈，需 rehash。Memcached、近年的 high-perf hash table。</p></div>
+<div data-lang="en"><p>2001 <strong>Pagh &amp; Rodler</strong>. Use <strong>two</strong> hash functions: if both h₁ and h₂ buckets are full, "evict" one (like a cuckoo) to its alternate spot. <strong>Guaranteed O(1) worst-case lookup</strong> (at most 2 buckets checked)! Downside: load factor &gt; 50% risks cycles, forcing rehash. Used in Memcached and modern high-perf hash tables.</p></div></div>
+<div class="card"><h4>② Robin Hood Hashing</h4>
+<div data-lang="zh"><p>1985 Pedro Celis 在 Waterloo 提出。Open addressing 的變體：插入時若新元素的 「探測距離」 (probe distance) 比現有的長，就「搶」現有位置（「劫富濟貧」）。<strong>大幅降低 variance、查詢更穩定</strong>。Rust 的 std::HashMap、ClickHouse、Tableau 都用。</p></div>
+<div data-lang="en"><p>1985 Pedro Celis (Waterloo). Open addressing variant: on insert, if the new element's probe distance exceeds the current occupant's, "steal" the slot ("rob from the rich"). <strong>Drastically lowers variance, more predictable lookups</strong>. Rust std::HashMap, ClickHouse, Tableau use it.</p></div></div>
+<div class="card"><h4>③ Consistent Hashing</h4>
+<div data-lang="zh"><p>1997 MIT <strong>Karger et al.</strong> 為 Akamai CDN 發明。把 hash space 想成一個環，<strong>節點與 key 都映射到環上</strong>，key 由「下一個順時針」節點負責。<strong>新增/移除節點時，只有 1/N 的 key 需要搬移</strong>，而非全部 rehash。<strong>Cassandra、DynamoDB、CDN、分散式快取</strong> 全靠它。</p></div>
+<div data-lang="en"><p>1997 MIT <strong>Karger et al.</strong> for Akamai CDN. Map hash space to a ring; <strong>both nodes and keys map onto the ring</strong>; each key is owned by the "next clockwise" node. <strong>Adding/removing a node moves only 1/N of keys</strong>, no full rehash. <strong>Cassandra, DynamoDB, CDNs, distributed caches</strong> all rely on this.</p></div></div>
+<div class="card"><h4>④ Count-Min Sketch / Count Sketch</h4>
+<div data-lang="zh"><p>2004 Cormode &amp; Muthukrishnan。<strong>probabilistic frequency estimator</strong>：用 d 個 hash function 將每筆事件分到 w 個 bucket，計次後取 min。<strong>記憶體 O(d·w)，遠小於精確計數</strong>。<strong>k-mer 頻率估算、網路流量計、推特即時 trending</strong>都用。誤差有上界保證。</p></div>
+<div data-lang="en"><p>2004 Cormode &amp; Muthukrishnan. <strong>Probabilistic frequency estimator</strong>: d hash functions place each event into w buckets; counts are taken as the min across rows. <strong>Memory O(d·w), far less than exact counting</strong>. Used in <strong>k-mer frequency estimation, network telemetry, Twitter live trending</strong>. Error bounds are provable.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="進階主題 C" data-en="ADVANCED C">持久 / Persistent 結構</div>
+<h2 data-zh="九-C、進階：Persistent（不可變）資料結構" data-en="IX-C. Advanced: Persistent (Immutable) Structures">九-C、Persistent 資料結構</h2>
+<div data-lang="zh"><p>「Persistent」此處<strong>不是「存到磁碟」</strong>，而是「<strong>修改後舊版本仍可用</strong>」。每次「修改」其實是建立一個新版本，與舊版本共享大部分結構（structural sharing）。</p>
+<p><strong>關鍵應用：</strong></p>
+<ul style="margin-left:20px;line-height:1.9;">
+<li><strong>Git 的 object store</strong>：commit 不修改舊資料，只加新 blob/tree。所以你可以 checkout 任何歷史版本。<strong>本質就是 persistent Merkle tree</strong>。</li>
+<li><strong>Clojure 的核心結構</strong>：list、vector、map、set 全部 persistent。底層用 <strong>Hash Array Mapped Trie (HAMT)</strong>，Phil Bagwell 2001 發明。</li>
+<li><strong>函數式語言</strong> (Haskell, Erlang, F#)：所有資料預設 immutable。</li>
+<li><strong>React / Redux 的狀態管理</strong>：用 immutable.js / Immer 確保時間旅行 debug。</li>
+<li><strong>區塊鏈 (Bitcoin, Ethereum)</strong>：UTXO + Merkle Patricia Trie 都是 persistent。</li>
+</ul>
+<p><strong>對生資的潛在用途</strong>：① 版本化基因組註解（每次更新 Ensembl 注解只加 diff 不重寫）；② 系統發生樹的編輯歷史；③ 共同分析中追蹤每個分析步驟對細胞分群的影響。Bioconductor 的 SummarizedExperiment 雖非 strictly persistent，但 S4 slot 修改 = 複製新物件，類似精神。</p></div>
+<div data-lang="en"><p>"Persistent" here <strong>does not mean "saved to disk"</strong> — it means "<strong>old versions remain accessible after modification</strong>." Every "edit" creates a new version that shares most structure with the old (structural sharing).</p>
+<p><strong>Key applications:</strong></p>
+<ul style="margin-left:20px;line-height:1.9;">
+<li><strong>Git's object store</strong>: commits don't modify old data, only add new blobs/trees. That's why you can check out any historical version. <strong>It is essentially a persistent Merkle tree.</strong></li>
+<li><strong>Clojure's core structures</strong>: list/vector/map/set all persistent. Backed by <strong>Hash Array Mapped Trie (HAMT)</strong> — Phil Bagwell 2001.</li>
+<li><strong>Functional languages</strong> (Haskell, Erlang, F#): immutable by default.</li>
+<li><strong>React/Redux state</strong>: immutable.js / Immer for time-travel debugging.</li>
+<li><strong>Blockchains (Bitcoin, Ethereum)</strong>: UTXO + Merkle Patricia Trie are persistent.</li>
+</ul>
+<p><strong>Potential bioinformatics uses:</strong> (1) versioned genome annotations (Ensembl updates as diffs); (2) phylogenetic-tree edit history; (3) tracking how each analysis step alters cell clustering. Bioconductor's SummarizedExperiment isn't strictly persistent, but S4 slot edits do return new objects — kindred spirit.</p></div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="進階主題 D" data-en="ADVANCED D">空間索引 R-tree / R*-tree</div>
+<h2 data-zh="九-D、進階：空間索引 R-tree（生物區間查詢的數學基礎）" data-en="IX-D. Advanced: Spatial Indices — R-tree (Math behind Genomic Range Queries)">九-D、R-tree 空間索引</h2>
+<div data-lang="zh"><p>當你問：<strong>「在 chr1:1,000,000-1,100,000 區間裡有哪些 SNP / gene / peak？」</strong>—— 用線性掃描要 O(n)，但用 <strong>R-tree</strong> 是 O(log n + k)。</p>
+<p><strong>R-tree (Guttman 1984)</strong> 把每個物件（點、區間、長方形）裝進 <strong>最小包圍盒 (MBR, Minimum Bounding Rectangle)</strong>，然後遞迴把 MBR 群組成更大的 MBR。查詢時剪掉所有 MBR 與 query 不交的子樹。</p>
+<p><strong>R*-tree (1990)</strong> 是改進版，插入時嘗試重新插入相鄰節點以最小化 overlap，2026 仍是 PostGIS、SQLite SpatiaLite 的預設。</p>
+<p><strong>生資對應的「區間樹 (Interval Tree)」</strong>：</p>
+<ul style="margin-left:20px;line-height:1.9;">
+<li><strong>BEDtools (Quinlan &amp; Hall 2010, Bioinformatics)</strong>：intersect / merge / closest，內部即 interval tree。</li>
+<li><strong>tabix (Li 2011, Bioinformatics)</strong>：在壓縮 BED/GFF/VCF 上做 O(log n) 區間查詢，BAM .bai 的兄弟。</li>
+<li><strong>GenomicRanges (R/Bioconductor)</strong>：findOverlaps, countOverlaps 是 interval tree。</li>
+<li><strong>pyranges (Stovner 2020)</strong>：Python 的 GenomicRanges 對應品，比 pybedtools 快 100×。</li>
+<li><strong>UCSC Genome Browser</strong> 的 binning scheme = 多層 interval tree。</li>
+</ul>
+<p><strong>哲學啟示</strong>：基因組座標是「1D 空間」，所以 1D R-tree (interval tree) 就夠用；但若做空間轉錄組 (Visium、MERFISH) 的「組織切片 2D」，2D R-tree (PostGIS) 才合適。<strong>10x Visium HD 2024 起就用空間索引加速。</strong></p></div>
+<div data-lang="en"><p>When you ask: <strong>"Which SNPs / genes / peaks lie in chr1:1,000,000-1,100,000?"</strong> — linear scan is O(n); with an <strong>R-tree</strong>, it's O(log n + k).</p>
+<p><strong>R-tree (Guttman 1984)</strong> wraps each object (point, interval, rectangle) in a <strong>Minimum Bounding Rectangle (MBR)</strong>, then recursively groups MBRs. Queries prune any subtree whose MBR doesn't intersect.</p>
+<p><strong>R*-tree (1990)</strong> is an improvement that re-inserts nearby nodes on insertion to minimize overlap; still the default in PostGIS and SQLite SpatiaLite in 2026.</p>
+<p><strong>Bioinformatics "interval tree" cousins:</strong></p>
+<ul style="margin-left:20px;line-height:1.9;">
+<li><strong>BEDtools (Quinlan &amp; Hall 2010, Bioinformatics)</strong>: intersect / merge / closest — internally an interval tree.</li>
+<li><strong>tabix (Li 2011, Bioinformatics)</strong>: O(log n) range queries on compressed BED/GFF/VCF; cousin of BAM .bai.</li>
+<li><strong>GenomicRanges (R/Bioconductor)</strong>: findOverlaps, countOverlaps — interval tree.</li>
+<li><strong>pyranges (Stovner 2020)</strong>: Python's GenomicRanges, 100× faster than pybedtools.</li>
+<li><strong>UCSC Genome Browser</strong> binning scheme = multi-level interval tree.</li>
+</ul>
+<p><strong>Takeaway:</strong> Genomic coordinates are "1D space," so a 1D R-tree (interval tree) suffices; but for spatial transcriptomics (Visium, MERFISH) the "tissue slice 2D" needs a 2D R-tree (PostGIS). <strong>10x Visium HD (2024) already uses spatial indices for acceleration.</strong></p></div>
+</section>
+
 <section class="quiz-section">
-<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<h3>📝 <span data-zh="自我檢測（5 題）" data-en="Self-Check (5 questions)">自我檢測</span></h3>
+
 <div class="quiz-q" data-answer="1">
-<p data-lang="zh">1. Stack 與 Queue 最關鍵的差異是？</p>
-<p data-lang="en">1. What is the key difference between a stack and a queue?</p>
+<p data-lang="zh">1. Python <code>dict</code> 的查找平均複雜度是？</p>
+<p data-lang="en">1. The average lookup complexity of Python <code>dict</code> is?</p>
 <div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Stack 比 Queue 快</span><span data-lang="en">A. Stacks are faster than queues</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Stack 是 LIFO（後進先出），Queue 是 FIFO（先進先出）</span><span data-lang="en">B. Stack is LIFO; Queue is FIFO</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Stack 只能存整數，Queue 可存任何型別</span><span data-lang="en">C. Stacks only hold ints; queues hold any type</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Stack 用陣列實作，Queue 必須用 linked list</span><span data-lang="en">D. Stacks must use arrays; queues must use linked lists</span></div>
-</div><div class="quiz-feedback" id="fb1"></div></div>
-
-<div class="quiz-q" data-answer="0">
-<p data-lang="zh">2. Hash Table 處理碰撞的兩大策略是？</p>
-<p data-lang="en">2. The two main collision-resolution strategies in a hash table are?</p>
-<div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Chaining（鏈結法）與 Open Addressing（開放定址）</span><span data-lang="en">A. Chaining and Open Addressing</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Bubble 與 Merge</span><span data-lang="en">B. Bubble and Merge</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Recursion 與 Iteration</span><span data-lang="en">C. Recursion and Iteration</span></div>
-<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. BFS 與 DFS</span><span data-lang="en">D. BFS and DFS</span></div>
-</div><div class="quiz-feedback" id="fb2"></div></div>
-
-<div class="quiz-q" data-answer="2">
-<p data-lang="zh">3. 平衡 BST 上的搜尋平均時間複雜度是？</p>
-<p data-lang="en">3. The average search complexity on a balanced BST is?</p>
-<div class="quiz-options">
-<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. O(1)</span><span data-lang="en">A. O(1)</span></div>
-<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. O(n)</span><span data-lang="en">B. O(n)</span></div>
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. O(n)</span><span data-lang="en">A. O(n)</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. O(1) 平均，最壞 O(n)</span><span data-lang="en">B. O(1) average, O(n) worst</span></div>
 <div class="quiz-opt" data-idx="2"><span data-lang="zh">C. O(log n)</span><span data-lang="en">C. O(log n)</span></div>
 <div class="quiz-opt" data-idx="3"><span data-lang="zh">D. O(n²)</span><span data-lang="en">D. O(n²)</span></div>
+</div><div class="quiz-feedback" id="fb1"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">2. SPAdes 基因組組裝工具的核心資料結構是？</p>
+<p data-lang="en">2. The core data structure of the SPAdes genome assembler is?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Hash Table</span><span data-lang="en">A. Hash Table</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Linked List</span><span data-lang="en">B. Linked List</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. de Bruijn Graph</span><span data-lang="en">C. de Bruijn Graph</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Binary Heap</span><span data-lang="en">D. Binary Heap</span></div>
+</div><div class="quiz-feedback" id="fb2"></div></div>
+
+<div class="quiz-q" data-answer="0">
+<p data-lang="zh">3. Stack 和 Queue 的差異是？</p>
+<p data-lang="en">3. The difference between Stack and Queue is?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Stack = LIFO 後進先出；Queue = FIFO 先進先出</span><span data-lang="en">A. Stack = LIFO; Queue = FIFO</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Stack 用樹結構；Queue 用 hash</span><span data-lang="en">B. Stack is tree-based; Queue is hash-based</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Stack 只能存整數</span><span data-lang="en">C. Stack only stores integers</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 沒有差別</span><span data-lang="en">D. No difference</span></div>
 </div><div class="quiz-feedback" id="fb3"></div></div>
+
+<div class="quiz-q" data-answer="3">
+<p data-lang="zh">4. 為什麼 BAM 檔案需要 <code>.bai</code> 索引？</p>
+<p data-lang="en">4. Why do BAM files need a <code>.bai</code> index?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. .bai 是檔案的備份</span><span data-lang="en">A. .bai is a backup</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. .bai 用於壓縮</span><span data-lang="en">B. .bai is for compression</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. .bai 加密資料</span><span data-lang="en">C. .bai encrypts data</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. .bai 是 B-tree 風格的位置索引，讓區間查詢從 O(n) 降到 O(log n + k)</span><span data-lang="en">D. .bai is a B-tree-style position index, reducing range queries from O(n) to O(log n + k)</span></div>
+</div><div class="quiz-feedback" id="fb4"></div></div>
+
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">5. Bloom Filter 最適合下列哪個情境？</p>
+<p data-lang="en">5. Bloom Filter is best for which scenario?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 需要精確「key→value」儲存</span><span data-lang="en">A. Need exact key→value storage</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 「是否可能存在」查詢，可接受誤判但記憶體極小</span><span data-lang="en">B. "Maybe exists" queries with tiny memory, tolerating false positives</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 範圍查詢</span><span data-lang="en">C. Range queries</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 排序</span><span data-lang="en">D. Sorting</span></div>
+</div><div class="quiz-feedback" id="fb5"></div></div>
+</section>
+
+<section class="section" style="background:#fef3c7;border-radius:14px;padding:32px;">
+<div class="section-label" style="color:#b45309;">💭 <span data-zh="延伸思考" data-en="DISCUSSION">延伸思考</span></div>
+<h2 data-zh="十、延伸思考與討論" data-en="X. Discussion &amp; Reflection">十、延伸思考</h2>
+<ol style="margin-left:20px;line-height:1.9;color:var(--c-ink);">
+<li data-lang="zh"><strong>量子資料結構是什麼？</strong>量子位元的 superposition 可以同時儲存多個狀態。<strong>量子隨機存取記憶體 (QRAM)</strong> 可在 O(log n) 查找 n 個 entry——但目前還停在理論。對生物資訊的潛在影響：能否用量子 Hash 同時查詢整個 GenBank？</li>
+<li data-lang="en"><strong>What are quantum data structures?</strong> Qubit superposition stores multiple states at once. <strong>Quantum RAM (QRAM)</strong> could look up n entries in O(log n) — but it's still theoretical. Potential impact on bioinformatics: could a quantum hash query all of GenBank at once?</li>
+<li data-lang="zh"><strong>Persistent (不可變) 資料結構的優雅之處？</strong>Git 的 object store 是 <strong>persistent Merkle tree</strong>——每次 commit 不修改舊資料，只加新節點。所以你可以 checkout 任何歷史版本而無資料遺失。Clojure 的核心資料結構全部 persistent。函數式設計的核心思想之一。</li>
+<li data-lang="en"><strong>The elegance of persistent (immutable) data structures?</strong> Git's object store is a <strong>persistent Merkle tree</strong> — each commit doesn't modify old data, only adds new nodes. That's why you can check out any historical version without loss. Clojure's core structures are all persistent. A pillar of functional design.</li>
+<li data-lang="zh"><strong>為何 cache-aware 的 B-tree 仍勝過理論最佳的 RB Tree？</strong>RB Tree 是 O(log₂ n)，B-tree 是 O(log_B n)，B (節點大小) = 100~1000。<strong>實務上 B-tree 比 RB Tree 快 10×</strong>，因為 disk/cache 每次讀都是 4 KB / 64 byte 塊。<strong>真實電腦不是 RAM 模型，是 memory hierarchy。</strong></li>
+<li data-lang="en"><strong>Why does cache-aware B-tree beat the "theoretically optimal" RB Tree?</strong> RB Tree is O(log₂ n), B-tree is O(log_B n) with B (node size) = 100–1000. <strong>In practice B-tree is 10× faster than RB Tree</strong> because disk/cache reads come in 4 KB / 64 B blocks. <strong>Real computers aren't the RAM model — they're a memory hierarchy.</strong></li>
+</ol>
 </section>
 
 <nav class="page-nav">
@@ -223,21 +618,42 @@ t = <span class="func">BST</span>()
 window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';});
 function switchTab(b,id){const p=b.closest('.code-tabs');p.querySelectorAll('.code-tab-btn').forEach(x=>x.classList.remove('active'));p.querySelectorAll('.code-tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(id).classList.add('active');}
 
-// Stack & Queue demo
-let stk=[], que=[], counter=1;
-const stackDisp=document.getElementById('stackDisp');
-const queueDisp=document.getElementById('queueDisp');
-function box(v){return '<div style="background:rgba(29,78,216,.85);color:white;padding:6px 10px;border-radius:4px;font-family:var(--font-mono);font-weight:600;">'+v+'</div>';}
-function renderStack(){stackDisp.innerHTML=stk.map(box).join('');}
-function renderQueue(){queueDisp.innerHTML=que.map(box).join('');}
-function stackPush(){if(stk.length>=6)return;stk.push(counter++);renderStack();}
-function stackPop(){stk.pop();renderStack();}
-function queueAdd(){if(que.length>=6)return;que.push(counter++);renderQueue();}
-function queueRemove(){que.shift();renderQueue();}
-renderStack();renderQueue();
+// Data structure complexity chart (lower = better; O(1)=1, O(log n)=3, O(n)=10)
+const dsLabels=['Array','Linked List','Hash Table','BST (balanced)','Binary Heap','Trie','Bloom Filter'];
+const dsInsert =[10, 1, 1, 3, 3, 5, 1];
+const dsSearch =[10, 10, 1, 3, 10, 5, 1];
+const dsDelete =[10, 1, 1, 3, 3, 5, 0];
+new Chart(document.getElementById('dsChart'),{type:'radar',data:{labels:dsLabels,datasets:[
+ {label:'Insert',data:dsInsert,borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.18)'},
+ {label:'Search',data:dsSearch,borderColor:'#dc2626',backgroundColor:'rgba(220,38,38,.18)'},
+ {label:'Delete',data:dsDelete,borderColor:'#16a34a',backgroundColor:'rgba(22,163,74,.18)'}
+]},options:{responsive:true,maintainAspectRatio:false,scales:{r:{min:0,max:10,ticks:{stepSize:2,callback:(v)=>v===1?'O(1)':v===3?'O(log n)':v===5?'O(m)':v===10?'O(n)':''}}},plugins:{title:{display:true,text:'Cost (lower = better)'}}}});
+
+// Stack vs Queue interactive
+const stack=[],queue=[];
+const sv=document.getElementById('stackView'),qv=document.getElementById('queueView'),logE=document.getElementById('sqLog');
+function pad(v){return '<div style="background:linear-gradient(90deg,#1B365D,#4A7C59);color:#fff;padding:10px 14px;border-radius:6px;font-family:var(--font-mono);font-weight:600;text-align:center;">'+v+'</div>';}
+function refresh(){sv.innerHTML=stack.map(pad).join('');qv.innerHTML=queue.map(pad).join('');}
+function log(msg){logE.textContent='[ '+new Date().toLocaleTimeString()+' ] '+msg;}
+document.getElementById('pushBtn').addEventListener('click',()=>{const v=+document.getElementById('sqInput').value||Math.floor(Math.random()*100);stack.push(v);queue.push(v);refresh();const L=I18n.get();log(L==='zh'?'Push '+v+' → Stack 頂 / Queue 尾':'Push '+v+' → Stack top / Queue tail');});
+document.getElementById('popBtn').addEventListener('click',()=>{if(!stack.length&&!queue.length){log('Empty');return;}const sv2=stack.pop();const qv2=queue.shift();refresh();const L=I18n.get();log(L==='zh'?'Stack pop → '+sv2+'  |  Queue dequeue → '+qv2+'  (順序差異!)':'Stack pop → '+sv2+'  |  Queue dequeue → '+qv2+'  (note order!)');});
+document.getElementById('randBtn').addEventListener('click',()=>{document.getElementById('sqInput').value=Math.floor(Math.random()*100);});
+document.getElementById('clearBtn').addEventListener('click',()=>{stack.length=0;queue.length=0;refresh();log('Cleared');});
 
 // Quiz feedback
-const QF={zh:{q1_y:'最後進來的元素最先被取出 → Stack；先進來的先離開 → Queue。',q1_n:'答案 B。',q2_y:'Chaining 在每個 bucket 維護一條 linked list；Open Addressing 則探測下一個空位。',q2_n:'答案 A。',q3_y:'平衡 BST (AVL / Red-Black) 樹高保證 O(log n)。',q3_n:'答案 C。'},en:{q1_y:'Latest in first out → Stack; first in first out → Queue.',q1_n:'Answer: B.',q2_y:'Chaining keeps a linked list per bucket; Open Addressing probes for the next empty slot.',q2_n:'Answer: A.',q3_y:'Balanced BSTs (AVL / Red-Black) guarantee O(log n) height.',q3_n:'Answer: C.'}};
+const QF={zh:{
+q1_y:'Python dict 是 hash table，平均 O(1)；最壞 O(n) 是所有 key 撞同一 bucket 時。',q1_n:'答案 B。',
+q2_y:'SPAdes 用 de Bruijn graph：k-mer 為節點，相鄰 k-mer 連邊，組裝 = 找 Eulerian path。',q2_n:'答案 C。',
+q3_y:'LIFO vs FIFO 是兩者的核心差異。瀏覽器歷史記錄用 Stack；任務排程用 Queue。',q3_n:'答案 A。',
+q4_y:'.bai 是 BAM 的 B-tree 風格位置索引，是 IGV、samtools 區間查詢的速度來源。',q4_n:'答案 D。',
+q5_y:'Bloom Filter：空間極小、O(k) 操作、絕無 false negative。生資 k-mer 存在性檢查、URL 黑名單常用。',q5_n:'答案 B。'
+},en:{
+q1_y:'Python dict is a hash table — O(1) average, O(n) worst when all keys collide.',q1_n:'Answer: B.',
+q2_y:'SPAdes uses a de Bruijn graph: k-mers as nodes, adjacent k-mers as edges, assembly = Eulerian path.',q2_n:'Answer: C.',
+q3_y:'LIFO vs FIFO is the core difference. Browser history uses Stack; task scheduling uses Queue.',q3_n:'Answer: A.',
+q4_y:".bai is BAM's B-tree-style position index — the speed source for IGV and samtools range queries.",q4_n:'Answer: D.',
+q5_y:'Bloom Filter: tiny memory, O(k) ops, no false negatives. Used for k-mer existence and URL blacklists.',q5_n:'Answer: B.'
+}};
 document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
 </script>
 </body></html>

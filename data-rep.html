@@ -1,6 +1,7 @@
 <!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Ch 2: 資料表示法 — Intro CS</title>
 <link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 </head><body>
 <nav class="top-nav"><div class="top-nav-inner">
   <a href="index.html" class="top-nav-brand"><span>💻</span> <span data-zh="計算機概論" data-en="Intro CS">計算機概論</span></a>
@@ -11,210 +12,346 @@
 <div class="progress-bar-container"><div class="progress-bar" id="progressBar"></div></div>
 <header class="page-hero"><div class="step-badge">CHAPTER 2 / 16</div>
 <h1 data-zh="資料表示法" data-en="Data Representation">資料表示法</h1>
-<p class="subtitle" data-lang="zh">電腦的世界只有 0 與 1。本章教你如何用二進位表達整數、實數、文字與多媒體，並理解 IEEE 754 浮點數的精度陷阱。</p>
-<p class="subtitle" data-lang="en">A computer sees only 0s and 1s. This chapter shows how to encode integers, reals, text, and media in binary — and reveals the precision traps of IEEE 754.</p>
+<p class="subtitle" data-lang="zh">電腦的世界只有 0 和 1。本章告訴你：為什麼 0.1 + 0.2 ≠ 0.3 害一枚火箭爆炸、為什麼 Excel 強迫 27 個基因改名，以及 FASTQ Phred 質量分數背後隱藏的 ASCII 故事。</p>
+<p class="subtitle" data-lang="en">A computer sees only 0s and 1s. This chapter shows why 0.1 + 0.2 ≠ 0.3 blew up a rocket, why Excel forced 27 genes to be renamed, and the ASCII story hiding inside every FASTQ Phred score.</p>
 </header>
 <main class="content-wrap">
 
 <section class="section">
-<div class="section-label" data-zh="概覽" data-en="OVERVIEW">概覽</div>
-<h2 data-zh="為什麼計算機只認得 0 與 1？" data-en="Why does a computer understand only 0s and 1s?">為什麼計算機只認得 0 與 1？</h2>
-<div data-lang="zh"><p>因為電子元件最容易、最可靠地表達兩種狀態：「高電壓 / 低電壓」、「導通 / 截止」、「磁化 N / S」、「光點 反射 / 不反射」。將兩種狀態指定為 <strong>1</strong> 和 <strong>0</strong>，就得到一個 <strong>bit (binary digit)</strong>。1 個 bit = 1 個是非題的答案；8 個 bit = 1 個 byte，能表達 0–255 共 256 種狀態。</p>
-<p>所有更高層次的資料——整數、小數、文字、圖片、影片、AI 模型權重——都是「許多個 bit 的不同詮釋」。</p></div>
-<div data-lang="en"><p>Because electronic devices most easily and reliably represent two states: high/low voltage, on/off, magnetized N/S, light reflected/not. Assigning these to <strong>1</strong> and <strong>0</strong> yields a <strong>bit (binary digit)</strong>. One bit = answer to one yes/no question; 8 bits = 1 byte, encoding 256 values (0–255).</p>
-<p>All higher-level data — integers, decimals, text, images, video, AI weights — are simply <em>different interpretations</em> of bit patterns.</p></div>
+<div class="section-label" data-zh="開場故事" data-en="OPENING STORY">1996.06.04, 09:34 UTC</div>
+<h2 data-zh="一、$5 億美元的整數溢位：阿麗亞娜 5 號" data-en="I. The $500M Integer Overflow: Ariane 5">一、$5 億美元的整數溢位</h2>
+<div data-lang="zh"><p>1996 年 6 月 4 日，歐洲太空總署 ESA 的<strong>阿麗亞娜 5 號</strong>火箭首次飛行。發射 <strong>37 秒</strong>後，火箭突然偏離航道，自毀系統啟動——損失 <strong>5 億美元</strong>的衛星貨物與 80 億美元的研發費用，這是史上最昂貴的軟體 bug 之一。</p>
+<p>事後調查（ESA-CNES 1996 報告）發現災難原因竟是<strong>一行型別轉換的程式碼</strong>：阿麗亞娜 4 號的慣性導航系統把「水平速度」儲存為 64-bit float，新版火箭速度更快，數值超過了 <strong>32,768</strong>（2¹⁵）；當系統把它轉成 16-bit signed int 時，發生溢位、產生負值，導航電腦以為火箭翻覆，緊急修正導致氣動應力過大解體。</p>
+<p>核心教訓：<strong>「位元有限，數字無限」</strong>。理解計算機如何用有限位元表達各種資料，是寫出正確程式的<strong>第一性原理</strong>。</p></div>
+<div data-lang="en"><p>4 June 1996. ESA's <strong>Ariane 5</strong> rocket lifted off on its maiden flight. <strong>37 seconds</strong> later it veered off course and self-destructed — losing <strong>$500 million</strong> in cargo and $8 billion in R&D. One of the most expensive software bugs in history.</p>
+<p>The post-mortem (ESA-CNES 1996) found a single type-conversion line at fault: Ariane 4's inertial unit stored horizontal velocity as a 64-bit float; Ariane 5 was faster, exceeding <strong>32,768</strong> (2¹⁵); converting to 16-bit signed int overflowed to a negative, the nav computer believed the rocket had flipped, and the corrective steering tore it apart.</p>
+<p>The lesson: <strong>"bits are finite, numbers are infinite."</strong> Knowing how computers encode data with finite bits is the <strong>first principle</strong> of writing correct programs.</p></div>
 <div class="callout tip"><span class="callout-icon">💡</span><div>
-<span data-lang="zh"><strong>核心觀念：</strong>位元組裡的二進位「沒有自帶意義」。同一個 byte <code>01000001</code> 可以被解讀為整數 65、字元 'A'、或紅綠藍三色中的某個分量——取決於程式上下文。</span>
-<span data-lang="en"><strong>Core idea:</strong> Bits in a byte have <em>no inherent meaning</em>. The byte <code>01000001</code> can be interpreted as integer 65, the letter 'A', or a color channel — depending on the program's context.</span>
+<span data-lang="zh"><strong>核心觀念：</strong>位元組裡的二進位「沒有自帶意義」。同一個 byte <code>01000001</code> 可被解讀為整數 65、字元 'A'、RGB 中的紅色分量、FASTQ 的 Phred 32——取決於程式上下文。</span>
+<span data-lang="en"><strong>Core idea:</strong> Bits have <em>no inherent meaning</em>. The byte <code>01000001</code> can be integer 65, the letter 'A', a red-channel value, or FASTQ Phred 32 — it depends entirely on program context.</span>
 </div></div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="進位制" data-en="NUMBER SYSTEMS">進位制</div>
-<h2 data-zh="一、進位系統：二進位、十進位、十六進位" data-en="I. Number Systems: Binary, Decimal, Hex">一、進位系統</h2>
-<div data-lang="zh"><p>進位制是「以多少種符號表達數字」的規則。日常使用的<strong>十進位</strong>有 10 個符號 (0–9)，計算機用的<strong>二進位</strong>有 2 個 (0, 1)，工程師常用的<strong>十六進位</strong>有 16 個 (0–9, A–F)。</p></div>
-<div data-lang="en"><p>A number system defines how many symbols are used to write numbers. Everyday <strong>decimal</strong> uses 10 symbols (0–9); computers use <strong>binary</strong> (0, 1); engineers often use <strong>hexadecimal</strong> (0–9, A–F).</p></div>
+<div class="section-label" data-zh="基礎名詞" data-en="BASICS">bit / byte / 進位制</div>
+<h2 data-zh="二、初學者基礎：bit、byte、進位制" data-en="II. Beginner Basics: bit, byte, number systems">二、bit、byte 與進位制</h2>
+<div data-lang="zh"><p>電子元件最容易表達兩種狀態：高電壓/低電壓、磁化 N/S、光點反射/不反射。把兩種狀態指定為 <strong>0</strong> 與 <strong>1</strong>，就是一個 <strong>bit (binary digit)</strong>。8 個 bit = 1 個 <strong>byte</strong>，可表達 256 種值 (0–255)。所有更高層次的資料——整數、實數、文字、圖片、AI 模型權重——都只是「許多 bit 的不同詮釋」。</p></div>
+<div data-lang="en"><p>Electronic devices easily store two states: high/low voltage, magnetized N/S, light reflected/not. Call those <strong>0</strong> and <strong>1</strong> and you have a <strong>bit (binary digit)</strong>. 8 bits = 1 <strong>byte</strong>, representing 256 values (0–255). All higher-level data — ints, floats, text, images, AI weights — is just "many bits, interpreted differently."</p></div>
+
+<div class="card-grid cols-3">
+<div class="card"><h4>🔢 <span data-zh="二進位 (Base 2)" data-en="Binary (Base 2)">二進位</span></h4><div data-lang="zh"><p>只用 0 和 1。每位代表 2 的次方。<code>1011₂ = 8+0+2+1 = 11</code>。電腦底層的母語。</p></div><div data-lang="en"><p>Just 0 and 1. Each digit is a power of 2. <code>1011₂ = 8+0+2+1 = 11</code>. The native tongue of every computer.</p></div></div>
+<div class="card"><h4>🔟 <span data-zh="十進位 (Base 10)" data-en="Decimal (Base 10)">十進位</span></h4><div data-lang="zh"><p>人類日常使用，0–9。<code>2026₁₀ = 2·10³+0·10²+2·10+6</code>。源於十個手指。</p></div><div data-lang="en"><p>Everyday human counting, 0–9. <code>2026₁₀ = 2·10³+0·10²+2·10+6</code>. Origin: ten fingers.</p></div></div>
+<div class="card"><h4>🔡 <span data-zh="十六進位 (Base 16)" data-en="Hex (Base 16)">十六進位</span></h4><div data-lang="zh"><p>0–9, A–F。一個 hex digit = 4 個 bit，所以 1 個 byte = 2 個 hex chars。用於 #FF8C00 顏色、MAC 位址、記憶體 dump。</p></div><div data-lang="en"><p>0–9, A–F. One hex digit = 4 bits, so 1 byte = 2 hex chars. Used for #FF8C00 colors, MAC addresses, memory dumps.</p></div></div>
+</div>
 
 <table class="comp-table">
-<thead><tr><th data-zh="十進位" data-en="Decimal">十進位</th><th data-zh="二進位" data-en="Binary">二進位</th><th data-zh="十六進位" data-en="Hex">十六進位</th><th data-zh="八進位" data-en="Octal">八進位</th></tr></thead>
+<thead><tr><th data-zh="十進位" data-en="Decimal">十進位</th><th data-zh="二進位" data-en="Binary">二進位</th><th data-zh="十六進位" data-en="Hex">十六進位</th><th data-zh="八進位" data-en="Octal">八進位</th><th data-zh="意義" data-en="Meaning">意義 (ASCII)</th></tr></thead>
 <tbody>
-<tr><td>0</td><td>0000</td><td>0</td><td>0</td></tr>
-<tr><td>1</td><td>0001</td><td>1</td><td>1</td></tr>
-<tr><td>5</td><td>0101</td><td>5</td><td>5</td></tr>
-<tr><td>10</td><td>1010</td><td>A</td><td>12</td></tr>
-<tr><td>15</td><td>1111</td><td>F</td><td>17</td></tr>
-<tr><td>16</td><td>0001 0000</td><td>10</td><td>20</td></tr>
-<tr><td>255</td><td>1111 1111</td><td>FF</td><td>377</td></tr>
-<tr><td>2026</td><td>0111 1110 1010</td><td>7EA</td><td>3752</td></tr>
+<tr><td>0</td><td>0000 0000</td><td>0x00</td><td>000</td><td>NUL</td></tr>
+<tr><td>10</td><td>0000 1010</td><td>0x0A</td><td>012</td><td>\n (LF)</td></tr>
+<tr><td>33</td><td>0010 0001</td><td>0x21</td><td>041</td><td>! (FASTQ Phred Q0 起點)</td></tr>
+<tr><td>48</td><td>0011 0000</td><td>0x30</td><td>060</td><td>'0'</td></tr>
+<tr><td>65</td><td>0100 0001</td><td>0x41</td><td>101</td><td>'A'</td></tr>
+<tr><td>73</td><td>0100 1001</td><td>0x49</td><td>111</td><td>'I' (FASTQ Phred Q40)</td></tr>
+<tr><td>255</td><td>1111 1111</td><td>0xFF</td><td>377</td><td>(unsigned max)</td></tr>
+<tr><td>2026</td><td>0111 1110 1010</td><td>0x7EA</td><td>3752</td><td>—</td></tr>
 </tbody></table>
 
 <div class="callout warn"><span class="callout-icon">⚠️</span><div>
-<div data-lang="zh"><strong>為什麼工程師愛用十六進位？</strong>一個 hex digit 剛好等於 4 個 bit，閱讀記憶體 dump、MAC 位址、顏色 (#FF8C00) 都很方便。</div>
-<div data-lang="en"><strong>Why hex?</strong> One hex digit equals exactly 4 bits — convenient for memory dumps, MAC addresses, colors (#FF8C00), etc.</div>
+<div data-lang="zh"><strong>為什麼工程師愛用十六進位？</strong>一個 hex digit 剛好對應 4 個 bit；閱讀記憶體 dump、MAC 位址 (<code>00:1B:44:11:3A:B7</code>)、CSS 顏色 (<code>#FF8C00</code>) 都比二進位簡潔 4 倍、比十進位直觀許多。</div>
+<div data-lang="en"><strong>Why hex?</strong> One hex digit = 4 bits cleanly. Memory dumps, MAC addresses (<code>00:1B:44:11:3A:B7</code>), CSS colors (<code>#FF8C00</code>) are 4× shorter than binary and far more intuitive than decimal.</div>
 </div></div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="互動轉換器" data-en="INTERACTIVE CONVERTER">互動轉換器</div>
-<h2 data-zh="二、互動：十進位 ↔ 二進位 / 十六進位" data-en="II. Interactive: Decimal ↔ Binary / Hex">二、進位轉換器</h2>
+<div class="section-label" data-zh="互動 #1" data-en="INTERACTIVE #1">進位轉換器</div>
+<h2 data-zh="三、互動 ①：點擊位元方塊，看數字變化" data-en="III. Interactive ①: Click Bit Cells & Watch Numbers Change">三、互動 ①：進位轉換器</h2>
 <div class="interactive-panel">
 <div class="slider-group"><label><span data-zh="十進位數字 (0–255)" data-en="Decimal (0–255)">十進位數字</span> <span id="decVal">42</span></label><input type="range" id="decSlider" min="0" max="255" value="42"></div>
 <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:24px;margin:18px 0;">
   <div style="text-align:center;"><div style="font-size:.8rem;color:var(--c-ink-muted);font-weight:600;letter-spacing:1px;" data-zh="二進位" data-en="BINARY">BINARY</div><div id="binOut" style="font-family:var(--font-mono);font-size:1.4rem;color:var(--c-accent-dark);font-weight:600;margin-top:4px;">0010 1010</div></div>
   <div style="text-align:center;"><div style="font-size:.8rem;color:var(--c-ink-muted);font-weight:600;letter-spacing:1px;" data-zh="十六進位" data-en="HEX">HEX</div><div id="hexOut" style="font-family:var(--font-mono);font-size:1.4rem;color:var(--c-accent-dark);font-weight:600;margin-top:4px;">0x2A</div></div>
   <div style="text-align:center;"><div style="font-size:.8rem;color:var(--c-ink-muted);font-weight:600;letter-spacing:1px;" data-zh="八進位" data-en="OCTAL">OCTAL</div><div id="octOut" style="font-family:var(--font-mono);font-size:1.4rem;color:var(--c-accent-dark);font-weight:600;margin-top:4px;">052</div></div>
+  <div style="text-align:center;"><div style="font-size:.8rem;color:var(--c-ink-muted);font-weight:600;letter-spacing:1px;" data-zh="ASCII" data-en="ASCII">ASCII</div><div id="ascOut" style="font-family:var(--font-mono);font-size:1.4rem;color:var(--c-accent-dark);font-weight:600;margin-top:4px;">*</div></div>
 </div>
 <div class="bin-row" id="bitRow"></div>
-<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;"><span data-lang="zh">點選位元方塊也能直接切換 0/1</span><span data-lang="en">Click bits to toggle 0/1</span></p>
+<p style="font-size:.82rem;color:var(--c-ink-muted);text-align:center;"><span data-lang="zh">滑動或點擊位元方塊切換 0/1。注意 Q33 = '!' 是 FASTQ Sanger 編碼的起點。</span><span data-lang="en">Drag or click any bit to toggle 0/1. Note Q33 = '!' is the starting point of FASTQ Sanger encoding.</span></p>
 </div>
 </section>
 
 <section class="section">
 <div class="section-label" data-zh="負數表示" data-en="NEGATIVE NUMBERS">負數與補數</div>
-<h2 data-zh="三、負數：二補數 (Two's Complement)" data-en="III. Negative Numbers: Two's Complement">三、負數表示與二補數</h2>
-<div data-lang="zh"><p>整數需要表示負數。最流行的方案是 <strong>二補數 (two's complement)</strong>，因為它讓加法器同時處理正負，硬體最簡單。</p>
+<h2 data-zh="四、負數：二補數 (Two's Complement)" data-en="IV. Negative Numbers: Two's Complement">四、二補數</h2>
+<div data-lang="zh"><p>整數需要表示負數。最流行的方案是 <strong>二補數 (two's complement)</strong>，因為它讓加法器同時處理正負——硬體最簡單。</p>
 <p><strong>二補數規則：</strong>① 取絕對值的二進位；② 全部位元反轉 (0↔1)；③ 加 1。</p>
-<p><strong>範例 (8 bit)：</strong> +5 = <code>0000 0101</code>，所以 −5 = <code>1111 1011</code>（反轉得 1111 1010，再加 1）。最左邊一位為「符號位」：0 正、1 負。</p></div>
-<div data-lang="en"><p>To encode negatives, the most common scheme is <strong>two's complement</strong>: it lets one adder handle both signs in hardware.</p>
-<p><strong>Rule:</strong> (1) take the absolute value in binary; (2) flip every bit; (3) add 1.</p>
-<p><strong>Example (8 bit):</strong> +5 = <code>0000 0101</code>, so −5 = <code>1111 1011</code> (flip → <code>1111 1010</code>, +1). The leftmost bit is the sign bit: 0 = positive, 1 = negative.</p></div>
+<p><strong>範例 (8 bit)：</strong> +5 = <code>0000 0101</code>，所以 −5 = <code>1111 1011</code>（反轉得 <code>1111 1010</code>，再加 1）。最左邊一位為「符號位」：0 正、1 負。</p></div>
+<div data-lang="en"><p>To represent negatives, the universal scheme is <strong>two's complement</strong>: one adder handles both signs.</p>
+<p><strong>Rule:</strong> (1) take absolute value in binary; (2) flip every bit; (3) add 1.</p>
+<p><strong>Example (8 bit):</strong> +5 = <code>0000 0101</code>, so −5 = <code>1111 1011</code> (flip → <code>1111 1010</code>, +1). Leftmost bit = sign: 0 positive, 1 negative.</p></div>
 
 <table class="comp-table">
-<thead><tr><th data-zh="位元數" data-en="Bits">位元數</th><th data-zh="無號範圍" data-en="Unsigned range">無號範圍</th><th data-zh="有號範圍 (二補數)" data-en="Signed range (2's complement)">有號範圍</th></tr></thead>
+<thead><tr><th data-zh="位元數" data-en="Bits">位元數</th><th data-zh="無號範圍" data-en="Unsigned range">無號範圍</th><th data-zh="有號範圍" data-en="Signed range (2's comp)">有號範圍</th><th data-zh="實務用途" data-en="Typical use">用途</th></tr></thead>
 <tbody>
-<tr><td>8-bit (byte)</td><td>0 – 255</td><td>−128 – 127</td></tr>
-<tr><td>16-bit (short)</td><td>0 – 65,535</td><td>−32,768 – 32,767</td></tr>
-<tr><td>32-bit (int)</td><td>0 – 4.29 × 10⁹</td><td>−2.15 × 10⁹ – 2.15 × 10⁹</td></tr>
-<tr><td>64-bit (long)</td><td>0 – 1.84 × 10¹⁹</td><td>±9.22 × 10¹⁸</td></tr>
+<tr><td>8-bit (byte)</td><td>0 – 255</td><td>−128 – 127</td><td data-lang="zh">RGB 通道、FASTQ Phred</td><td data-lang="en">RGB channels, FASTQ Phred</td></tr>
+<tr><td>16-bit (short)</td><td>0 – 65,535</td><td>−32,768 – 32,767</td><td data-lang="zh">音訊樣本、Ariane-5 速度欄位</td><td data-lang="en">Audio samples, Ariane-5 velocity field</td></tr>
+<tr><td>32-bit (int)</td><td>0 – 4.29 × 10⁹</td><td>±2.15 × 10⁹</td><td data-lang="zh">大多數整數變數、染色體座標</td><td data-lang="en">Most int variables, chromosome coordinates</td></tr>
+<tr><td>64-bit (long)</td><td>0 – 1.84 × 10¹⁹</td><td>±9.22 × 10¹⁸</td><td data-lang="zh">大型整數、檔案位移、Unix time</td><td data-lang="en">Big ints, file offsets, Unix time</td></tr>
 </tbody></table>
 
 <div class="callout danger"><span class="callout-icon">🚨</span><div>
-<div data-lang="zh"><strong>整數溢位 (Integer Overflow)：</strong>32-bit 有號整數的最大值是 2,147,483,647。再加 1 會變成 −2,147,483,648——這正是 1996 年阿麗亞娜 5 號火箭爆炸的根本原因（64-bit 浮點數轉 16-bit 整數溢位）。</div>
-<div data-lang="en"><strong>Integer overflow:</strong> A 32-bit signed int maxes at 2,147,483,647. Adding 1 wraps to −2,147,483,648 — the root cause of the 1996 Ariane 5 rocket explosion (a 64-bit float converted to 16-bit int overflowed).</div>
+<div data-lang="zh"><strong>整數溢位 (Integer Overflow)：</strong>32-bit 有號整數最大 2,147,483,647。再加 1 變 −2,147,483,648——這就是 1996 阿麗亞娜 5 號爆炸、2014 PSY《江南 Style》MV 突破 YouTube 32-bit 計數器上限的根本原因。今天 YouTube 已升級為 64-bit。</div>
+<div data-lang="en"><strong>Integer overflow:</strong> A 32-bit signed int caps at 2,147,483,647. +1 wraps to −2,147,483,648 — the root cause of the 1996 Ariane 5 explosion and of PSY's "Gangnam Style" breaking YouTube's 32-bit view counter in 2014. YouTube has since upgraded to 64-bit.</div>
 </div></div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="浮點數" data-en="FLOATING POINT">IEEE 754 浮點數</div>
-<h2 data-zh="四、實數：IEEE 754 浮點數" data-en="IV. Real Numbers: IEEE 754 Floating Point">四、IEEE 754 浮點數</h2>
-<div data-lang="zh"><p>要在電腦中表達「3.14159」這種實數，使用 <strong>IEEE 754</strong> 標準（1985 制定，2008/2019 修訂）。它將數字拆成三部分：</p>
-<p><strong>(−1)<sup>s</sup> × 1.M × 2<sup>(E − bias)</sup></strong></p>
+<div class="section-label" data-zh="深入剖析" data-en="DEEP DIVE">IEEE 754 拆解</div>
+<h2 data-zh="五、進階：IEEE 754 浮點數三大區塊" data-en="V. Advanced: The Three Pieces of IEEE 754">五、IEEE 754 浮點數</h2>
+<div data-lang="zh"><p>要表達 3.14159 這種實數，使用 <strong>IEEE 754</strong>（1985 制定，2008/2019 修訂）。每個數字拆成三部分：</p>
+<p style="text-align:center;font-size:1.15rem;color:var(--c-accent-dark);font-weight:600;">(−1)<sup>s</sup> × 1.M × 2<sup>(E − bias)</sup></p>
 <ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
 <li><strong>s（符號位 sign）</strong>：1 bit，0 正 1 負</li>
-<li><strong>E（指數 exponent）</strong>：8 bit (float32) 或 11 bit (float64)，需減 bias (127 或 1023)</li>
-<li><strong>M（尾數 mantissa/significand）</strong>：23 bit (float32) 或 52 bit (float64)，省略前面的隱含 1</li>
-</ul></div>
-<div data-lang="en"><p>For real numbers like 3.14159, computers use the <strong>IEEE 754</strong> standard (1985, revised 2008/2019). Each number has three parts:</p>
-<p><strong>(−1)<sup>s</sup> × 1.M × 2<sup>(E − bias)</sup></strong></p>
+<li><strong>E（指數 exponent）</strong>：8 bit (FP32) / 11 bit (FP64)，須減 bias (127 / 1023)</li>
+<li><strong>M（尾數 mantissa/significand）</strong>：23 bit (FP32) / 52 bit (FP64)，前面隱含一個 1</li>
+</ul>
+<p>還有兩個特殊「非數值」：<strong>NaN</strong> (Not a Number，例如 0/0、sqrt(-1)) 與 <strong>Inf</strong> (溢位)。<strong>NaN 的怪癖：</strong>NaN ≠ NaN！要檢查只能用 <code>isnan(x)</code>，這是 IEEE 754 為了讓「污染傳播」設計的——任何含 NaN 的運算結果都是 NaN，提醒程式員出錯了。</p>
+<p>還有 <strong>subnormal（非正規）數</strong>：當指數為 0 時，隱含的前導 1 變 0，可表達極小數（FP32 可到 1.4 × 10⁻⁴⁵）。代價是 CPU 處理 subnormal 比 normal 慢 10–100 倍——一些 deep learning 框架會故意「flush-to-zero」避開。</p></div>
+<div data-lang="en"><p>For reals like 3.14159, use <strong>IEEE 754</strong> (1985, revised 2008/2019). Each number = three parts:</p>
+<p style="text-align:center;font-size:1.15rem;color:var(--c-accent-dark);font-weight:600;">(−1)<sup>s</sup> × 1.M × 2<sup>(E − bias)</sup></p>
 <ul style="margin:8px 0 16px 20px;color:var(--c-ink-light);">
-<li><strong>s (sign)</strong>: 1 bit, 0 positive / 1 negative</li>
-<li><strong>E (exponent)</strong>: 8 bits (float32) or 11 bits (float64), with bias 127 or 1023</li>
-<li><strong>M (mantissa)</strong>: 23 bits (float32) or 52 bits (float64), with implicit leading 1</li>
-</ul></div>
+<li><strong>s (sign)</strong>: 1 bit, 0 = positive, 1 = negative</li>
+<li><strong>E (exponent)</strong>: 8 bits (FP32) / 11 bits (FP64), subtract bias (127 / 1023)</li>
+<li><strong>M (mantissa)</strong>: 23 bits (FP32) / 52 bits (FP64), with implicit leading 1</li>
+</ul>
+<p>Two special values: <strong>NaN</strong> (0/0, sqrt(-1)) and <strong>Inf</strong> (overflow). <strong>NaN quirk:</strong> NaN ≠ NaN. You must use <code>isnan(x)</code>. IEEE 754 designed it this way so NaN <em>propagates</em> through computations — flagging that something went wrong.</p>
+<p>Also: <strong>subnormal</strong> numbers fill the gap near zero (FP32 down to 1.4 × 10⁻⁴⁵), but CPUs process them 10–100× slower than normals. Many deep-learning frameworks "flush-to-zero" to skip them.</p></div>
 
 <table class="comp-table">
-<thead><tr><th data-zh="格式" data-en="Format">格式</th><th data-zh="總位元" data-en="Total bits">總位元</th><th data-zh="尾數位元" data-en="Mantissa">尾數</th><th data-zh="十進位精度" data-en="Decimal digits">十進位精度</th><th data-zh="範圍" data-en="Range">範圍</th></tr></thead>
+<thead><tr><th data-zh="格式" data-en="Format">格式</th><th data-zh="總位元" data-en="Bits">Bits</th><th>sign</th><th>exp</th><th>mantissa</th><th data-zh="十進位精度" data-en="Decimal digits">~ Dec digits</th><th data-zh="範圍" data-en="Range">Range</th></tr></thead>
 <tbody>
-<tr><td>FP16 (half)</td><td>16</td><td>10</td><td>~3</td><td>±6.55 × 10⁴</td></tr>
-<tr><td>BF16 (Brain Float)</td><td>16</td><td>7</td><td>~2.7</td><td>±3.4 × 10³⁸</td></tr>
-<tr><td>FP32 (float)</td><td>32</td><td>23</td><td>~7</td><td>±3.4 × 10³⁸</td></tr>
-<tr><td>FP64 (double)</td><td>64</td><td>52</td><td>~15</td><td>±1.8 × 10³⁰⁸</td></tr>
-<tr><td>FP8 (NV E4M3/E5M2)</td><td>8</td><td>3/2</td><td>~1</td><td>±448 / ±5.7×10⁴</td></tr>
+<tr><td>FP8 (E4M3, NVIDIA)</td><td>8</td><td>1</td><td>4</td><td>3</td><td>~1</td><td>±448</td></tr>
+<tr><td>FP16 (half)</td><td>16</td><td>1</td><td>5</td><td>10</td><td>~3</td><td>±6.55 × 10⁴</td></tr>
+<tr><td>BF16 (Brain Float)</td><td>16</td><td>1</td><td>8</td><td>7</td><td>~2.7</td><td>±3.4 × 10³⁸</td></tr>
+<tr><td>FP32 (float)</td><td>32</td><td>1</td><td>8</td><td>23</td><td>~7</td><td>±3.4 × 10³⁸</td></tr>
+<tr><td>FP64 (double)</td><td>64</td><td>1</td><td>11</td><td>52</td><td>~15</td><td>±1.8 × 10³⁰⁸</td></tr>
 </tbody></table>
 
 <div class="callout danger"><span class="callout-icon">🚨</span><div>
-<div data-lang="zh"><strong>經典陷阱：</strong>在 Python 試試 <code>0.1 + 0.2</code>，結果是 <code>0.30000000000000004</code>，不等於 0.3！因為 0.1 在二進位中是無窮迴圈小數（類似 1/3 在十進位）。<strong>金融計算絕對不要用浮點數</strong>，要用 <code>decimal.Decimal</code> 或整數（以「分」為單位）。</div>
-<div data-lang="en"><strong>Classic gotcha:</strong> Try <code>0.1 + 0.2</code> in Python — you get <code>0.30000000000000004</code>, not 0.3. Because 0.1 is an infinite repeating fraction in binary (like 1/3 in decimal). <strong>Never use floats for money</strong> — use <code>decimal.Decimal</code> or integers (in cents).</div>
+<div data-lang="zh"><strong>經典陷阱：</strong>在 Python 試試 <code>0.1 + 0.2</code> = <code>0.30000000000000004</code>，<strong>不等於</strong> 0.3！因為 0.1 在二進位是無窮循環小數（類似 1/3 在十進位是 0.333...）。<strong>金融計算絕不要用浮點數</strong>——用 <code>decimal.Decimal</code> 或整數「分」為單位。1991 年波斯灣戰爭中，美軍 Patriot 飛彈防禦系統因浮點累積誤差（時鐘計時 100 小時後誤差 0.34 秒）攔截失敗，造成 28 名美軍死亡。</div>
+<div data-lang="en"><strong>Classic gotcha:</strong> In Python, <code>0.1 + 0.2</code> = <code>0.30000000000000004</code> — <strong>not</strong> 0.3. 0.1 is an infinite repeating fraction in binary (like 1/3 in decimal). <strong>Never use floats for money</strong> — use <code>decimal.Decimal</code> or integer cents. In the 1991 Gulf War, the Patriot missile defense failed an interception due to accumulated float drift (0.34 s drift after 100 hours), killing 28 U.S. soldiers.</div>
 </div></div>
 </section>
 
 <section class="section">
-<div class="section-label" data-zh="文字編碼" data-en="TEXT ENCODING">文字編碼</div>
-<h2 data-zh="五、文字：ASCII → Unicode → UTF-8" data-en="V. Text: ASCII → Unicode → UTF-8">五、文字編碼</h2>
+<div class="section-label" data-zh="經典故事" data-en="STORIES">四個必聽災難</div>
+<h2 data-zh="六、四個必聽的資料表示災難" data-en="VI. Four Cautionary Tales">六、四個經典災難</h2>
+<div class="card-grid cols-2">
+<div class="card"><h4>📅 <span data-zh="Y2K 千禧蟲（1999）" data-en="Y2K Bug (1999)">Y2K 千禧蟲</span></h4><div data-lang="zh"><p>1960–80 年代記憶體昂貴，COBOL 程式員把年份存成 2 位數（"99" 代表 1999）。1999 年大家恐慌：2000 年系統會以為是 1900 年？銀行利息算錯？全球花了 <strong>$3,000–6,000 億美元</strong>修補。結果意外地平靜——但這是史上最大規模的軟體修補工程。</p></div><div data-lang="en"><p>In the 1960s–80s, memory was expensive, so COBOL programmers stored years as 2 digits ("99" = 1999). In 1999 the world panicked: would systems read 2000 as 1900? Banks miscalculate interest? Global remediation cost <strong>$300–600 billion</strong>. The actual transition was eerily smooth — the largest software fix in history.</p></div></div>
+<div class="card"><h4>⏰ <span data-zh="2038 問題（即將）" data-en="Year 2038 Problem">2038 問題</span></h4><div data-lang="zh"><p>Unix 系統用 32-bit signed int 儲存「從 1970-01-01 起的秒數」。<strong>2038-01-19 03:14:07 UTC</strong>會溢位變負——衣物、空調、舊嵌入式設備可能集體當機。Linux 5.6 已切換到 64-bit time_t，但全球仍有億萬台 32-bit 設備需要更新。</p></div><div data-lang="en"><p>Unix stores "seconds since 1970-01-01" as 32-bit signed int. On <strong>2038-01-19 03:14:07 UTC</strong>, it overflows to negative — washers, ACs, legacy embedded gear could die en masse. Linux 5.6+ switched to 64-bit time_t, but billions of 32-bit devices remain.</p></div></div>
+<div class="card"><h4>🧬 <span data-zh="Excel 改基因名 (Bruford 2020)" data-en="Excel Renames Genes (Bruford 2020)">Excel 改基因名</span></h4><div data-lang="zh"><p>研究發現 (Ziemann 2016 Genome Biol)：<strong>20% 的基因組相關論文補充表格</strong>含 Excel 自動轉換錯誤！基因 <code>MARCH1</code> 被改成「3 月 1 日」、<code>SEPT2</code> 變「9 月 2 日」、<code>DEC1</code> 變「12 月 1 日」。問題嚴重到 2020 年 HGNC (Bruford 2020 Nat Genet) 被迫<strong>正式將 27 個基因改名</strong>：MARCH1 → MARCHF1、SEPT1 → SEPTIN1。</p></div><div data-lang="en"><p>A study (Ziemann 2016 Genome Biol) found <strong>20% of papers with genomics supplements</strong> contained Excel auto-conversion errors! Gene <code>MARCH1</code> became "1 March," <code>SEPT2</code> became "2 Sept," <code>DEC1</code> became "1 Dec." So severe that in 2020 (Bruford 2020 Nat Genet), HGNC <strong>officially renamed 27 genes</strong>: MARCH1 → MARCHF1, SEPT1 → SEPTIN1.</p></div></div>
+<div class="card"><h4>🚀 <span data-zh="Patriot 飛彈累積誤差" data-en="Patriot Missile Drift">Patriot 飛彈誤差</span></h4><div data-lang="zh"><p>1991 年波斯灣戰爭，美軍 Patriot 防禦系統用 24-bit 浮點數計算時鐘（每 0.1 秒一個 tick）。0.1 在二進位是無窮循環，每 tick 累積 9.5 × 10⁻⁸ 秒的誤差。連續運行 100 小時後誤差達 0.34 秒，導致無法精準預測來襲 Scud 飛彈的位置——攔截失敗，沙烏地兵營 28 名美軍陣亡。GAO 1992 報告至今是浮點誤差的教科書案例。</p></div><div data-lang="en"><p>In the 1991 Gulf War, a U.S. Patriot battery's clock used a 24-bit float, ticking every 0.1 s. Since 0.1 is infinite-repeating in binary, each tick drifted 9.5 × 10⁻⁸ s. After 100 hours, drift hit 0.34 s — too imprecise to predict an incoming Scud. The interception failed; 28 soldiers died at Dhahran barracks. GAO's 1992 report remains the textbook example of float drift.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="文字編碼" data-en="TEXT ENCODING">ASCII → Unicode → UTF-8</div>
+<h2 data-zh="七、文字編碼演化" data-en="VII. Evolution of Text Encoding">七、文字編碼演化</h2>
 <div class="workflow">
 <div class="workflow-step" data-step="1"><h4>ASCII (1963)</h4>
-<div data-lang="zh"><p>7 bit 編碼，表達 128 個英文字母、數字、標點與控制字元。<code>'A' = 65</code>、<code>'a' = 97</code>、<code>'0' = 48</code>。優點簡單；缺點不支援其他語言。</p></div>
-<div data-lang="en"><p>7-bit encoding for 128 characters: English letters, digits, punctuation, control codes. <code>'A' = 65</code>, <code>'a' = 97</code>, <code>'0' = 48</code>. Simple but English-only.</p></div></div>
-<div class="workflow-step" data-step="2"><h4>Big5 / GB2312 / Shift-JIS</h4>
-<div data-lang="zh"><p>1980 年代各國各自發展中文/日文編碼。同一個 byte 在不同編碼下意義不同 → 出現「亂碼 / mojibake」災難。</p></div>
-<div data-lang="en"><p>In the 1980s, each region (zh-TW Big5, zh-CN GB2312, Japan Shift-JIS) defined its own encoding. Same bytes meant different things → the "mojibake" disaster.</p></div></div>
+<div data-lang="zh"><p>7 bit 編碼，表達 128 個英文字母、數字、標點與控制字元。<code>'A' = 65</code>、<code>'a' = 97</code>、<code>'0' = 48</code>、<code>' ' = 32</code>。優點簡單；缺點不支援其他語言。<strong>為何只到 127？</strong>因為早期電報用 7 bit 加一個 parity bit 偵錯，加起來剛好 1 byte。</p></div>
+<div data-lang="en"><p>7-bit encoding for 128 chars: letters, digits, punctuation, control codes. <code>'A' = 65</code>, <code>'a' = 97</code>, <code>'0' = 48</code>, <code>' ' = 32</code>. Simple but English-only. <strong>Why 127?</strong> Early teleprinters used 7 bits plus a parity bit = 1 byte total.</p></div></div>
+<div class="workflow-step" data-step="2"><h4>Big5 / GB2312 / Shift-JIS (1980s)</h4>
+<div data-lang="zh"><p>各國各自發展中日韓編碼。同一個 byte 在不同編碼下意義不同 → 出現「亂碼 (mojibake)」災難。檔案沒附編碼資訊時，幾乎無法復原。</p></div>
+<div data-lang="en"><p>Each region built its own encoding (zh-TW Big5, zh-CN GB2312, Japan Shift-JIS). The same bytes meant different things → the "mojibake" disaster. Files without encoding metadata are nearly impossible to recover.</p></div></div>
 <div class="workflow-step" data-step="3"><h4>Unicode (1991)</h4>
-<div data-lang="zh"><p>給世界上每個字元一個唯一的「碼點 (code point)」，例如 U+4E2D 代表「中」。目前已收錄 14 萬多個字元（含 emoji 😀）。但 Unicode 只是「身份證」，不是儲存格式。</p></div>
-<div data-lang="en"><p>Assigns every character in the world a unique <strong>code point</strong>, e.g., U+4E2D = "中". Now includes 140,000+ characters (and emoji 😀). But Unicode is just the "ID number" — not a storage format.</p></div></div>
+<div data-lang="zh"><p>給世界上每個字元一個唯一的「碼點 (code point)」。例如 <code>U+4E2D</code> = 「中」、<code>U+1F600</code> = 😀。2026 年已收錄 14.9 萬+ 字元。<strong>Unicode 只是「身分證」，不是儲存格式</strong>——還需要另一層編碼把碼點變成 bytes。</p></div>
+<div data-lang="en"><p>Assigns every character in the world a unique <strong>code point</strong>: <code>U+4E2D</code> = 「中」, <code>U+1F600</code> = 😀. Over 149,000 chars in 2026. <strong>Unicode is the "ID," not a storage format</strong> — you still need an encoding to turn code points into bytes.</p></div></div>
 <div class="workflow-step" data-step="4"><h4>UTF-8 (1992) ⭐</h4>
-<div data-lang="zh"><p>把 Unicode 碼點變成 1–4 個 byte：英文 1 byte（與 ASCII 完全相容）、中文 3 byte、emoji 4 byte。<strong>今天 98%+ 網頁使用 UTF-8</strong>，是事實上的網路標準。</p></div>
-<div data-lang="en"><p>Encodes Unicode as 1–4 bytes: ASCII 1 byte (backward-compatible), Chinese 3 bytes, emoji 4 bytes. <strong>98%+ of web pages use UTF-8 today</strong> — the de facto internet standard.</p></div></div>
+<div data-lang="zh"><p>Ken Thompson & Rob Pike 在 1992 年於紐澤西小餐館的餐墊上發明 UTF-8：把 Unicode 碼點變成 1–4 個 byte。英文 1 byte（ASCII 完全相容）、歐洲拉丁字母 2 byte、中文 3 byte、emoji 4 byte。<strong>2026 年 98%+ 網頁使用 UTF-8</strong>，是事實上的網路標準。</p></div>
+<div data-lang="en"><p>Ken Thompson & Rob Pike invented UTF-8 on a New Jersey diner placemat in 1992: encode Unicode as 1–4 bytes. English 1 byte (ASCII compatible), European Latin 2 bytes, Chinese 3 bytes, emoji 4 bytes. <strong>98%+ of web pages use UTF-8 in 2026</strong> — the de facto internet standard.</p></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="互動 #2" data-en="INTERACTIVE #2">IEEE 754 分解器</div>
+<h2 data-zh="八、互動 ②：IEEE 754 浮點數即時分解" data-en="VIII. Interactive ②: Live IEEE 754 Decomposition">八、互動 ②：浮點數分解器</h2>
+<div data-lang="zh"><p>輸入任意數值，下方即時顯示其 IEEE 754 FP32 結構：1 bit sign、8 bit exponent、23 bit mantissa。試試一些特殊值：<strong>0.1</strong>（看尾數的循環）、<strong>1.0</strong>、<strong>−0.0</strong>（有兩個零！）、<strong>3.14159</strong>。</p></div>
+<div data-lang="en"><p>Enter any number to see its IEEE 754 FP32 layout in real time: 1-bit sign, 8-bit exponent, 23-bit mantissa. Try special values: <strong>0.1</strong> (note the repeating mantissa), <strong>1.0</strong>, <strong>−0.0</strong> (yes, two zeros!), <strong>3.14159</strong>.</p></div>
+<div class="interactive-panel">
+<div style="margin-bottom:14px;"><label style="font-weight:600;font-size:.95rem;" data-zh="輸入十進位數值" data-en="Enter decimal value">輸入十進位數值</label><input type="number" id="fpInput" value="0.1" step="any" style="width:100%;padding:10px 14px;font-family:var(--font-mono);font-size:1.1rem;border:1.5px solid var(--c-border);border-radius:8px;margin-top:6px;"></div>
+<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;margin:18px 0;font-family:var(--font-mono);font-size:.85rem;">
+  <div id="fpSign" style="display:flex;flex-direction:column;align-items:center;"><div style="color:#dc2626;font-weight:700;font-size:.7rem;letter-spacing:1.5px;">SIGN</div><div id="fpSignBits" style="display:flex;gap:2px;margin-top:4px;"></div></div>
+  <div id="fpExp" style="display:flex;flex-direction:column;align-items:center;"><div style="color:#16a34a;font-weight:700;font-size:.7rem;letter-spacing:1.5px;">EXPONENT (8)</div><div id="fpExpBits" style="display:flex;gap:2px;margin-top:4px;"></div></div>
+  <div id="fpMant" style="display:flex;flex-direction:column;align-items:center;"><div style="color:#2563eb;font-weight:700;font-size:.7rem;letter-spacing:1.5px;">MANTISSA (23)</div><div id="fpMantBits" style="display:flex;gap:2px;margin-top:4px;"></div></div>
+</div>
+<div id="fpAnalysis" style="background:var(--c-surface-alt);border-radius:8px;padding:14px 18px;font-family:var(--font-mono);font-size:.85rem;line-height:1.8;color:var(--c-ink);"></div>
+</div>
+</section>
+
+<section class="section">
+<div class="section-label" data-zh="生資連結" data-en="BIOINFO LINK">給生資人</div>
+<h2 data-zh="九、🧬 生資連結：FASTQ Phred、BAM 二進位與 HGNC 改名" data-en="IX. 🧬 Bioinformatics Link: FASTQ Phred, BAM Binary, HGNC Renames">九、🧬 給生物資訊學家</h2>
+
+<div class="callout" style="background:linear-gradient(135deg,#dcfce7,#f0fdf4);border-left:4px solid #16a34a;"><span class="callout-icon">🧬</span><div>
+<strong data-zh="給生物資訊學家：每一個 FASTQ 字元都是一個 ASCII byte" data-en="For Bioinformaticians: Every FASTQ Char Is an ASCII Byte">給生物資訊學家：FASTQ、BAM、Excel 全是資料表示問題</strong>
+<p data-lang="zh">你今天接觸的 FASTQ、BAM、VCF、CRAM 全部都是「位元的不同詮釋」。理解 ASCII、二進位、浮點數，能讓你避免改錯基因名、誤判 Phred 質量、被 BAM/CRAM 邊界 bug 困住。</p>
+<p data-lang="en">FASTQ, BAM, VCF, CRAM — all you handle daily — are just "different interpretations of bits." Understanding ASCII, binary, and floats helps you avoid renaming genes wrong, misreading Phred scores, and getting stuck on BAM/CRAM boundary bugs.</p>
+</div></div>
+
+<div class="card-grid cols-2">
+<div class="card"><h4>📊 <span data-zh="FASTQ Phred 質量編碼" data-en="FASTQ Phred Quality">FASTQ Phred 編碼</span></h4><div data-lang="zh"><p>FASTQ 第四行每個字元代表一個鹼基的<strong>質量分數 (Q)</strong>：<code>Q = -10·log₁₀(P_error)</code>。Q30 = 99.9% 正確；Q40 = 99.99% 正確。<strong>但 Q 怎麼存？</strong>用 ASCII！<strong>Sanger / Illumina 1.8+</strong>：<code>char = Q + 33</code>（'!' 開始）；<strong>Illumina 1.3–1.7</strong>：<code>char = Q + 64</code>（'@' 開始）。所以 'I' (ASCII 73) = Q40。<strong>編碼搞混會導致整份 trimming 結果錯誤！</strong></p></div><div data-lang="en"><p>The 4th line of every FASTQ record encodes per-base <strong>quality (Q)</strong>: <code>Q = -10·log₁₀(P_error)</code>. Q30 = 99.9% accurate, Q40 = 99.99%. <strong>How is Q stored?</strong> As ASCII! <strong>Sanger / Illumina 1.8+</strong>: <code>char = Q + 33</code> (starts at '!'); <strong>Illumina 1.3–1.7</strong>: <code>char = Q + 64</code> (starts at '@'). So 'I' (ASCII 73) = Q40. <strong>Misreading the offset corrupts every trimming result.</strong></p></div></div>
+<div class="card"><h4>💾 <span data-zh="BAM/CRAM：二進位省 10× 空間" data-en="BAM/CRAM: 10× Smaller">BAM/CRAM 二進位</span></h4><div data-lang="zh"><p>FASTQ/SAM 是純文字 (ASCII)，人類可讀但每個鹼基要 1 byte (A/C/G/T)。<strong>BAM</strong> 是 SAM 的<strong>二進位壓縮版</strong>：每鹼基只用 4 bit (2¹⁶ 種組合) + bgzip 壓縮，空間省 ~5–10 倍，隨機存取也快。<strong>CRAM</strong> 更進一步——只儲存與參考序列不同處的差異，再省 30–60%。每 100 TB 的 BAM 用 CRAM 可省 50 TB 儲存費。</p></div><div data-lang="en"><p>FASTQ/SAM are plain text (ASCII): readable but 1 byte per base (A/C/G/T). <strong>BAM</strong> is SAM's <strong>binary compressed sibling</strong>: 4 bits per base (2¹⁶ combos) + bgzip, ~5–10× smaller, with random access. <strong>CRAM</strong> goes further — stores only differences from a reference, saving another 30–60%. On a 100 TB BAM archive, CRAM saves 50 TB of storage cost.</p></div></div>
+<div class="card"><h4>📅 <span data-zh="Excel 強迫 27 個基因改名" data-en="Excel Forced 27 Gene Renames">Excel 與 HGNC 改名</span></h4><div data-lang="zh"><p>Excel 的自動「智能」轉換把 <code>MARCH1</code> 變「3 月 1 日」、<code>SEPT2</code> 變「9 月 2 日」、<code>2310009E13</code> 變「2.31E+13」科學記號。Ziemann 2016 (Genome Biol) 發現 <strong>20% 的基因組學論文表格</strong>都受影響。HGNC 終於投降——2020 年 (Bruford 2020 Nat Genet) <strong>正式將 27 個基因改名</strong>避開 Excel：MARCH1 → MARCHF1、SEPT1 → SEPTIN1。<strong>啟示：</strong>用 TSV 而非 Excel，或在 Excel 中將欄位先設為「文字」格式。</p></div><div data-lang="en"><p>Excel's auto-conversion turns <code>MARCH1</code> into "1 March," <code>SEPT2</code> into "2 Sept," <code>2310009E13</code> into scientific notation "2.31E+13." Ziemann 2016 (Genome Biol) found <strong>20% of genomics-paper supplements</strong> were affected. HGNC finally surrendered — in 2020 (Bruford 2020 Nat Genet) it <strong>officially renamed 27 genes</strong> to evade Excel: MARCH1 → MARCHF1, SEPT1 → SEPTIN1. <strong>Lesson:</strong> use TSV, not Excel — or pre-format columns as "Text."</p></div></div>
+<div class="card"><h4>🎯 <span data-zh="FP8 / BF16 改變了 AI 生資" data-en="FP8/BF16 Reshaped AI Bio">FP8 / BF16 改變了生資 AI</span></h4><div data-lang="zh"><p>2020 年起 NVIDIA A100 引入 BF16 / FP8，<strong>AlphaFold2、ESM-2、scGPT</strong> 都在這些低精度格式下訓練：BF16 比 FP32 記憶體省一半、運算快 2× 而精度幾乎無損（指數位元數一樣為 8）。FP8 推論能再快 2×。<strong>沒有 BF16 / FP8，今天的生物大模型根本訓練不起</strong>。</p></div><div data-lang="en"><p>Since 2020, NVIDIA A100 introduced BF16/FP8; <strong>AlphaFold2, ESM-2, scGPT</strong> all train in these low-precision formats. BF16 halves memory and doubles math vs FP32 with negligible accuracy loss (same 8-bit exponent). FP8 doubles inference again. <strong>Without BF16/FP8, today's biological large models would be untrainable.</strong></p></div></div>
 </div>
 </section>
 
 <section class="section">
 <div class="section-label" data-zh="決策引導" data-en="DECISION GUIDE">型別選擇</div>
-<h2 data-zh="六、實務：選用合適的資料型別" data-en="VI. Choosing the Right Data Type">六、選用合適的資料型別</h2>
+<h2 data-zh="十、決策樹：選用合適的資料型別" data-en="X. Decision Tree: Pick the Right Data Type">十、選用合適的資料型別</h2>
 <div class="decision-tree">
 <h4>🌳 <span data-zh="資料型別決策樹" data-en="Data Type Decision Tree">資料型別決策樹</span></h4>
 <div data-lang="zh">
-<div class="dt-node"><span class="dt-q">Q1:</span><div>儲存「金額」嗎？<span class="dt-arrow">→ 是 →</span> 用 <strong>整數（分為單位）</strong>或 <code>decimal.Decimal</code>，<strong>絕不</strong>用 float。</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>儲存「科學測量值」？<span class="dt-arrow">→ 是 →</span> <code>float64 (double)</code>，精度約 15 位有效數字。</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>訓練「AI 模型」？<span class="dt-arrow">→ 是 →</span> 訓練用 <code>BF16</code> / <code>FP16</code>，推論用 <code>FP8</code> 或 <code>INT8</code> 量化。</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>儲存「文字」？<span class="dt-arrow">→ 是 →</span> 一律 <strong>UTF-8</strong>。資料庫 charset 設 <code>utf8mb4</code>（MySQL）。</div></div>
-<div class="dt-node"><span class="dt-q">Q5:</span><div>儲存「布林 (T/F)」？<span class="dt-arrow">→ 是 →</span> 1 bit 就夠，但記憶體仍按 byte 對齊；若要省，用 bitmask。</div></div>
+<div class="dt-node"><span class="dt-q">Q1:</span><div>儲存「金額 / 帳務」？<span class="dt-arrow">→ 是 →</span> 用 <strong>整數（分為單位）</strong>或 <code>decimal.Decimal</code>。<strong>絕不</strong>用 float。</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>儲存「科學測量值」（基因表達量、座標、距離）？<span class="dt-arrow">→ 是 →</span> <code>float64 (double)</code>，~15 位有效數字。</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>訓練「AI / 深度學習模型」？<span class="dt-arrow">→ 是 →</span> 訓練用 <code>BF16 / FP16</code>，推論用 <code>FP8 / INT8</code> 量化。</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>儲存「文字 / 基因名」？<span class="dt-arrow">→ 是 →</span> 一律 <strong>UTF-8</strong>；DB charset 設 <code>utf8mb4</code>（MySQL）。寫入 TSV 而非 XLSX。</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>儲存「布林 (T/F)」？<span class="dt-arrow">→ 是 →</span> 1 bit 即夠；記憶體仍按 byte 對齊，若大量需省，用 bitmask 或 numpy boolean。</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>儲存「Unix 時戳」？<span class="dt-arrow">→ 是 →</span> 用 <code>int64</code>，避免 2038 年溢位。</div></div>
+<div class="dt-node"><span class="dt-q">Q7:</span><div>儲存「DNA 序列」？<span class="dt-arrow">→ 是 →</span> 文字檔用 FASTA/FASTQ；大量分析用 2-bit packed (4 bp = 1 byte) 或直接 BAM/CRAM。</div></div>
 </div>
 <div data-lang="en">
 <div class="dt-node"><span class="dt-q">Q1:</span><div>Storing money? <span class="dt-arrow">→ Yes →</span> Use <strong>integer cents</strong> or <code>decimal.Decimal</code>; <strong>never</strong> float.</div></div>
-<div class="dt-node"><span class="dt-q">Q2:</span><div>Scientific measurements? <span class="dt-arrow">→ Yes →</span> <code>float64</code>, ~15 significant digits.</div></div>
-<div class="dt-node"><span class="dt-q">Q3:</span><div>Training AI models? <span class="dt-arrow">→ Yes →</span> Train in <code>BF16</code>/<code>FP16</code>, infer in <code>FP8</code> or <code>INT8</code> quantized.</div></div>
-<div class="dt-node"><span class="dt-q">Q4:</span><div>Storing text? <span class="dt-arrow">→ Yes →</span> Always <strong>UTF-8</strong>. DB charset = <code>utf8mb4</code> (MySQL).</div></div>
-<div class="dt-node"><span class="dt-q">Q5:</span><div>Storing booleans? <span class="dt-arrow">→ Yes →</span> 1 bit suffices but memory aligns to bytes; pack with bitmasks if it matters.</div></div>
+<div class="dt-node"><span class="dt-q">Q2:</span><div>Scientific measurements (expression, coords, distances)? <span class="dt-arrow">→ Yes →</span> <code>float64</code>, ~15 significant digits.</div></div>
+<div class="dt-node"><span class="dt-q">Q3:</span><div>Training AI / deep learning models? <span class="dt-arrow">→ Yes →</span> Train in <code>BF16/FP16</code>, infer in <code>FP8/INT8</code> quantized.</div></div>
+<div class="dt-node"><span class="dt-q">Q4:</span><div>Storing text / gene names? <span class="dt-arrow">→ Yes →</span> Always <strong>UTF-8</strong>; DB charset = <code>utf8mb4</code>. Use TSV, not XLSX.</div></div>
+<div class="dt-node"><span class="dt-q">Q5:</span><div>Storing booleans? <span class="dt-arrow">→ Yes →</span> 1 bit suffices; pack with bitmasks or numpy boolean for large arrays.</div></div>
+<div class="dt-node"><span class="dt-q">Q6:</span><div>Storing Unix timestamps? <span class="dt-arrow">→ Yes →</span> Use <code>int64</code> to avoid the 2038 overflow.</div></div>
+<div class="dt-node"><span class="dt-q">Q7:</span><div>Storing DNA sequences? <span class="dt-arrow">→ Yes →</span> Text use FASTA/FASTQ; analysis use 2-bit packed (4 bp = 1 byte) or BAM/CRAM directly.</div></div>
 </div>
 </div>
 </section>
 
 <section class="section">
 <div class="section-label" data-zh="程式碼" data-en="CODE">程式碼</div>
-<h2 data-zh="七、Python 動手試" data-en="VII. Hands-on Python">七、動手試</h2>
-<div class="code-tabs"><div class="code-tab-btns"><button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button><button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
+<h2 data-zh="十一、Python + R + 偽程式碼" data-en="XI. Python + R + Pseudocode">十一、動手試</h2>
+<div class="code-tabs"><div class="code-tab-btns">
+<button class="code-tab-btn active" onclick="switchTab(this,'py1')">Python</button>
+<button class="code-tab-btn" onclick="switchTab(this,'r1')">R</button>
+<button class="code-tab-btn" onclick="switchTab(this,'pseudo1')">Pseudocode</button></div>
 <div class="code-tab-content active" id="py1"><pre><span class="comment"># 進位轉換 / Base conversion</span>
-<span class="func">print</span>(<span class="func">bin</span>(<span class="num">42</span>))    <span class="comment"># '0b101010'</span>
-<span class="func">print</span>(<span class="func">hex</span>(<span class="num">255</span>))   <span class="comment"># '0xff'</span>
-<span class="func">print</span>(<span class="func">int</span>(<span class="str">'1010'</span>, <span class="num">2</span>))   <span class="comment"># 10  (binary string → int)</span>
-<span class="func">print</span>(<span class="func">int</span>(<span class="str">'FF'</span>, <span class="num">16</span>))     <span class="comment"># 255 (hex string → int)</span>
+<span class="func">print</span>(<span class="func">bin</span>(<span class="num">42</span>))           <span class="comment"># '0b101010'</span>
+<span class="func">print</span>(<span class="func">hex</span>(<span class="num">255</span>))          <span class="comment"># '0xff'</span>
+<span class="func">print</span>(<span class="func">int</span>(<span class="str">'1010'</span>, <span class="num">2</span>))      <span class="comment"># 10  (binary string → int)</span>
+<span class="func">print</span>(<span class="func">int</span>(<span class="str">'FF'</span>, <span class="num">16</span>))        <span class="comment"># 255 (hex string → int)</span>
 
 <span class="comment"># 浮點數精度陷阱 / Floating-point gotcha</span>
-<span class="func">print</span>(<span class="num">0.1</span> + <span class="num">0.2</span>)              <span class="comment"># 0.30000000000000004</span>
-<span class="func">print</span>(<span class="num">0.1</span> + <span class="num">0.2</span> == <span class="num">0.3</span>)       <span class="comment"># False !</span>
+<span class="func">print</span>(<span class="num">0.1</span> + <span class="num">0.2</span>)               <span class="comment"># 0.30000000000000004</span>
+<span class="func">print</span>(<span class="num">0.1</span> + <span class="num">0.2</span> == <span class="num">0.3</span>)        <span class="comment"># False !</span>
 <span class="kw">import</span> math
-<span class="func">print</span>(math.<span class="func">isclose</span>(<span class="num">0.1</span>+<span class="num">0.2</span>, <span class="num">0.3</span>))     <span class="comment"># True (correct way)</span>
+<span class="func">print</span>(math.<span class="func">isclose</span>(<span class="num">0.1</span>+<span class="num">0.2</span>, <span class="num">0.3</span>))   <span class="comment"># True (correct way)</span>
 
 <span class="comment"># 金額用 Decimal / Money with Decimal</span>
 <span class="kw">from</span> decimal <span class="kw">import</span> Decimal
-<span class="func">print</span>(<span class="func">Decimal</span>(<span class="str">'0.1'</span>) + <span class="func">Decimal</span>(<span class="str">'0.2'</span>))   <span class="comment"># 0.3 (exact!)</span>
+<span class="func">print</span>(<span class="func">Decimal</span>(<span class="str">'0.1'</span>) + <span class="func">Decimal</span>(<span class="str">'0.2'</span>))    <span class="comment"># 0.3 (exact!)</span>
+
+<span class="comment"># 觀察 IEEE 754 內部結構 / Inspect IEEE 754 bytes</span>
+<span class="kw">import</span> struct
+bits = <span class="func">struct</span>.<span class="func">pack</span>(<span class="str">'!f'</span>, <span class="num">0.1</span>)            <span class="comment"># big-endian FP32 bytes</span>
+<span class="func">print</span>(bits.<span class="func">hex</span>())                       <span class="comment"># '3dcccccd' (note repeating Cs!)</span>
+
+<span class="comment"># FASTQ Phred 編碼解碼 / FASTQ Phred encoding</span>
+<span class="kw">def</span> <span class="func">phred_to_q</span>(c, offset=<span class="num">33</span>):
+    <span class="kw">return</span> <span class="func">ord</span>(c) - offset
+<span class="func">print</span>(<span class="func">phred_to_q</span>(<span class="str">'I'</span>))                <span class="comment"># 40 (Q40 = 99.99% accurate)</span>
+<span class="func">print</span>(<span class="func">phred_to_q</span>(<span class="str">'!'</span>))                <span class="comment"># 0  (worst quality)</span>
 
 <span class="comment"># 文字編碼 / Text encoding</span>
 s = <span class="str">"中文 Hello 🌏"</span>
-<span class="func">print</span>(s.<span class="func">encode</span>(<span class="str">'utf-8'</span>))      <span class="comment"># b'\xe4\xb8\xad\xe6\x96\x87 Hello \xf0\x9f\x8c\x8f'</span>
-<span class="func">print</span>(<span class="func">len</span>(s.<span class="func">encode</span>(<span class="str">'utf-8'</span>)))   <span class="comment"># 14 bytes (中 3 + 文 3 + ' Hello ' 7 + 🌏 4 − ' ' miscount? recheck)</span>
+<span class="func">print</span>(s.<span class="func">encode</span>(<span class="str">'utf-8'</span>))           <span class="comment"># b'\xe4\xb8\xad\xe6\x96\x87...'</span>
+<span class="func">print</span>(<span class="func">len</span>(s.<span class="func">encode</span>(<span class="str">'utf-8'</span>)))      <span class="comment"># 16 bytes (中 3 + 文 3 + ' Hello ' 7 + 🌏 4 − 1 nuance)</span>
 
 <span class="comment"># 二補數演示 / Two's complement demo</span>
 n = -<span class="num">5</span>
-<span class="func">print</span>(<span class="func">format</span>(n & <span class="num">0xFF</span>, <span class="str">'08b'</span>))  <span class="comment"># '11111011'  (8-bit two's complement)</span></pre></div>
+<span class="func">print</span>(<span class="func">format</span>(n &amp; <span class="num">0xFF</span>, <span class="str">'08b'</span>))      <span class="comment"># '11111011'  (8-bit two's complement)</span></pre></div>
+<div class="code-tab-content" id="r1"><pre><span class="comment"># R 進位轉換 / Base conversion in R</span>
+<span class="func">intToBits</span>(<span class="num">42</span>)                          <span class="comment"># LSB-first bit vector</span>
+<span class="func">strtoi</span>(<span class="str">"1010"</span>, base=<span class="num">2</span>)                  <span class="comment"># 10</span>
+<span class="func">strtoi</span>(<span class="str">"FF"</span>, base=<span class="num">16</span>)                   <span class="comment"># 255</span>
+<span class="func">sprintf</span>(<span class="str">"%b"</span>, <span class="num">42</span>)                       <span class="comment"># "101010"</span>
+<span class="func">sprintf</span>(<span class="str">"%x"</span>, <span class="num">255</span>)                      <span class="comment"># "ff"</span>
+
+<span class="comment"># 浮點數精度 / Float precision</span>
+<span class="num">0.1</span> + <span class="num">0.2</span> == <span class="num">0.3</span>                        <span class="comment"># FALSE</span>
+<span class="func">all.equal</span>(<span class="num">0.1</span> + <span class="num">0.2</span>, <span class="num">0.3</span>)               <span class="comment"># TRUE (tolerance-based)</span>
+
+<span class="comment"># FASTQ Phred 解碼 / Phred decode</span>
+phred_decode &lt;- <span class="kw">function</span>(s, offset=<span class="num">33</span>) {
+  <span class="func">utf8ToInt</span>(s) - offset
+}
+<span class="func">phred_decode</span>(<span class="str">"!!II"</span>)                    <span class="comment"># 0  0 40 40</span>
+
+<span class="comment"># Excel 自動轉換的悲劇示範 / The Excel auto-convert tragedy</span>
+gene_names &lt;- <span class="func">c</span>(<span class="str">"MARCH1"</span>, <span class="str">"SEPT2"</span>, <span class="str">"DEC1"</span>)
+<span class="comment"># 直接 read.csv(stringsAsFactors=FALSE) 可避免；但若先用 Excel 開啟，已永久損毀。</span>
+<span class="comment"># Direct read.csv with stringsAsFactors=FALSE avoids it, but opening in Excel destroys it.</span></pre></div>
 <div class="code-tab-content" id="pseudo1"><pre><span class="comment">// 十進位轉二進位（除 2 取餘法）/ Decimal → binary by repeated division</span>
 <span class="kw">function</span> <span class="func">DecToBin</span>(n):
     <span class="kw">if</span> n == <span class="num">0</span>: <span class="kw">return</span> <span class="str">"0"</span>
     <span class="kw">let</span> bits = <span class="str">""</span>
-    <span class="kw">while</span> n > <span class="num">0</span>:
-        bits = (n mod <span class="num">2</span>) + bits      <span class="comment">// 將餘數放最前面</span>
-        n = n ÷ <span class="num">2</span>                    <span class="comment">// 整數除法</span>
+    <span class="kw">while</span> n &gt; <span class="num">0</span>:
+        bits = (n mod <span class="num">2</span>) + bits      <span class="comment">// prepend remainder</span>
+        n = n ÷ <span class="num">2</span>                    <span class="comment">// integer division</span>
     <span class="kw">return</span> bits
 
-<span class="comment">// 二補數（將正數轉為其 n-bit 負數）/ Two's complement: positive → n-bit negative</span>
+<span class="comment">// 二補數（將正數轉為其 n-bit 負數）/ Two's complement</span>
 <span class="kw">function</span> <span class="func">TwosComp</span>(value, n_bits):
     <span class="kw">let</span> mask = <span class="num">2</span>^n_bits − <span class="num">1</span>
-    <span class="kw">return</span> ((NOT value) + <span class="num">1</span>) AND mask</pre></div>
+    <span class="kw">return</span> ((NOT value) + <span class="num">1</span>) AND mask
+
+<span class="comment">// IEEE 754 拆解 / Decompose IEEE 754 FP32</span>
+<span class="kw">function</span> <span class="func">DecomposeFP32</span>(x):
+    <span class="kw">let</span> bits = reinterpret_as_uint32(x)
+    <span class="kw">let</span> sign     = (bits &gt;&gt; <span class="num">31</span>) AND <span class="num">1</span>
+    <span class="kw">let</span> exponent = (bits &gt;&gt; <span class="num">23</span>) AND <span class="num">0xFF</span>
+    <span class="kw">let</span> mantissa = bits AND <span class="num">0x7FFFFF</span>
+    <span class="kw">return</span> (sign, exponent, mantissa)</pre></div>
 </div>
 </section>
 
+<section class="section">
+<div class="section-label" data-zh="常見誤解" data-en="MISCONCEPTIONS">五個常見誤解</div>
+<h2 data-zh="十二、常見誤解與陷阱" data-en="XII. Common Misconceptions">十二、常見誤解</h2>
+
+<div class="callout danger"><span class="callout-icon">🚨</span><div>
+<div data-lang="zh"><strong>誤解 #1：「float 可以精確表示 0.1」</strong>——錯。0.1 在二進位是無窮循環小數，IEEE 754 必須截斷。<code>0.1 + 0.2 = 0.30000000000000004</code>。要比較浮點數請用 <code>math.isclose()</code> 或設定容忍度。</div>
+<div data-lang="en"><strong>Myth #1:</strong> "Float exactly represents 0.1." Wrong. 0.1 is an infinite repeating fraction in binary; IEEE 754 must truncate. <code>0.1 + 0.2 = 0.30000000000000004</code>. Compare floats with <code>math.isclose()</code> or a tolerance.</div>
+</div></div>
+
+<div class="callout danger"><span class="callout-icon">🚨</span><div>
+<div data-lang="zh"><strong>誤解 #2：「Unicode 就是 UTF-8」</strong>——錯。Unicode 是<strong>抽象的碼點對照表</strong>（U+4E2D = 中），UTF-8/UTF-16/UTF-32 才是<strong>把碼點變 bytes</strong> 的編碼。Python 3 字串內部是 Unicode；存檔/網路傳輸時才轉成 UTF-8 bytes。</div>
+<div data-lang="en"><strong>Myth #2:</strong> "Unicode is UTF-8." Wrong. Unicode is the <strong>abstract code-point catalog</strong> (U+4E2D = 中); UTF-8/UTF-16/UTF-32 are <strong>encodings that turn code points into bytes</strong>. Python 3 strings are Unicode internally; files/networks use UTF-8 bytes.</div>
+</div></div>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>誤解 #3：「char 永遠是 1 byte」</strong>——只在 ASCII 內。UTF-8 中文 3 byte、emoji 4 byte。<code>len("中文")</code> 在 Python 3 是 2（字元數），但 <code>len("中文".encode())</code> 是 6（byte 數）。處理 FASTA header 包含特殊字元時要特別注意。</div>
+<div data-lang="en"><strong>Myth #3:</strong> "A char is always 1 byte." Only in ASCII. In UTF-8, Chinese = 3 bytes, emoji = 4 bytes. In Python 3, <code>len("中文")</code> = 2 (chars) but <code>len("中文".encode())</code> = 6 (bytes). Beware when handling FASTA headers with special chars.</div>
+</div></div>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>誤解 #4：「FASTQ 質量字元的 ASCII 編碼是固定的」</strong>——錯。<strong>Sanger / Illumina 1.8+ 用 Q+33</strong>，<strong>舊 Illumina 1.3–1.7 用 Q+64</strong>。把 Phred+64 當 Phred+33 解碼會讓 Q40 變成 Q9——整份 QC 全錯。<code>fastp</code> / <code>seqkit</code> 都有自動偵測。</div>
+<div data-lang="en"><strong>Myth #4:</strong> "FASTQ Phred ASCII encoding is fixed." Wrong. <strong>Sanger / Illumina 1.8+ uses Q+33</strong>; <strong>old Illumina 1.3–1.7 uses Q+64</strong>. Reading Phred+64 as Phred+33 turns Q40 into Q9 — all QC is wrong. <code>fastp</code> / <code>seqkit</code> auto-detect.</div>
+</div></div>
+
+<div class="callout warn"><span class="callout-icon">⚠️</span><div>
+<div data-lang="zh"><strong>誤解 #5：「FP16 / BF16 必定不夠精準」</strong>——錯。AlphaFold2、ESM-2、scGPT、GPT-4 都用 BF16 訓練，且結果不比 FP32 差。秘訣是 BF16 的指數範圍與 FP32 相同（都 8 bit），只是尾數較少——適合 NN 梯度的「動態範圍 &gt; 精度」需求。</div>
+<div data-lang="en"><strong>Myth #5:</strong> "FP16/BF16 are always too imprecise." Wrong. AlphaFold2, ESM-2, scGPT, GPT-4 all train in BF16 with no loss vs FP32. Trick: BF16's exponent range matches FP32 (8 bits), only the mantissa shrinks — perfect for NN gradients where dynamic range matters more than precision.</div>
+</div></div>
+</section>
+
 <section class="quiz-section">
-<h3>📝 <span data-zh="自我檢測" data-en="Self-Check">自我檢測</span></h3>
+<h3>📝 <span data-zh="自我檢測（5 題）" data-en="Self-Check (5 Questions)">自我檢測</span></h3>
+
 <div class="quiz-q" data-answer="2">
 <p data-lang="zh">1. 32-bit 有號整數能表達的最大正整數是？</p>
 <p data-lang="en">1. The maximum positive value of a 32-bit signed integer is?</p>
@@ -231,7 +368,7 @@ n = -<span class="num">5</span>
 <div class="quiz-options">
 <div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 因為 Python 的 bug</span><span data-lang="en">A. It's a Python bug</span></div>
 <div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 因為 CPU 的浮點單元壞了</span><span data-lang="en">B. The CPU's FPU is broken</span></div>
-<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 0.1 與 0.2 在二進位中是無窮循環小數，IEEE 754 必須截斷</span><span data-lang="en">C. 0.1 and 0.2 are infinite repeating fractions in binary; IEEE 754 must truncate</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 0.1 與 0.2 在二進位是無窮循環小數，IEEE 754 必須截斷</span><span data-lang="en">C. 0.1 and 0.2 are infinite repeating fractions in binary; IEEE 754 must truncate</span></div>
 <div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 因為螢幕顯示精度有限</span><span data-lang="en">D. The display has limited precision</span></div>
 </div><div class="quiz-feedback" id="fb2"></div></div>
 
@@ -244,6 +381,43 @@ n = -<span class="num">5</span>
 <div class="quiz-opt" data-idx="2"><span data-lang="zh">C. UTF-8 已是當代網頁的主流編碼 (98%+)</span><span data-lang="en">C. UTF-8 is the dominant web encoding today (98%+)</span></div>
 <div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 中文字在 UTF-8 中通常占 3 個 byte</span><span data-lang="en">D. Chinese characters typically occupy 3 bytes in UTF-8</span></div>
 </div><div class="quiz-feedback" id="fb3"></div></div>
+
+<div class="quiz-q" data-answer="2">
+<p data-lang="zh">4. FASTQ 中質量字元 'I' (ASCII 73) 在 Sanger / Illumina 1.8+ 編碼下代表的 Phred Q 值是？</p>
+<p data-lang="en">4. In Sanger / Illumina 1.8+ FASTQ, the quality char 'I' (ASCII 73) represents which Phred Q?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. Q9 (因為 73−64=9)</span><span data-lang="en">A. Q9 (since 73−64=9)</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. Q30</span><span data-lang="en">B. Q30</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. Q40 (因為 73−33=40，對應 99.99% 正確)</span><span data-lang="en">C. Q40 (73−33=40, ~99.99% accurate)</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. Q73</span><span data-lang="en">D. Q73</span></div>
+</div><div class="quiz-feedback" id="fb4"></div></div>
+
+<div class="quiz-q" data-answer="1">
+<p data-lang="zh">5. 為何 HGNC 2020 把 MARCH1 改名為 MARCHF1？</p>
+<p data-lang="en">5. Why did HGNC rename MARCH1 to MARCHF1 in 2020?</p>
+<div class="quiz-options">
+<div class="quiz-opt" data-idx="0"><span data-lang="zh">A. 因為原名涉及商標糾紛</span><span data-lang="en">A. Trademark dispute</span></div>
+<div class="quiz-opt" data-idx="1"><span data-lang="zh">B. 因為 Excel 自動把 MARCH1 轉成「3 月 1 日」，導致大量論文表格錯誤</span><span data-lang="en">B. Excel auto-converted MARCH1 to "1 March," corrupting many paper supplements</span></div>
+<div class="quiz-opt" data-idx="2"><span data-lang="zh">C. 因為發現新功能，舊名不再適合</span><span data-lang="en">C. New function discovered; old name no longer fits</span></div>
+<div class="quiz-opt" data-idx="3"><span data-lang="zh">D. 因為跨物種同源基因命名統一</span><span data-lang="en">D. Cross-species homolog naming alignment</span></div>
+</div><div class="quiz-feedback" id="fb5"></div></div>
+</section>
+
+<section class="section" style="background:#fef3c7;border-radius:14px;padding:32px;">
+<div class="section-label">💭 <span data-zh="延伸思考" data-en="DISCUSSION">延伸思考</span></div>
+<h2 data-zh="十三、延伸思考與討論" data-en="XIII. Discussion & Reflection">十三、延伸思考</h2>
+<ol style="margin-left:20px;line-height:1.9;color:var(--c-ink);">
+<li data-lang="zh"><strong>AI 量化為何 FP8 也夠？</strong> Transformer 參數梯度的「動態範圍」遠大於「精度需求」。試解釋為何把 FP32 量化成 INT8 inference 在 LLM 上幾乎無損？</li>
+<li data-lang="en"><strong>Why is FP8 enough for AI quantization?</strong> Transformer gradients have huge dynamic range but modest precision needs. Explain why INT8 quantization of an FP32 LLM is nearly lossless.</li>
+<li data-lang="zh"><strong>NaN ≠ NaN 是 IEEE 754 的「特性還是 bug」？</strong> 為何 IEEE 委員會堅持讓 NaN 不等於自己？這在實務上有什麼好處？又有什麼陷阱？</li>
+<li data-lang="en"><strong>Is NaN ≠ NaN a feature or a bug?</strong> Why did the IEEE committee insist NaN is unequal to itself? What benefits does it bring? What traps?</li>
+<li data-lang="zh"><strong>DNA 序列若用 2-bit packed (A=00, C=01, G=10, T=11) 可省 4× 空間，但為何 BAM 仍用 4-bit?</strong> 答案：要保留 N (unknown) 與其他 IUPAC 模糊碼 (R, Y, S, W…)。</li>
+<li data-lang="en"><strong>If DNA could be 2-bit-packed (A=00, C=01, G=10, T=11) saving 4×, why does BAM still use 4-bit?</strong> Hint: to preserve N (unknown) and IUPAC ambiguity codes (R, Y, S, W…).</li>
+<li data-lang="zh"><strong>2038 問題誰受害？</strong> 銀行核心系統、嵌入式工業控制、舊家電。如果你是 IT 主管，從哪裡開始排查？</li>
+<li data-lang="en"><strong>Who suffers from Y2038?</strong> Bank cores, industrial controls, legacy appliances. As IT lead, where do you start auditing?</li>
+<li data-lang="zh"><strong>為何「保留有效數字」是科學計算的好習慣？</strong> 若直接列印 <code>3.141592653589793</code>，可能誤導讀者以為測量精度到 15 位。</li>
+<li data-lang="en"><strong>Why is "preserving significant figures" good scientific practice?</strong> Printing <code>3.141592653589793</code> may mislead readers into thinking your measurement has 15-digit accuracy.</li>
+</ol>
 </section>
 
 <nav class="page-nav">
@@ -262,10 +436,35 @@ const bitRow=document.getElementById('bitRow');
 const decSlider=document.getElementById('decSlider');
 let curVal=42;
 function buildBits(){bitRow.innerHTML='';for(let i=7;i>=0;i--){const b=document.createElement('div');b.className='bin-bit'+(((curVal>>i)&1)?' on':'');b.textContent=(curVal>>i)&1;b.dataset.bit=i;b.onclick=()=>{curVal^=(1<<i);decSlider.value=curVal;render();};bitRow.appendChild(b);}}
-function render(){curVal=+decSlider.value;document.getElementById('decVal').textContent=curVal;const b=curVal.toString(2).padStart(8,'0');document.getElementById('binOut').textContent=b.slice(0,4)+' '+b.slice(4);document.getElementById('hexOut').textContent='0x'+curVal.toString(16).toUpperCase().padStart(2,'0');document.getElementById('octOut').textContent='0'+curVal.toString(8).padStart(3,'0');buildBits();}
+function render(){curVal=+decSlider.value;document.getElementById('decVal').textContent=curVal;const b=curVal.toString(2).padStart(8,'0');document.getElementById('binOut').textContent=b.slice(0,4)+' '+b.slice(4);document.getElementById('hexOut').textContent='0x'+curVal.toString(16).toUpperCase().padStart(2,'0');document.getElementById('octOut').textContent='0'+curVal.toString(8).padStart(3,'0');const asc=document.getElementById('ascOut');if(curVal>=32 && curVal<127){asc.textContent=String.fromCharCode(curVal);}else if(curVal===10){asc.textContent='\\n';}else if(curVal===9){asc.textContent='\\t';}else{asc.textContent='—';}buildBits();}
 decSlider.addEventListener('input',render);render();
 
-const QF={zh:{q1_y:'32-bit 有號整數最高位是符號位，所以正數範圍是 0 到 2³¹−1。',q1_n:'答案 C。',q2_y:'0.1 = 0.0001100110011... (binary)，是無窮循環。',q2_n:'答案 C。',q3_y:'UTF-8 是「變動長度」(1–4 bytes)，不是固定 4 byte。',q3_n:'答案 B。'},en:{q1_y:'A 32-bit signed int uses the highest bit as sign, so positive range is 0 to 2³¹−1.',q1_n:'Answer: C.',q2_y:'0.1 = 0.0001100110011... in binary — an infinite repeating fraction.',q2_n:'Answer: C.',q3_y:'UTF-8 is variable-length (1–4 bytes), not fixed 4.',q3_n:'Answer: B.'}};
+// IEEE 754 decomposer
+function makeBitDiv(b,color){const d=document.createElement('div');d.textContent=b;d.style.cssText='width:18px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:3px;background:'+(b==='1'?color:'#e5e7eb')+';color:'+(b==='1'?'#fff':'#9ca3af')+';font-weight:700;';return d;}
+function decomposeFP32(){
+  const inp=document.getElementById('fpInput');
+  let x=parseFloat(inp.value);
+  if(isNaN(x)){document.getElementById('fpAnalysis').textContent='Invalid number';return;}
+  const buf=new ArrayBuffer(4);const f=new Float32Array(buf);const i=new Uint32Array(buf);
+  f[0]=x;const bits=i[0].toString(2).padStart(32,'0');
+  const sign=bits[0],exp=bits.slice(1,9),mant=bits.slice(9);
+  const sd=document.getElementById('fpSignBits');sd.innerHTML='';sd.appendChild(makeBitDiv(sign,'#dc2626'));
+  const ed=document.getElementById('fpExpBits');ed.innerHTML='';for(const b of exp)ed.appendChild(makeBitDiv(b,'#16a34a'));
+  const md=document.getElementById('fpMantBits');md.innerHTML='';for(const b of mant)md.appendChild(makeBitDiv(b,'#2563eb'));
+  const expVal=parseInt(exp,2);const expReal=expVal-127;
+  const mantVal=parseInt(mant,2);const mantFrac=mantVal/(1<<23);
+  let note='';
+  if(expVal===0 && mantVal===0)note='= ±0';
+  else if(expVal===255 && mantVal===0)note='= ±Infinity';
+  else if(expVal===255)note='= NaN (any nonzero mantissa with E=255)';
+  else if(expVal===0)note='= subnormal (no implicit leading 1)';
+  else note='= (-1)^'+sign+' × 1.'+mantFrac.toFixed(10).slice(2)+' × 2^'+expReal;
+  document.getElementById('fpAnalysis').innerHTML='<div>sign = '+sign+' &nbsp;&nbsp; exponent = '+expVal+' (real: '+expReal+') &nbsp;&nbsp; mantissa = '+mantVal+'/2²³</div><div style="margin-top:6px;color:var(--c-accent-dark);">value '+note+'</div><div style="margin-top:6px;color:var(--c-ink-muted);font-size:.78rem;">hex: 0x'+i[0].toString(16).padStart(8,'0').toUpperCase()+' &nbsp;&nbsp; stored as FP32 ≈ '+f[0]+'</div>';
+}
+document.getElementById('fpInput').addEventListener('input',decomposeFP32);
+decomposeFP32();
+
+const QF={zh:{q1_y:'32-bit 有號整數最高位是符號位，所以正數範圍是 0 到 2³¹−1。',q1_n:'答案 C。',q2_y:'0.1 = 0.0001100110011... (binary)，是無窮循環。',q2_n:'答案 C。',q3_y:'UTF-8 是「變動長度」(1–4 bytes)，不是固定 4 byte。',q3_n:'答案 B。',q4_y:'Sanger/Illumina 1.8+ 用 Phred+33 編碼，所以 \'I\' (73) − 33 = 40。',q4_n:'答案 C。',q5_y:'Excel 自動轉日期破壞了大量論文表格資料，HGNC 改名為 MARCHF1 以避開。',q5_n:'答案 B。'},en:{q1_y:'A 32-bit signed int uses the highest bit as sign, so positive range is 0 to 2³¹−1.',q1_n:'Answer: C.',q2_y:'0.1 = 0.0001100110011... in binary — an infinite repeating fraction.',q2_n:'Answer: C.',q3_y:'UTF-8 is variable-length (1–4 bytes), not fixed 4.',q3_n:'Answer: B.',q4_y:'Sanger/Illumina 1.8+ uses Phred+33, so \'I\' (73) − 33 = 40.',q4_n:'Answer: C.',q5_y:'Excel auto-conversion to dates corrupted many supplement tables; HGNC renamed to MARCHF1 to evade it.',q5_n:'Answer: B.'}};
 document.querySelectorAll('.quiz-q').forEach((q,qi)=>{const ans=+q.dataset.answer;q.querySelectorAll('.quiz-opt').forEach(o=>{o.addEventListener('click',()=>{if(q.classList.contains('answered'))return;q.classList.add('answered');const fb=document.getElementById('fb'+(qi+1));const ok=+o.dataset.idx===ans;o.classList.add(ok?'correct':'wrong');if(!ok)q.querySelectorAll('.quiz-opt')[ans].classList.add('correct');const L=I18n.get();fb.className='quiz-feedback show '+(ok?'correct-fb':'wrong-fb');fb.textContent=(ok?'✅ ':'❌ ')+(QF[L]['q'+(qi+1)+'_'+(ok?'y':'n')]||'');});});});
 </script>
 </body></html>
